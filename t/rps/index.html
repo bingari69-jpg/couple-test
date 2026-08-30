@@ -162,12 +162,12 @@
     <div class="rounds" id="openRounds"></div>
   </div>
 
-  <label class="q" for="myNameIn">내 이름 <em>· 선택</em></label>
+  <label class="q" for="myNameIn">내 이름 <em>· 결과에 표시돼요</em></label>
   <input type="text" id="myNameIn" placeholder="이름 또는 별명" maxlength="12">
 
   <div class="q">무엇을 낼까요?</div>
   <div class="hands" id="openHands" role="group" aria-label="패 선택"></div>
-  <p class="hint">한 번 고르면 되돌릴 수 없어요</p>
+  <p class="hint" id="openHint">이름을 적으면 고를 수 있어요</p>
 </section>
 
 <!-- ============ 결과 ============ -->
@@ -182,6 +182,11 @@
   <p class="sub-verdict" id="subVerdict"></p>
   <div class="title-badge hidden" id="titleBadge"></div>
   <div class="lie hidden" id="lieBox"></div>
+
+  <div id="notYet" class="hidden" style="margin-top:18px;padding:12px 14px;background:rgba(255,210,63,.08);border:1px solid rgba(255,210,63,.3);border-radius:12px;font-size:13.5px;line-height:1.6;color:var(--ink)">
+    ⚠️ <b>상대는 아직 이 결과를 몰라요.</b><br>
+    <span style="color:var(--sub)">결과 링크를 보내거나, 복수전을 걸면 지난 판 결과가 같이 전달됩니다.</span>
+  </div>
 
   <div id="tieActions" class="hidden">
     <button class="btn btn-main" id="tieNext">다시 내 차례 — 다음 패 고르기</button>
@@ -257,6 +262,7 @@ const state = {
   name:"", hand:null, msg:0,
   hist:[],          // [[challengerName, cHand, rHand, cMsg], ...]  이전 라운드들
   rv:0,             // 복수전 여부
+  prev:null,        // 복수전일 때 지난 판 결과 [cName, cHand, rHand, cMsg, rName]
   incoming:null     // 열어본 도전장 payload
 };
 let madeUrl="";
@@ -305,9 +311,11 @@ $("nameIn").oninput=e=>{state.name=e.target.value.trim(); hideLink();};
 function hideLink(){ ["linkbox","copyBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
 
 $("makeBtn").onclick=()=>{
+  if(!state.name){toast("이름을 먼저 적어주세요"); $("nameIn").focus(); return;}
   if(state.hand==null){toast("패를 먼저 골라주세요");return;}
   const {k,x}=lockHand(state.hand);
-  const p={v:1, n:state.name||"상대", k, x, m:state.msg, h:state.hist, rv:state.rv};
+  const p={v:1, n:state.name, k, x, m:state.msg, h:state.hist, rv:state.rv};
+  if(state.prev) p.prev=state.prev;
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   $("linkbox").textContent=madeUrl; $("linkbox").classList.remove("hidden");
   $("copyBtn").classList.remove("hidden");
@@ -324,18 +332,35 @@ function openChallenge(p){
   if(p.m && MSGS[p.m]){ $("openMsg").textContent=MSGS[p.m]; $("openMsg").classList.remove("hidden"); }
   else { $("openMsg").textContent="(아무 말도 남기지 않았습니다)"; }
   const r=(p.h||[]).length;
-  $("openRounds").innerHTML = r ? `이전 ${r}판 비김 · 지금은 <b style="color:var(--gold)">${r+1}판</b>` : "";
+  let roundsHtml = r ? `이전 ${r}판 비김 · 지금은 <b style="color:var(--gold)">${r+1}판</b>` : "";
+  if(p.prev){
+    const [pc,ph,prh,pm,prn]=p.prev;
+    const po=outcome(ph,prh);
+    const winner = po==="c"?pc:(po==="r"?prn:null);
+    roundsHtml = `<div style="margin-top:6px;padding:10px 12px;background:rgba(255,78,106,.08);border:1px solid rgba(255,78,106,.3);border-radius:10px;color:var(--ink)">
+      <b style="color:var(--red)">복수전</b> · 지난 판 ${esc(pc)} ${HANDS[ph].e} vs ${esc(prn)} ${HANDS[prh].e}
+      → <b>${winner?esc(winner)+" 승":"비김"}</b></div>` + (roundsHtml?`<div style="margin-top:6px">${roundsHtml}</div>`:"");
+  }
+  $("openRounds").innerHTML = roundsHtml;
   handsInto("openHands",(i,box)=>{
+    if(!$("myNameIn").value.trim()){ toast("이름을 먼저 적어주세요"); $("myNameIn").focus(); return; }
     [...box.children].forEach((c,j)=>{c.setAttribute("aria-pressed",j===i); c.classList.add("locked"); c.disabled=true;});
     respond(i);
   });
+  const setLock=()=>{
+    const ok=!!$("myNameIn").value.trim();
+    [...$("openHands").children].forEach(c=>c.classList.toggle("locked",!ok));
+    $("openHint").textContent = ok ? "한 번 고르면 되돌릴 수 없어요" : "이름을 적으면 고를 수 있어요";
+  };
+  $("myNameIn").oninput=setLock; setLock();
   show("s-open");
 }
 function respond(myHand){
   const p=state.incoming;
   const theirHand=unlockHand(p.k,p.x);
   if(theirHand==null){ toast("도전장이 손상됐어요. 다시 받아주세요"); return; }
-  const myName=$("myNameIn").value.trim()||"나";
+  const myName=$("myNameIn").value.trim();
+  if(!myName){ toast("이름을 먼저 적어주세요"); return; }
   countdown(()=>{
     const round=[p.n, theirHand, myHand, p.m];
     const hist=[...(p.h||[]), round];
@@ -375,12 +400,12 @@ function titleFor(o, cMsg, cHand, hist, rv, winnerIsC){
 }
 function renderResult(R){
   const o=outcome(R.cHand,R.rHand);
-  // 화면 왼쪽 = 도전자, 오른쪽 = 응답자
-  $("handA").textContent=HANDS[R.cHand].e; $("nameA").textContent=R.cName;
-  $("handB").textContent=HANDS[R.rHand].e; $("nameB").textContent=R.rName;
+  const me = R.viewer==="responder" ? "r" : "c";
+  // 화면 왼쪽 = 도전자, 오른쪽 = 응답자. 보는 사람 쪽에 (나) 표시
+  $("handA").textContent=HANDS[R.cHand].e; $("nameA").textContent=R.cName + (me==="c"?" (나)":"");
+  $("handB").textContent=HANDS[R.rHand].e; $("nameB").textContent=R.rName + (me==="r"?" (나)":"");
   ["sideA","sideB"].forEach(id=>$(id).classList.remove("win","lose"));
   $("verdict").className="verdict";
-  const me = R.viewer==="responder" ? "r" : "c";
   const iWon = o===me;
   if(o==="tie"){
     $("verdict").classList.add("tie"); $("verdict").textContent="비겼습니다";
@@ -420,25 +445,40 @@ function renderResult(R){
     }
   }else if(R.viewer==="responder"){
     $("doneActions").classList.remove("hidden");
+    $("notYet").classList.remove("hidden");
     const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
     $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
-    $("revenge").onclick=()=>{ startNext([], R.rName, 1); };
+    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName];
+    $("revenge").onclick=()=>{ startNext([], R.rName, 1, prev); };
   }else{
     $("viewActions").classList.remove("hidden");
-    $("revenge2").onclick=()=>{ startNext([], R.cName, 1); };
+    $("notYet").classList.add("hidden");
+    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName];
+    $("revenge2").onclick=()=>{ startNext([], R.cName, 1, prev); };
   }
+  if(o==="tie") $("notYet").classList.add("hidden");
   show("s-result");
 }
 /* 비긴 뒤 다음 판 / 복수전 → 도전장 만들기 화면으로 (이력·이름 유지) */
-function startNext(hist, myName, rv){
-  state.hist=hist; state.rv=rv; state.hand=null; state.msg=0; state.name=myName;
+function startNext(hist, myName, rv, prev){
+  state.hist=hist; state.rv=rv; state.prev=prev||null; state.hand=null; state.msg=0; state.name=myName;
   $("nameIn").value=myName; hideLink();
   [...$("makeHands").children].forEach(c=>c.setAttribute("aria-pressed","false"));
   [...$("msgChips").children].forEach((c,j)=>c.setAttribute("aria-pressed",j===0));
   $("makeBtn").disabled=true;
-  if(hist.length){ $("tieHist").innerHTML=histText(hist); $("tieNote").classList.remove("hidden"); $("makeLead").textContent="비겼으니 이번엔 내가 먼저 냅니다. 상대는 고른 뒤에야 볼 수 있어요."; }
-  else { $("tieNote").classList.add("hidden"); $("makeLead").textContent = rv ? "복수전입니다. 이번엔 내가 먼저 냅니다." : "내가 고른 패는 상대가 고르기 전까지 공개되지 않아요."; }
+  if(hist.length){ $("tieHist").innerHTML=histText(hist);
+    $("tieNote").querySelector("div:last-child").innerHTML=`비겼어요. 이번엔 <span style="color:var(--gold)">내가 먼저</span> 냅니다.`;
+    $("tieNote").classList.remove("hidden"); $("makeLead").textContent="비겼으니 이번엔 내가 먼저 냅니다. 상대는 고른 뒤에야 볼 수 있어요."; }
+  else if(prev){
+    const [pc,ph,prh,pm,prn]=prev; const po=outcome(ph,prh);
+    const winner = po==="c"?pc:(po==="r"?prn:null);
+    $("tieHist").innerHTML=`지난 판 ${esc(pc)} ${HANDS[ph].e} vs ${esc(prn)} ${HANDS[prh].e} → <b>${winner?esc(winner)+" 승":"비김"}</b>`;
+    $("tieNote").querySelector("div:last-child").innerHTML=`<span style="color:var(--red)">복수전</span>입니다. 이번엔 내가 먼저 냅니다. 이 도전장에 지난 판 결과가 같이 실려요.`;
+    $("tieNote").classList.remove("hidden");
+    $("makeLead").textContent="복수전 도전장입니다. 상대는 고른 뒤에야 내 패를 볼 수 있어요.";
+  }
+  else { $("tieNote").classList.add("hidden"); $("makeLead").textContent="내가 고른 패는 상대가 고르기 전까지 공개되지 않아요."; }
   history.replaceState(null,"",location.pathname);
   show("s-make");
 }
