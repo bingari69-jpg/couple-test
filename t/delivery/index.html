@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>배달 텔레파시</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="내가 뭐 시킬지 맞혀봐">
+<meta property="og:description" content="배달 취향 10문항. 못 맞히면 네가 사는 거다.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-delivery.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/delivery/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#1A1412; --bg2:#26201C; --bg3:#332A25; --line:#443A33;
+    --ink:#FBF6F0; --sub:#B8A99C; --dim:#7A6D62;
+    --tang:#FF7A3D; --tang-d:#C95A26; --mint:#3DD9A6; --red:#FF5C5C; --cream:#FFE8C8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.6;min-height:100vh;padding:var(--sp) var(--sp) 56px;
+    background-image:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(255,122,61,.10),transparent 70%)}
+  .wrap{max-width:520px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--tang);border:1px solid rgba(255,122,61,.4);border-radius:999px;padding:4px 11px;margin-bottom:14px}
+  h1{font-size:clamp(25px,7vw,32px);font-weight:800;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--tang)}
+  .lead{font-size:15px;color:var(--sub);line-height:1.7;margin-bottom:22px}
+  .q{font-size:13px;color:var(--sub);margin:22px 0 10px;display:block}
+  .q em{font-style:normal;color:var(--dim);font-size:12px}
+  input[type=text]{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px}
+  input::placeholder{color:var(--dim)}
+  input:focus{outline:2px solid var(--tang);outline-offset:1px;border-color:transparent}
+
+  .prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:6px 0 22px}
+  .prog i{display:block;height:100%;background:linear-gradient(90deg,var(--tang),var(--cream));transition:width .3s}
+  .qnum{font-size:12px;font-weight:700;letter-spacing:.12em;color:var(--dim);margin-bottom:8px}
+  .qtext{font-size:clamp(19px,5.5vw,23px);font-weight:700;line-height:1.45;margin-bottom:20px;min-height:66px}
+  .qtext .who{color:var(--tang)}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opt{background:var(--bg2);border:2px solid var(--line);border-radius:14px;padding:15px 16px;text-align:left;font:inherit;font-size:16px;color:var(--ink);cursor:pointer;transition:border-color .15s,background .15s,transform .1s;display:flex;align-items:center;gap:12px}
+  .opt .k{width:26px;height:26px;border-radius:50%;background:var(--bg3);color:var(--sub);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+  .opt:hover:not(:disabled){border-color:#6a5a4e}
+  .opt:active:not(:disabled){transform:scale(.985)}
+  .opt:disabled{cursor:default}
+  .opt.picked{border-color:var(--tang);background:rgba(255,122,61,.10)}
+  .opt.actual{border-color:var(--mint);background:rgba(61,217,166,.10)}
+  .opt.actual .k{background:var(--mint);color:#0b2a1f}
+  .opt.wrong{border-color:var(--red);background:rgba(255,92,92,.08)}
+  .opt.wrong .k{background:var(--red);color:#fff}
+  .feedback{margin-top:14px;padding:12px 14px;border-radius:12px;font-size:14.5px;font-weight:600;line-height:1.5}
+  .feedback.ok{background:rgba(61,217,166,.12);color:var(--mint)}
+  .feedback.no{background:rgba(255,92,92,.12);color:var(--red)}
+  .qnav{margin-top:18px;display:flex;gap:8px}
+  .qnav .btn{margin-top:0}
+
+  .btn{width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,filter .15s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-main{background:var(--tang);color:#2a1000}
+  .btn-main:hover:not(:disabled){filter:brightness(1.06)}
+  .btn-sub{background:transparent;color:var(--sub);border:1px solid var(--line);font-weight:500}
+  .btn-sub:hover{border-color:#6a5a4e;color:var(--ink)}
+  .btn-ghost{background:transparent;color:var(--dim);font-weight:500;font-size:14px;padding:12px}
+  .linkbox{margin-top:12px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:80px;overflow:auto}
+  .hint{font-size:12.5px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.7}
+  .homelink{display:block;text-align:center;font-size:12.5px;color:var(--dim);text-decoration:none;margin-top:24px}
+
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px;margin:16px 0}
+  .card .who{font-size:13px;color:var(--sub);margin-bottom:6px}
+  .card .who b{color:var(--ink)}
+  .locked{display:flex;align-items:center;gap:10px;margin-top:10px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px;font-size:13px;color:var(--sub)}
+  .locked .e{font-size:22px}
+
+  /* 결과 */
+  .score{text-align:center;margin:10px 0 6px}
+  .score .big{font-size:clamp(56px,18vw,84px);font-weight:900;line-height:1;letter-spacing:-.04em;color:var(--tang)}
+  .score .big small{font-size:.4em;color:var(--sub);font-weight:600;letter-spacing:0}
+  .score .lab{font-size:15px;color:var(--sub);margin-top:6px}
+  .score .lab b{color:var(--ink)}
+  .title-badge{margin:16px auto 0;display:table;background:linear-gradient(135deg,rgba(255,122,61,.18),rgba(255,232,200,.10));border:1px solid rgba(255,122,61,.4);border-radius:999px;padding:9px 18px;font-size:14px;font-weight:700;color:var(--cream)}
+  .quip{text-align:center;font-size:14.5px;color:var(--sub);margin-top:12px;line-height:1.6}
+  .miss{margin-top:18px}
+  .miss h3{font-size:13px;color:var(--sub);font-weight:600;margin-bottom:8px}
+  .miss .row{background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px;font-size:14px;line-height:1.5}
+  .miss .row .qq{color:var(--dim);font-size:12.5px;margin-bottom:3px}
+  .miss .row .a{color:var(--mint)} .miss .row .g{color:var(--red)}
+  .vsbox{margin-top:18px;background:var(--bg2);border:1px solid var(--line);border-radius:16px;padding:16px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px;text-align:center}
+  .vsbox .n{font-size:13px;color:var(--sub)}
+  .vsbox .s{font-size:30px;font-weight:900;color:var(--ink)}
+  .vsbox .s.win{color:var(--tang)}
+  .vsbox .vs{font-size:12px;color:var(--dim);font-weight:800}
+  .vsbox .sum{grid-column:1/-1;font-size:14px;color:var(--ink);margin-top:4px;padding-top:10px;border-top:1px solid var(--line)}
+  .notyet{margin-top:18px;padding:12px 14px;background:rgba(255,232,200,.07);border:1px solid rgba(255,232,200,.25);border-radius:12px;font-size:13.5px;line-height:1.6}
+  .notyet b{color:var(--cream)}
+  .next{margin-top:26px}
+  .next h3{font-size:13px;color:var(--sub);font-weight:600;margin-bottom:10px}
+  .next a{display:block;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:600}
+  .next a small{display:block;font-weight:400;font-size:12.5px;color:var(--dim);margin-top:2px}
+  .next a:hover{border-color:var(--tang)}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--tang);color:#2a1000;font-weight:700;font-size:14.5px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 시작 ============ -->
+<section class="screen" id="s-intro">
+  <span class="tag">예측 · 10문항</span>
+  <h1>내가 뭐 시킬지 <b>맞혀봐.</b><br>못 맞히면 네가 사.</h1>
+  <p class="lead">내 배달 취향 10개에 먼저 답할게. 상대는 내 답을 맞혀야 해. 몇 개나 맞힐까?</p>
+  <div id="prevNote" class="card hidden">
+    <div class="who">이어서 하기</div>
+    <div id="prevText" style="font-size:14.5px;line-height:1.6"></div>
+  </div>
+  <label class="q" for="nameIn">내 이름</label>
+  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+  <button class="btn btn-main" id="startBtn">내 답부터 고르기</button>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 내 답 고르기 ============ -->
+<section class="screen hidden" id="s-answer">
+  <div class="prog"><i id="aProg"></i></div>
+  <div class="qnum" id="aNum"></div>
+  <div class="qtext" id="aText"></div>
+  <div class="opts" id="aOpts"></div>
+  <div class="qnav"><button class="btn btn-ghost" id="aBack">← 이전</button></div>
+</section>
+
+<!-- ============ 링크 ============ -->
+<section class="screen hidden" id="s-link">
+  <span class="tag">준비 완료</span>
+  <h1>내 답을 숨겨뒀어.<br><b>이제 맞혀보라고</b> 보내자.</h1>
+  <p class="lead">상대는 문항마다 내가 뭘 골랐을지 찍어. 하나 찍을 때마다 정답이 공개돼.</p>
+  <div class="linkbox" id="linkbox"></div>
+  <button class="btn btn-main" id="copyBtn">링크 복사 — 맞혀보라고 보내기</button>
+  <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
+  <button class="btn btn-ghost" id="editBtn">답 다시 고르기</button>
+</section>
+
+<!-- ============ 맞히기 시작 ============ -->
+<section class="screen hidden" id="s-open">
+  <span class="tag">텔레파시 도전</span>
+  <h1><b id="openName"></b>님의 배달 취향,<br>몇 개나 맞힐 수 있을까?</h1>
+  <p class="lead">문항마다 <span id="openName2" style="color:var(--tang);font-weight:700"></span>님이 뭘 골랐을지 찍어봐. 찍는 순간 정답이 나와.</p>
+  <div class="card">
+    <div class="locked"><span class="e">🔒</span><span><b id="openName3"></b>님의 답 10개가 잠겨 있어요. 찍을 때마다 하나씩 열립니다.</span></div>
+  </div>
+  <label class="q" for="myNameIn">내 이름 <em>· 결과에 표시돼요</em></label>
+  <input type="text" id="myNameIn" placeholder="이름 또는 별명" maxlength="12">
+  <button class="btn btn-main" id="guessStart" disabled>맞히기 시작</button>
+</section>
+
+<!-- ============ 맞히기 ============ -->
+<section class="screen hidden" id="s-guess">
+  <div class="prog"><i id="gProg"></i></div>
+  <div class="qnum" id="gNum"></div>
+  <div class="qtext"><span class="who" id="gWho"></span>은(는) <span id="gText"></span></div>
+  <div class="opts" id="gOpts"></div>
+  <div class="feedback hidden" id="gFeed"></div>
+  <div class="qnav"><button class="btn btn-main hidden" id="gNext">다음 →</button></div>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">텔레파시 결과</span>
+  <div class="score">
+    <div class="big"><span id="scoreNum">0</span><small> / 10</small></div>
+    <div class="lab"><b id="resGuesser"></b>은(는) <b id="resOwner"></b>을(를) 이만큼 안다</div>
+  </div>
+  <div class="title-badge" id="titleBadge"></div>
+  <p class="quip" id="quip"></p>
+  <div class="vsbox hidden" id="vsbox"></div>
+  <div class="miss hidden" id="missBox"><h3>틀린 것</h3><div id="missList"></div></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과를 몰라요.</b><br><span style="color:var(--sub)">결과 링크를 보내거나, "나도 답하기"로 이어가면 점수가 같이 전달됩니다.</span></div>
+  <div id="guesserActions" class="hidden">
+    <button class="btn btn-main" id="mineToo">나도 답하기 — 이번엔 상대가 나를 맞히게</button>
+    <button class="btn btn-sub" id="sendResult">결과 링크만 보내기</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+  </div>
+  <div id="ownerActions" class="hidden">
+    <button class="btn btn-main hidden" id="guessBack">나도 맞혀보기 — 상대 답 맞히러 가기</button>
+  </div>
+  <div class="next" id="nextBox"><h3>다음은 이거 어때요?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none;line-height:1.4">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 ===== */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/delivery/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+/* ===== 문항 ===== */
+const Q = [
+  {t:"비 오는 날 밤 11시, 배달앱을 켰다", o:["치킨","족발·보쌈","떡볶이","피자"]},
+  {t:"치킨 한 마리를 시킨다면",           o:["후라이드","양념","반반","간장"]},
+  {t:"배달비 4,000원이 붙었다",           o:["그냥 시킨다","다른 집 찾는다","포장하러 간다"]},
+  {t:"리뷰 별점을 보는 기준",             o:["4.5 미만이면 안 시킴","3.5만 넘으면 됨","안 봄"]},
+  {t:"떡볶이 맵기",                       o:["순한맛","보통","매운맛","극한"]},
+  {t:"예상 배달 시간 60분",               o:["기다린다","취소하고 다른 거","라면 끓인다"]},
+  {t:"음식은 왔는데 젓가락이 없다",       o:["집 젓가락 쓴다","리뷰에 쓴다","가게에 연락한다"]},
+  {t:"혼자인데 1인분은 애매하다",         o:["2인분 시켜 남긴다","1인분 딱","편의점 간다"]},
+  {t:"둘 중 하나만 평생",                 o:["곱창","회"]},
+  {t:"새벽 3시, 배가 고프다",             o:["시킨다","참는다","냉장고 뒤진다"]}
+];
+const N = Q.length;
+const NEXT = [
+  {path:"../rps/",      title:"가위바위보 도전장", desc:"이번엔 승부로. 거짓말도 가능."},
+  {path:"../crash/",    title:"20분 후 추락합니다", desc:"정답 없는 10개 상황, 당신이라면?"},
+  {path:"../marriage/", title:"결혼 전에 맞춰봐야 할 것들", desc:"20문항, 다르게 생각하는 지점 찾기"}
+];
+
+/* ===== 잠금 (1단계) ===== */
+function lockAll(ans){ const k=Math.floor(Math.random()*0xFFFF); return {k, x:ans.map((a,i)=>((a+1)*7919 + k + i*131) % 65521)}; }
+function unlockOne(k,x,i){ for(let a=0;a<4;a++){ if(((a+1)*7919 + k + i*131) % 65521 === x) return a; } return null; }
+
+/* ===== 해시 ===== */
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
+function readHash(){const m=location.hash.match(/^#([ir])=(.+)$/);if(!m)return null;try{return {type:m[1],p:JSON.parse(b64d(m[2]))};}catch(e){return null;}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ===== 상태 ===== */
+const state={ name:"", ans:[], qi:0, prev:null, incoming:null, guess:[], gi:0, myName:"" };
+let madeUrl="";
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
+let tt;function toast(m){const el=$("toast");el.textContent=m;el.style.opacity="1";el.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{el.style.opacity="0";el.style.transform="translate(-50%,20px)";},2400);}
+async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해 주세요");}
+const KEYS="①②③④";
+
+/* ===== 내 답 고르기 ===== */
+$("nameIn").oninput=e=>{state.name=e.target.value.trim();};
+$("startBtn").onclick=()=>{
+  if(!state.name){toast("이름을 먼저 적어주세요");$("nameIn").focus();return;}
+  state.qi=0; renderA(); show("s-answer");
+};
+function renderA(){
+  const q=Q[state.qi];
+  $("aProg").style.width=(state.qi/N*100)+"%";
+  $("aNum").textContent=`${state.qi+1} / ${N}`;
+  $("aText").textContent=q.t;
+  const box=$("aOpts"); box.innerHTML="";
+  q.o.forEach((o,i)=>{
+    const b=document.createElement("button"); b.className="opt"+(state.ans[state.qi]===i?" picked":""); b.type="button";
+    b.innerHTML=`<span class="k">${KEYS[i]}</span><span>${esc(o)}</span>`;
+    b.onclick=()=>{ state.ans[state.qi]=i; state.qi++; if(state.qi>=N) finishA(); else renderA(); };
+    box.appendChild(b);
+  });
+  $("aBack").style.visibility=state.qi===0?"hidden":"visible";
+}
+$("aBack").onclick=()=>{ if(state.qi>0){state.qi--;renderA();} };
+function finishA(){
+  const {k,x}=lockAll(state.ans);
+  const p={v:1,n:state.name,k,x};
+  if(state.prev) p.prev=state.prev;
+  madeUrl=baseUrl()+"#i="+b64e(JSON.stringify(p));
+  $("linkbox").textContent=madeUrl;
+  $("sandboxNote").classList.toggle("hidden",!isSandbox());
+  show("s-link");
+}
+$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 맞혀보라고 보내세요");
+$("editBtn").onclick=()=>{state.qi=0;renderA();show("s-answer");};
+
+/* ===== 맞히기 ===== */
+function openChallenge(p){
+  state.incoming=p;
+  ["openName","openName2","openName3"].forEach(id=>$(id).textContent=p.n);
+  $("myNameIn").oninput=e=>{state.myName=e.target.value.trim();$("guessStart").disabled=!state.myName;};
+  $("guessStart").onclick=()=>{ if(!state.myName){toast("이름을 먼저 적어주세요");return;} state.gi=0; state.guess=[]; renderG(); show("s-guess"); };
+  show("s-open");
+}
+function renderG(){
+  const q=Q[state.gi], p=state.incoming;
+  $("gProg").style.width=(state.gi/N*100)+"%";
+  $("gNum").textContent=`${state.gi+1} / ${N}`;
+  $("gWho").textContent=p.n; $("gText").textContent=q.t;
+  const box=$("gOpts"); box.innerHTML="";
+  $("gFeed").classList.add("hidden"); $("gNext").classList.add("hidden");
+  q.o.forEach((o,i)=>{
+    const b=document.createElement("button"); b.className="opt"; b.type="button";
+    b.innerHTML=`<span class="k">${KEYS[i]}</span><span>${esc(o)}</span>`;
+    b.onclick=()=>reveal(i);
+    box.appendChild(b);
+  });
+}
+function reveal(g){
+  const p=state.incoming, i=state.gi;
+  const actual=unlockOne(p.k,p.x[i],i);
+  state.guess[i]=g;
+  const btns=[...$("gOpts").children];
+  btns.forEach((b,j)=>{ b.disabled=true; if(j===actual) b.classList.add("actual"); else if(j===g) b.classList.add("wrong"); });
+  const ok = g===actual;
+  const f=$("gFeed"); f.classList.remove("hidden","ok","no"); f.classList.add(ok?"ok":"no");
+  f.textContent = ok ? `○ 맞았어요. ${p.n}은(는) 진짜 "${Q[i].o[actual]}"` : `✕ ${p.n}은(는) "${Q[i].o[actual]}"`;
+  const nx=$("gNext"); nx.classList.remove("hidden");
+  nx.textContent = i+1>=N ? "결과 보기 →" : "다음 →";
+  nx.onclick=()=>{ state.gi++; if(state.gi>=N) finishG(); else renderG(); };
+}
+function finishG(){
+  const p=state.incoming;
+  const actuals=p.x.map((x,i)=>unlockOne(p.k,x,i));
+  const score=state.guess.filter((g,i)=>g===actuals[i]).length;
+  const misses=actuals.map((a,i)=>({i,a,g:state.guess[i]})).filter(m=>m.a!==m.g);
+  renderResult({ owner:p.n, guesser:state.myName, score, misses, prev:p.prev||null, viewer:"guesser", actuals });
+}
+
+/* ===== 결과 ===== */
+function titleFor(s){
+  if(s>=9) return ["텔레파시 확정","배달앱 아이디 공유해도 됩니다."];
+  if(s>=6) return ["그럭저럭 안다","다만 틀린 것들은 다시 물어보세요."];
+  if(s>=3) return ["아는 척","같이 먹은 지 얼마나 됐죠?"];
+  return ["남남","서로 몰라도 너무 모릅니다. 오늘 배달은 각자 시키세요."];
+}
+function renderResult(R){
+  $("scoreNum").textContent=R.score;
+  $("resGuesser").textContent=R.guesser; $("resOwner").textContent=R.owner;
+  const [t,q]=titleFor(R.score);
+  $("titleBadge").textContent="🏅 "+t; $("quip").textContent=q;
+  $("resTag").textContent = R.prev ? "2라운드 결과" : "텔레파시 결과";
+
+  // 틀린 것
+  if(R.misses.length){
+    $("missBox").classList.remove("hidden");
+    $("missList").innerHTML=R.misses.map(m=>`<div class="row"><div class="qq">${esc(Q[m.i].t)}</div>
+      <span class="g">✕ ${esc(Q[m.i].o[m.g])}</span> → <span class="a">○ ${esc(Q[m.i].o[m.a])}</span></div>`).join("");
+  } else $("missBox").classList.add("hidden");
+
+  // 양방향 비교
+  if(R.prev){
+    const a=R.prev, meNow=R.score;
+    $("vsbox").classList.remove("hidden");
+    const aWin = a.score>meNow, tie = a.score===meNow;
+    $("vsbox").innerHTML=`
+      <div><div class="n">${esc(a.by)} → ${esc(a.of)}</div><div class="s ${aWin?'win':''}">${a.score}</div></div>
+      <div class="vs">VS</div>
+      <div><div class="n">${esc(R.guesser)} → ${esc(R.owner)}</div><div class="s ${(!aWin&&!tie)?'win':''}">${meNow}</div></div>
+      <div class="sum">${tie ? "똑같이 압니다. 무승부." : (aWin ? `<b>${esc(a.by)}</b>이(가) 상대를 더 잘 압니다.` : `<b>${esc(R.guesser)}</b>이(가) 상대를 더 잘 압니다.`)}</div>`;
+  } else $("vsbox").classList.add("hidden");
+
+  ["guesserActions","ownerActions","resLinkbox","notYet"].forEach(id=>$(id).classList.add("hidden"));
+  if(R.viewer==="guesser"){
+    $("guesserActions").classList.remove("hidden");
+    $("notYet").classList.remove("hidden");
+    const rp={v:1, of:R.owner, by:R.guesser, score:R.score, miss:R.misses.map(m=>[m.i,m.g]), prev:R.prev||undefined};
+    const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
+    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    // 나도 답하기: 이번엔 내가 답하고 상대가 맞힘. 내 점수를 prev로 실어 보냄
+    if(R.prev){ $("mineToo").classList.add("hidden"); }   // 이미 2라운드면 종료
+    else $("mineToo").onclick=()=>{
+      state.prev={of:R.owner, by:R.guesser, score:R.score};
+      state.name=R.guesser; $("nameIn").value=R.guesser; state.ans=[];
+      $("prevText").innerHTML=`<b>${esc(R.guesser)}</b>이(가) <b>${esc(R.owner)}</b>을(를) <b style="color:var(--tang)">${R.score}/10</b> 맞혔어요.<br>이번엔 내가 답하고, ${esc(R.owner)}이(가) 나를 맞힙니다. 누가 더 잘 알까요?`;
+      $("prevNote").classList.remove("hidden");
+      history.replaceState(null,"",location.pathname);
+      state.qi=0; renderA(); show("s-answer");
+    };
+  }else{
+    $("ownerActions").classList.remove("hidden");
+  }
+  // 다음 놀이
+  $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
+  show("s-result");
+}
+
+/* ===== 진입 ===== */
+(function(){
+  const h=readHash();
+  if(!h){ show("s-intro"); return; }
+  if(h.type==="i" && h.p && Array.isArray(h.p.x) && h.p.x.length===N){ openChallenge(h.p); return; }
+  if(h.type==="r" && h.p && typeof h.p.score==="number"){
+    const misses=(h.p.miss||[]).map(([i,g])=>({i, g, a:null}));
+    // 결과 링크에는 실제 답이 없으니(잠금 해제 키 없음) 틀린 항목은 추측만 표시
+    renderResult({ owner:h.p.of, guesser:h.p.by, score:h.p.score,
+      misses: misses.map(m=>({i:m.i, g:m.g, a:m.a})), prev:h.p.prev||null, viewer:"owner" });
+    // owner 시점에서는 실제 답을 본인이 아니까 미스 목록 대신 개수만
+    $("missBox").classList.add("hidden");
+    return;
+  }
+  show("s-intro");
+})();
+</script>
+</body>
+</html>
