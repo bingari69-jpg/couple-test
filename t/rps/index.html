@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>가위바위보 도전장</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="가위바위보 도전장이 왔어요">
+<meta property="og:description" content="상대가 먼저 냈습니다. 당신이 고르기 전까지는 공개되지 않아요.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-rps.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/rps/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#0F1020; --bg2:#181A33; --bg3:#232650; --line:#2E3260;
+    --ink:#F5F4FF; --sub:#9A9EC7; --dim:#5F638E;
+    --gold:#FFD23F; --gold-d:#B8951E; --red:#FF4E6A; --blue:#4FA3FF; --green:#3DDC97;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--bg);color:var(--ink);
+    font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
+    line-height:1.6;min-height:100vh;padding:var(--sp) var(--sp) 56px;
+    background-image:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(255,210,63,.08),transparent 70%);
+  }
+  .wrap{max-width:520px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--gold);
+    border:1px solid rgba(255,210,63,.35);border-radius:999px;padding:4px 11px;margin-bottom:14px}
+  h1{font-size:clamp(26px,7vw,34px);font-weight:800;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--gold)}
+  .lead{font-size:15px;color:var(--sub);line-height:1.7;margin-bottom:22px}
+  .q{font-size:13px;color:var(--sub);margin:22px 0 10px;display:block}
+  .q em{font-style:normal;color:var(--dim);font-size:12px}
+
+  input[type=text]{width:100%;background:var(--bg2);border:1px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px}
+  input::placeholder{color:var(--dim)}
+  input:focus{outline:2px solid var(--gold);outline-offset:1px;border-color:transparent}
+
+  /* 손 선택 */
+  .hands{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .hand{background:var(--bg2);border:2px solid var(--line);border-radius:18px;padding:18px 6px 14px;
+    text-align:center;cursor:pointer;transition:transform .12s,border-color .15s,background .15s;font:inherit;color:var(--ink)}
+  .hand .e{font-size:44px;line-height:1;display:block;margin-bottom:8px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+  .hand .l{font-size:14px;font-weight:600;color:var(--sub)}
+  .hand:hover{border-color:#4a4f8a}
+  .hand:active{transform:scale(.96)}
+  .hand[aria-pressed=true]{border-color:var(--gold);background:rgba(255,210,63,.1)}
+  .hand[aria-pressed=true] .l{color:var(--gold)}
+  .hand.locked{cursor:default;opacity:.5}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--bg2);border:1px solid var(--line);color:#B9BDE0;border-radius:999px;padding:9px 14px;font:inherit;font-size:13.5px;cursor:pointer;transition:background .15s,color .15s}
+  .chip[aria-pressed=true]{background:var(--gold);color:#1a1500;border-color:var(--gold);font-weight:700}
+  .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .btn{width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;transition:transform .1s,filter .15s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn:disabled{opacity:.35;cursor:default}
+  .btn-main{background:var(--gold);color:#1a1500}
+  .btn-main:hover:not(:disabled){filter:brightness(1.06)}
+  .btn-sub{background:transparent;color:var(--sub);border:1px solid var(--line);font-weight:500}
+  .btn-sub:hover{border-color:#4a4f8a;color:var(--ink)}
+  .btn-red{background:var(--red);color:#fff}
+
+  .linkbox{margin-top:12px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:80px;overflow:auto}
+  .hint{font-size:12.5px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.7}
+  .homelink{display:block;text-align:center;font-size:12.5px;color:var(--dim);text-decoration:none;margin-top:24px}
+  .homelink:hover{color:var(--sub)}
+
+  /* 도전장 카드 */
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:18px;padding:20px;margin:16px 0}
+  .card .who{font-size:13px;color:var(--sub);margin-bottom:6px}
+  .card .who b{color:var(--ink)}
+  .bubble{background:var(--bg3);border-radius:14px 14px 14px 4px;padding:13px 15px;font-size:15.5px;line-height:1.55;margin-top:10px;position:relative}
+  .bubble::before{content:"💬";margin-right:6px}
+  .locked{display:flex;align-items:center;gap:10px;margin-top:14px;padding:12px 14px;border:1px dashed var(--line);border-radius:12px;font-size:13px;color:var(--sub)}
+  .locked .e{font-size:22px}
+  .rounds{font-size:12px;color:var(--dim);margin-top:8px}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:8px;margin:18px 0}
+  .side{background:var(--bg2);border:2px solid var(--line);border-radius:20px;padding:20px 8px 14px;text-align:center;transition:border-color .3s}
+  .side .e{font-size:56px;line-height:1;display:block;margin-bottom:8px}
+  .side .n{font-size:13px;color:var(--sub);font-weight:600;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side.win{border-color:var(--gold);box-shadow:0 0 0 4px rgba(255,210,63,.15)}
+  .side.lose{opacity:.55}
+  .vs{font-size:13px;font-weight:800;color:var(--dim);letter-spacing:.1em}
+  .verdict{text-align:center;font-size:clamp(24px,7vw,32px);font-weight:800;letter-spacing:-.02em;margin:8px 0 4px}
+  .verdict.win{color:var(--gold)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--blue)}
+  .sub-verdict{text-align:center;font-size:14.5px;color:var(--sub);line-height:1.6}
+  .title-badge{margin:18px auto 0;display:table;background:linear-gradient(135deg,rgba(255,210,63,.18),rgba(255,78,106,.14));border:1px solid rgba(255,210,63,.35);border-radius:999px;padding:9px 18px;font-size:14px;font-weight:700;color:var(--gold)}
+  .lie{margin-top:16px;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font-size:14px;line-height:1.7}
+  .lie b{color:var(--ink)}
+  .lie .flag{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:6px}
+  .lie .flag.t{background:rgba(61,220,151,.15);color:var(--green)}
+  .lie .flag.f{background:rgba(255,78,106,.15);color:var(--red)}
+
+  /* 카운트다운 */
+  .count{position:fixed;inset:0;background:rgba(15,16,32,.94);display:flex;align-items:center;justify-content:center;z-index:50;
+    font-size:clamp(48px,18vw,96px);font-weight:900;color:var(--gold);letter-spacing:-.04em}
+  .count span{animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+  @keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--gold);color:#1a1500;font-weight:700;font-size:14.5px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+
+  @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition-duration:.01ms!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 도전장 만들기 ============ -->
+<section class="screen" id="s-make">
+  <span class="tag">대결 · 1판 승부</span>
+  <h1>내가 먼저 낸다.<br><b>네가 이길 수 있는지</b> 골라봐.</h1>
+  <p class="lead" id="makeLead">내가 고른 패는 상대가 고르기 전까지 공개되지 않아요.</p>
+
+  <div id="tieNote" class="card hidden">
+    <div class="who">이전 판 결과</div>
+    <div id="tieHist" style="font-size:14px;color:var(--sub)"></div>
+    <div style="margin-top:8px;font-size:15px;font-weight:700">비겼어요. 이번엔 <span style="color:var(--gold)">내가 먼저</span> 냅니다.</div>
+  </div>
+
+  <label class="q" for="nameIn">내 이름</label>
+  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+
+  <div class="q">무엇을 낼까요?</div>
+  <div class="hands" id="makeHands" role="group" aria-label="패 선택"></div>
+
+  <div class="q">상대에게 한마디 <em>· 진실이든 거짓이든 · 선택</em></div>
+  <div class="chips" id="msgChips" role="group"></div>
+
+  <button class="btn btn-main" id="makeBtn" disabled>도전장 만들기</button>
+  <div class="linkbox hidden" id="linkbox"></div>
+  <button class="btn btn-main hidden" id="copyBtn">도전장 링크 복사</button>
+  <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
+  <p class="hint">결과는 상대가 고른 뒤 동시에 공개됩니다</p>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 도전장 열기 ============ -->
+<section class="screen hidden" id="s-open">
+  <span class="tag">도전장 도착</span>
+  <h1><b id="openName"></b>님이<br>먼저 냈습니다.</h1>
+  <p class="lead">상대가 뭘 냈는지는 당신이 고른 뒤에 공개돼요.</p>
+
+  <div class="card">
+    <div class="who"><b id="openName2"></b>님의 메시지</div>
+    <div class="bubble" id="openMsg"></div>
+    <div class="locked"><span class="e">🔒</span><span>상대의 패는 잠겨 있습니다. 당신이 선택하면 동시에 공개됩니다.</span></div>
+    <div class="rounds" id="openRounds"></div>
+  </div>
+
+  <label class="q" for="myNameIn">내 이름 <em>· 선택</em></label>
+  <input type="text" id="myNameIn" placeholder="이름 또는 별명" maxlength="12">
+
+  <div class="q">무엇을 낼까요?</div>
+  <div class="hands" id="openHands" role="group" aria-label="패 선택"></div>
+  <p class="hint">한 번 고르면 되돌릴 수 없어요</p>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><span class="e" id="handA">❔</span><div class="n" id="nameA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><span class="e" id="handB">❔</span><div class="n" id="nameB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge hidden" id="titleBadge"></div>
+  <div class="lie hidden" id="lieBox"></div>
+
+  <div id="tieActions" class="hidden">
+    <button class="btn btn-main" id="tieNext">다시 내 차례 — 다음 패 고르기</button>
+  </div>
+  <div id="doneActions" class="hidden">
+    <button class="btn btn-main" id="sendResult">결과 링크 보내기</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-red" id="revenge">복수전 신청</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-red" id="revenge2">복수전 신청</button>
+  </div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none;line-height:1.4">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="count hidden" id="count"><span id="countText"></span></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 ===== */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/rps/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+/* ===== 게임 정의 ===== */
+const HANDS = [
+  {e:"✌️", l:"가위"},
+  {e:"✊", l:"바위"},
+  {e:"🖐", l:"보"}
+];
+const BEATS = {0:2, 1:0, 2:1};           // 가위>보, 바위>가위, 보>바위
+const MSGS = [
+  "말 안 함",
+  "이번엔 가위다.", "이번엔 바위다.", "이번엔 보다.",
+  "가위는 안 낸다.", "바위는 안 낸다.", "보는 안 낸다."
+];
+/* 선언의 진위: true=진실, false=거짓, null=선언 없음 */
+function truth(msg, hand){
+  if(msg===0) return null;
+  if(msg>=1 && msg<=3) return (msg-1)===hand;     // "X다"
+  return (msg-4)!==hand;                            // "X는 안 낸다"
+}
+
+/* ===== 가벼운 잠금 (1단계 공정성) =====
+   base64만 풀어서는 손이 뭔지 안 보이게 키로 섞어 넣는다.
+   암호화가 아니라 '무심코 열어본 사람' 방지용. */
+function lockHand(hand){
+  const k = Math.floor(Math.random()*0xFFFF);
+  const x = ((hand+1) * 7919 + k) % 65521;
+  return {k, x};
+}
+function unlockHand(k, x){
+  for(let h=0;h<3;h++){ if(((h+1)*7919 + k) % 65521 === x) return h; }
+  return null;
+}
+
+/* ===== 해시 ===== */
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));
+  return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);
+  const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+  return new TextDecoder().decode(u);}
+function readHash(){
+  const h=location.hash;
+  const m=h.match(/^#([cr])=(.+)$/); if(!m) return null;
+  try{ return {type:m[1], p:JSON.parse(b64d(m[2]))}; }catch(e){ return null; }
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ===== 상태 ===== */
+const state = {
+  name:"", hand:null, msg:0,
+  hist:[],          // [[challengerName, cHand, rHand, cMsg], ...]  이전 라운드들
+  rv:0,             // 복수전 여부
+  incoming:null     // 열어본 도전장 payload
+};
+let madeUrl="";
+
+/* ===== 공통 ===== */
+const $=id=>document.getElementById(id);
+function show(id){ document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden")); $(id).classList.remove("hidden"); window.scrollTo(0,0); }
+let tt; function toast(m){const el=$("toast");el.textContent=m;el.style.opacity="1";el.style.transform="translate(-50%,0)";
+  clearTimeout(tt);tt=setTimeout(()=>{el.style.opacity="0";el.style.transform="translate(-50%,20px)";},2400);}
+async function copy(url, ok){
+  let done=false;
+  try{await navigator.clipboard.writeText(url);done=true;}
+  catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();try{done=document.execCommand("copy");}catch(e2){}ta.remove();}
+  toast(done?ok:"링크를 길게 눌러 복사해 주세요");
+}
+function handsInto(boxId, onPick){
+  const box=$(boxId); box.innerHTML="";
+  HANDS.forEach((h,i)=>{
+    const b=document.createElement("button"); b.className="hand"; b.type="button";
+    b.innerHTML=`<span class="e">${h.e}</span><span class="l">${h.l}</span>`;
+    b.setAttribute("aria-pressed","false"); b.setAttribute("aria-label",h.l);
+    b.onclick=()=>onPick(i,box); box.appendChild(b);
+  });
+}
+function histText(hist){
+  return hist.map((r,i)=>`${i+1}판 · ${r[0]} ${HANDS[r[1]].e} vs ${HANDS[r[2]].e} 비김`).join("<br>");
+}
+
+/* ===== 도전장 만들기 ===== */
+handsInto("makeHands",(i,box)=>{
+  state.hand=i;
+  [...box.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===i));
+  $("makeBtn").disabled=false; hideLink();
+});
+(function(){
+  const box=$("msgChips");
+  MSGS.forEach((m,i)=>{
+    const b=document.createElement("button"); b.className="chip"; b.type="button"; b.textContent=m;
+    b.setAttribute("aria-pressed", i===0);
+    b.onclick=()=>{ state.msg=i; [...box.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===i)); hideLink(); };
+    box.appendChild(b);
+  });
+})();
+$("nameIn").oninput=e=>{state.name=e.target.value.trim(); hideLink();};
+function hideLink(){ ["linkbox","copyBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
+
+$("makeBtn").onclick=()=>{
+  if(state.hand==null){toast("패를 먼저 골라주세요");return;}
+  const {k,x}=lockHand(state.hand);
+  const p={v:1, n:state.name||"상대", k, x, m:state.msg, h:state.hist, rv:state.rv};
+  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
+  $("linkbox").textContent=madeUrl; $("linkbox").classList.remove("hidden");
+  $("copyBtn").classList.remove("hidden");
+  $("makeBtn").textContent="도전장 다시 만들기";
+  $("sandboxNote").classList.toggle("hidden",!isSandbox());
+  toast("도전장이 만들어졌어요");
+};
+$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으세요");
+
+/* ===== 도전장 열기 ===== */
+function openChallenge(p){
+  state.incoming=p;
+  $("openName").textContent=p.n; $("openName2").textContent=p.n;
+  if(p.m && MSGS[p.m]){ $("openMsg").textContent=MSGS[p.m]; $("openMsg").classList.remove("hidden"); }
+  else { $("openMsg").textContent="(아무 말도 남기지 않았습니다)"; }
+  const r=(p.h||[]).length;
+  $("openRounds").innerHTML = r ? `이전 ${r}판 비김 · 지금은 <b style="color:var(--gold)">${r+1}판</b>` : "";
+  handsInto("openHands",(i,box)=>{
+    [...box.children].forEach((c,j)=>{c.setAttribute("aria-pressed",j===i); c.classList.add("locked"); c.disabled=true;});
+    respond(i);
+  });
+  show("s-open");
+}
+function respond(myHand){
+  const p=state.incoming;
+  const theirHand=unlockHand(p.k,p.x);
+  if(theirHand==null){ toast("도전장이 손상됐어요. 다시 받아주세요"); return; }
+  const myName=$("myNameIn").value.trim()||"나";
+  countdown(()=>{
+    const round=[p.n, theirHand, myHand, p.m];
+    const hist=[...(p.h||[]), round];
+    renderResult({
+      hist, rv:p.rv||0,
+      cName:p.n, rName:myName,
+      cHand:theirHand, rHand:myHand, cMsg:p.m||0,
+      viewer:"responder"
+    });
+  });
+}
+function countdown(done){
+  const el=$("count"), t=$("countText");
+  const seq=["가위","바위","보!"]; let i=0;
+  el.classList.remove("hidden");
+  const tick=()=>{ t.textContent=seq[i]; t.style.animation="none"; void t.offsetWidth; t.style.animation="";
+    i++; if(i<seq.length) setTimeout(tick,520); else setTimeout(()=>{el.classList.add("hidden");done();},620); };
+  tick();
+}
+
+/* ===== 결과 ===== */
+function outcome(c,r){ if(c===r) return "tie"; return BEATS[c]===r ? "c" : "r"; }   // c=도전자 승, r=응답자 승
+function titleFor(o, cMsg, cHand, hist, rv, winnerIsC){
+  const ties=hist.length-1;
+  if(o==="tie") return ties>=2 ? "생각까지 겹치는 두 사람" : null;
+  const tr=truth(cMsg,cHand);
+  if(winnerIsC){
+    if(rv) return "복수 성공";
+    if(tr===false) return "심리전의 지배자";
+    if(tr===true)  return "정직한 강자";
+    return ties===0 ? "한 방 승부사" : "긴 승부의 승자";
+  }else{
+    if(tr===false) return "거짓말을 꿰뚫은 자";
+    if(tr===true)  return "정직을 이용한 자";
+    return ties===0 ? "한 방 승부사" : "긴 승부의 승자";
+  }
+}
+function renderResult(R){
+  const o=outcome(R.cHand,R.rHand);
+  // 화면 왼쪽 = 도전자, 오른쪽 = 응답자
+  $("handA").textContent=HANDS[R.cHand].e; $("nameA").textContent=R.cName;
+  $("handB").textContent=HANDS[R.rHand].e; $("nameB").textContent=R.rName;
+  ["sideA","sideB"].forEach(id=>$(id).classList.remove("win","lose"));
+  $("verdict").className="verdict";
+  const me = R.viewer==="responder" ? "r" : "c";
+  const iWon = o===me;
+  if(o==="tie"){
+    $("verdict").classList.add("tie"); $("verdict").textContent="비겼습니다";
+    $("subVerdict").textContent=`${HANDS[R.cHand].l} vs ${HANDS[R.cHand].l}. 승부가 나지 않았어요.`;
+  }else{
+    const wName = o==="c"?R.cName:R.rName, lName = o==="c"?R.rName:R.cName;
+    const wHand = o==="c"?R.cHand:R.rHand, lHand = o==="c"?R.rHand:R.cHand;
+    $(o==="c"?"sideA":"sideB").classList.add("win"); $(o==="c"?"sideB":"sideA").classList.add("lose");
+    $("verdict").classList.add(iWon?"win":"lose");
+    $("verdict").textContent = iWon ? "이겼습니다" : "졌습니다";
+    $("subVerdict").textContent=`${HANDS[lHand].l}가 ${HANDS[wHand].l}에 졌어요. ${wName} 승리.`;
+  }
+  $("resTag").textContent = `${R.hist.length}판 결과` + (R.rv?" · 복수전":"");
+
+  // 선언 진위
+  const tr=truth(R.cMsg,R.cHand);
+  if(tr===null){ $("lieBox").classList.add("hidden"); }
+  else{
+    $("lieBox").classList.remove("hidden");
+    $("lieBox").innerHTML =
+      `<b>${esc(R.cName)}</b>의 선언 — "${MSGS[R.cMsg]}"<br>` +
+      `실제로 낸 것: <b>${HANDS[R.cHand].l}</b>` +
+      `<span class="flag ${tr?'t':'f'}">${tr?"진실이었습니다":"거짓말이었습니다"}</span>`;
+  }
+
+  // 칭호
+  const t=titleFor(o,R.cMsg,R.cHand,R.hist,R.rv,o==="c");
+  if(t){ $("titleBadge").textContent="🏅 "+t; $("titleBadge").classList.remove("hidden"); }
+  else $("titleBadge").classList.add("hidden");
+
+  // 버튼
+  ["tieActions","doneActions","viewActions","resLinkbox"].forEach(id=>$(id).classList.add("hidden"));
+  if(o==="tie"){
+    if(R.viewer==="responder"){
+      $("tieActions").classList.remove("hidden");
+      $("tieNext").onclick=()=>{ startNext(R.hist, R.rName, R.rv); };
+    }
+  }else if(R.viewer==="responder"){
+    $("doneActions").classList.remove("hidden");
+    const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
+    const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
+    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    $("revenge").onclick=()=>{ startNext([], R.rName, 1); };
+  }else{
+    $("viewActions").classList.remove("hidden");
+    $("revenge2").onclick=()=>{ startNext([], R.cName, 1); };
+  }
+  show("s-result");
+}
+/* 비긴 뒤 다음 판 / 복수전 → 도전장 만들기 화면으로 (이력·이름 유지) */
+function startNext(hist, myName, rv){
+  state.hist=hist; state.rv=rv; state.hand=null; state.msg=0; state.name=myName;
+  $("nameIn").value=myName; hideLink();
+  [...$("makeHands").children].forEach(c=>c.setAttribute("aria-pressed","false"));
+  [...$("msgChips").children].forEach((c,j)=>c.setAttribute("aria-pressed",j===0));
+  $("makeBtn").disabled=true;
+  if(hist.length){ $("tieHist").innerHTML=histText(hist); $("tieNote").classList.remove("hidden"); $("makeLead").textContent="비겼으니 이번엔 내가 먼저 냅니다. 상대는 고른 뒤에야 볼 수 있어요."; }
+  else { $("tieNote").classList.add("hidden"); $("makeLead").textContent = rv ? "복수전입니다. 이번엔 내가 먼저 냅니다." : "내가 고른 패는 상대가 고르기 전까지 공개되지 않아요."; }
+  history.replaceState(null,"",location.pathname);
+  show("s-make");
+}
+
+/* ===== 진입 ===== */
+(function(){
+  const h=readHash();
+  if(!h){ show("s-make"); return; }
+  if(h.type==="c" && h.p && typeof h.p.k==="number"){ openChallenge(h.p); return; }
+  if(h.type==="r" && h.p && Array.isArray(h.p.h) && h.p.h.length){
+    const last=h.p.h[h.p.h.length-1];
+    renderResult({ hist:h.p.h, rv:h.p.rv||0, cName:last[0], rName:h.p.rn||"상대",
+      cHand:last[1], rHand:last[2], cMsg:last[3]||0, viewer:"challenger" });
+    return;
+  }
+  show("s-make");
+})();
+</script>
+</body>
+</html>
