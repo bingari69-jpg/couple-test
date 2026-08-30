@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>결혼 전에 맞춰봐야 할 것들 — 커플 테스트</title>
+<meta name="description" content="좋아하는 것은 이미 서로 압니다. 아직 안 물어본 건, 다르게 생각하는 지점입니다. 20문항 · 2분 · 회원가입 없음">
+<meta property="og:title" content="결혼 전에 맞춰봐야 할 것들">
+<meta property="og:description" content="둘 다 같은 질문에 답하면, 누가 먼저 꺼냈는지가 사라집니다. 20문항 · 2분">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/marriage/">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
+
+:root{
+  --paper:#F6F4F1;
+  --ink:#26222E;
+  --muted:#8A8492;
+  --line:#E5E1DC;
+  --rose:#E4506B;       /* 첫 번째 사람 */
+  --rose-soft:#FBE9ED;
+  --blue:#5B7DB1;       /* 두 번째 사람 */
+  --blue-soft:#E9EFF7;
+  --card:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  font-family:'Pretendard Variable',Pretendard,-apple-system,'Malgun Gothic',sans-serif;
+  background:var(--paper);color:var(--ink);
+  min-height:100dvh;display:flex;justify-content:center;
+  line-height:1.6;
+}
+.wrap{width:100%;max-width:440px;padding:28px 22px 48px;display:flex;flex-direction:column;min-height:100dvh}
+
+/* ---------- 타이포 ---------- */
+.serif{font-family:'Gowun Batang',serif}
+h1{font-family:'Gowun Batang',serif;font-weight:700;font-size:26px;line-height:1.45;letter-spacing:-.01em}
+h2{font-family:'Gowun Batang',serif;font-weight:700;font-size:21px;line-height:1.5}
+.small{font-size:13px;color:var(--muted)}
+.center{text-align:center}
+
+/* ---------- 겹치는 두 원 (시그니처) ---------- */
+.circles{position:relative;width:150px;height:96px;margin:0 auto}
+.circles i{position:absolute;top:0;width:96px;height:96px;border-radius:50%;
+  mix-blend-mode:multiply;transition:left 1.1s cubic-bezier(.22,1,.36,1),right 1.1s cubic-bezier(.22,1,.36,1)}
+.circles .c1{left:0;background:var(--rose);opacity:.82}
+.circles .c2{right:0;background:var(--blue);opacity:.82}
+@media (prefers-reduced-motion:reduce){.circles i{transition:none}}
+
+/* ---------- 화면 전환 ---------- */
+.screen{display:none;flex-direction:column;flex:1;animation:fadein .35s ease}
+.screen.on{display:flex}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.screen{animation:none}}
+
+/* ---------- 버튼 ---------- */
+button{font-family:inherit;font-size:16px;cursor:pointer;border:none;border-radius:14px;
+  -webkit-tap-highlight-color:transparent}
+.btn{display:block;width:100%;padding:16px;background:var(--ink);color:#fff;
+  font-weight:600;letter-spacing:.01em}
+.btn:active{transform:scale(.985)}
+.btn.ghost{background:transparent;color:var(--muted);font-weight:500;font-size:14px;padding:12px}
+.btn:disabled{opacity:.35}
+
+/* ---------- 입력 ---------- */
+input[type=text]{width:100%;padding:15px 16px;font-size:17px;font-family:inherit;
+  border:1.5px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink);text-align:center}
+input[type=text]:focus{outline:none;border-color:var(--ink)}
+input::placeholder{color:#C6C1CC}
+
+/* ---------- 진행 바 ---------- */
+.prog{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin:4px 0 26px}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,var(--rose),var(--blue));
+  border-radius:2px;transition:width .3s ease}
+
+/* ---------- 문항 ---------- */
+.qarea{font-size:12px;font-weight:700;letter-spacing:.14em;color:var(--muted);margin-bottom:10px}
+.qtext{font-family:'Gowun Batang',serif;font-size:21px;font-weight:700;line-height:1.55;
+  margin-bottom:30px;min-height:100px}
+.opt{display:block;width:100%;text-align:left;padding:18px 18px;margin-bottom:12px;
+  background:var(--card);border:1.5px solid var(--line);border-radius:16px;
+  font-size:16px;line-height:1.5;color:var(--ink);transition:border-color .15s, background .15s}
+.opt:active{border-color:var(--ink)}
+.qnav{margin-top:auto;padding-top:18px}
+
+/* ---------- 카드/공유 ---------- */
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;padding:22px 20px;margin:18px 0}
+.linkbox{font-size:12px;color:var(--muted);word-break:break-all;background:var(--paper);
+  border-radius:10px;padding:12px;margin:14px 0;max-height:72px;overflow:hidden}
+.toast{position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(20px);
+  background:var(--ink);color:#fff;font-size:14px;padding:11px 20px;border-radius:99px;
+  opacity:0;pointer-events:none;transition:.3s}
+.toast.on{opacity:1;transform:translateX(-50%)}
+
+/* ---------- 결과 ---------- */
+.tagA,.tagB{display:inline-block;font-size:12px;font-weight:700;padding:2px 9px;border-radius:99px}
+.tagA{background:var(--rose-soft);color:var(--rose)}
+.tagB{background:var(--blue-soft);color:var(--blue)}
+.areas{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}
+.areachip{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:13px 14px}
+.areachip b{font-size:15px}
+.areachip .m{font-size:12px;color:var(--muted);margin-top:2px}
+.diff{background:var(--card);border:1.5px solid var(--line);border-radius:16px;
+  padding:18px;margin-bottom:14px}
+.diff .q{font-family:'Gowun Batang',serif;font-weight:700;font-size:16px;line-height:1.55;margin-bottom:12px}
+.diff .ans{font-size:14px;margin:7px 0;padding-left:12px;line-height:1.5}
+.diff .ans.a{border-left:3px solid var(--rose)}
+.diff .ans.b{border-left:3px solid var(--blue)}
+.diff .ans b{font-weight:700}
+.talk{margin-top:13px;padding:12px 14px;background:var(--paper);border-radius:12px;
+  font-size:14px;line-height:1.55}
+.talk::before{content:"이야기해볼 질문";display:block;font-size:11px;font-weight:700;
+  letter-spacing:.12em;color:var(--muted);margin-bottom:5px}
+.samehead{width:100%;text-align:left;background:none;padding:14px 4px;font-size:15px;
+  color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+.same{display:none}
+.same.open{display:block}
+.same .row{font-size:14px;padding:11px 4px;border-bottom:1px solid var(--line);color:var(--muted)}
+.same .row b{color:var(--ink);font-weight:600}
+.footnote{font-size:12px;color:var(--muted);text-align:center;margin-top:30px;line-height:1.7}
+.spacer{flex:1}
+.homelink{display:block;text-align:center;font-size:12.5px;color:var(--muted);
+  text-decoration:none;margin-top:18px}
+.homelink:hover{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ═══════════ ① 시작 화면 ═══════════ -->
+<section class="screen" id="s-intro">
+  <div class="spacer"></div>
+  <div class="circles" id="introCircles"><i class="c1"></i><i class="c2"></i></div>
+  <div style="height:34px"></div>
+  <h1 class="center">결혼 전에<br>맞춰봐야 할 것들</h1>
+  <div style="height:16px"></div>
+  <p class="center" style="font-size:15px;color:#5d5766;line-height:1.8">
+    좋아하는 것은 이미 서로 압니다.<br>
+    아직 안 물어본 건, <b>다르게 생각하는 지점</b>입니다.
+  </p>
+  <div style="height:10px"></div>
+  <p class="center small" id="introMeta">20문항 · 2분 · 회원가입 없음</p>
+  <div class="spacer"></div>
+  <button class="btn" id="introStart">시작하기</button>
+  <p class="footnote">둘 다 같은 질문에 답하면,<br>누가 먼저 꺼냈는지가 사라집니다.</p>
+  <a class="homelink" href="../../">다른 테스트 보기 →</a>
+</section>
+
+<!-- ═══════════ ② 이름 입력 ═══════════ -->
+<section class="screen" id="s-name">
+  <div class="spacer"></div>
+  <h2 class="center" id="nameTitle">뭐라고 불러드릴까요?</h2>
+  <div style="height:8px"></div>
+  <p class="center small">결과 화면에 표시될 이름이에요</p>
+  <div style="height:26px"></div>
+  <input type="text" id="nameInput" maxlength="8" placeholder="예: 지은" autocomplete="off">
+  <div class="spacer"></div>
+  <button class="btn" id="nameNext" disabled>다음</button>
+</section>
+
+<!-- ═══════════ ③ 문항 ═══════════ -->
+<section class="screen" id="s-quiz">
+  <div class="prog"><i id="progBar"></i></div>
+  <div class="qarea" id="qArea"></div>
+  <div class="qtext" id="qText"></div>
+  <button class="opt" id="opt0"></button>
+  <button class="opt" id="opt1"></button>
+  <div class="qnav">
+    <button class="btn ghost" id="qBack">← 이전 질문</button>
+  </div>
+</section>
+
+<!-- ═══════════ ③-b 챕터 완료 ═══════════ -->
+<section class="screen" id="s-chapter">
+  <div class="prog"><i id="chProgBar"></i></div>
+  <div class="spacer"></div>
+  <p class="center" style="font-size:34px" id="chMark">✓</p>
+  <div style="height:14px"></div>
+  <h2 class="center" id="chDone"></h2>
+  <div style="height:10px"></div>
+  <p class="center small" id="chSub"></p>
+  <div class="spacer"></div>
+  <button class="btn" id="chNext"></button>
+</section>
+
+<!-- ═══════════ ④ 완료(첫 번째 사람) — 링크 보내기 ═══════════ -->
+<section class="screen" id="s-share">
+  <div class="spacer"></div>
+  <div class="circles"><i class="c1" style="left:6px"></i><i class="c2" style="right:34px;opacity:.25"></i></div>
+  <div style="height:30px"></div>
+  <h2 class="center">이제 절반 왔어요</h2>
+  <div style="height:12px"></div>
+  <p class="center" style="font-size:15px;color:#5d5766;line-height:1.8">
+    <b id="shareName"></b>님의 답이 담긴 링크예요.<br>
+    상대가 답을 마치면, 서로 어디가 같고<br>어디가 다른지 <b>둘 다</b> 볼 수 있어요.
+  </p>
+  <div class="card">
+    <p class="small" style="margin-bottom:4px">상대에게 보낼 링크</p>
+    <div class="linkbox" id="shareLink"></div>
+    <button class="btn" id="shareBtn">링크 보내기</button>
+  </div>
+  <p class="center small">상대가 열기 전까지 내 답은 아무도 볼 수 없어요</p>
+  <div class="spacer"></div>
+</section>
+
+<!-- ═══════════ ⑤ 초대받은 화면(두 번째 사람) ═══════════ -->
+<section class="screen" id="s-invited">
+  <div class="spacer"></div>
+  <div class="circles"><i class="c1" style="left:0;opacity:.25"></i><i class="c2" style="right:6px"></i></div>
+  <div style="height:30px"></div>
+  <h2 class="center"><b id="invName"></b>님이<br>테스트를 보냈어요</h2>
+  <div style="height:14px"></div>
+  <p class="center" style="font-size:15px;color:#5d5766;line-height:1.8">
+    같은 20개 질문에 답하면<br>
+    두 사람이 <b>어디에서 다르게 생각하는지</b><br>바로 볼 수 있어요.
+  </p>
+  <div style="height:8px"></div>
+  <p class="center small">상대의 답은 내가 다 답한 뒤에 공개돼요</p>
+  <div class="spacer"></div>
+  <button class="btn" id="invStart">나도 답하기</button>
+</section>
+
+<!-- ═══════════ ⑥ 결과 ═══════════ -->
+<section class="screen" id="s-result">
+  <div style="height:8px"></div>
+  <div class="circles" id="resCircles"><i class="c1"></i><i class="c2"></i></div>
+  <div style="height:26px"></div>
+  <h2 class="center" id="resHead"></h2>
+  <div style="height:10px"></div>
+  <p class="center" style="font-size:14.5px;color:#5d5766;line-height:1.75">
+    다른 건 문제가 아니에요.<br><b>이제 알게 됐다는 게</b> 중요하죠.
+  </p>
+
+  <div class="center" style="margin-top:16px">
+    <span class="tagA" id="tagA"></span>&nbsp;
+    <span class="tagB" id="tagB"></span>
+  </div>
+
+  <div class="areas" id="areaChips"></div>
+
+  <div id="diffList"></div>
+
+  <button class="samehead" id="sameToggle">
+    <span id="sameLabel"></span><span id="sameArrow">▾</span>
+  </button>
+  <div class="same" id="sameList"></div>
+
+  <div style="height:26px"></div>
+  <div class="card" id="sendBackCard">
+    <p style="font-size:15px;line-height:1.6;margin-bottom:4px">
+      이 결과, <b id="sendBackName"></b>님도 봐야죠</p>
+    <p class="small" style="margin-bottom:10px">두 사람의 답이 모두 담긴 결과 링크예요</p>
+    <button class="btn" id="sendBackBtn">결과 링크 보내기</button>
+  </div>
+
+  <button class="btn ghost" id="restartBtn">우리도 처음부터 해보기</button>
+  <p class="footnote">
+    이 테스트는 심리 진단이 아니라 대화의 출발점입니다.<br>
+    답에는 정답도 오답도 없습니다.
+  </p>
+  <a class="homelink" href="../../">다른 테스트 보기 →</a>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   결혼 전에 맞춰봐야 할 것들 — 커플 테스트 MVP
+   서버 없음: 답변은 링크(URL 해시)에만 담깁니다.
+   경로: /couple-test/t/marriage/
+   ===================================================================== */
+
+const AREAS = ["갈등","양가","돈","생활"];
+
+const QUESTIONS = [
+ /* ── 갈등 (0~4) ── */
+ {a:0,q:"크게 다툰 날 밤은",
+  o:["그날 안에 풀어야 잠이 온다","하루쯤 시간을 두고 말하고 싶다"],
+  t:"화해까지 걸리는 시간이 서로 다르면, 기다리는 쪽 마음은 어떨까요?"},
+ {a:0,q:"내가 화났을 때 상대가",
+  o:["바로 이유를 물어봐 주면 좋겠다","먼저 혼자 정리할 시간을 주면 좋겠다"],
+  t:"상대가 원하는 방식이 내 방식과 반대라면, 그걸 어떻게 알아챌 수 있을까요?"},
+ {a:0,q:"부부싸움을 각자 부모님께 말하는 것은",
+  o:["힘들면 말할 수도 있다","우리 일은 우리 안에서 끝내야 한다"],
+  t:"각자 부모님이 우리 싸움을 알게 됐을 때 벌어질 일을 상상해서 말해보세요."},
+ {a:0,q:"미안하다는 말 없이 슬쩍 잘해주는 화해는",
+  o:["그것도 사과다","\u201c미안해\u201d라는 말은 들어야 한다"],
+  t:"지금까지 받아본 화해 중 제일 마음이 풀렸던 방식은 뭐였나요?"},
+ {a:0,q:"싸운 날 밤 따로 자는 것은",
+  o:["머리 식히는 시간으로 필요하다","아무리 싸워도 잠은 같이 자야 한다"],
+  t:"싸운 날 밤, 각자 정말 원하는 건 혼자만의 시간인가요, 붙어 있는 온기인가요?"},
+
+ /* ── 양가 (5~9) ── */
+ {a:1,q:"명절은",
+  o:["양가에 똑같이 하는 게 원칙이다","상황에 따라 유연하게 정하면 된다"],
+  t:"올해 명절을 미리 그려본다면, 각자 머릿속 그림이 같은가요?"},
+ {a:1,q:"시가·처가에 가면",
+  o:["자고 오는 게 도리다","당일로 다녀와도 충분하다"],
+  t:"\u201c자고 온다\u201d는 것이 각자에게 편안함인지 숙제인지 솔직히 말해보세요."},
+ {a:1,q:"상대가 자기 부모님 편을 드는 것처럼 보일 때",
+  o:["부모님이니 그럴 수 있다","어떤 상황에도 내 편이 먼저면 좋겠다"],
+  t:"\u201c내 편\u201d이라는 말이 각자에게 어떤 장면으로 그려지는지 이야기해 보세요."},
+ {a:1,q:"부모님 용돈이나 지원은",
+  o:["각자 부모님은 각자 알아서","부부 공동 지출로 함께 정한다"],
+  t:"금액까지 구체적으로 말해본 적 있나요? 숫자가 나와야 진짜 대화입니다."},
+ {a:1,q:"부모님 집 10분 거리에 사는 것은",
+  o:["도움받을 수 있어 좋다","가까울수록 오히려 힘들어진다"],
+  t:"어느 쪽 부모님 근처인지에 따라 답이 달라지는지도 물어보세요."},
+
+ /* ── 돈 (10~14) ── */
+ {a:2,q:"결혼 후 월급은",
+  o:["합쳐서 하나로 관리한다","각자 관리하고 생활비만 함께 낸다"],
+  t:"돈을 합치는 것과 각자 쓰는 것, 각자에게 그건 \u2018신뢰\u2019의 문제인가요 \u2018자유\u2019의 문제인가요?"},
+ {a:2,q:"배우자가 모르는 돈(비상금)은",
+  o:["있어도 된다","있으면 안 된다"],
+  t:"비상금이 있다면 어디까지가 \u201c귀여운 수준\u201d인지, 금액으로 말해보세요."},
+ {a:2,q:"나는 돈을",
+  o:["지금의 행복에 쓰는 편이다","미래를 위해 모으는 편이다"],
+  t:"서로의 소비에서 \u2018이해 안 되지만 참았던 것\u2019이 하나씩 있다면 무엇인가요?"},
+ {a:2,q:"대출(빚)에 대해",
+  o:["필요하면 활용하는 것도 전략이다","빚은 최대한 없이 사는 게 원칙이다"],
+  t:"집을 산다면 대출을 어디까지 감당할 수 있을지, 숫자로 말해본 적 있나요?"},
+ {a:2,q:"형편이 충분하다면",
+  o:["그래도 맞벌이가 기본이다","한 사람은 집에 있어도 좋다"],
+  t:"집에 있게 되는 쪽이 누구일 거라 상상했는지, 서로 확인해 보세요."},
+
+ /* ── 생활 (15~19) ── */
+ {a:3,q:"배우자의 휴대폰은",
+  o:["서로 언제든 열어볼 수 있어야 한다","부부여도 사생활이다"],
+  t:"열어볼 수 있는 것과 실제로 열어보는 것, 어느 쪽이 진짜 쟁점인가요?"},
+ {a:3,q:"결혼 후 이성 친구와 단둘이 식사하는 것은",
+  o:["친구는 친구, 괜찮다","결혼했다면 조심해야 한다"],
+  t:"\u2018괜찮은 것\u2019과 \u2018불편한 것\u2019의 목록을 각자 만들어 비교해 보세요."},
+ {a:3,q:"친구들과 각자 가는 여행은",
+  o:["부부여도 당연히 갈 수 있다","여행은 같이 가는 것이다"],
+  t:"각자 여행에서 연락은 얼마나 할 건지까지 그려보면 진짜 답이 나옵니다."},
+ {a:3,q:"늦은 술자리는",
+  o:["어디서 누구와 있는지는 알려야 한다","묻지 않는 게 신뢰다"],
+  t:"\u201c알려야 한다\u201d는 보고인가요 공유인가요. 그 단어를 뭐라고 부를지부터요."},
+ {a:3,q:"아이는",
+  o:["결혼하면 낳는 게 자연스럽다","둘만으로도 완전한 가족이다"],
+  t:"이 질문만큼은 오늘 답이 달라도 됩니다. 다만 언제 다시 이야기할지는 정해두세요."},
+];
+
+/* ---------- 상태 ---------- */
+let mode = "first";          // first | second
+let myName = "";
+let myAns = [];
+let partner = null;          // {n, ans} — 초대 링크에 담겨 온 상대(첫 번째 사람)
+let qi = 0;
+
+/* ---------- 유틸 ---------- */
+const $ = s => document.querySelector(s);
+function show(id){
+  document.querySelectorAll('.screen').forEach(x=>x.classList.remove('on'));
+  $(id).classList.add('on');
+  window.scrollTo(0,0);
+}
+function toast(msg){
+  const t=$('#toast'); t.textContent=msg; t.classList.add('on');
+  setTimeout(()=>t.classList.remove('on'), 2200);
+}
+function enc(obj){
+  return btoa(unescape(encodeURIComponent(JSON.stringify(obj))))
+    .replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+}
+function dec(s){
+  try{
+    s = s.replace(/-/g,'+').replace(/_/g,'/');
+    return JSON.parse(decodeURIComponent(escape(atob(s))));
+  }catch(e){ return null; }
+}
+function baseUrl(){
+  if(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null"){
+    return location.origin + location.pathname;
+  }
+  return "https://bingari69-jpg.github.io/couple-test/t/marriage/";
+}
+
+async function shareOrCopy(url, title){
+  if (navigator.share){
+    try{ await navigator.share({title, url}); return; }catch(e){/* 취소 */}
+  }
+  try{
+    await navigator.clipboard.writeText(url);
+    toast("링크를 복사했어요. 카카오톡에 붙여넣으세요!");
+  }catch(e){
+    prompt("아래 링크를 복사하세요", url);
+  }
+}
+
+/* ---------- 시작 분기: 링크에 뭐가 담겨 왔나 ---------- */
+(function init(){
+  const h = location.hash;
+  let stale = false;
+  if (h.startsWith('#r=')){          // 완성된 결과 링크 (둘 다의 답)
+    const d = dec(h.slice(3));
+    if (d && d.q===2 && d.a && d.b){ renderResult(d.a, d.b, false); show('#s-result'); return; }
+    if (d) stale = true;
+  }
+  if (h.startsWith('#i=')){          // 초대 링크 (첫 번째 사람의 답)
+    const d = dec(h.slice(3));
+    if (d && d.q===2 && d.n && Array.isArray(d.ans) && d.ans.length===QUESTIONS.length){
+      partner = d; mode = "second";
+      $('#invName').textContent = d.n;
+      show('#s-invited'); return;
+    }
+    if (d) stale = true;
+  }
+  if (stale){
+    $('#introMeta').innerHTML =
+      "이 링크는 이전 버전의 테스트예요.<br>문항이 새로워졌으니 처음부터 시작해 주세요.";
+    $('#introMeta').style.color = "var(--rose)";
+  }
+  show('#s-intro');
+  /* 인트로 원 애니메이션: 떨어져 있던 두 원이 겹쳐짐 */
+  setTimeout(()=>{
+    $('#introCircles .c1').style.left='16px';
+    $('#introCircles .c2').style.right='16px';
+  }, 350);
+})();
+
+/* ---------- 화면 이동 ---------- */
+$('#introStart').onclick = ()=> show('#s-name');
+$('#invStart').onclick   = ()=>{
+  $('#nameTitle').innerHTML = "내 이름도 알려주세요";
+  show('#s-name');
+};
+$('#nameInput').addEventListener('input', e=>{
+  $('#nameNext').disabled = !e.target.value.trim();
+});
+$('#nameInput').addEventListener('keydown', e=>{
+  if(e.key==='Enter' && e.target.value.trim()) $('#nameNext').click();
+});
+$('#nameNext').onclick = ()=>{
+  myName = $('#nameInput').value.trim();
+  myAns = []; qi = 0;
+  renderQ(); show('#s-quiz');
+};
+
+/* ---------- 문항 ---------- */
+function renderQ(){
+  const Q = QUESTIONS[qi];
+  $('#progBar').style.width = (qi/QUESTIONS.length*100)+'%';
+  $('#qArea').textContent = "「" + AREAS[Q.a] + "」 " + (qi%5+1) + " / 5";
+  $('#qText').textContent = Q.q;
+  $('#opt0').textContent = Q.o[0];
+  $('#opt1').textContent = Q.o[1];
+  $('#qBack').style.visibility = qi===0 ? 'hidden' : 'visible';
+}
+const CH_MSG = [
+  {done:"「갈등」 편 끝",  sub:"벌써 4분의 1 왔어요",   next:"다음은 「양가」"},
+  {done:"「양가」 편 끝",  sub:"절반 왔어요",           next:"다음은 「돈」"},
+  {done:"「돈」 편 끝",    sub:"이제 마지막 편이에요",   next:"다음은 「생활」"},
+];
+const chShown = new Set();
+
+function answer(v){
+  myAns[qi] = v;
+  qi++;
+  if (qi >= QUESTIONS.length){ finishQuiz(); return; }
+  /* 5문항마다 챕터 완료 화면 (앞으로 갈 때 한 번만) */
+  if (qi % 5 === 0 && !chShown.has(qi)){
+    chShown.add(qi);
+    const m = CH_MSG[qi/5 - 1];
+    $('#chProgBar').style.width = (qi/QUESTIONS.length*100)+'%';
+    $('#chDone').textContent = m.done;
+    $('#chSub').textContent  = m.sub;
+    $('#chNext').textContent = m.next + " →";
+    show('#s-chapter');
+    return;
+  }
+  renderQ();
+}
+$('#chNext').onclick = ()=>{ renderQ(); show('#s-quiz'); };
+$('#opt0').onclick = ()=>answer(0);
+$('#opt1').onclick = ()=>answer(1);
+$('#qBack').onclick = ()=>{ if(qi>0){ qi--; renderQ(); } };
+
+/* ---------- 완료 분기 ---------- */
+function finishQuiz(){
+  $('#progBar').style.width = '100%';
+  if (mode === "first"){
+    const link = baseUrl() + '#i=' + enc({q:2, n:myName, ans:myAns});
+    $('#shareName').textContent = myName;
+    $('#shareLink').textContent = link;
+    $('#shareBtn').onclick = ()=>shareOrCopy(link, myName+"님이 보낸 커플 테스트");
+    show('#s-share');
+  } else {
+    renderResult(partner, {n:myName, ans:myAns}, true);
+    show('#s-result');
+  }
+}
+
+/* ---------- 결과 ---------- */
+function renderResult(A, B, canSendBack){
+  const N = QUESTIONS.length;
+  let diffs = [], sames = [];
+  for (let i=0;i<N;i++){
+    (A.ans[i]===B.ans[i] ? sames : diffs).push(i);
+  }
+  const match = sames.length;
+
+  /* 헤드라인 + 원 겹침 정도 */
+  $('#resHead').innerHTML =
+    diffs.length===0
+      ? "20개 모두 같았어요"
+      : "20개 중 <b style='font-family:inherit'>"+diffs.length+"개</b>에서<br>서로 다르게 답했어요";
+  const overlap = Math.round( (match/N) * 54 );  /* 0~54px 겹침 */
+  const off = 27 - overlap/2 + 27;
+  $('#resCircles .c1').style.left  = (75-96+off)+'px';
+  $('#resCircles .c2').style.right = (75-96+off)+'px';
+
+  $('#tagA').textContent = A.n;
+  $('#tagB').textContent = B.n;
+
+  /* 영역별 칩 */
+  let chips = '';
+  for (let a=0;a<4;a++){
+    const idxs = QUESTIONS.map((q,i)=>q.a===a?i:-1).filter(i=>i>=0);
+    const m = idxs.filter(i=>A.ans[i]===B.ans[i]).length;
+    chips += `<div class="areachip"><b>${AREAS[a]}</b>
+      <div class="m">${m} / ${idxs.length} 같음</div></div>`;
+  }
+  $('#areaChips').innerHTML = chips;
+
+  /* 다르게 답한 문항 */
+  let dhtml = '';
+  if (diffs.length){
+    dhtml += `<p style="font-size:14px;font-weight:700;margin:10px 0 12px">
+      다르게 답한 ${diffs.length}가지</p>`;
+    diffs.forEach(i=>{
+      const Q = QUESTIONS[i];
+      dhtml += `<div class="diff">
+        <div class="q">${Q.q}</div>
+        <div class="ans a"><b>${A.n}</b> · ${Q.o[A.ans[i]]}</div>
+        <div class="ans b"><b>${B.n}</b> · ${Q.o[B.ans[i]]}</div>
+        <div class="talk">${Q.t}</div>
+      </div>`;
+    });
+  } else {
+    dhtml = `<p class="center small" style="margin:14px 0">
+      모든 답이 같은 커플은 드물어요. 그만큼 이미 많은 대화를 해온 사이라는 뜻이겠죠.</p>`;
+  }
+  $('#diffList').innerHTML = dhtml;
+
+  /* 같았던 문항 (접힘) */
+  $('#sameLabel').textContent = "우리가 같았던 것 " + sames.length + "개";
+  let shtml = '';
+  sames.forEach(i=>{
+    const Q = QUESTIONS[i];
+    shtml += `<div class="row">${Q.q} → <b>${Q.o[A.ans[i]]}</b></div>`;
+  });
+  $('#sameList').innerHTML = shtml;
+  $('#sameToggle').onclick = ()=>{
+    $('#sameList').classList.toggle('open');
+    $('#sameArrow').textContent = $('#sameList').classList.contains('open') ? '▴' : '▾';
+  };
+
+  /* 결과 되돌려 보내기 (두 번째 사람 화면에서만) */
+  if (canSendBack){
+    const rlink = baseUrl() + '#r=' + enc({q:2, a:A, b:B});
+    $('#sendBackName').textContent = A.n;
+    $('#sendBackBtn').onclick = ()=>shareOrCopy(rlink, "우리 커플 테스트 결과");
+    $('#sendBackCard').style.display = 'block';
+  } else {
+    $('#sendBackCard').style.display = 'none';
+  }
+
+  /* 처음부터 */
+  $('#restartBtn').onclick = ()=>{ location.hash=''; location.reload(); };
+}
+</script>
+</body>
+</html>

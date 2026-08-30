@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>100일 편지</title>
+
+<!-- 카톡 미리보기 카드 (해시 뒤는 크롤러가 못 읽으므로 고정 문구) -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="편지가 도착했어요">
+<meta property="og:description" content="100일을 기념해 누군가 편지를 남겼습니다. 열어보세요.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og-image.png">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/letter100/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --night:#151831; --night-2:#1E2244; --night-3:#2A2F58;
+    --paper:#FAF6EE; --paper-edge:#EDE5D6;
+    --ink:#262A45; --ink-soft:#5C6080;
+    --mark:#E4899E; --mark-dim:#3A3358; --moon:#F0DFA8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--night); color:var(--paper);
+    font-family:'Pretendard Variable',Pretendard,-apple-system,'Apple SD Gothic Neo',sans-serif;
+    line-height:1.6; min-height:100vh; padding:var(--sp) var(--sp) 64px;
+    background-image:radial-gradient(ellipse 80% 50% at 50% 0%,rgba(240,223,168,.07),transparent 70%);
+  }
+  .wrap{max-width:560px;margin:0 auto}
+  .hidden{display:none!important}
+
+  /* ---- 100 marks ---- */
+  .counter{padding:26px 0 4px;text-align:center}
+  .grid100{display:grid;grid-template-columns:repeat(20,1fr);gap:clamp(3px,1.1vw,5px);max-width:420px;margin:0 auto 18px}
+  .cell{aspect-ratio:1;border-radius:50%;background:var(--mark);opacity:0;transform:scale(.3);animation:pop .5s cubic-bezier(.2,1.4,.4,1) forwards}
+  .cell.last{background:var(--moon);box-shadow:0 0 0 3px rgba(240,223,168,.22)}
+  @keyframes pop{to{opacity:1;transform:scale(1)}}
+  .count-num{font-family:'IBM Plex Mono',monospace;font-size:clamp(38px,11vw,54px);font-weight:500;color:var(--moon);line-height:1}
+  .count-label{font-size:13px;color:var(--ink-soft);margin-top:8px;letter-spacing:.06em}
+
+  /* ---- form ---- */
+  section{margin-top:30px}
+  .q{font-size:13px;color:#9AA0C4;margin-bottom:10px}
+  .q em{font-style:normal;color:#666C96;font-size:12px}
+  input[type=text]{width:100%;background:var(--night-2);border:1px solid var(--night-3);color:var(--paper);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px}
+  input[type=text]::placeholder{color:#5A5F86}
+  input[type=text]:focus{outline:2px solid var(--moon);outline-offset:1px;border-color:transparent}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--night-2);border:1px solid var(--night-3);color:#B6BBDC;border-radius:999px;padding:9px 15px;font:inherit;font-size:14px;cursor:pointer;transition:background .15s,color .15s}
+  .chip[aria-pressed=true]{background:var(--moon);color:var(--night);border-color:var(--moon);font-weight:600}
+  .chip:focus-visible{outline:2px solid var(--moon);outline-offset:2px}
+
+  /* ---- letter paper ---- */
+  .letter{background:var(--paper);color:var(--ink);border-radius:6px;padding:30px 22px 26px;box-shadow:0 18px 44px rgba(0,0,0,.42);font-family:'Gowun Batang',serif;font-size:17px;line-height:2;position:relative}
+  .letter::before{content:"";position:absolute;left:0;right:0;top:0;height:5px;background:repeating-linear-gradient(90deg,var(--mark) 0 14px,transparent 14px 28px);border-radius:6px 6px 0 0;opacity:.5}
+  .letter-wrap{margin-top:34px}
+  .line{display:flex;padding:5px 34px 5px 6px;border-radius:5px;position:relative;transition:background .15s}
+  .line:hover,.line:focus-within{background:var(--paper-edge)}
+  .line p{flex:1;min-width:0}
+  .regen{position:absolute;right:4px;top:7px;width:26px;height:26px;border-radius:50%;border:none;background:transparent;color:#A79C86;font-size:15px;cursor:pointer;opacity:0;transition:opacity .15s}
+  .line:hover .regen,.line:focus-within .regen,.regen:focus-visible{opacity:1}
+  .regen:hover{background:var(--paper-edge);color:var(--ink)}
+  .hint{font-size:12.5px;color:#666C96;margin-top:12px;text-align:center}
+
+  /* ---- buttons ---- */
+  .actions{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+  .btn{width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:transform .1s,filter .15s}
+  .btn:active{transform:scale(.985)}
+  .btn:focus-visible{outline:2px solid var(--moon);outline-offset:3px}
+  .btn-main{background:var(--moon);color:var(--night)}
+  .btn-sub{background:transparent;color:#9AA0C4;border:1px solid var(--night-3);font-weight:500}
+  .btn-sub:hover{border-color:#4A5090;color:#B6BBDC}
+
+  .linkbox{margin-top:14px;background:var(--night-2);border:1px solid var(--night-3);border-radius:12px;padding:13px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C92BC;word-break:break-all;line-height:1.6;max-height:88px;overflow:auto}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--moon);color:var(--night);font-weight:600;font-size:14.5px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.4);max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  /* ================= 수신 화면 ================= */
+  #view-read{min-height:82vh;display:flex;flex-direction:column;justify-content:center}
+  .envelope{
+    background:var(--paper);border-radius:10px;padding:56px 26px;text-align:center;cursor:pointer;
+    box-shadow:0 18px 44px rgba(0,0,0,.45);position:relative;overflow:hidden;
+    border:none;width:100%;font:inherit;color:var(--ink);
+  }
+  .envelope::after{
+    content:"";position:absolute;left:0;right:0;top:0;height:52%;
+    background:linear-gradient(#F2ECE0,#E9E0CE);
+    clip-path:polygon(0 0,100% 0,50% 100%);
+    transition:transform .75s cubic-bezier(.5,0,.2,1);transform-origin:top;
+  }
+  .envelope.opening::after{transform:rotateX(180deg)}
+  .seal{
+    width:58px;height:58px;border-radius:50%;background:var(--mark);
+    display:flex;align-items:center;justify-content:center;margin:0 auto 22px;
+    font-family:'IBM Plex Mono',monospace;font-weight:500;font-size:19px;color:#fff;
+    position:relative;z-index:2;
+  }
+  .env-title{font-family:'Gowun Batang',serif;font-size:20px;position:relative;z-index:2}
+  .env-sub{font-size:13.5px;color:#8C8570;margin-top:10px;position:relative;z-index:2}
+
+  .read-letter{background:var(--paper);color:var(--ink);border-radius:8px;padding:38px 26px 30px;box-shadow:0 18px 44px rgba(0,0,0,.45);font-family:'Gowun Batang',serif;font-size:18px;line-height:2.1}
+  .read-letter .rl{opacity:0;transform:translateY(10px);animation:rise .8s ease forwards}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .read-foot{margin-top:26px;text-align:center;font-size:13px;color:#7C82AA}
+
+  @media (prefers-reduced-motion:reduce){
+    .cell,.read-letter .rl{animation:none;opacity:1;transform:none}
+    .envelope::after{transition:none}
+    *{transition-duration:.01ms!important}
+  }
+</style>
+</head>
+<body>
+
+<!-- ===================== 작성 화면 ===================== -->
+<div class="wrap" id="view-write">
+  <div class="counter">
+    <div class="grid100" id="grid" aria-hidden="true"></div>
+    <div class="count-num" id="countNum">0</div>
+    <div class="count-label">일째 되는 날</div>
+  </div>
+
+  <section>
+    <label class="q" for="nameIn">상대를 뭐라고 부르세요?</label>
+    <input type="text" id="nameIn" placeholder="자기야 / 여보 / 이름" maxlength="12" value="자기야">
+  </section>
+
+  <section>
+    <div class="q" id="toneLabel">어떤 느낌으로 쓸까요?</div>
+    <div class="chips" role="group" aria-labelledby="toneLabel" id="toneChips"></div>
+  </section>
+
+  <section>
+    <div class="q" id="relLabel">요즘 두 사람은 어떤가요?</div>
+    <div class="chips" role="group" aria-labelledby="relLabel" id="relChips"></div>
+  </section>
+
+  <section>
+    <label class="q" for="momentIn">고마웠던 순간이 있다면 <em>· 안 쓰셔도 됩니다</em></label>
+    <input type="text" id="momentIn" placeholder="예: 내가 아플 때 죽 사다준 거" maxlength="40">
+  </section>
+
+  <div class="letter-wrap">
+    <div class="letter" id="letter"></div>
+    <p class="hint">마음에 안 드는 줄에 손을 올리면 ↻ 로 다시 뽑을 수 있어요</p>
+  </div>
+
+  <div class="actions">
+    <button class="btn btn-main" id="makeLink">편지 링크 만들기</button>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main hidden" id="copyLink">링크 복사하기</button>
+    <button class="btn btn-sub hidden" id="previewBtn">받는 사람 화면 미리보기</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창 안이라 링크를 눌러도 열리지 않습니다. 파일을 내려받아 브라우저에서 직접 열거나, 배포한 뒤 확인해 주세요. 화면 확인은 아래 미리보기 버튼으로 하시면 됩니다.</p>
+    <button class="btn btn-sub" id="allBtn">전체 다시 뽑기</button>
+  </div>
+</div>
+
+<!-- ===================== 수신 화면 ===================== -->
+<div class="wrap hidden" id="view-read">
+  <button class="envelope" id="envelope">
+    <div class="seal">100</div>
+    <div class="env-title" id="envTitle">편지가 도착했어요</div>
+    <div class="env-sub">눌러서 열어보세요</div>
+  </button>
+
+  <div class="hidden" id="opened">
+    <div class="read-letter" id="readLetter"></div>
+    <p class="read-foot">100일 축하해요</p>
+    <div class="actions">
+      <button class="btn btn-main" id="writeBack">나도 편지 쓰기</button>
+      <button class="btn btn-sub" id="goTest">우리 궁합도 볼래?</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 =====
+   TODO: 실제 배포 경로로 교체하세요.
+   예) https://bingari69-jpg.github.io/couple-test/letter100/          */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/letter100/";
+
+function baseUrl(){
+  // http(s)로 정상 서빙 중이면 현재 주소를 쓰고,
+  // iframe(srcdoc)·file:// 처럼 주소가 없는 환경에서는 배포 주소를 쓴다.
+  if(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null"){
+    return location.origin + location.pathname;
+  }
+  return DEPLOY_BASE;
+}
+function isSandbox(){
+  return !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+}
+
+/* ===== 문장 뱅크 (버전 1) ===== */
+const BANK_VERSION = 1;
+const OPEN = {
+  담백:["{n}, 오늘 100일이야.","{n}, 우리 만난 지 100일이래.","{n}, 벌써 100일이네.","{n}, 오늘로 딱 100일이다."],
+  다정:["{n}, 오늘 우리 100일이야.","{n}, 100일이라는 게 오늘이더라.","{n}, 우리가 100일을 같이 지나왔어.","{n}, 오늘 무슨 날인지 알지? 100일이야."],
+  웃김:["{n} 100일 축하해 ㅋㅋ","{n}, 100일이래. 나도 방금 알았어.","{n}, 100일인 거 알고 있었지? 나 세고 있었음.","{n}, 오늘 100일이다. 다들 박수."],
+  진지:["{n}, 오늘로 100일이야.","{n}, 우리가 만난 지 100일이 됐어.","{n}, 100일이라는 시간이 지났네.","{n}, 오늘 100일이라 하루 종일 생각이 많았어."]
+};
+const REL = {
+  "장거리":["멀리 있다 보니 못 본 날이 더 많았는데, 이상하게 그 시간이 아깝진 않았어.","만나는 날보다 기다리는 날이 훨씬 많았지.","화면 너머로 본 날이 더 많았는데도 가깝게 느껴졌어.","거리 때문에 지치는 날도 있었지만, 그때마다 네가 먼저 연락해줬어."],
+  "자주 다퉈":["우리 자주 부딪히긴 했지만, 매번 다시 붙잡아준 게 너였어.","싸운 날도 꽤 되는데, 그래도 끝까지 안 놓은 건 우리 둘이더라.","서로 안 맞는 부분이 있다는 걸 이제는 알아. 그래도 여기까지 왔잖아.","티격태격하면서도 하루도 안 미워한 건 좀 신기해."],
+  "조용한 편":["우리 둘 다 말수가 많은 편은 아닌데, 같이 있으면 조용한 게 안 어색했어.","굳이 말 안 해도 편했던 시간이 많았어.","말보다 그냥 옆에 있는 게 익숙해진 100일이었어.","우리는 시끄럽지 않아서 좋아."],
+  "매일 붙어있어":["거의 매일 봤는데도 아직 안 질리는 게 신기해.","하루도 빠짐없이 연락한 거 알아? 나 세어봤어.","매일 보다 보니 기념일이 좀 어색하긴 한데,","붙어 있는 게 당연해져서, 가끔 고마운 걸 잊고 있었어."],
+  "이제 막 편해짐":["처음엔 서로 조심스러웠는데, 요즘은 네 앞에서 아무렇지 않게 있을 수 있어서 좋아.","이제야 좀 편해진 것 같아. 그게 제일 마음에 들어.","낯가리던 게 얼마 전인데 벌써 이만큼 편해졌네.","요즘 너한테 아무 말이나 할 수 있게 된 게 좋아."]
+};
+const MOMENT = {
+  담백:["{m}, 그거 아직 기억나.","{m}. 그때 말은 안 했는데 고마웠어.","{m}. 그건 잊고 있다가 요즘 다시 생각났어.","{m}, 그거 하나는 확실히 고마워."],
+  다정:["{m}, 그날 진짜 고마웠어.","{m}. 그거 생각하면 아직도 마음이 좀 이상해.","{m}. 그때 네가 없었으면 어땠을까 싶어.","{m}, 그게 나한테는 꽤 큰 일이었어."],
+  웃김:["{m} 그건 좀 반칙이었지 ㅋㅋ 고마웠어.","{m}. 그거 하나로 한동안 버텼다.","{m}. 그때 감동받은 거 티 안 내려고 애썼어.","{m} 그거 아직 안 잊었다."],
+  진지:["{m}, 그 순간이 오래 남아 있어.","{m}. 그때부터였던 것 같아.","{m}. 그날 이후로 너를 다르게 보게 됐어.","{m}, 그게 지금까지 이어진 것 같아."]
+};
+const BODY = {
+  담백:["고맙다는 말은 잘 안 하는데, 오늘은 해두고 싶었어.","말로 잘 못 해서 이렇게라도 써.","표현이 서툴러서 그렇지, 늘 고마워하고 있어.","특별한 말은 못 하겠고, 그냥 좋다는 얘기야."],
+  다정:["네가 옆에 있어서 하루가 좀 덜 힘들었어.","네 덕분에 웃은 날이 훨씬 많았어.","별거 아닌 날들도 너랑 있으면 괜찮았어.","고맙다는 말이 부족한 것 같아서 자꾸 다른 말을 찾게 돼."],
+  웃김:["이런 거 잘 못 쓰는데 오늘만 봐줘.","손발 오그라들어서 여기까지가 최선이야.","이거 쓰는 데 30분 걸렸다. 진심이라는 뜻이야.","칭찬 한 번 하는 게 이렇게 어려운 일인 줄 몰랐어."],
+  진지:["네가 나한테 어떤 사람인지 요즘 자주 생각해.","만나기 전보다 지금의 내가 더 마음에 들어. 그게 네 덕분인 것 같아.","당연한 게 하나도 없다는 걸 너 만나고 알았어.","이 시간이 나한테 꽤 중요한 시간이었어."]
+};
+const CLOSE = {
+  담백:["다음 100일도 잘 부탁해.","앞으로도 이대로 가자.","오래 보자.","200일에 또 쓸게."],
+  다정:["다음 100일은 더 많이 웃자.","앞으로도 지금처럼만 있어줘.","오래오래 옆에 있자.","사랑해. 100일 축하해."],
+  웃김:["…사랑해. 이거 캡처하지 마.","여기까지 읽었으면 답장은 필수다.","다음 100일도 잘 부탁드립니다.","오늘은 네가 사줘. 100일이잖아."],
+  진지:["앞으로의 시간도 너와 보내고 싶어.","다음 100일도, 그다음도 함께 있자.","고마워. 그리고 사랑해.","오래 함께 있자, 우리."]
+};
+const TONES=Object.keys(OPEN), RELS=Object.keys(REL);
+
+/* ===== 상태 ===== */
+const state={tone:1,rel:3,idx:[0,0,0,0],name:"자기야",moment:""};
+const toneName=()=>TONES[state.tone], relName=()=>RELS[state.rel];
+const pick=(a,i)=>a[i%a.length];
+
+function slots(){
+  const t=toneName(), m=state.moment.trim();
+  return [OPEN[t], REL[relName()], m?MOMENT[t]:BODY[t], CLOSE[t]];
+}
+function lines(){
+  const m=state.moment.trim();
+  return slots().map((bank,i)=>pick(bank,state.idx[i])
+    .replace("{n}",state.name||"자기야").replace("{m}",m));
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+
+/* ===== 해시 인코딩 ===== */
+function b64e(str){
+  const bytes=new TextEncoder().encode(str);
+  let bin=""; bytes.forEach(b=>bin+=String.fromCharCode(b));
+  return btoa(bin).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function b64d(s){
+  s=s.replace(/-/g,"+").replace(/_/g,"/");
+  s+="=".repeat((4-s.length%4)%4);
+  const bin=atob(s), bytes=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+function makeHash(){
+  const p={v:BANK_VERSION,n:state.name||"자기야",t:state.tone,r:state.rel,i:state.idx};
+  if(state.moment.trim())p.m=state.moment.trim();
+  return "#l="+b64e(JSON.stringify(p));
+}
+function readHash(){
+  const h=location.hash;
+  if(!h.startsWith("#l="))return null;
+  try{
+    const p=JSON.parse(b64d(h.slice(3)));
+    if(!p||typeof p.t!=="number"||!Array.isArray(p.i))return null;
+    return p;
+  }catch(e){return null;}
+}
+function linesFrom(p){
+  const t=TONES[p.t]||TONES[0], r=RELS[p.r]||RELS[0], m=(p.m||"").trim();
+  const banks=[OPEN[t],REL[r],m?MOMENT[t]:BODY[t],CLOSE[t]];
+  return banks.map((bank,i)=>pick(bank,p.i[i]||0)
+    .replace("{n}",p.n||"자기야").replace("{m}",m));
+}
+
+/* ===== 작성 화면 ===== */
+function render(){
+  const el=document.getElementById("letter");
+  el.innerHTML="";
+  lines().forEach((txt,i)=>{
+    const d=document.createElement("div");
+    d.className="line";
+    d.innerHTML=`<p>${esc(txt)}</p><button class="regen" aria-label="${i+1}번째 줄 다시 뽑기" data-i="${i}">↻</button>`;
+    el.appendChild(d);
+  });
+  document.getElementById("linkbox").classList.add("hidden");
+  document.getElementById("copyLink").classList.add("hidden");
+  document.getElementById("previewBtn").classList.add("hidden");
+  const sn=document.getElementById("sandboxNote");
+  if(sn)sn.classList.add("hidden");
+  const mk=document.getElementById("makeLink");
+  if(mk)mk.textContent="편지 링크 만들기";
+  madeUrl="";
+}
+function buildChips(id,items,key){
+  const box=document.getElementById(id);
+  items.forEach((v,i)=>{
+    const b=document.createElement("button");
+    b.className="chip";b.type="button";b.textContent=v;
+    b.setAttribute("aria-pressed",state[key]===i);
+    b.onclick=()=>{
+      state[key]=i;
+      [...box.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===i));
+      state.idx=state.idx.map(()=>Math.floor(Math.random()*4));
+      render();
+    };
+    box.appendChild(b);
+  });
+}
+buildChips("toneChips",TONES,"tone");
+buildChips("relChips",RELS,"rel");
+
+document.getElementById("letter").addEventListener("click",e=>{
+  const b=e.target.closest(".regen"); if(!b)return;
+  const i=+b.dataset.i; state.idx[i]=(state.idx[i]+1)%4; render();
+});
+document.getElementById("nameIn").oninput=e=>{state.name=e.target.value;render();};
+document.getElementById("momentIn").oninput=e=>{state.moment=e.target.value;render();};
+document.getElementById("allBtn").onclick=()=>{
+  state.idx=state.idx.map(()=>Math.floor(Math.random()*4));render();toast("새로 뽑았어요");
+};
+
+let madeUrl="";
+async function copyUrl(){
+  if(!madeUrl){toast("먼저 링크를 만들어 주세요");return;}
+  try{
+    await navigator.clipboard.writeText(madeUrl);
+    toast("복사됐어요. 카톡에 붙여넣으세요");
+  }catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=madeUrl;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    let ok=false;
+    try{ok=document.execCommand("copy");}catch(e2){}
+    ta.remove();
+    toast(ok?"복사됐어요. 카톡에 붙여넣으세요":"아래 링크를 길게 눌러 복사해 주세요");
+  }
+}
+document.getElementById("makeLink").onclick=()=>{
+  madeUrl=baseUrl()+makeHash();
+  const box=document.getElementById("linkbox");
+  box.textContent=madeUrl; box.classList.remove("hidden");
+  document.getElementById("copyLink").classList.remove("hidden");
+  document.getElementById("previewBtn").classList.remove("hidden");
+  document.getElementById("makeLink").textContent="편지 링크 다시 만들기";
+  const note=document.getElementById("sandboxNote");
+  if(isSandbox()) note.classList.remove("hidden"); else note.classList.add("hidden");
+  toast("링크가 만들어졌어요");
+};
+document.getElementById("copyLink").onclick=copyUrl;
+document.getElementById("previewBtn").onclick=()=>{
+  // location.hash 를 거치지 않고 현재 상태로 바로 수신 화면을 그린다.
+  const p={v:BANK_VERSION,n:state.name||"자기야",t:state.tone,r:state.rel,i:state.idx.slice()};
+  if(state.moment.trim())p.m=state.moment.trim();
+  showRead(p);
+};
+
+let tt;
+function toast(m){
+  const el=document.getElementById("toast");
+  el.textContent=m;el.classList.add("show");
+  clearTimeout(tt);tt=setTimeout(()=>el.classList.remove("show"),2400);
+}
+
+/* ===== 수신 화면 ===== */
+function showRead(p){
+  document.getElementById("view-write").classList.add("hidden");
+  document.getElementById("view-read").classList.remove("hidden");
+  document.getElementById("envTitle").textContent=
+    (p.n?p.n+"에게 ":"")+"편지가 도착했어요";
+  window.scrollTo(0,0);
+
+  const env=document.getElementById("envelope");
+  env.onclick=()=>{
+    env.classList.add("opening");
+    setTimeout(()=>{
+      env.classList.add("hidden");
+      const box=document.getElementById("readLetter");
+      box.innerHTML="";
+      linesFrom(p).forEach((t,i)=>{
+        const d=document.createElement("p");
+        d.className="rl"; d.textContent=t;
+        d.style.animationDelay=(i*420)+"ms";
+        box.appendChild(d);
+      });
+      document.getElementById("opened").classList.remove("hidden");
+    },780);
+  };
+}
+document.getElementById("writeBack").onclick=()=>{
+  location.hash="";
+  location.reload();
+};
+document.getElementById("goTest").onclick=()=>{
+  toast("궁합 테스트 연결 예정");
+};
+
+/* ===== 100칸 + 진입 분기 ===== */
+(function(){
+  const grid=document.getElementById("grid");
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  for(let i=0;i<100;i++){
+    const c=document.createElement("div");
+    c.className="cell"+(i===99?" last":"");
+    c.style.animationDelay=(reduce?0:i*11)+"ms";
+    grid.appendChild(c);
+  }
+  const num=document.getElementById("countNum");
+  if(reduce){num.textContent="100";}
+  else{let n=0;const t=setInterval(()=>{n+=2;if(n>=100){n=100;clearInterval(t);}num.textContent=n;},22);}
+})();
+
+const payload=readHash();
+if(payload){ showRead(payload); }
+else{ render(); }
+</script>
+</body>
+</html>

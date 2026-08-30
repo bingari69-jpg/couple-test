@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>20분 후 추락합니다 — 당신의 선택은</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="20분 후 추락합니다">
+<meta property="og:description" content="정답이 없는 10개의 상황. 당신이라면 어떻게 하시겠습니까?">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og-image.png">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/crash/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --void:#0E1A1F; --panel:#152A31; --panel-2:#1C363F;
+    --line:#26505C; --amber:#F2A93B; --amber-dim:#8A6220;
+    --paper:#E7F1F0; --dim:#7E9BA3; --alert:#E4695E;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    background:var(--void);color:var(--paper);
+    font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
+    line-height:1.6;min-height:100vh;padding:var(--sp) var(--sp) 60px;
+    background-image:radial-gradient(ellipse 70% 40% at 50% 0%,rgba(242,169,59,.08),transparent 70%);
+  }
+  .wrap{max-width:560px;margin:0 auto}
+  .hidden{display:none!important}
+  .mono{font-family:'IBM Plex Mono',monospace}
+
+  /* ---- 계기판 헤더 ---- */
+  .hud{
+    display:flex;justify-content:space-between;align-items:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);
+    letter-spacing:.08em;padding:6px 0 14px;border-bottom:1px solid var(--line);
+  }
+  .hud .live{color:var(--amber)}
+  .bar{height:3px;background:var(--panel-2);margin:14px 0 0;border-radius:2px;overflow:hidden}
+  .bar i{display:block;height:100%;background:var(--amber);width:0;transition:width .35s ease}
+
+  /* ---- 인트로 ---- */
+  .intro{padding:52px 0 20px;text-align:center}
+  .intro h1{
+    font-family:'IBM Plex Mono',monospace;font-weight:600;
+    font-size:clamp(28px,8vw,40px);line-height:1.25;letter-spacing:-.01em;
+  }
+  .intro h1 span{color:var(--amber)}
+  .intro p{color:var(--dim);margin-top:18px;font-size:15px;line-height:1.8}
+  .meta{
+    display:flex;gap:8px;justify-content:center;margin-top:22px;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);
+  }
+  .meta span{border:1px solid var(--line);border-radius:999px;padding:5px 12px}
+
+  /* ---- 문항 ---- */
+  .qnum{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-size:13px;letter-spacing:.1em;margin:30px 0 12px}
+  .scene{
+    background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--amber);
+    border-radius:4px;padding:20px 18px;font-size:16px;line-height:1.85;
+  }
+  .ask{margin:22px 0 14px;font-size:15px;color:var(--dim)}
+  .opts{display:flex;flex-direction:column;gap:10px}
+  .opt{
+    text-align:left;background:var(--panel);border:1px solid var(--line);color:var(--paper);
+    border-radius:12px;padding:17px 18px;font:inherit;font-size:15.5px;line-height:1.6;
+    cursor:pointer;transition:border-color .15s,background .15s,transform .1s;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .opt:hover{border-color:var(--amber);background:var(--panel-2)}
+  .opt:active{transform:scale(.99)}
+  .opt:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .opt b{font-family:'IBM Plex Mono',monospace;color:var(--amber);font-weight:500;flex:none}
+
+  /* ---- 버튼 ---- */
+  .btn{width:100%;border:none;border-radius:12px;padding:16px;font:inherit;font-size:16px;font-weight:600;cursor:pointer;transition:filter .15s,transform .1s}
+  .btn:active{transform:scale(.985)}
+  .btn:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+  .btn-main{background:var(--amber);color:#241705}
+  .btn-main:hover{filter:brightness(1.07)}
+  .btn-sub{background:transparent;color:var(--dim);border:1px solid var(--line);font-weight:500}
+  .btn-sub:hover{border-color:var(--amber);color:var(--paper)}
+  .actions{margin-top:26px;display:flex;flex-direction:column;gap:10px}
+
+  /* ---- 결과 ---- */
+  .type-card{
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;
+    padding:26px 20px;text-align:center;margin-top:28px;
+  }
+  .type-card .code{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--amber);letter-spacing:.14em}
+  .type-card h2{font-size:26px;margin:10px 0 12px;letter-spacing:-.01em}
+  .type-card p{color:var(--dim);font-size:14.5px;line-height:1.8}
+  .axes{margin-top:20px;display:flex;flex-direction:column;gap:14px}
+  .axis{font-size:12.5px;color:var(--dim)}
+  .axis .track{height:6px;background:var(--panel-2);border-radius:3px;margin-top:7px;position:relative}
+  .axis .track i{position:absolute;top:-3px;width:12px;height:12px;border-radius:50%;background:var(--amber);transform:translateX(-50%);transition:left .5s ease}
+  .axis .ends{display:flex;justify-content:space-between;margin-top:7px;font-size:11.5px;color:#5E7B84}
+
+  .diff{margin-top:26px}
+  .diff h3{font-size:14px;color:var(--dim);margin-bottom:12px;font-weight:500}
+  .drow{border:1px solid var(--line);border-radius:10px;padding:14px 15px;margin-bottom:9px;font-size:14px}
+  .drow .t{color:var(--paper);margin-bottom:9px;line-height:1.55}
+  .drow .who{display:flex;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim);flex-wrap:wrap}
+  .drow .who span{border:1px solid var(--line);border-radius:6px;padding:3px 8px}
+  .same{border-color:var(--amber-dim)}
+
+  .score{font-family:'IBM Plex Mono',monospace;font-size:clamp(40px,12vw,58px);color:var(--amber);text-align:center;line-height:1;margin-top:4px}
+  .score-l{text-align:center;font-size:13px;color:var(--dim);margin-top:10px}
+
+  .linkbox{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:#8FAEB6;word-break:break-all;line-height:1.6;max-height:84px;overflow:auto}
+  .hint{font-size:12.5px;color:#5E7B84;margin-top:12px;text-align:center;line-height:1.7}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--amber);color:#241705;font-weight:600;font-size:14.5px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:90vw;text-align:center}
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+
+  @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ===== 인트로 ===== -->
+  <div id="v-intro">
+    <div class="intro">
+      <h1>20분 후<br><span>추락합니다</span></h1>
+      <p>정답이 없는 10개의 상황.<br>당신이라면 어떻게 하시겠습니까?</p>
+      <div class="meta"><span>10문항</span><span>2분</span><span>가입 없음</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-main" id="startBtn">시작하기</button>
+    </div>
+    <p class="hint">답을 마치면 링크가 만들어집니다.<br>애인이나 친구에게 보내 선택을 비교해 보세요.</p>
+  </div>
+
+  <!-- ===== 문항 ===== -->
+  <div id="v-quiz" class="hidden">
+    <div class="hud">
+      <span id="hudLeft">SITUATION</span>
+      <span class="live" id="hudRight">01 / 10</span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+    <div class="qnum mono" id="qNum">SITUATION 01</div>
+    <div class="scene" id="scene"></div>
+    <p class="ask" id="ask">당신의 선택은?</p>
+    <div class="opts" id="opts"></div>
+    <div class="actions">
+      <button class="btn btn-sub" id="backBtn">이전 상황</button>
+    </div>
+  </div>
+
+  <!-- ===== 내 결과 (초대 만들기) ===== -->
+  <div id="v-mine" class="hidden">
+    <div class="hud"><span>RESULT</span><span class="live">YOU</span></div>
+    <div class="type-card">
+      <div class="code mono" id="myCode">TYPE</div>
+      <h2 id="myName"></h2>
+      <p id="myDesc"></p>
+      <div class="axes">
+        <div class="axis">
+          말할 것인가, 감출 것인가
+          <div class="track"><i id="ax1"></i></div>
+          <div class="ends"><span>감춘다</span><span>말한다</span></div>
+        </div>
+        <div class="axis">
+          원칙인가, 내 사람인가
+          <div class="track"><i id="ax2"></i></div>
+          <div class="ends"><span>내 사람</span><span>원칙</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <label class="axis" for="myNameIn" style="text-align:left">이름 또는 별명</label>
+      <input type="text" id="myNameIn" maxlength="10" placeholder="예: 지훈"
+        style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--paper);border-radius:10px;padding:13px 14px;font:inherit;font-size:16px">
+      <button class="btn btn-main" id="makeLink">비교 링크 만들기</button>
+      <div class="linkbox hidden" id="linkbox"></div>
+      <button class="btn btn-main hidden" id="copyLink">링크 복사하기</button>
+      <button class="btn btn-sub" id="retry">다시 하기</button>
+    </div>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창 안이라 링크가 열리지 않습니다. 배포한 뒤 확인해 주세요.</p>
+  </div>
+
+  <!-- ===== 초대받은 사람 인트로 ===== -->
+  <div id="v-invited" class="hidden">
+    <div class="intro">
+      <h1 id="invTitle"></h1>
+      <p>같은 10개 상황에 답하면<br>두 사람의 선택을 나란히 볼 수 있습니다.</p>
+      <div class="meta"><span>10문항</span><span>2분</span><span>가입 없음</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-main" id="startInvited">나도 답해보기</button>
+    </div>
+  </div>
+
+  <!-- ===== 비교 결과 ===== -->
+  <div id="v-compare" class="hidden">
+    <div class="hud"><span>COMPARE</span><span class="live" id="cmpWho"></span></div>
+    <div class="score mono" id="cmpScore">0/10</div>
+    <p class="score-l" id="cmpLabel"></p>
+    <div class="diff" id="diffBox"></div>
+    <div class="actions">
+      <button class="btn btn-main" id="shareResult">결과 링크 복사하기</button>
+      <div class="linkbox hidden" id="linkbox2"></div>
+      <button class="btn btn-sub" id="retry2">나도 처음부터 해보기</button>
+    </div>
+  </div>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* =========================================================
+   공통 영역 — 나중에 /assets/core.js 로 분리할 부분
+   ========================================================= */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/crash/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin !== "null");
+const baseUrl  = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));
+  return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);
+  const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
+  return new TextDecoder().decode(u);}
+function readHash(){
+  const h=location.hash;
+  for(const k of ["i","r"]){
+    if(h.startsWith("#"+k+"=")){
+      try{return {kind:k,data:JSON.parse(b64d(h.slice(3)))};}catch(e){return null;}
+    }
+  }
+  return null;
+}
+async function copyText(t){
+  try{ await navigator.clipboard.writeText(t); return true; }
+  catch(e){
+    const ta=document.createElement("textarea");
+    ta.value=t;ta.style.position="fixed";ta.style.opacity="0";
+    document.body.appendChild(ta);ta.select();
+    let ok=false; try{ok=document.execCommand("copy");}catch(e2){}
+    ta.remove(); return ok;
+  }
+}
+let tt; function toast(m){const el=document.getElementById("toast");
+  el.textContent=m;el.classList.add("show");clearTimeout(tt);
+  tt=setTimeout(()=>el.classList.remove("show"),2400);}
+function show(id){
+  ["v-intro","v-quiz","v-mine","v-invited","v-compare"]
+    .forEach(v=>document.getElementById(v).classList.toggle("hidden",v!==id));
+  window.scrollTo(0,0);
+}
+
+/* =========================================================
+   콘텐츠 영역 — 나중에 data.json 으로 분리할 부분
+   axis: "T" 말한다/감춘다  |  "S" 원칙/내 사람
+   opts[0] 이 해당 축의 1점
+   ========================================================= */
+const TEST = {
+  id:"crash", version:1,
+  data:[
+    {axis:"T",
+     scene:"태평양 한가운데. 엔진이 멈췄고 20분 안에 추락합니다. 당신은 기장입니다. 승객 180명은 아직 아무것도 모릅니다.",
+     opts:["지금 알린다. 마지막 시간을 어떻게 쓸지는 각자가 정할 몫이다.",
+           "알리지 않는다. 공황이 번지면 남은 20분이 더 끔찍해진다."]},
+    {axis:"S",
+     scene:"구명보트에 자리가 하나 남았습니다. 앞에는 모르는 아이와, 당신의 가장 친한 친구가 있습니다.",
+     opts:["아이를 태운다. 누구라도 그렇게 해야 한다고 배웠다.",
+           "친구를 태운다. 내가 아는 사람을 먼저 지킨다."]},
+    {axis:"T",
+     scene:"친구의 애인이 다른 사람과 있는 걸 봤습니다. 친구는 요즘 그 사람 얘기만 하며 행복해합니다.",
+     opts:["말한다. 늦게 알수록 상처가 커진다.",
+           "말하지 않는다. 내가 본 게 전부가 아닐 수도 있다."]},
+    {axis:"S",
+     scene:"회사에서 명백한 부정을 발견했습니다. 신고하면 회사가 흔들리고, 동료 수십 명의 자리가 위태로워집니다.",
+     opts:["신고한다. 덮으면 나도 공범이 된다.",
+           "덮는다. 옳은 일 하나가 여러 사람 삶을 무너뜨릴 수 있다."]},
+    {axis:"T",
+     scene:"복권 20억에 당첨됐습니다. 아직 아무도 모릅니다.",
+     opts:["가족에게 알린다. 숨기고 사는 게 더 어렵다.",
+           "말하지 않는다. 돈을 알면 관계가 변한다."]},
+    {axis:"S",
+     scene:"자율주행차 사고가 불가피합니다. 핸들을 꺾으면 보행자 셋이 위험하고, 그대로 가면 차에 탄 당신이 위험합니다.",
+     opts:["핸들을 꺾지 않는다. 숫자가 많은 쪽을 살려야 한다.",
+           "핸들을 꺾는다. 내 목숨을 내놓는 선택을 남이 정할 순 없다."]},
+    {axis:"T",
+     scene:"의사가 말합니다. 5년 뒤 당신은 지금의 기억을 대부분 잃게 됩니다. 지금은 아무 증상도 없습니다.",
+     opts:["가까운 사람들에게 지금 알린다. 남은 5년을 함께 준비하고 싶다.",
+           "혼자 안고 간다. 5년을 걱정 속에 살게 하고 싶지 않다."]},
+    {axis:"S",
+     scene:"팀 성과의 대부분은 당신이 만들었는데, 상사는 조용한 동료의 공으로 알고 그를 승진시키려 합니다.",
+     opts:["바로잡는다. 사실은 사실대로 가야 한다.",
+           "넘어간다. 그 사람에게는 이번이 마지막 기회일 수도 있다."]},
+    {axis:"T",
+     scene:"소행성 충돌로 24시간 뒤 모든 것이 끝납니다. 발표 여부를 정하는 자리에 당신이 앉아 있습니다.",
+     opts:["공개한다. 마지막 하루를 어떻게 보낼지는 각자의 권리다.",
+           "공개하지 않는다. 마지막 하루를 지옥으로 만들 이유가 없다."]},
+    {axis:"S",
+     scene:"다음 주 구조조정 명단을 미리 봤습니다. 거기 10년 함께한 동료의 이름이 있습니다.",
+     opts:["말하지 않는다. 알게 된 경위부터가 지켜야 할 선이다.",
+           "귀띔한다. 규정보다 그 사람의 다음 달이 더 급하다."]}
+  ],
+  types:{
+    "11":{name:"관제탑", desc:"다 알리고, 정해진 대로 갑니다. 감정보다 원칙이 사람을 지킨다고 믿는 쪽입니다. 단단하지만, 가까운 사람에게는 가끔 차갑게 느껴질 수 있습니다."},
+    "10":{name:"조종석", desc:"숨기지 않되, 마지막 순간에는 내 사람 쪽으로 핸들을 꺾습니다. 솔직하고 뜨겁습니다. 그래서 가끔 원칙과 부딪힙니다."},
+    "01":{name:"블랙박스", desc:"말은 아끼지만 옳은 쪽에 섭니다. 조용히 기록하고 조용히 지킵니다. 속을 알기 어렵다는 말을 자주 듣습니다."},
+    "00":{name:"방패", desc:"감추더라도 내 사람을 지킵니다. 규칙보다 사람이 먼저입니다. 따뜻하지만, 그 선택의 무게를 혼자 지는 편입니다."}
+  }
+};
+const Q = TEST.data, N = Q.length;
+
+/* ===== 상태 ===== */
+let ans=[], cur=0, invite=null;
+
+function scoreOf(a){
+  let T=0,S=0,tN=0,sN=0;
+  Q.forEach((q,i)=>{
+    const pt = a[i]===0 ? 1 : 0;
+    if(q.axis==="T"){T+=pt;tN++;} else {S+=pt;sN++;}
+  });
+  return {T,S,tN,sN};
+}
+function typeOf(a){
+  const s=scoreOf(a);
+  return (s.T*2>=s.tN?"1":"0") + (s.S*2>=s.sN?"1":"0");
+}
+
+/* ===== 문항 진행 ===== */
+function renderQ(){
+  const q=Q[cur];
+  document.getElementById("qNum").textContent="SITUATION "+String(cur+1).padStart(2,"0");
+  document.getElementById("hudRight").textContent=String(cur+1).padStart(2,"0")+" / "+N;
+  document.getElementById("barFill").style.width=(cur/N*100)+"%";
+  document.getElementById("scene").textContent=q.scene;
+  const box=document.getElementById("opts"); box.innerHTML="";
+  q.opts.forEach((t,i)=>{
+    const b=document.createElement("button");
+    b.className="opt"; b.type="button";
+    b.innerHTML=`<b>${i+1}</b><span>${t.replace(/</g,"&lt;")}</span>`;
+    b.onclick=()=>{ ans[cur]=i; cur++; cur<N ? renderQ() : finish(); };
+    box.appendChild(b);
+  });
+  document.getElementById("backBtn").classList.toggle("hidden",cur===0);
+}
+function finish(){
+  document.getElementById("barFill").style.width="100%";
+  invite ? showCompare() : showMine();
+}
+
+/* ===== 내 결과 ===== */
+function showMine(){
+  const t=typeOf(ans), info=TEST.types[t], s=scoreOf(ans);
+  document.getElementById("myCode").textContent="TYPE "+t;
+  document.getElementById("myName").textContent=info.name;
+  document.getElementById("myDesc").textContent=info.desc;
+  document.getElementById("ax1").style.left=(s.T/s.tN*100)+"%";
+  document.getElementById("ax2").style.left=(s.S/s.sN*100)+"%";
+  show("v-mine");
+}
+document.getElementById("makeLink").onclick=()=>{
+  const nm=(document.getElementById("myNameIn").value||"").trim();
+  if(!nm){ toast("이름을 먼저 적어주세요"); document.getElementById("myNameIn").focus(); return; }
+  const url=baseUrl()+"#i="+b64e(JSON.stringify({v:TEST.version,n:nm,a:ans}));
+  const box=document.getElementById("linkbox");
+  box.textContent=url; box.classList.remove("hidden");
+  document.getElementById("copyLink").classList.remove("hidden");
+  document.getElementById("makeLink").textContent="링크 다시 만들기";
+  document.getElementById("sandboxNote").classList.toggle("hidden",!isSandbox());
+  window.__url=url;
+  toast("링크가 만들어졌어요");
+};
+document.getElementById("copyLink").onclick=async()=>{
+  toast(await copyText(window.__url) ? "복사됐어요. 카톡에 붙여넣으세요" : "링크를 길게 눌러 복사해 주세요");
+};
+
+/* ===== 비교 결과 ===== */
+function showCompare(p){
+  const A = p ? p.a  : invite.a;      // 초대한 사람
+  const B = p ? p.a2 : ans;           // 답한 사람
+  const nA= p ? p.n  : invite.n;
+  const nB= p ? p.n2 : "나";
+  let same=0;
+  const box=document.getElementById("diffBox"); box.innerHTML="";
+  const diffs=[];
+  Q.forEach((q,i)=>{
+    if(A[i]===B[i]) same++; else diffs.push(i);
+  });
+  document.getElementById("cmpScore").textContent=same+"/"+N;
+  document.getElementById("cmpWho").textContent=nA+" ↔ "+nB;
+  document.getElementById("cmpLabel").textContent =
+    same>=8 ? "거의 같은 곳에 섰습니다" :
+    same>=5 ? "반쯤은 같고, 반쯤은 갈렸습니다" :
+              "갈린 지점이 많습니다. 이야기할 거리가 많다는 뜻입니다";
+
+  const h=document.createElement("h3");
+  h.textContent = diffs.length ? "갈린 상황 "+diffs.length+"개" : "모든 상황에서 같은 선택을 했습니다";
+  box.appendChild(h);
+  diffs.forEach(i=>{
+    const d=document.createElement("div"); d.className="drow";
+    d.innerHTML=`<div class="t">${Q[i].scene.replace(/</g,"&lt;")}</div>
+      <div class="who"><span>${esc(nA)} → ${A[i]+1}번</span><span>${esc(nB)} → ${B[i]+1}번</span></div>`;
+    box.appendChild(d);
+  });
+  if(!p){
+    const url=baseUrl()+"#r="+b64e(JSON.stringify({v:TEST.version,n:invite.n,a:invite.a,n2:nB,a2:ans}));
+    window.__url2=url;
+  }
+  document.getElementById("shareResult").classList.toggle("hidden",!!p);
+  show("v-compare");
+}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+document.getElementById("shareResult").onclick=async()=>{
+  const box=document.getElementById("linkbox2");
+  box.textContent=window.__url2; box.classList.remove("hidden");
+  toast(await copyText(window.__url2) ? "결과 링크가 복사됐어요" : "링크를 길게 눌러 복사해 주세요");
+};
+
+/* ===== 진입 ===== */
+document.getElementById("startBtn").onclick=()=>{ans=[];cur=0;renderQ();show("v-quiz");};
+document.getElementById("startInvited").onclick=()=>{ans=[];cur=0;renderQ();show("v-quiz");};
+document.getElementById("backBtn").onclick=()=>{if(cur>0){cur--;renderQ();}};
+document.getElementById("retry").onclick=()=>{location.hash="";ans=[];cur=0;show("v-intro");};
+document.getElementById("retry2").onclick=()=>{location.hash="";invite=null;ans=[];cur=0;show("v-intro");};
+
+(function(){
+  const h=readHash();
+  if(h && h.kind==="i" && Array.isArray(h.data.a)){
+    invite=h.data;
+    document.getElementById("invTitle").innerHTML=
+      esc(invite.n)+"님이<br><span style='color:var(--amber)'>선택을 남겼습니다</span>";
+    show("v-invited");
+  } else if(h && h.kind==="r" && Array.isArray(h.data.a) && Array.isArray(h.data.a2)){
+    showCompare(h.data);
+  } else {
+    show("v-intro");
+  }
+})();
+</script>
+</body>
+</html>
