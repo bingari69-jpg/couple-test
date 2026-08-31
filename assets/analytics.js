@@ -13,7 +13,7 @@
    replay         복수전·재도전·나도 답하기
 */
 (function(){
-  const ID = "G-EOP7KBMOFD";
+  const ID = "G-E0P7KBM0FD";
 
   /* gtag 로드 */
   const s=document.createElement("script"); s.async=true;
@@ -22,7 +22,12 @@
   function gtag(){ dataLayer.push(arguments); }
   window.gtag=gtag;
   gtag("js", new Date());
-  gtag("config", ID, { anonymize_ip:true });
+  /* 주소의 #해시·?쿼리에는 답변·이름이 실려 있으므로 GA에는 경로만 보낸다 */
+  gtag("config", ID, {
+    anonymize_ip: true,
+    page_location: location.origin + location.pathname,
+    page_path: location.pathname
+  });
 
   /* 게임 이름: /couple-test/t/rps/ → rps, 홈 → home */
   const m=location.pathname.match(/\/t\/([^/]+)\/?/);
