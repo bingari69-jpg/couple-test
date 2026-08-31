@@ -13,6 +13,7 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<script src="../../assets/kakao-share.js"></script>
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
@@ -203,7 +204,8 @@ input::placeholder{color:#C6C1CC}
   <div class="card">
     <p class="small" style="margin-bottom:4px">상대에게 보낼 링크</p>
     <div class="linkbox" id="shareLink"></div>
-    <button class="btn" id="shareBtn">링크 보내기</button>
+    <button class="btn" id="kakaoBtn" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 보내기</button>
+    <button class="btn" id="shareBtn">링크만 복사</button>
   </div>
   <p class="center small">상대가 열기 전까지 내 답은 아무도 볼 수 없어요</p>
   <div class="spacer"></div>
@@ -256,7 +258,8 @@ input::placeholder{color:#C6C1CC}
     <p style="font-size:15px;line-height:1.6;margin-bottom:4px">
       이 결과, <b id="sendBackName"></b>님도 봐야죠</p>
     <p class="small" style="margin-bottom:10px">두 사람의 답이 모두 담긴 결과 링크예요</p>
-    <button class="btn" id="sendBackBtn">결과 링크 보내기</button>
+    <button class="btn" id="kakaoRes" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 결과 보내기</button>
+    <button class="btn" id="sendBackBtn">링크만 복사</button>
   </div>
 
   <button class="btn ghost" id="restartBtn">우리도 처음부터 해보기</button>
@@ -492,6 +495,12 @@ function finishQuiz(){
     $('#shareName').textContent = myName;
     $('#shareLink').textContent = link;
     $('#shareBtn').onclick = ()=>shareOrCopy(link, myName+"님이 보낸 커플 테스트");
+    document.getElementById("kakaoBtn").onclick=()=>kakaoShare({
+      url:link, btn:"나도 답하기",
+      img:"https://bingari69-jpg.github.io/couple-test/og/og-marriage-sq.png",
+      title:`${myName}이(가) 결혼 전 테스트를 보냈어요`,
+      desc:"같은 20개 질문에 답하면 어디서 다르게 생각하는지 바로 보여요."
+    }, ()=>document.getElementById("shareBtn").click());
     show('#s-share');
   } else {
     renderResult(partner, {n:myName, ans:myAns}, true);
@@ -569,6 +578,12 @@ function renderResult(A, B, canSendBack){
     const rlink = baseUrl() + '#r=' + enc({q:2, a:A, b:B});
     $('#sendBackName').textContent = A.n;
     $('#sendBackBtn').onclick = ()=>shareOrCopy(rlink, "우리 커플 테스트 결과");
+    document.getElementById("kakaoRes").onclick=()=>kakaoShare({
+      url:rlink, btn:"결과 보기",
+      img:"https://bingari69-jpg.github.io/couple-test/og/og-marriage-sq.png",
+      title:"두 사람의 결과가 나왔어요",
+      desc:"20개 중 몇 개가 달랐는지 확인해보세요"
+    }, ()=>document.getElementById("sendBackBtn").click());
     $('#sendBackCard').style.display = 'block';
   } else {
     $('#sendBackCard').style.display = 'none';

@@ -14,6 +14,7 @@
 <meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/delivery/">
 <meta name="twitter:card" content="summary_large_image">
 
+<script src="../../assets/kakao-share.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -145,7 +146,8 @@
   <h1>내 답을 숨겨뒀어.<br><b>이제 맞혀보라고</b> 보내자.</h1>
   <p class="lead">상대는 문항마다 내가 뭘 골랐을지 찍어. 하나 찍을 때마다 정답이 공개돼.</p>
   <div class="linkbox" id="linkbox"></div>
-  <button class="btn btn-main" id="copyBtn">링크 복사 — 맞혀보라고 보내기</button>
+  <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 보내기 — 맞혀보라고</button>
+  <button class="btn btn-sub" id="copyBtn">링크만 복사</button>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
   <button class="btn btn-ghost" id="editBtn">답 다시 고르기</button>
 </section>
@@ -187,7 +189,8 @@
   <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과를 몰라요.</b><br><span style="color:var(--sub)">결과 링크를 보내거나, "나도 답하기"로 이어가면 점수가 같이 전달됩니다.</span></div>
   <div id="guesserActions" class="hidden">
     <button class="btn btn-main" id="mineToo">나도 답하기 — 이번엔 상대가 나를 맞히게</button>
-    <button class="btn btn-sub" id="sendResult">결과 링크만 보내기</button>
+    <button class="btn btn-sub" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
   </div>
   <div id="ownerActions" class="hidden">
@@ -276,6 +279,10 @@ function finishA(){
   show("s-link");
 }
 $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 맞혀보라고 보내세요");
+$("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"맞혀보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-delivery-sq.png",
+  title:`${state.name}의 배달 취향, 몇 개나 맞힐래?`,
+  desc: state.prev ? `${state.prev.by}이(가) ${state.prev.of}을(를) ${state.prev.score}/10 맞혔어. 이번엔 네 차례.` : "내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 사. 찍을 때마다 정답 공개."},
+  ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
 $("editBtn").onclick=()=>{state.qi=0;renderA();show("s-answer");};
 
 /* ===== 맞히기 ===== */
@@ -361,6 +368,9 @@ function renderResult(R){
     const rp={v:1, of:R.owner, by:R.guesser, score:R.score, miss:R.misses.map(m=>[m.i,m.g]), prev:R.prev||undefined};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
     $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-delivery-sq.png",
+      title:`${R.guesser}은(는) ${R.owner}을(를) ${R.score}/10 안다`, desc:titleFor(R.score)[1]},
+      ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
     // 나도 답하기: 이번엔 내가 답하고 상대가 맞힘. 내 점수를 prev로 실어 보냄
     if(R.prev){ $("mineToo").classList.add("hidden"); }   // 이미 2라운드면 종료
     else $("mineToo").onclick=()=>{

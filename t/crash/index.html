@@ -14,6 +14,7 @@
 <meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/crash/">
 <meta name="twitter:card" content="summary_large_image">
 
+<script src="../../assets/kakao-share.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -183,7 +184,8 @@
         style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--paper);border-radius:10px;padding:13px 14px;font:inherit;font-size:16px">
       <button class="btn btn-main" id="makeLink">비교 링크 만들기</button>
       <div class="linkbox hidden" id="linkbox"></div>
-      <button class="btn btn-main hidden" id="copyLink">링크 복사하기</button>
+      <button class="btn hidden" id="kakaoBtn" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 보내기</button>
+      <button class="btn btn-main hidden" id="copyLink">링크만 복사</button>
       <button class="btn btn-sub" id="retry">다시 하기</button>
     </div>
     <p class="hint hidden" id="sandboxNote">지금은 미리보기 창 안이라 링크가 열리지 않습니다. 배포한 뒤 확인해 주세요.</p>
@@ -208,7 +210,8 @@
     <p class="score-l" id="cmpLabel"></p>
     <div class="diff" id="diffBox"></div>
     <div class="actions">
-      <button class="btn btn-main" id="shareResult">결과 링크 복사하기</button>
+      <button class="btn" id="kakaoRes" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 결과 보내기</button>
+      <button class="btn btn-main" id="shareResult">링크만 복사</button>
       <div class="linkbox hidden" id="linkbox2"></div>
       <button class="btn btn-sub" id="retry2">나도 처음부터 해보기</button>
     </div>
@@ -374,6 +377,13 @@ document.getElementById("makeLink").onclick=()=>{
   document.getElementById("makeLink").textContent="링크 다시 만들기";
   document.getElementById("sandboxNote").classList.toggle("hidden",!isSandbox());
   window.__url=url;
+  document.getElementById("kakaoBtn").classList.remove("hidden");
+  document.getElementById("kakaoBtn").onclick=()=>kakaoShare({
+    url:url, btn:"나도 답하기",
+    img:"https://bingari69-jpg.github.io/couple-test/og/og-crash-sq.png",
+    title:`${nm}의 추락 테스트, 너라면?`,
+    desc:"정답 없는 10개 상황. 둘의 선택이 어디서 갈리는지 보여줘."
+  }, ()=>document.getElementById("copyLink").click());
   toast("링크가 만들어졌어요");
 };
 document.getElementById("copyLink").onclick=async()=>{
@@ -413,9 +423,16 @@ function showCompare(p){
     window.__url2=url;
   }
   document.getElementById("shareResult").classList.toggle("hidden",!!p);
+  document.getElementById("kakaoRes").classList.toggle("hidden",!!p);
   show("v-compare");
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+document.getElementById("kakaoRes").onclick=()=>kakaoShare({
+  url:window.__url2, btn:"결과 보기",
+  img:"https://bingari69-jpg.github.io/couple-test/og/og-crash-sq.png",
+  title:"두 사람의 결과가 나왔어요",
+  desc:"10개 중 몇 개가 달랐는지 확인해보세요"
+}, ()=>document.getElementById("shareResult").click());
 document.getElementById("shareResult").onclick=async()=>{
   const box=document.getElementById("linkbox2");
   box.textContent=window.__url2; box.classList.remove("hidden");
