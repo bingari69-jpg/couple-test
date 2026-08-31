@@ -82,6 +82,8 @@
   /* ===== 문제 붙여넣기 =====
      한 줄이 "문제 정답" 형태인 단어장을 그대로 받아 [[문제,[정답들]], ...] 로 만든다.
        apple 사과 / apple, 사과 / apple - 사과 / apple: 사과 / 1. apple 사과
+     구분자가 없으면 영문·한글 경계로 나눈다 ("take off 벗다" → "take off" | "벗다").
+     한쪽 글자만 있는 줄은 첫 토큰을 문제로 본다 ("세종대왕 훈민정음").
      정답이 여러 개면 "/" 로 나눈다 (apple 사과/능금).
      반환: {rows, over}  over = 상한을 넘어 잘라낸 줄 수                          */
 
@@ -89,6 +91,24 @@
      없으면 마지막 공백을 기준으로 나눈다("take off 벗다" 처럼 문제에 공백이 있어도
      정답 쪽이 한 덩어리면 제대로 잘린다). */
   const HARD_SEP = /\s*(?:[,\t]|[:：]|\s[-–—]\s)\s*/;
+
+  /* 영문 덩어리와 한글 덩어리의 경계에서 자른다.
+     "take off 벗다" → ["take off","벗다"],  "사과 apple" → ["사과","apple"]
+     한쪽 글자만 있는 줄(전부 한글·전부 영문)은 null 을 돌려준다. */
+  const isHan = c => c >= "가" && c <= "힣";
+  const isLat = c => (c >= "a" && c <= "z") || (c >= "A" && c <= "Z");
+  function scriptCut(line){
+    let first = null;
+    for(const c of line){ if(isHan(c)){ first = "han"; break; } if(isLat(c)){ first = "lat"; break; } }
+    if(!first) return null;
+    const other = first === "han" ? isLat : isHan;
+    let i = -1;
+    for(let k = 0; k < line.length; k++){ if(other(line[k])){ i = k; break; } }
+    if(i <= 0) return null;                       /* 다른 종류가 없거나 맨 앞이면 경계 없음 */
+    const q = line.slice(0, i).trim();
+    const a = line.slice(i).trim();
+    return (q && a) ? [q, a] : null;
+  }
 
   window.parseQuiz = function(text, opt){
     opt = opt || {};
@@ -107,15 +127,22 @@
       let q="", rest="";
       const m = line.match(HARD_SEP);
       if(m && m.index > 0){
+        /* 1) 쉼표·탭·콜론·붙임표가 있으면 그걸로 자른다 */
         q    = line.slice(0, m.index).trim();
         rest = line.slice(m.index + m[0].length).trim();
       }else{
-        /* 확실한 구분자가 없으면 첫 공백에서 자른다 — 첫 토큰이 문제, 나머지가 정답.
-           문제가 두 단어 이상이면 쉼표·콜론·붙임표를 써야 한다 ("take off - 벗다") */
-        const i = line.indexOf(" ");
-        if(i <= 0) return;                      // 정답이 없는 줄
-        q    = line.slice(0, i).trim();
-        rest = line.slice(i + 1).trim();
+        const cut = scriptCut(line);
+        if(cut){
+          /* 2) 영문 덩어리와 한글 덩어리가 한 줄에 있으면 그 경계에서 자른다
+                "take off 벗다" → "take off" | "벗다",  "사과 apple" → "사과" | "apple" */
+          q = cut[0]; rest = cut[1];
+        }else{
+          /* 3) 경계가 없으면(전부 한글·전부 영문) 첫 토큰이 문제 */
+          const i = line.indexOf(" ");
+          if(i <= 0) return;                    // 정답이 없는 줄
+          q    = line.slice(0, i).trim();
+          rest = line.slice(i + 1).trim();
+        }
       }
       if(!q || !rest) return;
       const answers = rest.split("/").map(s=>s.trim()).filter(Boolean);
