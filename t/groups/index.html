@@ -314,8 +314,9 @@ function applyRoster(text, src){
   $("pasteText").value="";
   track("roster_paste",{n:r.names.length, src:src||"box"});
   const msg=[];
-  if(r.dup)  msg.push(`중복 ${r.dup}명은 제외했어요`);
-  if(r.over) msg.push(`${MAX_N}명까지만 넣을 수 있어 나머지는 제외했어요`);
+  if(r.skipped) msg.push(`명단이 아닌 줄 ${r.skipped}개는 건너뛰었어요`);
+  if(r.dup)     msg.push(`중복 ${r.dup}명은 제외했어요`);
+  if(r.over)    msg.push(`${MAX_N}명까지만 넣을 수 있어 나머지는 제외했어요`);
   toast(msg.length ? msg.join(" · ") : `${r.names.length}명 넣었어요`);
   return true;
 }
