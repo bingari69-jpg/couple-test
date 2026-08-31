@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>10초 맞추기</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="10초 맞추기 — 나 9.98초. 이겨봐">
+<meta property="og:description" content="안 보고 10초 세다가 멈추기. 누가 더 가까울까.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-ten.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/ten/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 타이머 */
+  .clock{background:#fff;border:3px solid var(--line);border-radius:28px;padding:34px 20px 30px;text-align:center;margin:18px 0;box-shadow:0 10px 30px rgba(31,27,22,.06)}
+  .clock .num{font-size:clamp(64px,22vw,96px);font-weight:900;letter-spacing:-.04em;line-height:1;font-variant-numeric:tabular-nums;color:var(--ink);min-height:1em}
+  .clock .num.hide{color:var(--dim);letter-spacing:.2em}
+  .clock .unit{font-size:16px;color:var(--sub);margin-top:6px;font-weight:600}
+  .clock .msg{font-size:15px;color:var(--sub);margin-top:14px;min-height:1.4em}
+  .clock .msg b{color:var(--red)}
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:26px;font:inherit;font-size:26px;font-weight:900;cursor:pointer;transition:transform .08s,filter .15s;margin-top:6px;letter-spacing:-.01em;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn.stop{background:var(--red);color:#fff;animation:pulse 1s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,90,95,.45)}50%{box-shadow:0 0 0 14px rgba(255,90,95,0)}}
+  .bigbtn:disabled{opacity:.4;cursor:default;animation:none}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.45em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:13px;color:var(--sub);margin-top:6px;font-weight:600}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">10초 맞추기</span>
+  <h1 id="playHead">안 보고 <b>10초</b>.<br>딱 맞춰 멈춰봐.</h1>
+  <p class="lead" id="playLead">시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b></p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 멈춘 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (별명도 돼)</label>
+  <input type="text" id="nameIn" placeholder="예: 호랑이" maxlength="10">
+
+  <div class="clock">
+    <div class="num" id="num">0.00</div>
+    <div class="unit">초</div>
+    <div class="msg" id="msg">준비됐으면 시작!</div>
+  </div>
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="linkbox" id="linkbox"></div>
+    <button class="btn btn-main" id="copyBtn">도전장 링크 복사 — 상대에게 보내기</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">기회는 한 번. 다시 하기 없음 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="sendResult">결과 링크 보내기</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 한 판 더</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 한 판 더</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 ===== */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/ten/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+const TARGET=10000, SHOW_UNTIL=3000;   // ms
+const NEXT=[
+  {path:"../rps/",      title:"가위바위보 도전장", desc:"내가 먼저 낸다. 네가 이길 수 있는지 골라봐."},
+  {path:"../delivery/", title:"배달 텔레파시",    desc:"내가 뭐 시킬지 맞혀봐."},
+  {path:"../mbti/",     title:"내 MBTI 몇 글자나 맞힐래?", desc:"4문항으로 나온 네 글자."}
+];
+function titleFor(err){
+  if(err<=50)  return "인간 스톱워치";
+  if(err<=200) return "감각 좋은데?";
+  if(err<=500) return "보통 사람";
+  if(err<=1000)return "체감 시간이 좀 다름";
+  return "시계 하나 사자";
+}
+const fmt=ms=>(ms/1000).toFixed(2);
+const err=ms=>Math.abs(ms-TARGET);
+
+/* ===== 잠금 · 해시 · 공통 ===== */
+function lockNum(v){const k=Math.floor(Math.random()*0xFFFF);return {k,x:(v+k*7)%1000003};}
+function unlockNum(k,x){let v=(x-k*7)%1000003;if(v<0)v+=1000003;return v;}
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
+function readHash(){const m=location.hash.match(/^#([cr])=(.+)$/);if(!m)return null;try{return {type:m[1],p:JSON.parse(b64d(m[2]))};}catch(e){return null;}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
+let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
+async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해줘");}
+
+/* ===== 상태 ===== */
+/* hist: [[aName, aMs, bName, bMs], ...] */
+const state={name:"",ms:null,hist:[],incoming:null,running:false,t0:0,raf:0};
+let madeUrl="";
+
+/* ===== 타이머 ===== */
+$("nameIn").oninput=e=>{state.name=e.target.value.trim();};
+$("bigBtn").onclick=()=>{
+  if(!state.running){
+    if(!state.name){toast("이름부터 적어줘");$("nameIn").focus();return;}
+    startTimer();
+  } else stopTimer();
+};
+function startTimer(){
+  state.running=true;state.t0=performance.now();
+  const b=$("bigBtn");b.className="bigbtn stop";b.textContent="멈춤!";
+  $("afterPlay").classList.add("hidden");$("num").classList.remove("hide");
+  $("msg").innerHTML="3초까지만 보여줄게";
+  const tick=()=>{
+    const el=performance.now()-state.t0;
+    if(el<SHOW_UNTIL){$("num").textContent=fmt(el);}
+    else{$("num").classList.add("hide");$("num").textContent="· · ·";$("msg").innerHTML="이제 <b>속으로</b> 세는 거야";}
+    if(state.running)state.raf=requestAnimationFrame(tick);
+  };
+  state.raf=requestAnimationFrame(tick);
+}
+function stopTimer(){
+  state.running=false;cancelAnimationFrame(state.raf);
+  state.ms=Math.round(performance.now()-state.t0);
+  const b=$("bigBtn");b.className="bigbtn start";b.textContent="봉인됨";b.disabled=true;
+  if(state.incoming){
+    $("num").classList.add("hide");$("num").textContent="🔒";$("msg").innerHTML="개봉 중…";
+    setTimeout(()=>respond(),600);
+  } else {
+    $("num").classList.add("hide");$("num").textContent="🔒";
+    $("msg").innerHTML="<b>봉인 완료.</b> 내 기록은 상대가 멈춘 뒤에 같이 열려";
+    makeLink();$("afterPlay").classList.remove("hidden");
+  }
+}
+$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어. 카톡에 붙여넣어");
+function makeLink(){
+  const {k,x}=lockNum(state.ms);
+  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify({v:1,n:state.name,k,x,h:state.hist}));
+  $("linkbox").textContent=madeUrl;$("sandboxNote").classList.toggle("hidden",!isSandbox());
+}
+
+/* ===== 응답자 ===== */
+function tallyOf(hist,me){
+  let w=0,l=0,t=0;hist.forEach(r=>{const [an,am,bn,bm]=r;const ea=err(am),eb=err(bm);
+    const myErr=an===me?ea:eb, theirErr=an===me?eb:ea;
+    if(myErr<theirErr)w++;else if(myErr>theirErr)l++;else t++;});
+  return {w,l,t};
+}
+function histRows(hist){return hist.map((r,i)=>`${i+1}판 · ${esc(r[0])} ${fmt(r[1])} vs ${esc(r[2])} ${fmt(r[3])}`).join("<br>");}
+function openChallenge(p){
+  state.incoming=p;state.hist=p.h||[];
+  $("playTag").textContent="도전장 도착";
+  $("playHead").innerHTML=`<b>${esc(p.n)}</b>이(가) 도전했다.<br>10초, 더 가까이 멈춰봐.`;
+  $("lockName").textContent=p.n;$("lockedCard").classList.remove("hidden");
+  if(state.hist.length){$("tallyText").innerHTML=`<b>지금까지 ${state.hist.length}판</b><br>${histRows(state.hist)}`;$("tallyCard").classList.remove("hidden");}
+  show("s-play");
+}
+function respond(){
+  const p=state.incoming;const theirMs=unlockNum(p.k,p.x);
+  const round=[p.n,theirMs,state.name,state.ms];
+  renderResult({hist:[...state.hist,round],round,viewer:"b"});
+}
+
+/* ===== 결과 ===== */
+function renderResult(R){
+  const [aN,aMs,bN,bMs]=R.round;
+  const me = R.viewer==="b"?{n:bN,ms:bMs}:{n:aN,ms:aMs};
+  const them = R.viewer==="b"?{n:aN,ms:aMs}:{n:bN,ms:bMs};
+  const em=err(me.ms),et=err(them.ms);
+  const o = em<et?"win":(em>et?"lose":"tie");
+  $("nameA").textContent=me.n+" (나)";$("tA").innerHTML=fmt(me.ms)+"<small>초</small>";$("dA").textContent="차이 "+fmt(em);
+  $("nameB").textContent=them.n;$("tB").innerHTML=fmt(them.ms)+"<small>초</small>";$("dB").textContent="차이 "+fmt(et);
+  $("sideA").className="side "+(o==="win"?"win":o==="lose"?"lose":"");
+  $("sideB").className="side "+(o==="lose"?"win":o==="win"?"lose":"");
+  $("verdict").className="verdict "+o;
+  $("verdict").textContent= o==="win"?"내가 더 가까워!":o==="lose"?"상대가 더 가까워":"완전 똑같아?!";
+  $("subVerdict").textContent= o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${o==="win"?me.n:them.n}이(가) 10초에 ${fmt(Math.abs(em-et))}초 더 가까웠어.`;
+  $("titleBadge").textContent="🏅 "+titleFor(em);
+  $("resTag").textContent=`${R.hist.length}판 결과`;
+  if(R.hist.length>1){const t=tallyOf(R.hist,me.n);$("tallyBox").innerHTML=`전적<div class="big"><b>${t.w}승</b> ${t.l}패${t.t?` ${t.t}무`:""}</div><div class="rows">${histRows(R.hist)}</div>`;$("tallyBox").classList.remove("hidden");}
+  else $("tallyBox").classList.add("hidden");
+  ["respActions","viewActions","resLinkbox","notYet"].forEach(id=>$(id).classList.add("hidden"));
+  if(R.viewer==="b"){
+    $("respActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
+    const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,h:R.hist}));
+    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;$("resLinkbox").classList.remove("hidden");copy(rurl,"결과 링크 복사됐어. 상대에게 보내");};
+    $("again").onclick=()=>startNext(R.hist,bN);
+  }else{
+    $("viewActions").classList.remove("hidden");
+    $("again2").onclick=()=>startNext(R.hist,aN);
+  }
+  $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
+  show("s-result");
+}
+function startNext(hist,myName){
+  state.hist=hist;state.name=myName;state.ms=null;state.incoming=null;
+  $("nameIn").value=myName;$("lockedCard").classList.add("hidden");
+  $("playTag").textContent=`${hist.length+1}판째`;
+  $("playHead").innerHTML=`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`;
+  $("playLead").textContent="이 도전장에 지금까지 전적이 같이 실려.";
+  const t=tallyOf(hist,myName);
+  $("tallyText").innerHTML=`<b>전적 ${t.w}승 ${t.l}패${t.t?` ${t.t}무`:""}</b><br>${histRows(hist)}`;$("tallyCard").classList.remove("hidden");
+  $("afterPlay").classList.add("hidden");$("num").classList.remove("hide");$("num").textContent="0.00";$("msg").textContent="준비됐으면 시작!";$("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+  history.replaceState(null,"",location.pathname);show("s-play");
+}
+
+/* ===== 진입 ===== */
+(function(){
+  const h=readHash();
+  if(!h){show("s-play");return;}
+  if(h.type==="c"&&h.p&&typeof h.p.k==="number"){openChallenge(h.p);return;}
+  if(h.type==="r"&&h.p&&Array.isArray(h.p.h)&&h.p.h.length){renderResult({hist:h.p.h,round:h.p.h[h.p.h.length-1],viewer:"a"});return;}
+  show("s-play");
+})();
+</script>
+</body>
+</html>
