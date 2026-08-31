@@ -157,13 +157,13 @@ input::placeholder{color:#C6C1CC}
 <!-- ═══════════ ② 이름 입력 ═══════════ -->
 <section class="screen" id="s-name">
   <div class="spacer"></div>
-  <h2 class="center" id="nameTitle">뭐라고 불러드릴까요?</h2>
+  <h2 class="center" id="nameTitle">뭐라고 불러드릴까요? <span style="font-weight:400;color:var(--muted)">(선택)</span></h2>
   <div style="height:8px"></div>
-  <p class="center small">결과 화면에 표시될 이름이에요</p>
+  <p class="center small">결과 화면에 표시될 이름이에요. 비워도 됩니다.</p>
   <div style="height:26px"></div>
-  <input type="text" id="nameInput" maxlength="8" placeholder="예: 지은" autocomplete="off">
+  <input type="text" id="nameInput" maxlength="8" placeholder="비워도 돼요" autocomplete="off">
   <div class="spacer"></div>
-  <button class="btn" id="nameNext" disabled>다음</button>
+  <button class="btn" id="nameNext">다음</button>
 </section>
 
 <!-- ═══════════ ③ 문항 ═══════════ -->
@@ -355,6 +355,15 @@ const QUESTIONS = [
 
 /* ---------- 상태 ---------- */
 let mode = "first";          // first | second
+/* ===== 이름(선택) ===== */
+/* 이름은 안 적어도 된다. 링크·기록에는 빈 문자열 그대로 싣고,
+   화면에 그릴 때만 보는 사람 기준으로 "나"/"상대" 를 채운다.
+   (localStorage 에는 이름만 저장한다. 답변·점수는 저장하지 않는다.) */
+const NAME_KEY="gh_name";
+function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
+function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
+const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+
 let myName = "";
 let myAns = [];
 let partner = null;          // {n, ans} — 초대 링크에 담겨 온 상대(첫 번째 사람)
@@ -411,9 +420,9 @@ async function shareOrCopy(url, title){
   }
   if (h.startsWith('#i=')){          // 초대 링크 (첫 번째 사람의 답)
     const d = dec(h.slice(3));
-    if (d && d.q===2 && d.n && Array.isArray(d.ans) && d.ans.length===QUESTIONS.length){
+    if (d && d.q===2 && typeof d.n==="string" && Array.isArray(d.ans) && d.ans.length===QUESTIONS.length){
       partner = d; mode = "second";
-      $('#invName').textContent = d.n;
+      $('#invName').textContent = d.n || "상대";
       show('#s-invited'); return;
     }
     if (d) stale = true;
@@ -432,16 +441,17 @@ async function shareOrCopy(url, title){
 })();
 
 /* ---------- 화면 이동 ---------- */
-$('#introStart').onclick = ()=> show('#s-name');
+$('#introStart').onclick = ()=>{ $('#nameInput').value = loadName(); show('#s-name'); };
 $('#invStart').onclick   = ()=>{
-  $('#nameTitle').innerHTML = "내 이름도 알려주세요";
+  $('#nameTitle').innerHTML = '내 이름도 알려주세요 <span style="font-weight:400;color:var(--muted)">(선택)</span>';
+  $('#nameInput').value = loadName();
   show('#s-name');
 };
 $('#nameInput').addEventListener('input', e=>{
-  $('#nameNext').disabled = !e.target.value.trim();
+  saveName(e.target.value.trim());
 });
 $('#nameInput').addEventListener('keydown', e=>{
-  if(e.key==='Enter' && e.target.value.trim()) $('#nameNext').click();
+  if(e.key==='Enter') $('#nameNext').click();
 });
 $('#nameNext').onclick = ()=>{
   myName = $('#nameInput').value.trim();
@@ -493,13 +503,13 @@ function finishQuiz(){
   $('#progBar').style.width = '100%';
   if (mode === "first"){
     const link = baseUrl() + '#i=' + enc({q:2, n:myName, ans:myAns});
-    $('#shareName').textContent = myName;
+    $('#shareName').textContent = myName || "나";
     $('#shareLink').textContent = link;
-    $('#shareBtn').onclick = ()=>shareOrCopy(link, myName+"님이 보낸 커플 테스트");
+    $('#shareBtn').onclick = ()=>shareOrCopy(link, (myName?myName+"님이 보낸 ":"")+"커플 테스트");
     document.getElementById("kakaoBtn").onclick=()=>kakaoShare({
       url:link, btn:"나도 답하기",
       img:"https://bingari69-jpg.github.io/couple-test/og/og-marriage-sq.png",
-      title:`${myName}이(가) 결혼 전 테스트를 보냈어요`,
+      title:`${myName?myName+"이(가) ":""}결혼 전 테스트를 보냈어요`,
       desc:"같은 20개 질문에 답하면 어디서 다르게 생각하는지 바로 보여요."
     }, ()=>document.getElementById("shareBtn").click());
     show('#s-share');
@@ -511,6 +521,8 @@ function finishQuiz(){
 
 /* ---------- 결과 ---------- */
 function renderResult(A, B, canSendBack){
+  /* 결과를 보는 사람: 되돌려 보낼 수 있으면 두 번째 사람(B), 아니면 첫 번째 사람(A) */
+  const aL = who(A.n, !canSendBack), bL = who(B.n, !!canSendBack);
   const N = QUESTIONS.length;
   let diffs = [], sames = [];
   for (let i=0;i<N;i++){
@@ -528,8 +540,8 @@ function renderResult(A, B, canSendBack){
   $('#resCircles .c1').style.left  = (75-96+off)+'px';
   $('#resCircles .c2').style.right = (75-96+off)+'px';
 
-  $('#tagA').textContent = A.n;
-  $('#tagB').textContent = B.n;
+  $('#tagA').textContent = aL;
+  $('#tagB').textContent = bL;
 
   /* 영역별 칩 */
   let chips = '';
@@ -550,8 +562,8 @@ function renderResult(A, B, canSendBack){
       const Q = QUESTIONS[i];
       dhtml += `<div class="diff">
         <div class="q">${Q.q}</div>
-        <div class="ans a"><b>${A.n}</b> · ${Q.o[A.ans[i]]}</div>
-        <div class="ans b"><b>${B.n}</b> · ${Q.o[B.ans[i]]}</div>
+        <div class="ans a"><b>${aL}</b> · ${Q.o[A.ans[i]]}</div>
+        <div class="ans b"><b>${bL}</b> · ${Q.o[B.ans[i]]}</div>
         <div class="talk">${Q.t}</div>
       </div>`;
     });
@@ -577,7 +589,7 @@ function renderResult(A, B, canSendBack){
   /* 결과 되돌려 보내기 (두 번째 사람 화면에서만) */
   if (canSendBack){
     const rlink = baseUrl() + '#r=' + enc({q:2, a:A, b:B});
-    $('#sendBackName').textContent = A.n;
+    $('#sendBackName').textContent = aL;
     $('#sendBackBtn').onclick = ()=>shareOrCopy(rlink, "우리 커플 테스트 결과");
     document.getElementById("kakaoRes").onclick=()=>kakaoShare({
       url:rlink, btn:"결과 보기",

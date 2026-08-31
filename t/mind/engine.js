@@ -49,8 +49,8 @@
     <p class="lead">${esc(T.intro)}</p>
     <div class="meta"><span class="pill hot">${N}문항 · 1분</span><span class="pill">${esc(T.rel)}</span><span class="pill">둘이 하기</span></div>
     <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 답은 네가 다 고른 뒤에 공개돼.</span></div></div>
-    <label class="q" for="nameIn">내 이름</label>
-    <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+    <label class="q" for="nameIn">내 이름 <span style="font-weight:500;color:#B3AFBD">(선택)</span></label>
+    <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="12">
     <button class="btn btn-main" id="startBtn">내 답 먼저 고르기</button>
     <p class="hint">내 답은 상대가 고르기 전까지 공개되지 않아요</p>
     <a class="homelink" href="../../../">다른 놀이 보기 →</a>
@@ -111,8 +111,9 @@
     : `<b>${esc(T.title)}</b>`;
 
   /* ---------- 문항 ---------- */
-  $("nameIn").oninput=e=>{state.name=e.target.value.trim();};
-  $("startBtn").onclick=()=>{if(!state.name){toast("이름을 먼저 적어주세요");$("nameIn").focus();return;}state.qi=0;renderQ();show("s-q");};
+  try{state.name=localStorage.getItem("gh_name")||"";$("nameIn").value=state.name;}catch(e){}
+  $("nameIn").oninput=e=>{state.name=e.target.value.trim();try{localStorage.setItem("gh_name",state.name);}catch(x){}};
+  $("startBtn").onclick=()=>{state.qi=0;renderQ();show("s-q");};
   function renderQ(){
     const q=T.questions[state.qi];
     $("prog").style.width=(state.qi/N*100)+"%";
@@ -135,7 +136,7 @@
     madeUrl=baseUrl()+"#i="+b64e(JSON.stringify({v:1,n:state.name,k,x}));
     $("linkbox").textContent=madeUrl;$("sandboxNote").classList.toggle("hidden",!isSandbox());
     $("kakaoBtn").onclick=()=>share({url:madeUrl,btn:"나도 답하기",img:T.og.sq,
-      title:`${state.name}의 ${T.title} — 너는?`,desc:T.hook},()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
+      title:(state.name?`${state.name}의 `:"")+`${T.title} — 너는?`,desc:T.hook},()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
     $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으세요");
     $("editBtn").onclick=()=>{state.qi=0;renderQ();show("s-q");};
     show("s-link");
@@ -144,8 +145,8 @@
   /* ---------- 초대 ---------- */
   function openInvite(p){
     state.incoming=p;
-    $("introHead").innerHTML=`<b>${esc(p.n)}</b>은(는) 답했어.<br>너는?`;
-    $("lockName").textContent=p.n;$("lockedCard").classList.remove("hidden");
+    $("introHead").innerHTML=`<b>${esc(p.n||"상대")}</b>은(는) 답했어.<br>너는?`;
+    $("lockName").textContent=p.n||"상대";$("lockedCard").classList.remove("hidden");
     $("startBtn").textContent="내 답 고르기";
     show("s-intro");
   }
@@ -156,12 +157,13 @@
     const same=R.a.filter((v,i)=>v===R.b[i]).length,pct=Math.round(same/N*100);
     const me=R.viewer==="b"?{n:R.bName,t:tb,ans:R.b}:{n:R.aName,t:ta,ans:R.a};
     const you=R.viewer==="b"?{n:R.aName,t:ta,ans:R.a}:{n:R.bName,t:tb,ans:R.b};
+    const meL = me.n ? me.n+" (나)" : "나", youL = you.n || "상대";
     $("pct").textContent=pct;$("pctLab").textContent=pct>=70?"통했다!":(pct>=40?"반반":"완전 반대!");$("pctSub").textContent=scoreLine(pct);
-    $("whoA").textContent=me.n+" (나)";$("emoA").textContent=me.t.emoji;$("nameA").textContent=me.t.name;$("tagA").textContent=me.t.tag;
-    $("whoB").textContent=you.n;$("emoB").textContent=you.t.emoji;$("nameB").textContent=you.t.name;$("tagB").textContent=you.t.tag;
+    $("whoA").textContent=meL;$("emoA").textContent=me.t.emoji;$("nameA").textContent=me.t.name;$("tagA").textContent=me.t.tag;
+    $("whoB").textContent=youL;$("emoB").textContent=you.t.emoji;$("nameB").textContent=you.t.name;$("tagB").textContent=you.t.tag;
     $("combo").innerHTML=`<b>${esc(me.t.name)} + ${esc(you.t.name)}</b> — ${esc(comboOf(me.t.name,you.t.name))}`;
-    $("descHA").textContent=`${me.n} · ${me.t.name}`;$("descA").textContent=me.t.desc;
-    $("descHB").textContent=`${you.n} · ${you.t.name}`;$("descB").textContent=you.t.desc;
+    $("descHA").textContent=`${meL} · ${me.t.name}`;$("descA").textContent=me.t.desc;
+    $("descHB").textContent=`${youL} · ${you.t.name}`;$("descB").textContent=you.t.desc;
     // 특별 문항 (a=도전자, b=응답자 기준으로 정의됨)
     const sp=(T.special||[]).filter(s=>R.a[s.q]===s.a&&R.b[s.q]===s.b);
     $("specials").innerHTML=sp.map(s=>`<div class="special"><div class="h">${esc(T.questions[s.q].t)}</div>${esc(s.text)}</div>`).join("");
@@ -177,7 +179,7 @@
       const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
       $("sendResult").onclick=()=>copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");
       $("kakaoRes").onclick=()=>share({url:rurl,btn:"결과 보기",img:T.og.sq,
-        title:`${R.aName} ${ta.name} + ${R.bName} ${tb.name} — ${pct}%`,desc:comboOf(ta.name,tb.name).slice(0,60)+"…"},()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
+        title:`${R.aName||"먼저 답한 사람"} ${ta.name} + ${R.bName||"나"} ${tb.name} — ${pct}%`,desc:comboOf(ta.name,tb.name).slice(0,60)+"…"},()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
     }
     $("restart").onclick=()=>{location.hash="";location.reload();};
     $("nextList").innerHTML=(T.next||[]).map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");

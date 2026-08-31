@@ -73,8 +73,8 @@
   <span class="series" id="ansSeries">💕 우리의 기억</span>
   <div class="qbig"><div class="e" id="qEmoji"></div><div class="t" id="qTitle"></div></div>
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>은(는) 이미 답했어. 네가 답하면 둘의 기억이 같이 열려.</span></div></div>
-  <label class="q" for="nameIn">내 이름</label>
-  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+  <label class="q" for="nameIn">내 이름 <span style="font-weight:500;color:#B3AFBD">(선택)</span></label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="12">
   <div id="fields"></div>
   <button class="btn btn-main" id="sealBtn">답 봉인하기 🔒</button>
   <button class="btn btn-ghost" id="backHome">← 다른 문제 고르기</button>
@@ -143,6 +143,7 @@
 
   /* ---- 상태 ---- */
   const state={set:"couple",q:null,name:"",vals:[],incoming:null,judge:[]};
+  try{state.name=localStorage.getItem("gh_name")||"";}catch(e){}
   const NOW=new Date().getFullYear();
   const ymLabel=v=>v?`${v.split("-")[0]}년 ${parseInt(v.split("-")[1],10)}월`:"";
 
@@ -161,7 +162,7 @@
     state.q=q;state.incoming=incoming;state.vals=q.fields.map(()=>undefined);
     $("qEmoji").textContent=q.emoji;$("qTitle").textContent=q.title;
     $("ansSeries").textContent=M.sets[q.set].emoji+" "+M.series;
-    $("lockedCard").classList.toggle("hidden",!incoming);if(incoming)$("lockName").textContent=incoming.n;
+    $("lockedCard").classList.toggle("hidden",!incoming);if(incoming)$("lockName").textContent=incoming.n||"상대";
     $("nameIn").value=state.name;$("sealBtn").textContent=incoming?"기억 열어보기 💕":"답 봉인하기 🔒";
     const box=$("fields");box.innerHTML="";
     q.fields.forEach((f,i)=>{
@@ -175,7 +176,7 @@
         ys.onchange=upd;ms.onchange=upd;ym.appendChild(ys);ym.appendChild(ms);w.appendChild(ym);
       }else if(f.type==="pick"){
         const pk=document.createElement("div");pk.className="pick";
-        const me=incoming?"나":"나", other=incoming?incoming.n:"상대";
+        const me="나", other=(incoming&&incoming.n)?incoming.n:"상대";
         [me,other].forEach((t,v)=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.setAttribute("aria-pressed","false");
           b.onclick=()=>{state.vals[i]=v;[...pk.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===v));bl.setAttribute("aria-pressed","false");};pk.appendChild(b);});
         w.appendChild(pk);
@@ -192,10 +193,9 @@
     });
     show("s-answer");
   }
-  $("nameIn").oninput=e=>{state.name=e.target.value.trim();};
+  $("nameIn").oninput=e=>{state.name=e.target.value.trim();try{localStorage.setItem("gh_name",state.name);}catch(x){}};
   $("backHome").onclick=()=>{renderHome();show("s-home");history.replaceState(null,"",location.pathname);};
   $("sealBtn").onclick=()=>{
-    if(!state.name){toast("이름을 먼저 적어주세요");$("nameIn").focus();return;}
     if(state.vals.some(v=>v===undefined)){toast("모든 칸에 답하거나 '기억 안 나'를 눌러주세요");return;}
     if(state.incoming){
       const p=state.incoming;let a;try{a=unseal(p.k,p.x);}catch(e){toast("링크가 손상됐어요");return;}
@@ -205,7 +205,7 @@
     const url=baseUrl()+"#i="+encP({v:1,q:state.q.id,n:state.name,k,x});
     $("linkbox").textContent=url;$("sandboxNote").classList.toggle("hidden",!isSandbox());
     $("linkLead").textContent=`"${state.q.title}" — 상대가 답하면 둘의 기억이 같이 열려.`;
-    $("kakaoBtn").onclick=()=>share({url,btn:"기억 맞춰보기",img:M.og.sq,title:`${state.q.emoji} ${state.q.title}`,desc:`${state.name}: ${state.q.hook}`},()=>copy(url,"카톡 공유를 못 열어 링크를 복사했어요"));
+    $("kakaoBtn").onclick=()=>share({url,btn:"기억 맞춰보기",img:M.og.sq,title:`${state.q.emoji} ${state.q.title}`,desc:(state.name?`${state.name}: `:"")+state.q.hook},()=>copy(url,"카톡 공유를 못 열어 링크를 복사했어요"));
     $("copyBtn").onclick=()=>copy(url,"복사됐어요. 카톡에 붙여넣으세요");
     track("memory_q",{q:state.q.id});
     show("s-link");
@@ -224,12 +224,13 @@
   function valText(f,v,aName,bName,isA){
     if(v===null)return "기억 안 나";
     if(f.type==="ym")return ymLabel(v);
-    if(f.type==="pick")return isA?(v===0?aName:bName):(v===0?bName:aName);
+    if(f.type==="pick"){const A=aName||"먼저 답한 사람",B=bName||"나중에 답한 사람";return isA?(v===0?A:B):(v===0?B:A);}
     return v;
   }
   function renderResult(R){
     const q=R.q;$("rEmoji").textContent=q.emoji;$("rTitle").textContent=q.title;
     const me=R.viewer==="b"?{n:R.bName}:{n:R.aName}, you=R.viewer==="b"?{n:R.aName}:{n:R.bName};
+    const meL=me.n?me.n+" (나)":"나", youL=you.n||"상대";
     state.judge=q.fields.map((f,i)=>{const j=autoJudge(f,R.a[i],R.b[i]);return j!==null?j:(R.judge?R.judge[i]:null);});
     const rows=$("frows");rows.innerHTML="";
     q.fields.forEach((f,i)=>{
@@ -238,8 +239,8 @@
       const youV=R.viewer==="b"?valText(f,av,R.aName,R.bName,true):valText(f,bv,R.aName,R.bName,false);
       const d=document.createElement("div");d.className="frow";
       d.innerHTML=`<div class="fl">${esc(f.label)}</div><div class="two">
-        <div class="me"><div class="who">${esc(me.n)} (나)</div><div class="val ${meV==="기억 안 나"?"blank":""}">${esc(meV)}</div></div>
-        <div class="you"><div class="who">${esc(you.n)}</div><div class="val ${youV==="기억 안 나"?"blank":""}">${esc(youV)}</div></div></div>`;
+        <div class="me"><div class="who">${esc(meL)}</div><div class="val ${meV==="기억 안 나"?"blank":""}">${esc(meV)}</div></div>
+        <div class="you"><div class="who">${esc(youL)}</div><div class="val ${youV==="기억 안 나"?"blank":""}">${esc(youV)}</div></div></div>`;
       const j=state.judge[i];
       if(j===null&&R.viewer==="b"){
         const jd=document.createElement("div");jd.className="judge";

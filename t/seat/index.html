@@ -112,8 +112,8 @@
   <div class="board" id="board"></div>
   <div class="legend"><span><i style="background:#D9CFC0"></i>이미 앉은 사람</span><span><i style="background:#fff;border:2px solid var(--terra)"></i>빈자리</span></div>
   <div class="seatlist" id="seatlist"></div>
-  <label class="q" for="nameIn">내 이름 <em>· 결과에 표시돼요</em></label>
-  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="12">
   <button class="btn btn-main" id="goBtn" disabled>자리 정하기</button>
   <p class="hint" id="pickHint">내 자리는 상대가 고르기 전까지 공개되지 않아요</p>
   <a class="homelink" href="../../">다른 놀이 보기 →</a>
@@ -218,6 +218,21 @@ function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.ad
 let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
 async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해 주세요");}
 
+/* ===== 이름(선택) ===== */
+/* 이름은 안 적어도 된다. 링크·기록에는 빈 문자열 그대로 싣고,
+   화면에 그릴 때만 보는 사람 기준으로 "나"/"상대" 를 채운다.
+   (localStorage 에는 이름만 저장한다. 답변·점수는 저장하지 않는다.) */
+const NAME_KEY="gh_name";
+function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
+function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
+const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+/* 이름 뒤 조사. "나"는 "내가", "상대"는 받침이 없어 가/는/를 로 확정된다. */
+const JOSA={"나":["내가","나는","나를"],"상대":["상대가","상대는","상대를"]};
+const subj =l=>JOSA[l]?JOSA[l][0]:l+"이(가)";
+const topic=l=>JOSA[l]?JOSA[l][1]:l+"은(는)";
+const objp =l=>JOSA[l]?JOSA[l][2]:l+"을(를)";
+
+
 /* ===== 상태 ===== */
 const state={name:"",pick:null,incoming:null};
 let madeUrl="";
@@ -233,12 +248,11 @@ function renderPick(){
     b.onclick=()=>{state.pick=i;renderPick();};
     $("seatlist").appendChild(b);
   });
-  $("goBtn").disabled=!(state.pick!=null && state.name);
+  $("goBtn").disabled=(state.pick==null);
 }
-$("nameIn").oninput=e=>{state.name=e.target.value.trim();$("goBtn").disabled=!(state.pick!=null && state.name);};
+$("nameIn").oninput=e=>{state.name=e.target.value.trim();saveName(state.name);};
 $("goBtn").onclick=()=>{
   if(state.pick==null){toast("자리를 골라주세요");return;}
-  if(!state.name){toast("이름을 적어주세요");$("nameIn").focus();return;}
   if(state.incoming){          // 두 번째 사람: 바로 결과
     const p=state.incoming, a=unlock(p.k,p.x);
     if(a==null){toast("링크가 손상됐어요");return;}
@@ -252,38 +266,42 @@ $("goBtn").onclick=()=>{
 };
 $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으세요");
 $("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"나도 고르기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
-  title:`${state.name}은(는) 자리를 정했어. 너는?`, desc:"모임에 30분 늦었다. 웃음소리 쪽? 창가 끝? 고르면 둘의 성향이 나란히."},
+  title:`${state.name?state.name+"은(는) ":""}자리를 정했어. 너는?`, desc:"모임에 30분 늦었다. 웃음소리 쪽? 창가 끝? 고르면 둘의 성향이 나란히."},
   ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
 $("editBtn").onclick=()=>show("s-pick");
 
 function openInvite(p){
   state.incoming=p;
   $("pickTag").textContent="자리 심리 · 초대";
-  $("pickHead").innerHTML=`<b>${esc(p.n)}</b>님은 정했대.<br>너는 어디에 앉을 건데?`;
-  $("lockName").textContent=p.n; $("lockedCard").classList.remove("hidden");
+  const pn=p.n?`<b>${esc(p.n)}</b>님은`:"<b>상대</b>는";
+  $("pickHead").innerHTML=`${pn} 정했대.<br>너는 어디에 앉을 건데?`;
+  $("lockName").textContent=p.n||"상대"; $("lockedCard").classList.remove("hidden");
   $("goBtn").textContent="자리 정하고 결과 보기";
   $("pickHint").textContent="고르는 순간 둘의 자리가 같이 공개돼요";
   renderPick(); show("s-pick");
 }
 
 /* ===== 결과 ===== */
-function card(id, who, name, seat, cls){
+function card(id, tag, name, seat, cls){
   const s=SEATS[seat];
-  $(id).innerHTML=`<div class="seatno">${seat+1}</div><div class="who"><b>${esc(name)}</b>${who}</div>
+  $(id).innerHTML=`<div class="seatno">${seat+1}</div><div class="who"><b>${esc(name)}</b>${tag}</div>
     <div class="name">${esc(s.name)}</div><div class="where">${seat+1}번 · ${esc(s.l)}</div>
     <div class="desc">${esc(s.desc)}</div><div class="tip"><b>옆에 앉으면</b> ${esc(s.tip)}</div>`;
 }
 function renderResult(R){
   const same=R.a===R.b;
+  const meIsA0 = R.viewer==="a";
+  const aL=who(R.aName,meIsA0), bL=who(R.bName,!meIsA0);
+  const nm=n=>n?n+" ":"";
   $("resHead").innerHTML = same
     ? `둘 다 <b>${R.a+1}번</b>을 골랐어요`
-    : `<b>${esc(R.aName)}</b>은(는) ${R.a+1}번,<br><b>${esc(R.bName)}</b>은(는) ${R.b+1}번`;
+    : `<b>${esc(topic(aL))}</b> ${R.a+1}번,<br><b>${esc(topic(bL))}</b> ${R.b+1}번`;
   const cls=[]; cls[R.a]="picked"; if(!same) cls[R.b]="other";
   renderBoard($("resBoard"),cls,null);
-  $("lgA").textContent=R.aName; $("lgB").textContent=same?R.bName+" (같은 자리)":R.bName;
-  const meIsA = R.viewer==="a";
-  card("resA", meIsA?" 나":"", R.aName, R.a);
-  card("resB", meIsA?"":" 나", R.bName, R.b);
+  $("lgA").textContent=aL; $("lgB").textContent=same?bL+" (같은 자리)":bL;
+  const meIsA = meIsA0;
+  card("resA", (meIsA&&R.aName)?" 나":"", aL, R.a);
+  card("resB", (!meIsA&&R.bName)?" 나":"", bL, R.b);
   $("combo").innerHTML=`<div class="h">둘이 같은 모임에 가면</div>${esc(comboOf(R.a,R.b))}`;
   $("guesserActions").classList.add("hidden"); $("notYet").classList.add("hidden"); $("resLinkbox").classList.add("hidden");
   if(R.viewer==="b"){
@@ -291,8 +309,8 @@ function renderResult(R){
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
     $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
     $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
-      title: same ? `둘 다 ${R.a+1}번 자리` : `${R.aName} ${R.a+1}번 · ${R.bName} ${R.b+1}번`,
-      desc:`${R.aName}은(는) ${SEATS[R.a].name}, ${R.bName}은(는) ${SEATS[R.b].name}`},
+      title: same ? `둘 다 ${R.a+1}번 자리` : `${nm(R.aName)}${R.a+1}번 · ${nm(R.bName)}${R.b+1}번`,
+      desc:`${nm(R.aName)}${SEATS[R.a].name}, ${nm(R.bName)}${SEATS[R.b].name}`},
       ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
   }
   $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
@@ -302,6 +320,7 @@ $("restart").onclick=()=>{location.hash="";location.reload();};
 
 /* ===== 진입 ===== */
 (function(){
+  state.name=loadName(); $("nameIn").value=state.name;
   const h=readHash();
   if(h&&h.type==="i"&&h.p&&typeof h.p.k==="number"){openInvite(h.p);return;}
   if(h&&h.type==="r"&&h.p&&typeof h.p.a==="number"&&typeof h.p.b==="number"){

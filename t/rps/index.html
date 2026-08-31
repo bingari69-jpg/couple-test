@@ -135,8 +135,8 @@
     <div style="margin-top:8px;font-size:15px;font-weight:700">비겼어요. 이번엔 <span style="color:var(--gold)">내가 먼저</span> 냅니다.</div>
   </div>
 
-  <label class="q" for="nameIn">내 이름</label>
-  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="12">
 
   <div class="q">무엇을 낼까요?</div>
   <div class="hands" id="makeHands" role="group" aria-label="패 선택"></div>
@@ -166,12 +166,12 @@
     <div class="rounds" id="openRounds"></div>
   </div>
 
-  <label class="q" for="myNameIn">내 이름 <em>· 결과에 표시돼요</em></label>
-  <input type="text" id="myNameIn" placeholder="이름 또는 별명" maxlength="12">
+  <label class="q" for="myNameIn">내 이름 (선택)</label>
+  <input type="text" id="myNameIn" placeholder="비워도 돼요" maxlength="12">
 
   <div class="q">무엇을 낼까요?</div>
   <div class="hands" id="openHands" role="group" aria-label="패 선택"></div>
-  <p class="hint" id="openHint">이름을 적으면 고를 수 있어요</p>
+  <p class="hint" id="openHint">한 번 고르면 되돌릴 수 없어요</p>
 </section>
 
 <!-- ============ 결과 ============ -->
@@ -280,12 +280,41 @@ function readHash(){
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
+/* ===== 이름(선택) · 플레이어 식별자 ===== */
+/* 이름은 안 적어도 된다. 링크에는 빈 문자열 그대로 싣고,
+   화면에 그릴 때만 보는 사람 기준으로 "나"/"상대" 를 채운다.
+   비긴 판이 이어지거나 복수전일 때 누가 누구인지는
+   이름 대신 링크에 실린 짧은 무작위 id 로 가른다.
+   (localStorage 에는 이름만 저장한다. 답·패·전적은 저장하지 않는다.) */
+const NAME_KEY="gh_name";
+function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
+function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
+function rid(){return Math.random().toString(36).slice(2,8);}
+const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+/* 이름이 있으면 이름, 없으면 나/상대. 내 쪽이면 "(나)" 를 붙인다. */
+const whoMine=(nm,isMe)=>nm?(nm+(isMe?" (나)":"")):(isMe?"나":"상대");
+/* 이력 한 줄 [cName,cHand,rHand,cMsg,cId,rId] 에서 내가 도전자 쪽인지 판정.
+   새 링크는 id로, 옛 링크는 이름으로. */
+function meIsC(r,meId,meName){
+  const ci=r[4],ri=r[5];
+  if(meId){ if(ci===meId) return true; if(ri===meId) return false; }
+  return r[0]===meName;
+}
+/* 복수전 prev [cName,cHand,rHand,cMsg,rName,cId,rId] → 이력 한 줄 모양 */
+const prevRow=pv=>pv?[pv[0],pv[1],pv[2],pv[3],pv[5]||"",pv[6]||""]:null;
+/* 상대 id를 알 때 이력에서 내 id를 되찾는다. 첫 판이면 빈 문자열. */
+function myIdFrom(rows,theirId){
+  for(const r of rows||[]){ if(!r) continue; const ci=r[4],ri=r[5];
+    if(ci&&ri){ if(ci===theirId) return ri; if(ri===theirId) return ci; } }
+  return "";
+}
+
 /* ===== 상태 ===== */
 const state = {
-  name:"", hand:null, msg:0,
-  hist:[],          // [[challengerName, cHand, rHand, cMsg], ...]  이전 라운드들
+  name:"", id:"", theirId:"", hand:null, msg:0,
+  hist:[],          // [[cName, cHand, rHand, cMsg, cId, rId], ...]  이전 라운드들
   rv:0,             // 복수전 여부
-  prev:null,        // 복수전일 때 지난 판 결과 [cName, cHand, rHand, cMsg, rName]
+  prev:null,        // 복수전일 때 지난 판 결과 [cName, cHand, rHand, cMsg, rName, cId, rId]
   incoming:null     // 열어본 도전장 payload
 };
 let madeUrl="";
@@ -311,8 +340,10 @@ function handsInto(boxId, onPick){
     b.onclick=()=>onPick(i,box); box.appendChild(b);
   });
 }
-function histText(hist){
-  return hist.map((r,i)=>`${i+1}판 · ${r[0]} ${HANDS[r[1]].e} vs ${HANDS[r[2]].e} 비김`).join("<br>");
+function histText(hist,meId,meName){
+  return hist.map((r,i)=>{const isC=meIsC(r,meId,meName);
+    return `${i+1}판 · ${esc(who(r[0],isC))} ${HANDS[r[1]].e} vs ${HANDS[r[2]].e} 비김`;
+  }).join("<br>");
 }
 
 /* ===== 도전장 만들기 ===== */
@@ -330,21 +361,20 @@ handsInto("makeHands",(i,box)=>{
     box.appendChild(b);
   });
 })();
-$("nameIn").oninput=e=>{state.name=e.target.value.trim(); hideLink();};
+$("nameIn").oninput=e=>{state.name=e.target.value.trim(); saveName(state.name); hideLink();};
 function hideLink(){ ["linkbox","copyBtn","kakaoBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
 
 $("makeBtn").onclick=()=>{
-  if(!state.name){toast("이름을 먼저 적어주세요"); $("nameIn").focus(); return;}
   if(state.hand==null){toast("패를 먼저 골라주세요");return;}
   const {k,x}=lockHand(state.hand);
-  const p={v:1, n:state.name, k, x, m:state.msg, h:state.hist, rv:state.rv};
+  const p={v:1, n:state.name, i:state.id, k, x, m:state.msg, h:state.hist, rv:state.rv};
   if(state.prev) p.prev=state.prev;
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   $("linkbox").textContent=madeUrl;
   $("copyBtn").classList.remove("hidden"); $("kakaoBtn").classList.remove("hidden");
   $("kakaoBtn").onclick=()=>kakaoShare({
     url:madeUrl, btn:"도전 받기",
-    title:`${state.name||"상대"}의 가위바위보 도전장 🔒`,
+    title:`${state.name?state.name+"의 ":""}가위바위보 도전장 🔒`,
     desc: state.hist.length ? `${state.hist.length}판 비긴 뒤 ${state.hist.length+1}판째. 내 패는 네가 고른 뒤 공개.` : "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
   });
   $("makeBtn").textContent="도전장 다시 만들기";
@@ -356,31 +386,29 @@ $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으�
 /* ===== 도전장 열기 ===== */
 function openChallenge(p){
   state.incoming=p;
-  $("openName").textContent=p.n; $("openName2").textContent=p.n;
+  state.theirId=p.i||"";
+  state.id=myIdFrom(p.h,state.theirId)||myIdFrom([prevRow(p.prev)],state.theirId)||state.id||rid();
+  $("openName").textContent=p.n||"상대"; $("openName2").textContent=p.n||"상대";
   if(p.m && MSGS[p.m]){ $("openMsg").textContent=MSGS[p.m]; $("openMsg").classList.remove("hidden"); }
   else { $("openMsg").textContent="(아무 말도 남기지 않았습니다)"; }
   const r=(p.h||[]).length;
   let roundsHtml = r ? `이전 ${r}판 비김 · 지금은 <b style="color:var(--gold)">${r+1}판</b>` : "";
   if(p.prev){
-    const [pc,ph,prh,pm,prn]=p.prev;
+    const [pc,ph,prh,pm,prn,pci,pri]=p.prev;
     const po=outcome(ph,prh);
-    const winner = po==="c"?pc:(po==="r"?prn:null);
+    const pcL=who(pc,pci===state.id), prnL=who(prn,pri===state.id);
+    const winner = po==="c"?pcL:(po==="r"?prnL:null);
     roundsHtml = `<div style="margin-top:6px;padding:10px 12px;background:rgba(255,78,106,.08);border:1px solid rgba(255,78,106,.3);border-radius:10px;color:var(--ink)">
-      <b style="color:var(--red)">복수전</b> · 지난 판 ${esc(pc)} ${HANDS[ph].e} vs ${esc(prn)} ${HANDS[prh].e}
+      <b style="color:var(--red)">복수전</b> · 지난 판 ${esc(pcL)} ${HANDS[ph].e} vs ${esc(prnL)} ${HANDS[prh].e}
       → <b>${winner?esc(winner)+" 승":"비김"}</b></div>` + (roundsHtml?`<div style="margin-top:6px">${roundsHtml}</div>`:"");
   }
   $("openRounds").innerHTML = roundsHtml;
   handsInto("openHands",(i,box)=>{
-    if(!$("myNameIn").value.trim()){ toast("이름을 먼저 적어주세요"); $("myNameIn").focus(); return; }
     [...box.children].forEach((c,j)=>{c.setAttribute("aria-pressed",j===i); c.classList.add("locked"); c.disabled=true;});
     respond(i);
   });
-  const setLock=()=>{
-    const ok=!!$("myNameIn").value.trim();
-    [...$("openHands").children].forEach(c=>c.classList.toggle("locked",!ok));
-    $("openHint").textContent = ok ? "한 번 고르면 되돌릴 수 없어요" : "이름을 적으면 고를 수 있어요";
-  };
-  $("myNameIn").oninput=setLock; setLock();
+  $("myNameIn").value=loadName();
+  $("myNameIn").oninput=e=>saveName(e.target.value.trim());
   show("s-open");
 }
 function respond(myHand){
@@ -388,13 +416,12 @@ function respond(myHand){
   const theirHand=unlockHand(p.k,p.x);
   if(theirHand==null){ toast("도전장이 손상됐어요. 다시 받아주세요"); return; }
   const myName=$("myNameIn").value.trim();
-  if(!myName){ toast("이름을 먼저 적어주세요"); return; }
   countdown(()=>{
-    const round=[p.n, theirHand, myHand, p.m];
+    const round=[p.n, theirHand, myHand, p.m, p.i||"", state.id];
     const hist=[...(p.h||[]), round];
     renderResult({
       hist, rv:p.rv||0,
-      cName:p.n, rName:myName,
+      cName:p.n, rName:myName, cId:p.i||"", rId:state.id,
       cHand:theirHand, rHand:myHand, cMsg:p.m||0,
       viewer:"responder"
     });
@@ -429,9 +456,11 @@ function titleFor(o, cMsg, cHand, hist, rv, winnerIsC){
 function renderResult(R){
   const o=outcome(R.cHand,R.rHand);
   const me = R.viewer==="responder" ? "r" : "c";
+  const cL = whoMine(R.cName, me==="c"), rL = whoMine(R.rName, me==="r");
+  const cN = who(R.cName, me==="c"),     rN = who(R.rName, me==="r");
   // 화면 왼쪽 = 도전자, 오른쪽 = 응답자. 보는 사람 쪽에 (나) 표시
-  $("handA").textContent=HANDS[R.cHand].e; $("nameA").textContent=R.cName + (me==="c"?" (나)":"");
-  $("handB").textContent=HANDS[R.rHand].e; $("nameB").textContent=R.rName + (me==="r"?" (나)":"");
+  $("handA").textContent=HANDS[R.cHand].e; $("nameA").textContent=cL;
+  $("handB").textContent=HANDS[R.rHand].e; $("nameB").textContent=rL;
   ["sideA","sideB"].forEach(id=>$(id).classList.remove("win","lose"));
   $("verdict").className="verdict";
   const iWon = o===me;
@@ -439,7 +468,7 @@ function renderResult(R){
     $("verdict").classList.add("tie"); $("verdict").textContent="비겼습니다";
     $("subVerdict").textContent=`${HANDS[R.cHand].l} vs ${HANDS[R.cHand].l}. 승부가 나지 않았어요.`;
   }else{
-    const wName = o==="c"?R.cName:R.rName, lName = o==="c"?R.rName:R.cName;
+    const wName = o==="c"?cN:rN, lName = o==="c"?rN:cN;
     const wHand = o==="c"?R.cHand:R.rHand, lHand = o==="c"?R.rHand:R.cHand;
     $(o==="c"?"sideA":"sideB").classList.add("win"); $(o==="c"?"sideB":"sideA").classList.add("lose");
     $("verdict").classList.add(iWon?"win":"lose");
@@ -454,7 +483,7 @@ function renderResult(R){
   else{
     $("lieBox").classList.remove("hidden");
     $("lieBox").innerHTML =
-      `<b>${esc(R.cName)}</b>의 선언 — "${MSGS[R.cMsg]}"<br>` +
+      `<b>${esc(cN)}</b>의 선언 — "${MSGS[R.cMsg]}"<br>` +
       `실제로 낸 것: <b>${HANDS[R.cHand].l}</b>` +
       `<span class="flag ${tr?'t':'f'}">${tr?"진실이었습니다":"거짓말이었습니다"}</span>`;
   }
@@ -469,7 +498,7 @@ function renderResult(R){
   if(o==="tie"){
     if(R.viewer==="responder"){
       $("tieActions").classList.remove("hidden");
-      $("tieNext").onclick=()=>{ startNext(R.hist, R.rName, R.rv); };
+      $("tieNext").onclick=()=>{ startNext(R.hist, R.rName, R.rv, null, R.rId||""); };
     }
   }else if(R.viewer==="responder"){
     $("doneActions").classList.remove("hidden");
@@ -477,37 +506,41 @@ function renderResult(R){
     const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
     $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
-    { const wName = o==="c"?R.cName:R.rName;
+    { const nm=n=>n?n+" ":"";
+      const wRaw = o==="c"?R.cName:R.rName;
+      const tail = wRaw?` — ${wRaw} 승`:"";
       $("kakaoRes").onclick=()=>kakaoShare({
         url:rurl, btn:"결과 보기",
-        title:`${R.cName} ${HANDS[R.cHand].e} vs ${R.rName} ${HANDS[R.rHand].e} — ${wName} 승`,
+        title:`${nm(R.cName)}${HANDS[R.cHand].e} vs ${nm(R.rName)}${HANDS[R.rHand].e}${tail}`,
         desc:"가위바위보 결과가 나왔어요. 복수전은 여기서."
       }); }
-    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName];
-    $("revenge").onclick=()=>{ startNext([], R.rName, 1, prev); };
+    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName,R.cId||"",R.rId||""];
+    $("revenge").onclick=()=>{ startNext([], R.rName, 1, prev, R.rId||""); };
   }else{
     $("viewActions").classList.remove("hidden");
     $("notYet").classList.add("hidden");
-    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName];
-    $("revenge2").onclick=()=>{ startNext([], R.cName, 1, prev); };
+    const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName,R.cId||"",R.rId||""];
+    $("revenge2").onclick=()=>{ startNext([], R.cName, 1, prev, R.cId||""); };
   }
   if(o==="tie") $("notYet").classList.add("hidden");
   show("s-result");
 }
 /* 비긴 뒤 다음 판 / 복수전 → 도전장 만들기 화면으로 (이력·이름 유지) */
-function startNext(hist, myName, rv, prev){
+function startNext(hist, myName, rv, prev, myId){
   state.hist=hist; state.rv=rv; state.prev=prev||null; state.hand=null; state.msg=0; state.name=myName;
+  state.id=myId||state.id||rid();
   $("nameIn").value=myName; hideLink();
   [...$("makeHands").children].forEach(c=>c.setAttribute("aria-pressed","false"));
   [...$("msgChips").children].forEach((c,j)=>c.setAttribute("aria-pressed",j===0));
   $("makeBtn").disabled=true;
-  if(hist.length){ $("tieHist").innerHTML=histText(hist);
+  if(hist.length){ $("tieHist").innerHTML=histText(hist,state.id,myName);
     $("tieNote").querySelector("div:last-child").innerHTML=`비겼어요. 이번엔 <span style="color:var(--gold)">내가 먼저</span> 냅니다.`;
     $("tieNote").classList.remove("hidden"); $("makeLead").textContent="비겼으니 이번엔 내가 먼저 냅니다. 상대는 고른 뒤에야 볼 수 있어요."; }
   else if(prev){
-    const [pc,ph,prh,pm,prn]=prev; const po=outcome(ph,prh);
-    const winner = po==="c"?pc:(po==="r"?prn:null);
-    $("tieHist").innerHTML=`지난 판 ${esc(pc)} ${HANDS[ph].e} vs ${esc(prn)} ${HANDS[prh].e} → <b>${winner?esc(winner)+" 승":"비김"}</b>`;
+    const [pc,ph,prh,pm,prn,pci,pri]=prev; const po=outcome(ph,prh);
+    const pcL=who(pc,pci===state.id), prnL=who(prn,pri===state.id);
+    const winner = po==="c"?pcL:(po==="r"?prnL:null);
+    $("tieHist").innerHTML=`지난 판 ${esc(pcL)} ${HANDS[ph].e} vs ${esc(prnL)} ${HANDS[prh].e} → <b>${winner?esc(winner)+" 승":"비김"}</b>`;
     $("tieNote").querySelector("div:last-child").innerHTML=`<span style="color:var(--red)">복수전</span>입니다. 이번엔 내가 먼저 냅니다. 이 도전장에 지난 판 결과가 같이 실려요.`;
     $("tieNote").classList.remove("hidden");
     $("makeLead").textContent="복수전 도전장입니다. 상대는 고른 뒤에야 내 패를 볼 수 있어요.";
@@ -519,12 +552,15 @@ function startNext(hist, myName, rv, prev){
 
 /* ===== 진입 ===== */
 (function(){
+  state.id=rid();
+  state.name=loadName(); $("nameIn").value=state.name;
   const h=readHash();
   if(!h){ show("s-make"); return; }
   if(h.type==="c" && h.p && typeof h.p.k==="number"){ openChallenge(h.p); return; }
   if(h.type==="r" && h.p && Array.isArray(h.p.h) && h.p.h.length){
     const last=h.p.h[h.p.h.length-1];
-    renderResult({ hist:h.p.h, rv:h.p.rv||0, cName:last[0], rName:h.p.rn||"상대",
+    renderResult({ hist:h.p.h, rv:h.p.rv||0, cName:last[0], rName:h.p.rn||"",
+      cId:last[4]||"", rId:last[5]||"",
       cHand:last[1], rHand:last[2], cMsg:last[3]||0, viewer:"challenger" });
     return;
   }

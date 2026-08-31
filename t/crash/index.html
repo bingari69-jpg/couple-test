@@ -181,8 +181,8 @@
     </div>
 
     <div class="actions">
-      <label class="axis" for="myNameIn" style="text-align:left">이름 또는 별명</label>
-      <input type="text" id="myNameIn" maxlength="10" placeholder="예: 지훈"
+      <label class="axis" for="myNameIn" style="text-align:left">내 이름 (선택)</label>
+      <input type="text" id="myNameIn" maxlength="10" placeholder="비워도 돼요"
         style="width:100%;background:var(--panel);border:1px solid var(--line);color:var(--paper);border-radius:10px;padding:13px 14px;font:inherit;font-size:16px">
       <button class="btn btn-main" id="makeLink">비교 링크 만들기</button>
       <div class="linkbox hidden" id="linkbox"></div>
@@ -359,6 +359,15 @@ function finish(){
   invite ? showCompare() : showMine();
 }
 
+/* ===== 이름(선택) ===== */
+/* 이름은 안 적어도 된다. 링크·기록에는 빈 문자열 그대로 싣고,
+   화면에 그릴 때만 보는 사람 기준으로 "나"/"상대" 를 채운다.
+   (localStorage 에는 이름만 저장한다. 답변·점수는 저장하지 않는다.) */
+const NAME_KEY="gh_name";
+function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
+function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
+const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+
 /* ===== 내 결과 ===== */
 function showMine(){
   const t=typeOf(ans), info=TEST.types[t], s=scoreOf(ans);
@@ -371,7 +380,7 @@ function showMine(){
 }
 document.getElementById("makeLink").onclick=()=>{
   const nm=(document.getElementById("myNameIn").value||"").trim();
-  if(!nm){ toast("이름을 먼저 적어주세요"); document.getElementById("myNameIn").focus(); return; }
+  saveName(nm);
   const url=baseUrl()+"#i="+b64e(JSON.stringify({v:TEST.version,n:nm,a:ans}));
   const box=document.getElementById("linkbox");
   box.textContent=url;
@@ -383,7 +392,7 @@ document.getElementById("makeLink").onclick=()=>{
   document.getElementById("kakaoBtn").onclick=()=>kakaoShare({
     url:url, btn:"나도 답하기",
     img:"https://bingari69-jpg.github.io/couple-test/og/og-crash-sq.png",
-    title:`${nm}의 추락 테스트, 너라면?`,
+    title:`${nm?nm+"의 ":""}추락 테스트, 너라면?`,
     desc:"정답 없는 10개 상황. 둘의 선택이 어디서 갈리는지 보여줘."
   }, ()=>document.getElementById("copyLink").click());
   toast("링크가 만들어졌어요");
@@ -396,8 +405,11 @@ document.getElementById("copyLink").onclick=async()=>{
 function showCompare(p){
   const A = p ? p.a  : invite.a;      // 초대한 사람
   const B = p ? p.a2 : ans;           // 답한 사람
-  const nA= p ? p.n  : invite.n;
-  const nB= p ? p.n2 : "나";
+  // 결과 링크(p)를 보는 사람은 초대한 쪽(A), 방금 답한 사람이 보면 답한 쪽(B)
+  const nAraw = p ? p.n  : invite.n;
+  const nBraw = p ? p.n2 : (document.getElementById("myNameIn").value||"").trim();
+  const nA= who(nAraw, !!p);
+  const nB= who(nBraw, !p);
   let same=0;
   const box=document.getElementById("diffBox"); box.innerHTML="";
   const diffs=[];
@@ -421,7 +433,7 @@ function showCompare(p){
     box.appendChild(d);
   });
   if(!p){
-    const url=baseUrl()+"#r="+b64e(JSON.stringify({v:TEST.version,n:invite.n,a:invite.a,n2:nB,a2:ans}));
+    const url=baseUrl()+"#r="+b64e(JSON.stringify({v:TEST.version,n:invite.n,a:invite.a,n2:nBraw,a2:ans}));
     window.__url2=url;
   }
   document.getElementById("shareResult").classList.toggle("hidden",!!p);
@@ -449,11 +461,12 @@ document.getElementById("retry").onclick=()=>{location.hash="";ans=[];cur=0;show
 document.getElementById("retry2").onclick=()=>{location.hash="";invite=null;ans=[];cur=0;show("v-intro");};
 
 (function(){
+  document.getElementById("myNameIn").value=loadName();
   const h=readHash();
   if(h && h.kind==="i" && Array.isArray(h.data.a)){
     invite=h.data;
     document.getElementById("invTitle").innerHTML=
-      esc(invite.n)+"님이<br><span style='color:var(--amber)'>선택을 남겼습니다</span>";
+      (invite.n?esc(invite.n)+"님이":"상대가")+"<br><span style='color:var(--amber)'>선택을 남겼습니다</span>";
     show("v-invited");
   } else if(h && h.kind==="r" && Array.isArray(h.data.a) && Array.isArray(h.data.a2)){
     showCompare(h.data);
