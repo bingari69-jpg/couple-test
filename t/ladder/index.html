@@ -130,7 +130,7 @@
 <section class="screen hidden" id="s-share">
   <span class="tag">봉인 완료</span>
   <h1>사다리가<br><b>만들어졌어.</b></h1>
-  <div class="card"><div class="lockrow"><span class="e">🔒</span><span id="sealNote">결과는 방금 봉인됐어요. 링크를 열면 누구나 같은 사다리를 봐요.</span></div></div>
+  <div class="card"><div class="lockrow"><span class="e">🔒</span><span id="sealNote">결과는 방금 봉인됐어요. 톡방에 보낸 뒤, 받은 링크를 열어 다 같이 확인하세요</span></div></div>
   <p class="lead" id="shareLead"></p>
 
   <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 보내기</button>
@@ -138,8 +138,6 @@
   <div class="linkbox hidden" id="linkbox"></div>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
 
-  <button class="btn btn-blue" id="openMine">나도 내 결과 보기 →</button>
-  <button class="btn btn-sub" id="retry">참가자 다시 넣기</button>
   <a class="homelink" href="../../">다른 놀이 보기 →</a>
 </section>
 
@@ -354,8 +352,9 @@ $("kakaoBtn").onclick=()=>share({
   title:"🪜 사다리타기 — 오늘의 운명은?",
   desc:`${state.made?state.made.ns.length:0}명이 참가해요. 내 결과 확인하기`
 }, ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어"));
-$("openMine").onclick=()=>{ location.hash=madeUrl.slice(madeUrl.indexOf("#")+1); openLadder(state.made); };
-$("retry").onclick=()=>{ location.hash=""; location.reload(); };
+/* 공유 화면에서 결과로 넘어가는 길은 두지 않는다.
+   주최자가 결과를 먼저 보고 마음에 안 들면 다시 만드는 걸 막기 위해,
+   주최자도 톡방에 보낸 링크를 열어서 확인한다. */
 
 /* ===== 열람 화면 ===== */
 let view=null;   // {p, n, rows, rungs, map, geom}
