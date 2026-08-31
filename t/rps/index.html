@@ -73,6 +73,7 @@
   .btn-main:hover:not(:disabled){filter:brightness(1.06)}
   .btn-sub{background:transparent;color:var(--sub);border:1px solid var(--line);font-weight:500}
   .btn-sub:hover{border-color:#4a4f8a;color:var(--ink)}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
   .btn-red{background:var(--red);color:#fff}
 
   .linkbox{margin-top:12px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:13px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:80px;overflow:auto}
@@ -145,7 +146,7 @@
 
   <button class="btn btn-main" id="makeBtn" disabled>도전장 만들기</button>
   <button class="btn btn-main hidden" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
-  <button class="btn btn-sub hidden" id="copyBtn">링크만 복사</button>
+  <button class="btn btn-ghost hidden" id="copyBtn">링크만 복사</button>
   <div class="linkbox hidden" id="linkbox"></div>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
   <p class="hint">결과는 상대가 고른 뒤 동시에 공개됩니다</p>
@@ -196,7 +197,7 @@
   </div>
   <div id="doneActions" class="hidden">
     <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
-    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
     <button class="btn btn-red" id="revenge">복수전 신청</button>
   </div>
@@ -339,7 +340,7 @@ $("makeBtn").onclick=()=>{
   const p={v:1, n:state.name, k, x, m:state.msg, h:state.hist, rv:state.rv};
   if(state.prev) p.prev=state.prev;
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
-  $("linkbox").textContent=madeUrl; $("linkbox").classList.remove("hidden");
+  $("linkbox").textContent=madeUrl;
   $("copyBtn").classList.remove("hidden"); $("kakaoBtn").classList.remove("hidden");
   $("kakaoBtn").onclick=()=>kakaoShare({
     url:madeUrl, btn:"도전 받기",
@@ -475,7 +476,7 @@ function renderResult(R){
     $("notYet").classList.remove("hidden");
     const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
-    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
     { const wName = o==="c"?R.cName:R.rName;
       $("kakaoRes").onclick=()=>kakaoShare({
         url:rurl, btn:"결과 보기",

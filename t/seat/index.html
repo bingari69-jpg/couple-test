@@ -124,9 +124,9 @@
   <span class="tag">준비 완료</span>
   <h1>내 자리는 정했어.<br><b>너는 어디 앉을 건데?</b></h1>
   <p class="lead">상대가 고르면 둘의 자리와 성향이 나란히 나와요.</p>
-  <div class="linkbox" id="linkbox"></div>
+  <div class="linkbox hidden" id="linkbox"></div>
   <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 보내기 — 어디 앉을 건데?</button>
-  <button class="btn btn-sub" id="copyBtn">링크만 복사</button>
+  <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
   <button class="btn btn-ghost" id="editBtn">자리 다시 고르기</button>
 </section>
@@ -143,7 +143,7 @@
   <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과를 몰라요.</b><br><span style="color:var(--sub)">결과 링크를 보내야 상대도 둘의 성향을 볼 수 있어요.</span></div>
   <div id="guesserActions" class="hidden">
     <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
-    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
   </div>
   <button class="btn btn-sub" id="restart">나도 처음부터 해보기</button>
@@ -289,7 +289,7 @@ function renderResult(R){
   if(R.viewer==="b"){
     $("guesserActions").classList.remove("hidden"); $("notYet").classList.remove("hidden");
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
-    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;$("resLinkbox").classList.remove("hidden");copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
+    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
     $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
       title: same ? `둘 다 ${R.a+1}번 자리` : `${R.aName} ${R.a+1}번 · ${R.bName} ${R.b+1}번`,
       desc:`${R.aName}은(는) ${SEATS[R.a].name}, ${R.bName}은(는) ${SEATS[R.b].name}`},

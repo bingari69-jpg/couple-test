@@ -90,6 +90,7 @@
   .btn-main:hover{filter:brightness(1.07)}
   .btn-sub{background:transparent;color:var(--dim);border:1px solid var(--line);font-weight:500}
   .btn-sub:hover{border-color:var(--amber);color:var(--paper)}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
   .actions{margin-top:26px;display:flex;flex-direction:column;gap:10px}
 
   /* ---- 결과 ---- */
@@ -186,7 +187,7 @@
       <button class="btn btn-main" id="makeLink">비교 링크 만들기</button>
       <div class="linkbox hidden" id="linkbox"></div>
       <button class="btn hidden" id="kakaoBtn" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 보내기</button>
-      <button class="btn btn-main hidden" id="copyLink">링크만 복사</button>
+      <button class="btn btn-ghost hidden" id="copyLink">링크만 복사</button>
       <button class="btn btn-sub" id="retry">다시 하기</button>
     </div>
     <p class="hint hidden" id="sandboxNote">지금은 미리보기 창 안이라 링크가 열리지 않습니다. 배포한 뒤 확인해 주세요.</p>
@@ -212,7 +213,7 @@
     <div class="diff" id="diffBox"></div>
     <div class="actions">
       <button class="btn" id="kakaoRes" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 결과 보내기</button>
-      <button class="btn btn-main" id="shareResult">링크만 복사</button>
+      <button class="btn btn-ghost" id="shareResult">링크만 복사</button>
       <div class="linkbox hidden" id="linkbox2"></div>
       <button class="btn btn-sub" id="retry2">나도 처음부터 해보기</button>
     </div>
@@ -373,7 +374,7 @@ document.getElementById("makeLink").onclick=()=>{
   if(!nm){ toast("이름을 먼저 적어주세요"); document.getElementById("myNameIn").focus(); return; }
   const url=baseUrl()+"#i="+b64e(JSON.stringify({v:TEST.version,n:nm,a:ans}));
   const box=document.getElementById("linkbox");
-  box.textContent=url; box.classList.remove("hidden");
+  box.textContent=url;
   document.getElementById("copyLink").classList.remove("hidden");
   document.getElementById("makeLink").textContent="링크 다시 만들기";
   document.getElementById("sandboxNote").classList.toggle("hidden",!isSandbox());
@@ -436,7 +437,7 @@ document.getElementById("kakaoRes").onclick=()=>kakaoShare({
 }, ()=>document.getElementById("shareResult").click());
 document.getElementById("shareResult").onclick=async()=>{
   const box=document.getElementById("linkbox2");
-  box.textContent=window.__url2; box.classList.remove("hidden");
+  box.textContent=window.__url2;
   toast(await copyText(window.__url2) ? "결과 링크가 복사됐어요" : "링크를 길게 눌러 복사해 주세요");
 };
 

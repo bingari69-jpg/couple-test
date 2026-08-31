@@ -59,6 +59,7 @@
   .btn-main{background:var(--yellow);color:var(--ink)}
   .btn-blue{background:var(--blue);color:#fff}
   .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
   .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
   .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
   .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
@@ -118,9 +119,9 @@
   <button class="bigbtn start" id="bigBtn">시작</button>
 
   <div id="afterPlay" class="hidden">
-    <div class="linkbox" id="linkbox"></div>
+    <div class="linkbox hidden" id="linkbox"></div>
     <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
-    <button class="btn btn-sub" id="copyBtn">링크만 복사</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
     <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
     <p class="hint">기회는 한 번. 다시 하기 없음 — 상대도 한 번이니까 공평하게.</p>
   </div>
@@ -142,7 +143,7 @@
   <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
   <div id="respActions" class="hidden">
     <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
-    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
     <button class="btn btn-blue" id="again">재도전 — 한 판 더</button>
   </div>
@@ -284,7 +285,7 @@ function renderResult(R){
   if(R.viewer==="b"){
     $("respActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,h:R.hist}));
-    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;$("resLinkbox").classList.remove("hidden");copy(rurl,"결과 링크 복사됐어. 상대에게 보내");};
+    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크 복사됐어. 상대에게 보내");};
     { const wn = o==="win"?me.n:(o==="lose"?them.n:null);
       $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
         title:`${me.n} ${fmt(me.ms)} vs ${them.n} ${fmt(them.ms)}${wn?` — ${wn} 승`:" — 무승부"}`,

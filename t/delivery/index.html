@@ -146,9 +146,9 @@
   <span class="tag">준비 완료</span>
   <h1>내 답을 숨겨뒀어.<br><b>이제 맞혀보라고</b> 보내자.</h1>
   <p class="lead">상대는 문항마다 내가 뭘 골랐을지 찍어. 하나 찍을 때마다 정답이 공개돼.</p>
-  <div class="linkbox" id="linkbox"></div>
+  <div class="linkbox hidden" id="linkbox"></div>
   <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 보내기 — 맞혀보라고</button>
-  <button class="btn btn-sub" id="copyBtn">링크만 복사</button>
+  <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
   <button class="btn btn-ghost" id="editBtn">답 다시 고르기</button>
 </section>
@@ -191,7 +191,7 @@
   <div id="guesserActions" class="hidden">
     <button class="btn btn-main" id="mineToo">나도 답하기 — 이번엔 상대가 나를 맞히게</button>
     <button class="btn btn-sub" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
-    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
   </div>
   <div id="ownerActions" class="hidden">
@@ -368,7 +368,7 @@ function renderResult(R){
     $("notYet").classList.remove("hidden");
     const rp={v:1, of:R.owner, by:R.guesser, score:R.score, miss:R.misses.map(m=>[m.i,m.g]), prev:R.prev||undefined};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
-    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
     $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-delivery-sq.png",
       title:`${R.guesser}은(는) ${R.owner}을(를) ${R.score}/10 안다`, desc:titleFor(R.score)[1]},
       ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));

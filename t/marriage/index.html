@@ -203,10 +203,10 @@ input::placeholder{color:#C6C1CC}
     상대가 답을 마치면, 서로 어디가 같고<br>어디가 다른지 <b>둘 다</b> 볼 수 있어요.
   </p>
   <div class="card">
-    <p class="small" style="margin-bottom:4px">상대에게 보낼 링크</p>
-    <div class="linkbox" id="shareLink"></div>
+    <p class="small" style="margin-bottom:4px;display:none">상대에게 보낼 링크</p>
+    <div class="linkbox" id="shareLink" style="display:none"></div>
     <button class="btn" id="kakaoBtn" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 보내기</button>
-    <button class="btn" id="shareBtn">링크만 복사</button>
+    <button class="btn ghost" id="shareBtn">링크만 복사</button>
   </div>
   <p class="center small">상대가 열기 전까지 내 답은 아무도 볼 수 없어요</p>
   <div class="spacer"></div>
@@ -260,7 +260,7 @@ input::placeholder{color:#C6C1CC}
       이 결과, <b id="sendBackName"></b>님도 봐야죠</p>
     <p class="small" style="margin-bottom:10px">두 사람의 답이 모두 담긴 결과 링크예요</p>
     <button class="btn" id="kakaoRes" style="background:#FEE500;color:#191600;width:100%;border:none;border-radius:14px;padding:16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;margin-bottom:8px">💬 카톡으로 결과 보내기</button>
-    <button class="btn" id="sendBackBtn">링크만 복사</button>
+    <button class="btn ghost" id="sendBackBtn">링크만 복사</button>
   </div>
 
   <button class="btn ghost" id="restartBtn">우리도 처음부터 해보기</button>

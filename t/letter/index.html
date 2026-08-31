@@ -107,6 +107,7 @@
   .btn-main{background:var(--moon);color:var(--night)}
   .btn-sub{background:transparent;color:#9AA0C4;border:1px solid var(--night-3);font-weight:500}
   .btn-sub:hover{border-color:#4A5090;color:#B6BBDC}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
   .linkbox{margin-top:12px;background:var(--night-2);border:1px solid var(--night-3);border-radius:12px;padding:13px 14px;font-family:'IBM Plex Mono',monospace;font-size:12px;color:#8C92BC;word-break:break-all;line-height:1.6;max-height:88px;overflow:auto}
   .homelink{display:block;text-align:center;font-size:12.5px;color:#666C96;text-decoration:none;margin-top:22px}
   .homelink:hover{color:#B6BBDC}
@@ -235,7 +236,7 @@
     <button class="btn btn-main" id="makeLink">편지 링크 만들기</button>
     <div class="linkbox hidden" id="linkbox"></div>
     <button class="btn btn-main hidden" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 편지 보내기</button>
-    <button class="btn btn-sub hidden" id="copyLink">링크만 복사</button>
+    <button class="btn btn-ghost hidden" id="copyLink">링크만 복사</button>
     <button class="btn btn-sub hidden" id="previewBtn">받는 사람 화면 미리보기</button>
     <p class="hint hidden" id="sandboxNote">지금은 미리보기 창 안이라 링크가 열리지 않습니다. 배포한 뒤 확인해 주세요.</p>
     <button class="btn btn-sub tmode" id="allBtn">전체 다시 뽑기</button>
@@ -765,7 +766,7 @@ document.getElementById("makeLink").onclick=()=>{
   if(!ls.length){toast("편지 내용을 먼저 써주세요");return;}
   madeUrl=baseUrl()+"#l="+b64e(JSON.stringify(payload()));
   const box=document.getElementById("linkbox");
-  box.textContent=madeUrl; box.classList.remove("hidden");
+  box.textContent=madeUrl;
   document.getElementById("copyLink").classList.remove("hidden");
   document.getElementById("kakaoBtn").classList.remove("hidden");
   document.getElementById("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"편지 열어보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png",
@@ -863,7 +864,6 @@ function backToEdit(){
   window.scrollTo(0,0);
   // 링크는 그대로 두고, 미리보기 버튼만 다시 보여줌
   if(madeUrl){
-    document.getElementById("linkbox").classList.remove("hidden");
     document.getElementById("copyLink").classList.remove("hidden");
     document.getElementById("kakaoBtn").classList.remove("hidden");
     document.getElementById("previewBtn").classList.remove("hidden");
