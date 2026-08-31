@@ -14,6 +14,7 @@
 <meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/rps/">
 <meta name="twitter:card" content="summary_large_image">
 
+<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js" crossorigin="anonymous"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -142,8 +143,9 @@
   <div class="chips" id="msgChips" role="group"></div>
 
   <button class="btn btn-main" id="makeBtn" disabled>도전장 만들기</button>
+  <button class="btn btn-main hidden" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+  <button class="btn btn-sub hidden" id="copyBtn">링크만 복사</button>
   <div class="linkbox hidden" id="linkbox"></div>
-  <button class="btn btn-main hidden" id="copyBtn">도전장 링크 복사</button>
   <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
   <p class="hint">결과는 상대가 고른 뒤 동시에 공개됩니다</p>
   <a class="homelink" href="../../">다른 놀이 보기 →</a>
@@ -192,7 +194,8 @@
     <button class="btn btn-main" id="tieNext">다시 내 차례 — 다음 패 고르기</button>
   </div>
   <div id="doneActions" class="hidden">
-    <button class="btn btn-main" id="sendResult">결과 링크 보내기</button>
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-sub" id="sendResult">링크만 복사</button>
     <div class="linkbox hidden" id="resLinkbox"></div>
     <button class="btn btn-red" id="revenge">복수전 신청</button>
   </div>
@@ -211,6 +214,23 @@
 const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/rps/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
 const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+const OG_IMG = "https://bingari69-jpg.github.io/couple-test/og/og-rps.png";
+
+/* ===== 카카오톡 공유 ===== */
+const KAKAO_KEY = "8983fdb327539fa37eea7e842e46f011";
+try{ if(window.Kakao && !Kakao.isInitialized()) Kakao.init(KAKAO_KEY); }catch(e){}
+function kakaoShare(o){
+  const ready = window.Kakao && Kakao.isInitialized && Kakao.isInitialized();
+  if(!ready){ copy(o.url, "카톡 공유를 못 열어서 링크를 복사했어요. 붙여넣으세요"); return; }
+  try{
+    Kakao.Share.sendDefault({
+      objectType:"feed",
+      content:{ title:o.title, description:o.desc, imageUrl:OG_IMG,
+                link:{ mobileWebUrl:o.url, webUrl:o.url } },
+      buttons:[{ title:o.btn, link:{ mobileWebUrl:o.url, webUrl:o.url } }]
+    });
+  }catch(e){ copy(o.url, "카톡 공유를 못 열어서 링크를 복사했어요. 붙여넣으세요"); }
+}
 
 /* ===== 게임 정의 ===== */
 const HANDS = [
@@ -251,9 +271,10 @@ function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.leng
   const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);
   return new TextDecoder().decode(u);}
 function readHash(){
-  const h=location.hash;
-  const m=h.match(/^#([cr])=(.+)$/); if(!m) return null;
-  try{ return {type:m[1], p:JSON.parse(b64d(m[2]))}; }catch(e){ return null; }
+  let m=location.hash.match(/^#([cr])=(.+)$/);
+  if(!m) m=location.search.match(/^\?([cr])=([^&]+)/);
+  if(!m) return null;
+  try{ return {type:m[1], p:JSON.parse(b64d(decodeURIComponent(m[2])))}; }catch(e){ return null; }
 }
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 
@@ -308,7 +329,7 @@ handsInto("makeHands",(i,box)=>{
   });
 })();
 $("nameIn").oninput=e=>{state.name=e.target.value.trim(); hideLink();};
-function hideLink(){ ["linkbox","copyBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
+function hideLink(){ ["linkbox","copyBtn","kakaoBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
 
 $("makeBtn").onclick=()=>{
   if(!state.name){toast("이름을 먼저 적어주세요"); $("nameIn").focus(); return;}
@@ -318,7 +339,12 @@ $("makeBtn").onclick=()=>{
   if(state.prev) p.prev=state.prev;
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   $("linkbox").textContent=madeUrl; $("linkbox").classList.remove("hidden");
-  $("copyBtn").classList.remove("hidden");
+  $("copyBtn").classList.remove("hidden"); $("kakaoBtn").classList.remove("hidden");
+  $("kakaoBtn").onclick=()=>kakaoShare({
+    url:madeUrl, btn:"도전 받기",
+    title:`${state.name||"상대"}의 가위바위보 도전장 🔒`,
+    desc: state.hist.length ? `${state.hist.length}판 비긴 뒤 ${state.hist.length+1}판째. 내 패는 네가 고른 뒤 공개.` : "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
+  });
   $("makeBtn").textContent="도전장 다시 만들기";
   $("sandboxNote").classList.toggle("hidden",!isSandbox());
   toast("도전장이 만들어졌어요");
@@ -449,6 +475,12 @@ function renderResult(R){
     const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
     $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; $("resLinkbox").classList.remove("hidden"); copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
+    { const wName = o==="c"?R.cName:R.rName;
+      $("kakaoRes").onclick=()=>kakaoShare({
+        url:rurl, btn:"결과 보기",
+        title:`${R.cName} ${HANDS[R.cHand].e} vs ${R.rName} ${HANDS[R.rHand].e} — ${wName} 승`,
+        desc:"가위바위보 결과가 나왔어요. 복수전은 여기서."
+      }); }
     const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName];
     $("revenge").onclick=()=>{ startNext([], R.rName, 1, prev); };
   }else{
