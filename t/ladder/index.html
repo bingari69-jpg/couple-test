@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>사다리타기</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="🪜 사다리타기 — 오늘의 운명은?">
+<meta property="og:description" content="이름 넣고 링크 하나면 끝. 결과는 이미 봉인됐어.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-ladder.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/ladder/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  .q em{font-style:normal;color:var(--dim);font-weight:500}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:17px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 참가자 · 결과 입력 줄 */
+  .row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+  .row .no{flex:none;width:26px;text-align:center;font-size:13px;font-weight:800;color:var(--dim);font-variant-numeric:tabular-nums}
+  .row input{flex:1;min-width:0}
+  .del{flex:none;width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--dim);font-size:17px;font-weight:800;cursor:pointer;line-height:1;-webkit-tap-highlight-color:transparent}
+  .del:active{transform:scale(.94)}
+  .addrow{width:100%;margin-top:2px;background:transparent;border:2px dashed var(--line);color:var(--sub);border-radius:14px;padding:13px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  .addrow:active{transform:scale(.99)}
+  .cnt{font-size:12.5px;color:var(--dim);text-align:right;margin-top:2px;font-weight:600}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 이름 고르기 */
+  .picks{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 4px}
+  .pick{background:#fff;border:2px solid var(--line);border-radius:999px;padding:11px 16px;font:inherit;font-size:15px;font-weight:800;color:var(--ink);cursor:pointer;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;-webkit-tap-highlight-color:transparent}
+  .pick:active{transform:scale(.96)}
+  .pick.done{background:#FFFBEE;border-color:var(--yellow);color:var(--sub)}
+  .pick.on{background:var(--blue);border-color:var(--blue);color:#fff}
+  .pick:disabled{opacity:.55;cursor:default}
+
+  /* 사다리 */
+  .board{background:#fff;border:2px solid var(--line);border-radius:20px;padding:14px 10px 10px;margin:12px 0}
+  .board svg{display:block;width:100%;height:auto;overflow:visible}
+  .rung{stroke:var(--line);stroke-width:5;stroke-linecap:round}
+  .rail{stroke:var(--line);stroke-width:5;stroke-linecap:round}
+  .trace{stroke:var(--red);stroke-width:6;stroke-linecap:round;stroke-linejoin:round;fill:none;
+    filter:drop-shadow(0 1px 3px rgba(255,90,95,.35))}
+  .capL{font-size:11px;font-weight:800;fill:var(--sub)}
+  .capL.dim{fill:var(--dim)}
+  .capL.hit{fill:var(--red)}
+
+  /* 결과 */
+  .outcome{background:#fff;border:3px solid var(--yellow);border-radius:22px;padding:20px 16px;text-align:center;margin-top:12px;animation:pop .35s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.94)}to{opacity:1;transform:none}}
+  .outcome .who{font-size:14px;color:var(--sub);font-weight:700}
+  .outcome .what{font-size:clamp(26px,8vw,36px);font-weight:900;letter-spacing:-.02em;line-height:1.2;margin-top:6px;word-break:keep-all}
+  .outcome .what.win{color:var(--red)}
+
+  table.all{width:100%;border-collapse:collapse;background:#fff;border:2px solid var(--line);border-radius:16px;overflow:hidden;margin-top:12px;font-size:15px}
+  table.all th{background:#FFFBEE;color:var(--sub);font-size:12px;font-weight:800;letter-spacing:.06em;padding:9px 12px;text-align:left}
+  table.all td{padding:11px 12px;border-top:1px solid var(--line);font-weight:700;word-break:break-all}
+  table.all td.r{color:var(--sub)}
+  table.all tr.win td.r{color:var(--red);font-weight:900}
+
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 만들기 ============ -->
+<section class="screen" id="s-make">
+  <span class="tag">사다리타기</span>
+  <h1>오늘 커피는<br><b>누가 쏠까?</b></h1>
+  <p class="lead">이름만 넣으면 사다리가 만들어져. 링크를 단체톡에 던지면, 각자 자기 이름을 눌러 결과를 봐.</p>
+
+  <label class="q">참가자 <em>· 2~10명, 비워두면 자동으로 이름 붙어</em></label>
+  <div id="nameRows"></div>
+  <button class="addrow" id="addName" type="button">+ 참가자 추가</button>
+
+  <label class="q">결과 <em>· 참가자 수만큼. 고쳐 써도 돼</em></label>
+  <div id="prizeRows"></div>
+
+  <button class="btn btn-main" id="makeLink">사다리 만들기</button>
+  <p class="hint">만드는 사람도 결과를 미리 볼 수 없어. 링크를 열어야 알 수 있어.</p>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 공유 ============ -->
+<section class="screen hidden" id="s-share">
+  <span class="tag">봉인 완료</span>
+  <h1>사다리가<br><b>만들어졌어.</b></h1>
+  <div class="card"><div class="lockrow"><span class="e">🔒</span><span id="sealNote">결과는 방금 봉인됐어요. 링크를 열면 누구나 같은 사다리를 봐요.</span></div></div>
+  <p class="lead" id="shareLead"></p>
+
+  <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 보내기</button>
+  <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+  <div class="linkbox hidden" id="linkbox"></div>
+  <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+
+  <button class="btn btn-blue" id="openMine">나도 내 결과 보기 →</button>
+  <button class="btn btn-sub" id="retry">참가자 다시 넣기</button>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 열람 ============ -->
+<section class="screen hidden" id="s-play">
+  <span class="tag" id="playTag">사다리타기</span>
+  <h1 id="playHead">이름을 눌러.<br><b>사다리가 정해줄게.</b></h1>
+  <p class="lead" id="playLead"></p>
+
+  <div class="picks" id="picks"></div>
+  <div class="board"><svg id="svg" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="사다리"></svg></div>
+
+  <div id="result" class="hidden"></div>
+
+  <button class="btn btn-sub" id="showAll">전체 결과 한번에 보기</button>
+  <div id="allBox" class="hidden"></div>
+
+  <button class="btn btn-main" id="kakaoShareBtn" style="background:#FEE500;color:#191600">💬 이 사다리 카톡으로 보내기</button>
+  <button class="btn btn-ghost" id="copyLink">링크만 복사</button>
+  <button class="btn btn-blue" id="again">새 사다리 만들기</button>
+
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 ===== */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/ladder/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+const MIN_N=2, MAX_N=10, MAX_LEN=12;
+const NEXT=[
+  {path:"../rps/",      title:"가위바위보 도전장", desc:"내가 먼저 낸다. 네가 이길 수 있는지 골라봐."},
+  {path:"../delivery/", title:"배달 텔레파시",    desc:"내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 사."},
+  {path:"../ten/",      title:"10초 맞추기",      desc:"안 보고 10초 세다가 멈추기."}
+];
+
+/* ===== 해시 · 공통 ===== */
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
+function readHash(){const m=location.hash.match(/^#(c)=(.+)$/);if(!m)return null;
+  try{const p=JSON.parse(b64d(m[2]));
+    return (p && Array.isArray(p.ns) && Array.isArray(p.rs) && typeof p.s==="number"
+            && p.ns.length===p.rs.length && p.ns.length>=MIN_N && p.ns.length<=MAX_N) ? p : null;
+  }catch(e){return null;}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
+let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
+async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해줘");}
+function share(o,fb){ if(window.kakaoShare) kakaoShare(o,fb); else fb(); }
+const track=(e,p)=>{try{window.track&&window.track(e,p);}catch(x){}};
+
+/* ===== 시드 난수 (mulberry32) =====
+   Math.random() 은 링크를 만드는 순간 시드를 뽑을 때만 쓴다.
+   사다리 모양과 매핑은 오직 이 시드로만 만들어지므로,
+   같은 링크면 누가 언제 열어도 같은 사다리·같은 결과가 나온다. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+/* 시드로 가로선을 놓는다.
+   - 가로선은 이웃한 세로줄 사이에만 (i ↔ i+1)
+   - 같은 층에서 한 세로줄에 두 개가 붙지 않게 (사다리 규칙)
+
+   그냥 무작위로 가로선을 뿌리면 사다리가 공정하지 않다.
+   토큰은 한 층에 한 칸씩만 옆으로 움직여서, 층이 적으면 멀리 있는 칸까지 못 간다
+   (10명이면 1번이 1번 결과에 걸릴 확률이 10%가 아니라 24%까지 치우친다).
+   그래서 먼저 시드로 "고른 순열"을 뽑고, 그걸 홀짝 교환 정렬망으로 그대로 재현한다.
+   n층이면 어떤 순열이든 만들 수 있으므로, 층을 늘리지 않고도 정확히 1/n 이 된다.
+   장식용 무작위 가로선을 앞뒤로 더 얹어도, 고른 순열과 합성한 결과는 여전히 고르다. */
+function buildRungs(n, seed){
+  const rnd=mulberry32(seed>>>0);
+
+  /* 1) 고른 순열 뽑기 (피셔–예이츠) — perm[i] = i번 참가자의 도착 칸 */
+  const perm=Array.from({length:n},(_,i)=>i);
+  for(let i=n-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=perm[i];perm[i]=perm[j];perm[j]=t; }
+
+  /* 2) 그 순열을 홀짝 교환 정렬망으로 재현.
+        한 층은 같은 홀짝의 칸만 쓰므로 이웃끼리 겹칠 일이 없다. */
+  const layers=[];
+  const A=perm.slice();
+  for(let round=0; round<n; round++){
+    const layer=[];
+    for(let i=round%2; i<n-1; i+=2){
+      if(A[i]>A[i+1]){ const t=A[i];A[i]=A[i+1];A[i+1]=t; layer.push(i); }
+    }
+    layers.push(layer);
+  }
+
+  /* 3) 앞뒤에 장식용 무작위 층을 섞어 사다리답게 보이게 한다 */
+  const decor=()=>{
+    const layer=[]; const used=new Array(n).fill(false);
+    for(let i=0;i<n-1;i++){
+      if(used[i]) continue;
+      if(rnd()<0.45){ layer.push(i); used[i]=true; used[i+1]=true; }
+    }
+    return layer;
+  };
+  const pad=Math.max(4,n), head=Math.floor(pad/2);
+  const all=[];
+  for(let k=0;k<head;k++) all.push(decor());
+  layers.forEach(l=>all.push(l));
+  for(let k=0;k<pad-head;k++) all.push(decor());
+
+  const rungs=[];
+  all.forEach((layer,row)=>layer.forEach(i=>rungs.push({row,i})));
+  rungs.sort((a,b)=>a.row-b.row || a.i-b.i);
+  return {rows:all.length, rungs};
+}
+/* 사다리를 실제로 타고 내려가 도착 칸을 구한다.
+   매핑은 따로 저장하지 않고 언제나 이 함수로 다시 계산한다. */
+function walk(start, n, rows, rungs){
+  let col=start;
+  const path=[{row:0,col}];
+  for(let r=0;r<rows;r++){
+    const left =rungs.find(g=>g.row===r && g.i===col);     // 오른쪽으로 건너가는 가로선
+    const right=rungs.find(g=>g.row===r && g.i===col-1);   // 왼쪽으로 건너가는 가로선
+    if(left||right){
+      path.push({row:r+0.5,col});          // 가로선 높이까지 내려오고
+      col = left ? col+1 : col-1;          // 옆으로 건너간 다음
+      path.push({row:r+0.5,col});          // 거기서 다시 아래로
+    }
+    path.push({row:r+1,col});
+  }
+  return {end:col, path};
+}
+function mappingOf(n, rows, rungs){
+  return Array.from({length:n},(_,i)=>walk(i,n,rows,rungs).end);
+}
+
+/* ===== 상태 ===== */
+const state={names:["",""],prizes:[],made:null,picked:new Set(),animating:false};
+let madeUrl="";
+
+/* ===== 만들기 화면 ===== */
+const defPrize = i => i===0 ? "당첨 🎉" : "꽝";
+function syncPrizes(){
+  const n=state.names.length;
+  while(state.prizes.length<n) state.prizes.push(defPrize(state.prizes.length));
+  state.prizes.length=n;
+}
+function renderMake(){
+  syncPrizes();
+  const n=state.names.length;
+
+  const nb=$("nameRows"); nb.innerHTML="";
+  state.names.forEach((v,i)=>{
+    const row=document.createElement("div"); row.className="row";
+    const no=document.createElement("div"); no.className="no"; no.textContent=(i+1);
+    const inp=document.createElement("input"); inp.type="text"; inp.maxLength=MAX_LEN;
+    inp.value=v; inp.placeholder="참가자"+(i+1);
+    inp.setAttribute("aria-label",(i+1)+"번째 참가자 이름");
+    inp.oninput=e=>{state.names[i]=e.target.value;};
+    row.appendChild(no); row.appendChild(inp);
+    if(n>MIN_N){
+      const del=document.createElement("button"); del.type="button"; del.className="del"; del.textContent="✕";
+      del.setAttribute("aria-label",(i+1)+"번째 참가자 삭제");
+      del.onclick=()=>{ state.names.splice(i,1); state.prizes.splice(i,1); renderMake(); };
+      row.appendChild(del);
+    }
+    nb.appendChild(row);
+  });
+  $("addName").classList.toggle("hidden", n>=MAX_N);
+
+  const pb=$("prizeRows"); pb.innerHTML="";
+  state.prizes.forEach((v,i)=>{
+    const row=document.createElement("div"); row.className="row";
+    const no=document.createElement("div"); no.className="no"; no.textContent=(i+1);
+    const inp=document.createElement("input"); inp.type="text"; inp.maxLength=MAX_LEN;
+    inp.value=v; inp.placeholder="결과"+(i+1);
+    inp.setAttribute("aria-label",(i+1)+"번째 결과");
+    inp.oninput=e=>{state.prizes[i]=e.target.value;};
+    row.appendChild(no); row.appendChild(inp);
+    pb.appendChild(row);
+  });
+}
+$("addName").onclick=()=>{
+  if(state.names.length>=MAX_N) return;
+  state.names.push(""); renderMake();
+  const rows=$("nameRows").querySelectorAll("input");
+  const last=rows[rows.length-1]; if(last) last.focus();
+};
+$("makeLink").onclick=()=>{
+  const ns=state.names.map((v,i)=>(v||"").trim().slice(0,MAX_LEN) || ("참가자"+(i+1)));
+  const rs=state.prizes.map((v,i)=>(v||"").trim().slice(0,MAX_LEN) || ("결과"+(i+1)));
+  if(ns.length<MIN_N){ toast("참가자는 2명부터야"); return; }
+  const seed=Math.floor(Math.random()*0xFFFFFFFF);      // 무작위는 여기서 딱 한 번
+  const p={v:1, ns, rs, s:seed};
+  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
+  state.made=p;
+  $("linkbox").textContent=madeUrl;
+  $("sandboxNote").classList.toggle("hidden",!isSandbox());
+  $("shareLead").textContent=`${ns.length}명이 참가해요. 링크를 받은 사람이 자기 이름을 누르면 결과가 나와요.`;
+  show("s-share");
+};
+$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어. 단체톡에 붙여넣어");
+$("kakaoBtn").onclick=()=>share({
+  url:madeUrl, btn:"내 결과 확인하기",
+  img:"https://bingari69-jpg.github.io/couple-test/og/og-ladder-sq.png",
+  title:"🪜 사다리타기 — 오늘의 운명은?",
+  desc:`${state.made?state.made.ns.length:0}명이 참가해요. 내 결과 확인하기`
+}, ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어"));
+$("openMine").onclick=()=>{ location.hash=madeUrl.slice(madeUrl.indexOf("#")+1); openLadder(state.made); };
+$("retry").onclick=()=>{ location.hash=""; location.reload(); };
+
+/* ===== 열람 화면 ===== */
+let view=null;   // {p, n, rows, rungs, map, geom}
+function openLadder(p){
+  const n=p.ns.length;
+  const {rows,rungs}=buildRungs(n, p.s);
+  view={p, n, rows, rungs, map:mappingOf(n,rows,rungs)};
+  $("playLead").textContent=`${n}명이 참가했어. 자기 이름을 눌러봐. 결과는 이미 정해져 있어.`;
+  renderPicks(); drawLadder();
+  $("result").innerHTML=""; $("result").classList.add("hidden");
+  $("allBox").innerHTML=""; $("allBox").classList.add("hidden");
+  $("showAll").classList.remove("hidden");
+  $("nextList").innerHTML=NEXT.map(x=>`<a href="${x.path}">${esc(x.title)}<small>${esc(x.desc)}</small></a>`).join("");
+  show("s-play");
+}
+function renderPicks(){
+  const box=$("picks"); box.innerHTML="";
+  view.p.ns.forEach((nm,i)=>{
+    const b=document.createElement("button"); b.type="button";
+    b.className="pick"+(state.picked.has(i)?" done":"");
+    b.textContent=nm; b.dataset.i=i;
+    b.onclick=()=>pick(i);
+    box.appendChild(b);
+  });
+}
+
+/* 사다리 그리기.
+   viewBox 폭은 480으로 고정하고 세로줄을 그 안에 나눠 놓는다.
+   (참가자가 2명이든 10명이든 화면에서 비슷한 크기로 보이게) */
+const GEO={w:480, padX:30, top:34, bottom:30};
+function geom(){
+  const n=view.n, rows=view.rows;
+  const colGap=(GEO.w-GEO.padX*2)/Math.max(1,n-1);
+  const rowH=Math.max(15, Math.min(34, 300/rows));
+  const h=GEO.top+GEO.bottom+rowH*rows;
+  return {w:GEO.w, h, colGap, rowH, x:i=>GEO.padX+colGap*i, y:r=>GEO.top+rowH*r};
+}
+const cut=(s,n)=>s.length>n ? s.slice(0,n)+"…" : s;
+function drawLadder(traceCols){
+  const g=geom(); view.geom=g;
+  const n=view.n;
+  const lab=Math.max(3, Math.floor(28/n)+2);   // 칸이 좁을수록 라벨을 짧게
+  let s=`<svg id="svg" role="img" aria-label="사다리" viewBox="0 0 ${g.w} ${g.h}" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<n;i++) s+=`<line class="rail" x1="${g.x(i)}" y1="${g.y(0)}" x2="${g.x(i)}" y2="${g.y(view.rows)}"/>`;
+  view.rungs.forEach(r=>{
+    s+=`<line class="rung" x1="${g.x(r.i)}" y1="${g.y(r.row+0.5)}" x2="${g.x(r.i+1)}" y2="${g.y(r.row+0.5)}"/>`;
+  });
+  /* 위 = 참가자, 아래 = 결과 */
+  view.p.ns.forEach((nm,i)=>{
+    const on = traceCols && traceCols.start===i;
+    s+=`<text class="capL${on?" hit":""}" x="${g.x(i)}" y="${g.y(0)-12}" text-anchor="middle">${esc(cut(nm,lab))}</text>`;
+  });
+  view.p.rs.forEach((rs,i)=>{
+    const hit = traceCols && traceCols.end===i;
+    s+=`<text class="capL${hit?" hit":" dim"}" x="${g.x(i)}" y="${g.y(view.rows)+18}" text-anchor="middle">${esc(cut(rs,lab))}</text>`;
+  });
+  s+=`<path id="tracePath" class="trace hidden" d=""/>`;
+  s+=`</svg>`;
+  $("svg").outerHTML=s;
+}
+function pathD(path){
+  const g=view.geom;
+  return path.map((pt,k)=>(k?"L":"M")+g.x(pt.col)+" "+g.y(pt.row)).join(" ");
+}
+
+function pick(i){
+  if(state.animating) return;
+  const w=walk(i, view.n, view.rows, view.rungs);
+  state.animating=true;
+  [...$("picks").children].forEach(b=>{ b.disabled=true; b.classList.toggle("on", +b.dataset.i===i); });
+  $("result").classList.add("hidden"); $("result").innerHTML="";
+  track("ladder_pick",{who:i+1, of:view.n});
+
+  drawLadder({start:i, end:w.end});
+  const el=document.getElementById("tracePath");
+  el.classList.remove("hidden");
+  el.setAttribute("d", pathD(w.path));
+  const len=el.getTotalLength();
+  /* 줄이 길수록 조금 더 오래, 1.5~2.5초 */
+  const dur=Math.min(2500, Math.max(1500, 900+view.rows*90));
+  const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(reduce){ el.style.strokeDasharray=""; el.style.strokeDashoffset=""; finish(i,w); return; }
+  el.style.strokeDasharray=len; el.style.strokeDashoffset=len;
+  el.style.transition="none";
+  void el.getBoundingClientRect();
+  el.style.transition=`stroke-dashoffset ${dur}ms cubic-bezier(.45,.05,.3,1)`;
+  el.style.strokeDashoffset="0";
+  setTimeout(()=>finish(i,w), dur+60);
+}
+function finish(i,w){
+  state.animating=false;
+  state.picked.add(i);
+  const nm=view.p.ns[i], rs=view.p.rs[w.end];
+  const box=$("result");
+  box.className="";
+  box.innerHTML=`<div class="outcome"><div class="who">${esc(nm)}</div>
+    <div class="what${w.end===0?" win":""}">${esc(rs)}</div></div>`;
+  box.classList.remove("hidden");
+  [...$("picks").children].forEach(b=>{
+    b.disabled=false;
+    const j=+b.dataset.i;
+    b.classList.toggle("done", state.picked.has(j) && j!==i);
+    b.classList.toggle("on", j===i);
+  });
+  box.scrollIntoView({block:"nearest", behavior:"smooth"});
+}
+$("showAll").onclick=()=>{
+  track("ladder_all",{of:view.n});
+  const rowsHtml=view.p.ns.map((nm,i)=>{
+    const e=view.map[i];
+    return `<tr class="${e===0?"win":""}"><td>${esc(nm)}</td><td class="r">${esc(view.p.rs[e])}</td></tr>`;
+  }).join("");
+  $("allBox").innerHTML=`<table class="all"><thead><tr><th>참가자</th><th>결과</th></tr></thead><tbody>${rowsHtml}</tbody></table>`;
+  $("allBox").classList.remove("hidden");
+  $("showAll").classList.add("hidden");
+  $("allBox").scrollIntoView({block:"nearest", behavior:"smooth"});
+};
+$("copyLink").onclick=()=>copy(baseUrl()+location.hash,"복사됐어. 단체톡에 붙여넣어");
+$("kakaoShareBtn").onclick=()=>{
+  const url=baseUrl()+location.hash;
+  share({url, btn:"내 결과 확인하기",
+    img:"https://bingari69-jpg.github.io/couple-test/og/og-ladder-sq.png",
+    title:"🪜 사다리타기 — 오늘의 운명은?",
+    desc:`${view.n}명이 참가해요. 내 결과 확인하기`},
+    ()=>copy(url,"카톡 공유를 못 열어 링크를 복사했어"));
+};
+$("again").onclick=()=>{ location.hash=""; location.reload(); };
+
+/* ===== 진입 ===== */
+(function(){
+  const p=readHash();
+  if(p){ openLadder(p); return; }
+  renderMake(); show("s-make");
+})();
+</script>
+</body>
+</html>
