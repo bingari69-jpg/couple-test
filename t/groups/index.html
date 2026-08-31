@@ -16,6 +16,7 @@
 
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/roster.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -48,6 +49,18 @@
   .del:active{transform:scale(.94)}
   .addrow{width:100%;margin-top:2px;background:transparent;border:2px dashed var(--line);color:var(--sub);border-radius:14px;padding:13px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
   .addrow:active{transform:scale(.99)}
+  /* 명단 붙여넣기 — 인원이 많아질수록 눈에 띄게 */
+  .pasterow{display:flex;justify-content:flex-end;margin:-4px 0 8px}
+  .pastebtn{background:transparent;border:none;color:var(--green);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;padding:6px 2px;text-decoration:underline;text-underline-offset:3px;-webkit-tap-highlight-color:transparent}
+  .pastebtn.big{width:100%;background:var(--green);color:#fff;border-radius:14px;padding:14px;font-size:16px;text-decoration:none}
+  .pastebox{background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+  .pastebox textarea{width:100%;border:none;outline:none;resize:vertical;font:inherit;font-size:15px;line-height:1.6;color:var(--ink);min-height:110px;background:transparent;-webkit-user-select:text;user-select:text}
+  .pastebox textarea::placeholder{color:var(--dim);font-weight:500}
+  .pasteact{display:flex;gap:8px;margin-top:6px}
+  .pasteact .btn{margin-top:0}
+  /* 이름이 많아지면 입력 영역을 접고 인원 수를 고정 표시 */
+  .cntbar{position:sticky;top:0;z-index:2;background:var(--bg);padding:4px 0 8px;font-size:13px;font-weight:800;color:var(--green)}
+  .rowsbox{max-height:44vh;overflow-y:auto;-webkit-overflow-scrolling:touch;padding-right:2px}
 
   /* 조 크기 토글 */
   .seg{display:flex;gap:8px}
@@ -72,6 +85,8 @@
 
   /* 조 카드 */
   .decks{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:10px;margin:14px 0 4px}
+  .decks.two{grid-template-columns:1fr 1fr}
+  .gcard.noanim .gin{transition:none}
   .gcard{perspective:900px;background:none;border:none;padding:0;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
   .gcard:active{transform:scale(.97)}
   .gin{display:grid;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.2,.75,.3,1)}
@@ -107,7 +122,16 @@
   <h1>이번엔<br><b>누구랑 한 조?</b></h1>
   <p class="lead">이름만 넣으면 조가 짜여. 총무 눈치 볼 일 없이 기계가 정해주고, 결과는 링크를 열어야 보여.</p>
 
-  <label class="q">참가자 <em>· 5~20명, 비워두면 자동으로 이름 붙어</em></label>
+  <label class="q">참가자 <em>· 5~100명, 비워두면 자동으로 이름 붙어</em></label>
+  <div class="pasterow"><button class="pastebtn" id="pasteToggle" type="button">명단 붙여넣기</button></div>
+  <div class="pastebox hidden" id="pasteBox">
+    <textarea id="pasteText" placeholder="단톡 공지나 명단을 그대로 붙여넣으세요. 줄바꿈·쉼표 다 알아서 나눠요"></textarea>
+    <div class="pasteact">
+      <button class="btn btn-sub" id="pasteCancel" type="button">닫기</button>
+      <button class="btn btn-main" id="pasteApply" type="button">적용</button>
+    </div>
+  </div>
+  <div class="cntbar hidden" id="cntBar"></div>
   <div id="nameRows"></div>
   <button class="addrow" id="addName" type="button">+ 참가자 추가</button>
 
@@ -166,7 +190,7 @@ const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/groups/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
 const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
 
-const MIN_N=5, MAX_N=20, MAX_LEN=12;
+const MIN_N=5, MAX_N=100, MAX_LEN=12;
 const NEXT=[
   {path:"../ladder/",   title:"사다리타기",       desc:"오늘 커피는 누가 쏠까. 단체톡에 던져봐."},
   {path:"../ten/",      title:"10초 맞추기",      desc:"안 보고 10초 세다가 멈추기."},
@@ -218,7 +242,15 @@ function groupsOf(p){
   sizes.forEach(sz=>{ out.push(idx.slice(at,at+sz).map(i=>p.ns[i])); at+=sz; });
   return out;
 }
-const planText = sizes => `${sizes.length}조: ${sizes.map(s=>s+"명").join("·")}`;
+/* 조가 8개 이하면 하나씩, 넘으면 "4명×21 · 3명×2" 로 줄여 쓴다 */
+function planText(sizes){
+  const k=sizes.length;
+  if(k<=8) return `${k}조: ${sizes.map(s=>s+"명").join("·")}`;
+  const runs=[];
+  sizes.forEach(s=>{ const last=runs[runs.length-1];
+    if(last && last[0]===s) last[1]++; else runs.push([s,1]); });
+  return `${k}조: ${runs.map(([s,c])=>c>1?`${s}명×${c}`:`${s}명`).join(" · ")}`;
+}
 
 /* ===== 상태 ===== */
 /* revealed: 이미 뒤집은 조. 스포일러를 막기 위한 것으로 조편성 자체와는 무관하다. */
@@ -241,6 +273,11 @@ function renderMake(){
     inp.value=v; inp.placeholder="참가자"+(i+1);
     inp.setAttribute("aria-label",(i+1)+"번째 참가자 이름");
     inp.oninput=e=>{state.names[i]=e.target.value;};
+    /* 첫 칸에 명단을 통째로 붙여넣으면 같은 규칙으로 나눠 담는다 */
+    if(i===0) inp.addEventListener("paste",e=>{
+      const t=(e.clipboardData||window.clipboardData||{getData:()=>""}).getData("text");
+      if(window.looksLikeRoster && looksLikeRoster(t)){ e.preventDefault(); applyRoster(t,"input"); }
+    });
     row.appendChild(no); row.appendChild(inp);
     if(n>MIN_N){
       const del=document.createElement("button"); del.type="button"; del.className="del"; del.textContent="✕";
@@ -251,10 +288,44 @@ function renderMake(){
     nb.appendChild(row);
   });
   $("addName").classList.toggle("hidden", n>=MAX_N);
+  /* 15명이 넘으면 입력칸을 스크롤 영역으로 접고, 인원 수를 위에 고정 표시 */
+  const many = n>15;
+  $("nameRows").classList.toggle("rowsbox", many);
+  $("cntBar").classList.toggle("hidden", !many);
+  $("cntBar").textContent = "현재 "+n+"명";
+  $("pasteToggle").classList.toggle("big", n>=15);
   $("size4").setAttribute("aria-pressed", state.g===4);
   $("size3").setAttribute("aria-pressed", state.g===3);
   renderPlan();
 }
+/* 붙여넣은 명단을 참가자 칸에 담는다.
+   상한을 넘으면 잘라내고, 하한보다 적으면 빈 칸을 남겨 둔다. */
+function applyRoster(text, src){
+  if(!window.parseRoster){ toast("붙여넣기를 쓸 수 없어요"); return false; }
+  const r=parseRoster(text,{max:MAX_N,maxLen:6});
+  if(!r.names.length){ toast("이름을 찾지 못했어요"); return false; }
+  const filled=state.names.some(v=>(v||"").trim());
+  if(filled && !confirm("지금 입력된 이름을 덮어씁니다. 계속할까요?")) return false;
+  const ns=r.names.slice();
+  while(ns.length<MIN_N) ns.push("");          // 하한 미만이면 빈 칸 유지
+  state.names=ns;
+  renderMake();
+  $("pasteBox").classList.add("hidden");
+  $("pasteText").value="";
+  track("roster_paste",{n:r.names.length, src:src||"box"});
+  const msg=[];
+  if(r.dup)  msg.push(`중복 ${r.dup}명은 제외했어요`);
+  if(r.over) msg.push(`${MAX_N}명까지만 넣을 수 있어 나머지는 제외했어요`);
+  toast(msg.length ? msg.join(" · ") : `${r.names.length}명 넣었어요`);
+  return true;
+}
+$("pasteToggle").onclick=()=>{
+  const open=$("pasteBox").classList.toggle("hidden")===false;
+  if(open) setTimeout(()=>$("pasteText").focus(),60);
+};
+$("pasteCancel").onclick=()=>{ $("pasteBox").classList.add("hidden"); };
+$("pasteApply").onclick=()=>applyRoster($("pasteText").value,"box");
+
 $("addName").onclick=()=>{
   if(state.names.length>=MAX_N) return;
   state.names.push(""); renderMake();
@@ -309,6 +380,7 @@ function backHtml(gi){
 }
 function renderDecks(){
   const box=$("decks"); box.innerHTML="";
+  box.classList.toggle("two", view.groups.length>6);   // 조가 많으면 2열 고정
   view.groups.forEach((mem,gi)=>{
     const open=state.revealed.has(gi);
     const b=document.createElement("button");
@@ -343,10 +415,25 @@ function flip(gi){
   setTimeout(noteLine, 260);
   if(state.revealed.size===view.groups.length) $("showAll").classList.add("hidden");
 }
+/* 카드가 화면 안에 있는지 — 밖에 있으면 뒤집기 애니메이션을 돌리지 않는다(폰 성능) */
+function onScreen(el){
+  if(!el.getBoundingClientRect) return true;
+  const r=el.getBoundingClientRect();
+  const h=window.innerHeight||0;
+  return r.bottom>0 && r.top<h;
+}
 $("showAll").onclick=()=>{
   track("groups_all",{of:view.groups.length});
-  view.groups.forEach((_,gi)=>state.revealed.add(gi));
-  renderDecks(); noteLine();
+  const cards=[...$("decks").querySelectorAll(".gcard")];
+  cards.forEach((c,gi)=>{
+    if(state.revealed.has(gi)) return;
+    state.revealed.add(gi);
+    if(!onScreen(c)) c.classList.add("noanim");     // 보이지 않는 카드는 즉시 전환
+    c.querySelector(".back").innerHTML=backHtml(gi);
+    c.classList.add("open");
+    c.setAttribute("aria-label",(gi+1)+"조 카드 (공개됨)");
+  });
+  noteLine();
   $("showAll").classList.add("hidden");
 };
 $("copyLink").onclick=()=>copy(baseUrl()+location.hash,"복사됐어. 톡방에 붙여넣어");

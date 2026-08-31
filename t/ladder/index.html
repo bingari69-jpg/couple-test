@@ -16,6 +16,7 @@
 
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/roster.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -48,6 +49,14 @@
   .del{flex:none;width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:#fff;color:var(--dim);font-size:17px;font-weight:800;cursor:pointer;line-height:1;-webkit-tap-highlight-color:transparent}
   .del:active{transform:scale(.94)}
   .addrow{width:100%;margin-top:2px;background:transparent;border:2px dashed var(--line);color:var(--sub);border-radius:14px;padding:13px;font:inherit;font-size:15px;font-weight:700;cursor:pointer}
+  /* 명단 붙여넣기 */
+  .pasterow{display:flex;justify-content:flex-end;margin:-4px 0 8px}
+  .pastebtn{background:transparent;border:none;color:var(--blue);font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;padding:6px 2px;text-decoration:underline;text-underline-offset:3px;-webkit-tap-highlight-color:transparent}
+  .pastebox{background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+  .pastebox textarea{width:100%;border:none;outline:none;resize:vertical;font:inherit;font-size:15px;line-height:1.6;color:var(--ink);min-height:110px;background:transparent;-webkit-user-select:text;user-select:text}
+  .pastebox textarea::placeholder{color:var(--dim);font-weight:500}
+  .pasteact{display:flex;gap:8px;margin-top:6px}
+  .pasteact .btn{margin-top:0}
   .addrow:active{transform:scale(.99)}
   .cnt{font-size:12.5px;color:var(--dim);text-align:right;margin-top:2px;font-weight:600}
 
@@ -115,6 +124,14 @@
   <p class="lead">이름만 넣으면 사다리가 만들어져. 링크를 단체톡에 던지면, 각자 자기 이름을 눌러 결과를 봐.</p>
 
   <label class="q">참가자 <em>· 2~10명, 비워두면 자동으로 이름 붙어</em></label>
+  <div class="pasterow"><button class="pastebtn" id="pasteToggle" type="button">명단 붙여넣기</button></div>
+  <div class="pastebox hidden" id="pasteBox">
+    <textarea id="pasteText" placeholder="단톡 공지나 명단을 그대로 붙여넣으세요. 줄바꿈·쉼표 다 알아서 나눠요"></textarea>
+    <div class="pasteact">
+      <button class="btn btn-sub" id="pasteCancel" type="button">닫기</button>
+      <button class="btn btn-main" id="pasteApply" type="button">적용</button>
+    </div>
+  </div>
   <div id="nameRows"></div>
   <button class="addrow" id="addName" type="button">+ 참가자 추가</button>
 
@@ -303,6 +320,11 @@ function renderMake(){
     inp.value=v; inp.placeholder="참가자"+(i+1);
     inp.setAttribute("aria-label",(i+1)+"번째 참가자 이름");
     inp.oninput=e=>{state.names[i]=e.target.value;};
+    /* 첫 칸에 명단을 통째로 붙여넣으면 같은 규칙으로 나눠 담는다 */
+    if(i===0) inp.addEventListener("paste",e=>{
+      const t=(e.clipboardData||window.clipboardData||{getData:()=>""}).getData("text");
+      if(window.looksLikeRoster && looksLikeRoster(t)){ e.preventDefault(); applyRoster(t,"input"); }
+    });
     row.appendChild(no); row.appendChild(inp);
     if(n>MIN_N){
       const del=document.createElement("button"); del.type="button"; del.className="del"; del.textContent="✕";
@@ -326,6 +348,34 @@ function renderMake(){
     pb.appendChild(row);
   });
 }
+/* 붙여넣은 명단을 참가자 칸에 담는다.
+   상한을 넘으면 잘라내고, 하한보다 적으면 빈 칸을 남겨 둔다. */
+function applyRoster(text, src){
+  if(!window.parseRoster){ toast("붙여넣기를 쓸 수 없어요"); return false; }
+  const r=parseRoster(text,{max:MAX_N,maxLen:6});
+  if(!r.names.length){ toast("이름을 찾지 못했어요"); return false; }
+  const filled=state.names.some(v=>(v||"").trim());
+  if(filled && !confirm("지금 입력된 이름을 덮어씁니다. 계속할까요?")) return false;
+  const ns=r.names.slice();
+  while(ns.length<MIN_N) ns.push("");          // 하한 미만이면 빈 칸 유지
+  state.names=ns;
+  renderMake();
+  $("pasteBox").classList.add("hidden");
+  $("pasteText").value="";
+  track("roster_paste",{n:r.names.length, src:src||"box"});
+  const msg=[];
+  if(r.dup)  msg.push(`중복 ${r.dup}명은 제외했어요`);
+  if(r.over) msg.push(`${MAX_N}명까지만 넣을 수 있어 나머지는 제외했어요`);
+  toast(msg.length ? msg.join(" · ") : `${r.names.length}명 넣었어요`);
+  return true;
+}
+$("pasteToggle").onclick=()=>{
+  const box=$("pasteBox"), open=box.classList.toggle("hidden")===false;
+  if(open) setTimeout(()=>$("pasteText").focus(),60);
+};
+$("pasteCancel").onclick=()=>{ $("pasteBox").classList.add("hidden"); };
+$("pasteApply").onclick=()=>applyRoster($("pasteText").value,"box");
+
 $("addName").onclick=()=>{
   if(state.names.length>=MAX_N) return;
   state.names.push(""); renderMake();
