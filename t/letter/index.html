@@ -81,7 +81,7 @@
     min-height:240px;padding:2px}
   .freewrite::placeholder{color:#C3BBA8}
   .charcount{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:11.5px;color:var(--ink-faint);margin-top:10px}
-  .charcount.over{color:#C4566B}   /* 480자부터 */
+  .charcount.over{color:#C4566B}   /* 460자부터 */
   .hint{font-size:12.5px;color:#666C96;margin-top:12px;text-align:center;line-height:1.7}
 
   .actions{margin-top:22px;display:flex;flex-direction:column;gap:10px}
@@ -208,9 +208,9 @@
 
   <div class="letter-wrap">
     <div class="letter">
-      <textarea class="freewrite" id="freewrite" maxlength="500"
+      <textarea class="freewrite" id="freewrite" maxlength="480"
         placeholder="여기에 편지를 쓰세요.&#10;&#10;엔터로 줄을 나눌 수 있어요."></textarea>
-      <div class="charcount" id="charcount">0 / 500</div>
+      <div class="charcount" id="charcount">0 / 480</div>
     </div>
     <p class="hint" id="letterHint">고른 문장이 여기에 채워집니다. 그대로 보내도 되고, 자유롭게 고쳐 써도 됩니다</p>
   </div>
@@ -267,8 +267,8 @@ const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/letter/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
 const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
 const BANK_VERSION = 3;
-const MAX_FREE = 500;   // 본문 전체 최대 (textarea maxlength 와 같아야 함)
-const WARN_AT  = 480;   // 이 글자 수부터 카운터를 경고색으로
+const MAX_FREE = 480;   // 본문 전체 최대 (textarea maxlength 와 같아야 함)
+const WARN_AT  = 460;   // 이 글자 수부터 카운터를 경고색으로 (한도 20자 전)
 
 /* ===== 기념일 ===== */
 const KINDS = [
@@ -654,7 +654,7 @@ function renderTones(){
 }
 renderKinds(); renderRels(); renderSits(); renderTones(); applyRelName();
 
-/* 본문 직접 쓰기 — maxlength 로 500자를 막고, 붙여넣기 등으로 넘어오면 잘라낸다.
+/* 본문 직접 쓰기 — maxlength 로 480자를 막고, 붙여넣기 등으로 넘어오면 잘라낸다.
    한 글자라도 손대면 dirty 가 되어 템플릿이 덮어쓰지 않는다. */
 const FREE=document.getElementById("freewrite");
 FREE.addEventListener("input",()=>{
