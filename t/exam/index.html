@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>시험지 보내기</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="시험지 보내기 — 카톡으로 단어 시험">
+<meta property="og:description" content="단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-exam.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/exam/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/roster.js"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#F7F9FC; --card:#FFFFFF; --line:#E3E8F0; --ink:#171A1F; --sub:#5F6B7A; --dim:#A3AEBC;
+    --blue:#2D6BE8; --blue-s:#EAF1FF; --red:#E5484D; --red-s:#FFF0F0; --green:#12A150; --green-s:#E9F8F0;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.55;min-height:100vh;padding:var(--sp) var(--sp) 56px}
+  .wrap{max-width:520px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .28s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;color:var(--blue);background:#fff;border:2px solid var(--blue);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(26px,7vw,34px);font-weight:900;line-height:1.3;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:15.5px;color:var(--sub);line-height:1.65;margin-bottom:18px}
+  .q{font-size:14px;color:var(--sub);margin:18px 0 8px;display:block;font-weight:700}
+  .q em{font-style:normal;color:var(--dim);font-weight:500}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 14px;font:inherit;font-size:16px;font-weight:600}
+  input::placeholder{color:var(--dim);font-weight:400}
+  input:focus{outline:none;border-color:var(--blue)}
+  textarea{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:12px;padding:13px 14px;font:inherit;font-size:15px;line-height:1.7;min-height:150px;resize:vertical}
+  textarea:focus{outline:none;border-color:var(--blue)}
+  textarea::placeholder{color:var(--dim)}
+
+  .seg{display:flex;gap:8px}
+  .seg button{flex:1;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 8px;font:inherit;font-size:14.5px;font-weight:800;color:var(--sub);cursor:pointer}
+  .seg button[aria-pressed=true]{background:var(--blue);border-color:var(--blue);color:#fff}
+  .seg button:disabled{opacity:.45;cursor:default}
+  .segnote{font-size:12.5px;color:var(--dim);margin-top:6px;line-height:1.5}
+
+  /* 문제 표 */
+  .qtable{background:#fff;border:2px solid var(--line);border-radius:14px;overflow:hidden;margin-top:8px}
+  .qhead,.qrow{display:grid;grid-template-columns:28px 1fr 1fr 34px;align-items:center;gap:6px;padding:8px 10px}
+  .qhead{background:#F2F5FA;font-size:11.5px;font-weight:800;color:var(--sub);letter-spacing:.04em}
+  .qrow{border-top:1px solid var(--line)}
+  .qrow .no{font-size:12px;font-weight:800;color:var(--dim);text-align:center}
+  .qrow input{padding:9px 10px;font-size:14.5px;border-width:1.5px;border-radius:9px}
+  .qrow .del{width:30px;height:30px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--dim);font-size:14px;font-weight:800;cursor:pointer;line-height:1}
+  .addrow{width:100%;margin-top:8px;background:transparent;border:2px dashed var(--line);color:var(--sub);border-radius:12px;padding:12px;font:inherit;font-size:14.5px;font-weight:700;cursor:pointer}
+  .cnt{font-size:12.5px;color:var(--dim);text-align:right;margin-top:6px;font-weight:700}
+
+  .btn{width:100%;border:none;border-radius:14px;padding:15px;font:inherit;font-size:16.5px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn:disabled{opacity:.4;cursor:default}
+  .btn-main{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:700}
+  .btn-ghost{background:transparent;color:#8B95A3;font-size:14px;border:none;font-weight:600;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:22px}
+  .lockrow b{color:var(--ink)}
+
+  /* 응시 */
+  .prog{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .prog .bar{flex:1;height:8px;background:#E7ECF4;border-radius:999px;overflow:hidden}
+  .prog .bar i{display:block;height:100%;background:var(--blue);border-radius:999px;transition:width .2s}
+  .prog .num{font-size:13px;font-weight:800;color:var(--sub);font-variant-numeric:tabular-nums;flex:none}
+  .qcard{background:#fff;border:2px solid var(--line);border-radius:18px;padding:26px 18px;text-align:center;margin-bottom:12px}
+  .qcard .lab{font-size:12px;font-weight:800;color:var(--dim);letter-spacing:.06em}
+  .qcard .word{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.02em;line-height:1.25;margin-top:8px;word-break:break-word}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choices button{background:#fff;border:2px solid var(--line);border-radius:14px;padding:15px 16px;font:inherit;font-size:16px;font-weight:700;text-align:left;cursor:pointer;color:var(--ink)}
+  .choices button:active{transform:scale(.99)}
+  .navrow{display:flex;gap:8px;margin-top:10px}
+  .navrow .btn{margin-top:0}
+
+  /* 결과 */
+  .score{background:#fff;border:3px solid var(--blue);border-radius:20px;padding:22px 16px;text-align:center;margin-bottom:12px}
+  .score .big{font-size:clamp(34px,11vw,46px);font-weight:900;letter-spacing:-.02em;line-height:1.1}
+  .score .big b{color:var(--blue)}
+  .score .sub{font-size:14px;color:var(--sub);font-weight:700;margin-top:6px}
+  .score .try{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:800;color:var(--blue);background:var(--blue-s);border-radius:999px;padding:4px 12px}
+  .wrongs{background:#fff;border:2px solid var(--line);border-radius:16px;overflow:hidden}
+  .wrongs h3{font-size:12.5px;font-weight:800;color:var(--sub);letter-spacing:.04em;padding:11px 14px;background:#F2F5FA}
+  .wrow{border-top:1px solid var(--line);padding:12px 14px}
+  .wrow .w{font-size:16px;font-weight:800}
+  .wrow .l{display:flex;gap:8px;font-size:13.5px;margin-top:5px;flex-wrap:wrap}
+  .wrow .mine{color:var(--red);font-weight:700}
+  .wrow .mine s{opacity:.75}
+  .wrow .right{color:var(--green);font-weight:800}
+  .allok{background:var(--green-s);border:2px solid #BCE7D0;border-radius:16px;padding:18px;text-align:center;font-size:16px;font-weight:800;color:#0B7C3E}
+
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 출제 ============ -->
+<section class="screen" id="s-make">
+  <span class="tag">시험지 보내기</span>
+  <h1>단어 붙여넣으면<br><b>시험지 완성.</b></h1>
+  <p class="lead">한 줄에 "단어 뜻" 으로 붙여넣으면 자동으로 나뉘어요. 카톡으로 보내면 상대가 풀고, 채점은 자동입니다.</p>
+
+  <label class="q" for="titleIn">시험지 제목 <em>· 선택</em></label>
+  <input type="text" id="titleIn" placeholder="예: 중1 3과 단어" maxlength="20">
+
+  <label class="q" for="nameIn">출제자 이름 <em>· 선택</em></label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <label class="q" for="pasteText">문제 붙여넣기 <em>· 1~30문제</em></label>
+  <textarea id="pasteText" placeholder="apple 사과&#10;banana, 바나나&#10;cat - 고양이&#10;dog: 개&#10;1. egg 달걀&#10;&#10;정답이 여러 개면 / 로 나눠요 — apple 사과/능금"></textarea>
+  <button class="btn btn-sub" id="pasteApply">문제로 만들기</button>
+
+  <div id="qWrap" class="hidden">
+    <label class="q">문제 확인 <em>· 고치거나 지울 수 있어요</em></label>
+    <div class="qtable">
+      <div class="qhead"><span></span><span>문제</span><span>정답</span><span></span></div>
+      <div id="qRows"></div>
+    </div>
+    <button class="addrow" id="addRow" type="button">+ 문제 추가</button>
+    <div class="cnt" id="qCount"></div>
+
+    <label class="q">출제 방향</label>
+    <div class="seg" id="dirSeg">
+      <button type="button" id="dirNormal" aria-pressed="true">문제 보고 정답 쓰기</button>
+      <button type="button" id="dirFlip" aria-pressed="false">뒤집기</button>
+    </div>
+    <p class="segnote" id="dirNote">단어를 보여주고 뜻을 쓰게 합니다.</p>
+
+    <label class="q">답안 유형</label>
+    <div class="seg" id="mcSeg">
+      <button type="button" id="mcType" aria-pressed="true">직접 입력</button>
+      <button type="button" id="mcChoice" aria-pressed="false">4지선다</button>
+    </div>
+    <p class="segnote" id="mcNote"></p>
+
+    <button class="btn btn-main" id="makeLink">시험지 보내기</button>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 공유 ============ -->
+<section class="screen hidden" id="s-share">
+  <span class="tag">시험지 완성</span>
+  <h1>시험지가<br><b>만들어졌어요.</b></h1>
+  <div class="card"><div class="lockrow"><span class="e">📝</span><span id="shareNote"></span></div></div>
+  <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 시험지 보내기</button>
+  <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+  <div class="linkbox hidden" id="linkbox"></div>
+  <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려요. 배포 후 확인해 주세요.</p>
+  <p class="hint">상대가 풀고 나면 결과를 보내줄 수 있어요.</p>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 응시 ============ -->
+<section class="screen hidden" id="s-quiz">
+  <span class="tag" id="quizTag">시험</span>
+  <h1 id="quizHead"></h1>
+  <p class="lead" id="quizLead"></p>
+
+  <div id="preName">
+    <label class="q" for="takerIn">내 이름 <em>· 선택</em></label>
+    <input type="text" id="takerIn" placeholder="비워도 돼요" maxlength="10">
+    <button class="btn btn-main" id="startQuiz">시험 시작</button>
+  </div>
+
+  <div id="quizBody" class="hidden">
+    <div class="prog"><div class="bar"><i id="progBar"></i></div><div class="num" id="progNum"></div></div>
+    <div class="qcard"><div class="lab" id="qLab">문제</div><div class="word" id="qWord"></div></div>
+    <input type="text" id="answerIn" placeholder="정답을 입력하세요" autocomplete="off" autocapitalize="off" spellcheck="false">
+    <div class="choices hidden" id="choices"></div>
+    <div class="navrow">
+      <button class="btn btn-sub" id="prevQ">← 이전</button>
+      <button class="btn btn-main" id="nextQ">다음 →</button>
+    </div>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 채점 결과 (응시자) ============ -->
+<section class="screen hidden" id="s-score">
+  <span class="tag">채점 결과</span>
+  <div class="score hidden" id="result">
+    <div class="big"><span id="scName"></span> <b id="scGot">0</b> / <span id="scTot">0</span></div>
+    <div class="sub" id="scSub"></div>
+    <div class="try hidden" id="scTry"></div>
+  </div>
+  <div id="wrongWrap"></div>
+  <button class="btn btn-main hidden" id="retryWrong">틀린 것만 다시 풀기</button>
+  <button class="btn btn-sub" id="retry">처음부터 다시</button>
+  <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 결과 보내기</button>
+  <button class="btn btn-ghost" id="sendResult">결과 링크만 복사</button>
+  <div class="linkbox hidden" id="resLinkbox"></div>
+  <p class="hint">보내는 건 점수와 틀린 문제 번호뿐이에요. 쓴 답은 안 보내집니다.</p>
+  <div class="next"><h3>다음은 이거 어때요?</h3><div id="nextList"></div></div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 열람 (출제자) ============ -->
+<section class="screen hidden" id="s-report">
+  <span class="tag">결과 도착</span>
+  <div class="score">
+    <div class="big"><span id="rpName"></span> <b id="rpGot">0</b> / <span id="rpTot">0</span></div>
+    <div class="sub" id="rpSub"></div>
+    <div class="try hidden" id="rpTry"></div>
+  </div>
+  <div id="rpWrong"></div>
+  <p class="hint">틀린 문제만 모아 다시 시험지를 만들 수 있어요.</p>
+  <button class="btn btn-main" id="againWrong">틀린 문제로 새 시험지</button>
+  <button class="btn btn-sub" id="again">새 시험지 만들기</button>
+  <div class="next"><h3>다음은 이거 어때요?</h3><div id="nextList2"></div></div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 배포 주소 ===== */
+const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/exam/";
+const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
+const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
+
+const MAX_Q=30, MIN_MC=4, N_CHOICE=4;
+const NEXT=[
+  {path:"../memory/",  title:"우리의 기억",     desc:"같은 걸 기억하고 있을까."},
+  {path:"../ladder/",  title:"사다리타기",      desc:"오늘 커피는 누가 쏠까."},
+  {path:"../num25/",   title:"1에서 25까지",    desc:"순서대로 최대한 빨리."}
+];
+
+/* ===== 해시 · 공통 ===== */
+function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
+function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
+function readHash(){const m=location.hash.match(/^#([cr])=(.+)$/);if(!m)return null;try{return {type:m[1],p:JSON.parse(b64d(m[2]))};}catch(e){return null;}}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
+let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2600);}
+async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해 주세요");}
+function share(o,fb){ if(window.kakaoShare) kakaoShare(o,fb); else fb(); }
+const track=(e,p)=>{try{window.track&&window.track(e,p);}catch(x){}};
+
+/* ===== 이름(선택) ===== */
+const NAME_KEY="gh_name";
+function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
+function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
+const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+
+/* ===== 시드 난수 — 4지선다 보기 배치를 응시자마다 같게 ===== */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+/* i번 문제의 보기 4개. 오답은 같은 시험지의 다른 문제 정답에서만 뽑는다. */
+function choicesFor(p, i){
+  const rnd=mulberry32(((p.s>>>0) + i*7919) >>> 0);
+  const right=answerOf(p, i);
+  const pool=[];
+  p.q.forEach((row,j)=>{ if(j===i) return;
+    const a=answerOf(p, j);
+    if(a && a!==right && pool.indexOf(a)<0) pool.push(a); });
+  /* 시드로 섞어서 앞에서부터 3개 */
+  for(let k=pool.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); const t=pool[k];pool[k]=pool[j];pool[j]=t; }
+  const list=[right].concat(pool.slice(0, N_CHOICE-1));
+  for(let k=list.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); const t=list[k];list[k]=list[j];list[j]=t; }
+  return list;
+}
+/* 출제 방향에 따라 "보여줄 것"과 "받을 정답" */
+const askOf    = (p,i)=> p.flip ? p.q[i][1][0] : p.q[i][0];
+const answerOf = (p,i)=> p.flip ? p.q[i][0]    : p.q[i][1][0];
+const acceptOf = (p,i)=> p.flip ? [p.q[i][0]]  : p.q[i][1];
+
+/* ===== 출제 상태 ===== */
+const mk={title:"",name:"",rows:[],flip:false,mc:false};
+
+function renderRows(){
+  const box=$("qRows"); box.innerHTML="";
+  mk.rows.forEach((r,i)=>{
+    const row=document.createElement("div"); row.className="qrow";
+    const no=document.createElement("span"); no.className="no"; no.textContent=i+1;
+    const q=document.createElement("input"); q.type="text"; q.value=r[0]; q.maxLength=40;
+    q.setAttribute("aria-label",(i+1)+"번 문제");
+    q.oninput=e=>{mk.rows[i][0]=e.target.value;};
+    const a=document.createElement("input"); a.type="text"; a.value=r[1].join("/"); a.maxLength=60;
+    a.setAttribute("aria-label",(i+1)+"번 정답");
+    a.oninput=e=>{mk.rows[i][1]=e.target.value.split("/").map(s=>s.trim()).filter(Boolean);};
+    const del=document.createElement("button"); del.type="button"; del.className="del"; del.textContent="✕";
+    del.setAttribute("aria-label",(i+1)+"번 문제 삭제");
+    del.onclick=()=>{ mk.rows.splice(i,1); renderRows(); };
+    row.appendChild(no); row.appendChild(q); row.appendChild(a); row.appendChild(del);
+    box.appendChild(row);
+  });
+  $("qCount").textContent=`${mk.rows.length}문제 / 최대 ${MAX_Q}`;
+  $("addRow").classList.toggle("hidden", mk.rows.length>=MAX_Q);
+  $("qWrap").classList.toggle("hidden", !mk.rows.length);
+  /* 4지선다는 문제가 4개 이상일 때만 */
+  const can=mk.rows.length>=MIN_MC;
+  $("mcChoice").disabled=!can;
+  if(!can && mk.mc){ mk.mc=false; }
+  $("mcType").setAttribute("aria-pressed", !mk.mc);
+  $("mcChoice").setAttribute("aria-pressed", mk.mc);
+  $("mcNote").textContent = can
+    ? (mk.mc ? "보기 4개 중에 고릅니다. 오답 보기는 같은 시험지의 다른 정답에서 뽑아요."
+             : "정답을 직접 입력합니다. 대소문자·공백·문장부호는 무시해요.")
+    : `4지선다는 문제가 ${MIN_MC}개 이상일 때 쓸 수 있어요.`;
+  $("makeLink").disabled=!mk.rows.length;
+}
+$("pasteApply").onclick=()=>{
+  const r=window.parseQuiz ? parseQuiz($("pasteText").value,{max:MAX_Q}) : {rows:[],over:0};
+  if(!r.rows.length){ toast("문제를 찾지 못했어요. 한 줄에 “단어 뜻” 으로 넣어주세요"); return; }
+  mk.rows=r.rows.map(x=>[x[0],x[1].slice()]);
+  renderRows();
+  track("exam_paste",{n:mk.rows.length});
+  toast(r.over ? `${MAX_Q}문제까지만 넣을 수 있어 ${r.over}줄은 뺐어요` : `${mk.rows.length}문제 만들었어요`);
+  $("qWrap").scrollIntoView({block:"nearest",behavior:"smooth"});
+};
+$("addRow").onclick=()=>{ if(mk.rows.length>=MAX_Q) return; mk.rows.push(["",[""]]); renderRows(); };
+$("titleIn").oninput=e=>{mk.title=e.target.value.trim();};
+$("nameIn").oninput=e=>{mk.name=e.target.value.trim();saveName(mk.name);};
+$("dirNormal").onclick=()=>{mk.flip=false;applyDir();};
+$("dirFlip").onclick=()=>{mk.flip=true;applyDir();};
+function applyDir(){
+  $("dirNormal").setAttribute("aria-pressed", !mk.flip);
+  $("dirFlip").setAttribute("aria-pressed", mk.flip);
+  $("dirNote").textContent = mk.flip ? "뜻을 보여주고 단어를 쓰게 합니다." : "단어를 보여주고 뜻을 쓰게 합니다.";
+}
+$("mcType").onclick=()=>{mk.mc=false;renderRows();};
+$("mcChoice").onclick=()=>{ if(mk.rows.length<MIN_MC) return; mk.mc=true;renderRows(); };
+
+$("makeLink").onclick=()=>{
+  const q=mk.rows.map(r=>[String(r[0]||"").trim(), (r[1]||[]).map(s=>String(s).trim()).filter(Boolean)])
+                 .filter(r=>r[0] && r[1].length);
+  if(!q.length){ toast("문제와 정답을 채워주세요"); return; }
+  const p={v:1, t:mk.title, n:mk.name, q, flip:mk.flip?1:0, mc:mk.mc?1:0, s:Math.floor(Math.random()*0xFFFFFFFF)};
+  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
+  $("linkbox").textContent=madeUrl;
+  $("sandboxNote").classList.toggle("hidden",!isSandbox());
+  $("shareNote").innerHTML=`<b>${q.length}문제</b>${mk.title?" · "+esc(mk.title):""} · ${mk.mc?"4지선다":"직접 입력"}${mk.flip?" · 뒤집기":""}`;
+  track("link_made");
+  show("s-share");
+};
+let madeUrl="";
+const cardTitle=()=>`📝 ${mk.name?mk.name+"의 시험지":"시험지 도착"} — ${mk.rows.length}문제`;
+$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으세요");
+$("kakaoBtn").onclick=()=>share({url:madeUrl,btn:"시험 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-exam-sq.png",
+  title:cardTitle(),
+  desc:(mk.title?mk.title+" · ":"")+"풀고 나면 바로 채점돼요."},
+  ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
+
+/* ===== 응시 상태 ===== */
+const qz={p:null, order:[], at:0, ans:[], taker:"", tries:0, lastWrong:[]};
+
+function openExam(p){
+  qz.p=p; qz.taker=loadName();
+  $("takerIn").value=qz.taker;
+  $("quizTag").textContent = p.t ? p.t : "시험";
+  $("quizHead").innerHTML = p.n
+    ? `<b>${esc(p.n)}</b>님이 시험지를<br>보냈어요. ${p.q.length}문제예요.`
+    : `<b>시험지</b>가 왔어요.<br>${p.q.length}문제예요.`;
+  $("quizLead").textContent = (p.mc?"보기 4개 중에 고르면 돼요.":"정답을 직접 입력하면 돼요.")
+    + (p.flip?" 뜻을 보고 단어를 씁니다.":"");
+  show("s-quiz");
+}
+$("takerIn").oninput=e=>{qz.taker=e.target.value.trim();saveName(qz.taker);};
+$("startQuiz").onclick=()=>{ startRound(qz.p.q.map((_,i)=>i)); };
+
+function startRound(order){
+  qz.order=order.slice(); qz.at=0; qz.ans=new Array(qz.p.q.length).fill("");
+  qz.tries++;
+  $("preName").classList.add("hidden");
+  $("quizBody").classList.remove("hidden");
+  renderQ();
+}
+function renderQ(){
+  const p=qz.p, idx=qz.order[qz.at];
+  $("progNum").textContent=`${qz.at+1} / ${qz.order.length}`;
+  $("progBar").style.width=((qz.at)/qz.order.length*100)+"%";
+  $("qLab").textContent = p.flip ? "이 뜻의 단어는?" : "이 단어의 뜻은?";
+  $("qWord").textContent = askOf(p, idx);
+  const inp=$("answerIn"), box=$("choices");
+  if(p.mc){
+    inp.classList.add("hidden"); box.classList.remove("hidden"); box.innerHTML="";
+    choicesFor(p, idx).forEach(c=>{
+      const b=document.createElement("button"); b.type="button"; b.textContent=c;
+      b.onclick=()=>{ qz.ans[idx]=c; goNext(); };
+      box.appendChild(b);
+    });
+    $("nextQ").classList.add("hidden");
+  }else{
+    inp.classList.remove("hidden"); box.classList.add("hidden");
+    inp.value=qz.ans[idx]||"";
+    $("nextQ").classList.remove("hidden");
+    $("nextQ").textContent = qz.at===qz.order.length-1 ? "제출하기" : "다음 →";
+    setTimeout(()=>inp.focus(),40);
+  }
+  $("prevQ").disabled = qz.at===0;
+}
+function goNext(){
+  const p=qz.p, idx=qz.order[qz.at];
+  if(!p.mc) qz.ans[idx]=$("answerIn").value;
+  if(qz.at < qz.order.length-1){ qz.at++; renderQ(); }
+  else grade();
+}
+$("nextQ").onclick=goNext;
+$("prevQ").onclick=()=>{
+  const p=qz.p;
+  if(!p.mc) qz.ans[qz.order[qz.at]]=$("answerIn").value;
+  if(qz.at>0){ qz.at--; renderQ(); }
+};
+$("answerIn").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); goNext(); } });
+
+function grade(){
+  const p=qz.p;
+  const wrong=[];
+  qz.order.forEach(i=>{
+    if(!window.isCorrect(qz.ans[i], acceptOf(p,i))) wrong.push(i);
+  });
+  qz.lastWrong=wrong;
+  const got=qz.order.length-wrong.length;
+  $("result").classList.remove("hidden");
+  $("scName").textContent = qz.taker ? qz.taker : "나";
+  $("scGot").textContent=got; $("scTot").textContent=qz.order.length;
+  $("scSub").textContent = wrong.length ? `${wrong.length}개 틀렸어요` : "전부 맞았어요 🎉";
+  $("scTry").classList.toggle("hidden", qz.tries<2);
+  $("scTry").textContent=`${qz.tries}번째 시도`;
+  const wrapper=$("wrongWrap");
+  if(wrong.length){
+    wrapper.innerHTML=`<div class="wrongs"><h3>틀린 문제 ${wrong.length}개</h3>`+
+      wrong.map(i=>`<div class="wrow"><div class="w">${esc(askOf(p,i))}</div>
+        <div class="l"><span class="mine">내 답: <s>${esc(qz.ans[i]||"(빈칸)")}</s></span>
+        <span class="right">정답: ${esc(acceptOf(p,i).join(" / "))}</span></div></div>`).join("")+`</div>`;
+    $("retryWrong").classList.remove("hidden");
+  }else{
+    wrapper.innerHTML=`<div class="allok">전부 맞았어요! 다시 풀 게 없네요.</div>`;
+    $("retryWrong").classList.add("hidden");
+  }
+  $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
+  /* 결과 링크 — 점수·시도·틀린 문제 번호만. 응시자가 쓴 답은 싣지 않는다. */
+  const rp={v:1,t:p.t,n:p.n,tn:qz.taker,g:got,tot:qz.order.length,tr:qz.tries,w:wrong,q:p.q,flip:p.flip};
+  const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
+  $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 보내주세요");};
+  $("kakaoRes").onclick=()=>share({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-exam-sq.png",
+    title:`${qz.taker?qz.taker+" ":""}${qz.order.length}문제 중 ${got}개 맞았어요${qz.tries>1?` (${qz.tries}번째 시도)`:""}`,
+    desc:(p.t?p.t+" · ":"")+"틀린 문제도 같이 볼 수 있어요."},
+    ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
+  track("exam_graded",{n:qz.order.length, got, tries:qz.tries});
+  show("s-score");
+}
+$("retryWrong").onclick=()=>{ track("replay",{kind:"wrong"}); startRound(qz.lastWrong); show("s-quiz"); };
+$("retry").onclick=()=>{ startRound(qz.p.q.map((_,i)=>i)); show("s-quiz"); };
+
+/* ===== 결과 열람 (출제자) ===== */
+function openReport(p){
+  $("rpName").textContent = who(p.tn, false);
+  $("rpGot").textContent=p.g; $("rpTot").textContent=p.tot;
+  $("rpSub").textContent = (p.t?p.t+" · ":"") + (p.w.length? `${p.w.length}개 틀렸어요` : "전부 맞았어요 🎉");
+  $("rpTry").classList.toggle("hidden", !(p.tr>1));
+  $("rpTry").textContent=`${p.tr}번째 시도`;
+  const box=$("rpWrong");
+  if(p.w.length && p.q){
+    box.innerHTML=`<div class="wrongs"><h3>틀린 문제 ${p.w.length}개</h3>`+
+      p.w.map(i=>{ const row=p.q[i]; if(!row) return "";
+        const ask = p.flip ? row[1][0] : row[0];
+        const ans = p.flip ? [row[0]]  : row[1];
+        return `<div class="wrow"><div class="w">${esc(ask)}</div>
+          <div class="l"><span class="right">정답: ${esc(ans.join(" / "))}</span></div></div>`;}).join("")+`</div>`;
+    $("againWrong").classList.remove("hidden");
+  }else{
+    box.innerHTML=`<div class="allok">전부 맞았어요!</div>`;
+    $("againWrong").classList.add("hidden");
+  }
+  $("nextList2").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
+  $("againWrong").onclick=()=>{
+    mk.rows=p.w.map(i=>p.q[i]).filter(Boolean).map(r=>[r[0],r[1].slice()]);
+    mk.title=p.t?p.t+" (틀린 것만)":""; mk.flip=!!p.flip; mk.mc=false;
+    $("titleIn").value=mk.title; $("nameIn").value=mk.name=loadName();
+    location.hash=""; renderRows(); applyDir(); show("s-make");
+  };
+  show("s-report");
+}
+$("again").onclick=()=>{ location.hash=""; location.reload(); };
+
+/* ===== 진입 ===== */
+(function(){
+  mk.name=loadName(); $("nameIn").value=mk.name;
+  applyDir(); renderRows();
+  const h=readHash();
+  if(h&&h.type==="c"&&h.p&&Array.isArray(h.p.q)&&h.p.q.length){ openExam(h.p); return; }
+  if(h&&h.type==="r"&&h.p&&typeof h.p.g==="number"){ openReport(h.p); return; }
+  show("s-make");
+})();
+</script>
+</body>
+</html>

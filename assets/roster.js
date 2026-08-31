@@ -78,4 +78,67 @@
     if(!/[\n,、，/|]/.test(String(text||""))) return false;
     return window.parseRoster(text).names.length >= 2;
   };
+
+  /* ===== 문제 붙여넣기 =====
+     한 줄이 "문제 정답" 형태인 단어장을 그대로 받아 [[문제,[정답들]], ...] 로 만든다.
+       apple 사과 / apple, 사과 / apple - 사과 / apple: 사과 / 1. apple 사과
+     정답이 여러 개면 "/" 로 나눈다 (apple 사과/능금).
+     반환: {rows, over}  over = 상한을 넘어 잘라낸 줄 수                          */
+
+  /* 문제와 정답을 가르는 구분자. 쉼표·탭·콜론·붙임표는 확실한 구분자라 먼저 보고,
+     없으면 마지막 공백을 기준으로 나눈다("take off 벗다" 처럼 문제에 공백이 있어도
+     정답 쪽이 한 덩어리면 제대로 잘린다). */
+  const HARD_SEP = /\s*(?:[,\t]|[:：]|\s[-–—]\s)\s*/;
+
+  window.parseQuiz = function(text, opt){
+    opt = opt || {};
+    const max = opt.max || 30;
+    const rows = [];
+    String(text||"").replace(/\r\n?/g,"\n").split("\n").forEach(raw=>{
+      let line = String(raw)
+        .replace(/[​-‍﻿]/g,"")
+        .trim()
+        .replace(/^[\s\-•*·▪◦]+/,"")
+        .replace(/^[①-⑳]\s*/,"")
+        .replace(/^\d+\s*[.)\]]\s*/,"")
+        .trim();
+      if(!line) return;
+
+      let q="", rest="";
+      const m = line.match(HARD_SEP);
+      if(m && m.index > 0){
+        q    = line.slice(0, m.index).trim();
+        rest = line.slice(m.index + m[0].length).trim();
+      }else{
+        /* 확실한 구분자가 없으면 첫 공백에서 자른다 — 첫 토큰이 문제, 나머지가 정답.
+           문제가 두 단어 이상이면 쉼표·콜론·붙임표를 써야 한다 ("take off - 벗다") */
+        const i = line.indexOf(" ");
+        if(i <= 0) return;                      // 정답이 없는 줄
+        q    = line.slice(0, i).trim();
+        rest = line.slice(i + 1).trim();
+      }
+      if(!q || !rest) return;
+      const answers = rest.split("/").map(s=>s.trim()).filter(Boolean);
+      if(!answers.length) return;
+      rows.push([q, answers]);
+    });
+    const over = Math.max(0, rows.length - max);
+    return { rows: rows.slice(0, max), over };
+  };
+
+  /* 채점용 정규화 — 앞뒤 공백·대소문자·연속 공백·문장부호를 없앤다 */
+  window.normAnswer = function(s){
+    return String(s||"")
+      .trim()
+      .toLowerCase()
+      .replace(/[.,!?;:'"“”‘’`~()\[\]{}<>·・…]/g,"")
+      .replace(/\s+/g," ")
+      .trim();
+  };
+  /* 입력이 정답들 중 하나와 정확히 같은지 — 부분 일치는 오답 */
+  window.isCorrect = function(input, answers){
+    const a = window.normAnswer(input);
+    if(!a) return false;
+    return (answers||[]).some(x=>window.normAnswer(x) === a);
+  };
 })();
