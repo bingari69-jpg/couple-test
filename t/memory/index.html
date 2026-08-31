@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>우리의 기억 — 같은 걸 기억하고 있을까</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="우리의 기억 — 같은 걸 기억하고 있을까">
+<meta property="og:description" content="첫 키스, 첫 데이트, 처음 준 선물. 나는 답했어. 우리 기억이 같은지 보자.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-memory.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/memory/">
+<meta name="twitter:card" content="summary_large_image">
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../mind/engine.css">
+<style>
+  .qcards{display:flex;flex-direction:column;gap:10px}
+  .qcard{display:flex;align-items:center;gap:14px;background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;text-align:left;font:inherit;cursor:pointer;transition:border-color .15s,transform .1s}
+  .qcard:hover{border-color:var(--coral)} .qcard:active{transform:scale(.985)}
+  .qcard .e{font-size:30px;line-height:1;flex:none}
+  .qcard .t{font-size:15.5px;font-weight:800;line-height:1.35}
+  .qcard .s{font-size:12.5px;color:var(--muted);margin-top:2px}
+  .settabs{display:flex;gap:8px;margin-bottom:14px}
+  .settab{flex:1;background:#fff;border:2px solid var(--line);border-radius:999px;padding:10px;font:inherit;font-size:14px;font-weight:800;color:var(--muted);cursor:pointer}
+  .settab[aria-pressed=true]{background:var(--coral);border-color:var(--coral);color:#fff}
+  .qbig{background:#fff;border:2.5px solid var(--line);border-radius:var(--r);padding:20px 18px;margin:14px 0;text-align:center}
+  .qbig .e{font-size:52px;line-height:1;margin-bottom:8px}
+  .qbig .t{font-size:clamp(20px,6vw,25px);font-weight:900;letter-spacing:-.02em;line-height:1.3}
+  .field{margin-top:14px}
+  .field label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px}
+  .ym{display:flex;gap:8px}
+  .ym select{flex:1;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 12px;font:inherit;font-size:16px;font-weight:700;color:var(--ink)}
+  .ym select:focus{outline:none;border-color:var(--coral)}
+  .pick{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .pick button{background:#fff;border:2.5px solid var(--line);border-radius:var(--r);padding:18px;font:inherit;font-size:17px;font-weight:800;cursor:pointer}
+  .pick button[aria-pressed=true]{border-color:var(--coral);background:var(--coral-s)}
+  .blank{margin-top:8px;background:none;border:none;color:var(--muted);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer;padding:6px 4px}
+  .blank[aria-pressed=true]{color:var(--coral);font-weight:800;text-decoration:none}
+  .cnt{font-size:11.5px;color:#B3AFBD;text-align:right;margin-top:4px}
+  /* 결과 */
+  .frow{background:#fff;border:2px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:10px}
+  .frow .fl{font-size:12.5px;font-weight:800;color:var(--muted);margin-bottom:8px}
+  .frow .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .frow .who{font-size:11px;font-weight:900;letter-spacing:.06em;margin-bottom:3px}
+  .frow .me .who{color:var(--coral)} .frow .you .who{color:#0AA88A}
+  .frow .val{font-size:16px;font-weight:800;line-height:1.35;word-break:keep-all}
+  .frow .val.blank{color:#B3AFBD;font-weight:600}
+  .judge{display:flex;gap:8px;margin-top:10px}
+  .judge button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:10px;font:inherit;font-size:14px;font-weight:800;cursor:pointer;color:var(--muted)}
+  .judge button.s[aria-pressed=true]{background:var(--mint-s);border-color:var(--mint);color:#0AA88A}
+  .judge button.d[aria-pressed=true]{background:var(--coral-s);border-color:var(--coral);color:var(--coral)}
+  .verdict{margin-top:8px;font-size:12.5px;font-weight:900;padding:4px 10px;border-radius:999px;display:inline-block}
+  .verdict.s{background:var(--mint-s);color:#0AA88A} .verdict.d{background:var(--coral-s);color:var(--coral)} .verdict.b{background:#F1EAE0;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<section class="screen" id="s-home">
+  <span class="series">💕 우리의 기억</span>
+  <h1>우리, 같은 걸<br><b>기억하고 있을까?</b></h1>
+  <p class="lead">한 문제씩. 내가 먼저 답하고 봉인해서 보내면, 상대가 답한 뒤에 둘의 기억이 같이 열려.</p>
+  <div class="settabs" id="settabs"></div>
+  <div class="qcards" id="qcards"></div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<section class="screen hidden" id="s-answer">
+  <span class="series" id="ansSeries">💕 우리의 기억</span>
+  <div class="qbig"><div class="e" id="qEmoji"></div><div class="t" id="qTitle"></div></div>
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>은(는) 이미 답했어. 네가 답하면 둘의 기억이 같이 열려.</span></div></div>
+  <label class="q" for="nameIn">내 이름</label>
+  <input type="text" id="nameIn" placeholder="이름 또는 별명" maxlength="12">
+  <div id="fields"></div>
+  <button class="btn btn-main" id="sealBtn">답 봉인하기 🔒</button>
+  <button class="btn btn-ghost" id="backHome">← 다른 문제 고르기</button>
+</section>
+
+<section class="screen hidden" id="s-link">
+  <span class="series">💕 우리의 기억</span>
+  <h1>봉인했어.<br><b>상대 기억은 어떨까?</b></h1>
+  <p class="lead" id="linkLead"></p>
+  <button class="btn btn-kakao" id="kakaoBtn">💬 카톡으로 보내기</button>
+  <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+  <div class="linkbox hidden" id="linkbox"></div>
+  <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
+  <p class="hint">카드에는 질문만 실려. 내 답은 상대가 답한 뒤에 열려.</p>
+</section>
+
+<section class="screen hidden" id="s-result">
+  <span class="series">💕 우리의 기억</span>
+  <div class="qbig"><div class="e" id="rEmoji"></div><div class="t" id="rTitle"></div></div>
+  <div id="frows"></div>
+  <div class="hidden" id="judgeWrap">
+    <p class="hint" style="margin-top:4px">글로 쓴 답은 네가 판정해. 같은 기억이야, 다른 기억이야?</p>
+    <button class="btn btn-main" id="judgeDone" disabled>판정 완료 — 결과 보기</button>
+  </div>
+  <div class="hidden" id="final">
+    <div class="score"><div class="big"><span id="pct">0</span><small>%</small></div><div class="lab" id="pctLab"></div><div class="sub" id="pctSub"></div></div>
+    <div class="special hidden" id="specialBox"><div class="h">이 문제는</div><div id="specialTxt"></div></div>
+    <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과를 몰라요.</b> 결과 링크를 보내야 상대도 둘의 기억을 봅니다.</div>
+    <div id="respActions" class="hidden">
+      <button class="btn btn-kakao" id="kakaoRes">💬 카톡으로 결과 보내기</button>
+      <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+      <div class="linkbox hidden" id="resLinkbox"></div>
+    </div>
+    <div class="next"><h3>다음 추억 →</h3><div id="nextList" class="qcards"></div></div>
+    <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+    <p class="disclaimer">재미로 보는 콘텐츠입니다. 답은 링크 안에만 담기고 어디에도 저장되지 않습니다.</p>
+  </div>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const M=window.MEMORY, Q=M.questions;
+  const DEPLOY_BASE="https://bingari69-jpg.github.io/couple-test/"+M.path;
+  const isSandbox=()=>!(/^https?:$/.test(location.protocol)&&location.origin&&location.origin!=="null");
+  const baseUrl=()=>isSandbox()?DEPLOY_BASE:location.origin+location.pathname;
+  const $=id=>document.getElementById(id);
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
+  let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
+  async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해 주세요");}
+  function share(o,fb){if(window.kakaoShare)kakaoShare(o,fb);else fb();}
+  const track=(e,p)=>{try{window.track&&window.track(e,p);}catch(x){}};
+
+  /* ---- 바이트 base64 & 가벼운 봉인 ---- */
+  const b64=u=>{let s="";u.forEach(c=>s+=String.fromCharCode(c));return btoa(s).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");};
+  const unb64=s=>{s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return u;};
+  function seal(obj){const k=Math.floor(Math.random()*254)+1;const b=new TextEncoder().encode(JSON.stringify(obj));return {k,x:b64(b.map((v,i)=>v^((k+i*31)&255)))};}
+  function unseal(k,x){const b=unb64(x);return JSON.parse(new TextDecoder().decode(b.map((v,i)=>v^((k+i*31)&255))));}
+  const encP=o=>b64(new TextEncoder().encode(JSON.stringify(o)));
+  const decP=s=>JSON.parse(new TextDecoder().decode(unb64(s)));
+  function readHash(){let m=location.hash.match(/^#([ir])=(.+)$/);if(!m)m=location.search.match(/^\?([ir])=([^&]+)/);if(!m)return null;try{return {type:m[1],p:decP(decodeURIComponent(m[2]))};}catch(e){return null;}}
+
+  /* ---- 상태 ---- */
+  const state={set:"couple",q:null,name:"",vals:[],incoming:null,judge:[]};
+  const NOW=new Date().getFullYear();
+  const ymLabel=v=>v?`${v.split("-")[0]}년 ${parseInt(v.split("-")[1],10)}월`:"";
+
+  /* ---- 홈 ---- */
+  function renderHome(){
+    $("settabs").innerHTML="";
+    Object.entries(M.sets).forEach(([k,s])=>{const b=document.createElement("button");b.className="settab";b.type="button";b.textContent=s.emoji+" "+s.name;b.setAttribute("aria-pressed",state.set===k);b.onclick=()=>{state.set=k;renderHome();};$("settabs").appendChild(b);});
+    $("qcards").innerHTML="";
+    Q.filter(q=>q.set===state.set).forEach(q=>{const b=document.createElement("button");b.className="qcard";b.type="button";
+      b.innerHTML=`<span class="e">${q.emoji}</span><span><div class="t">${esc(q.title)}</div><div class="s">${q.fields.map(f=>f.label).join(" · ")}</div></span>`;
+      b.onclick=()=>startAnswer(q,null);$("qcards").appendChild(b);});
+  }
+
+  /* ---- 답하기 (도전자·응답자 공용) ---- */
+  function startAnswer(q,incoming){
+    state.q=q;state.incoming=incoming;state.vals=q.fields.map(()=>undefined);
+    $("qEmoji").textContent=q.emoji;$("qTitle").textContent=q.title;
+    $("ansSeries").textContent=M.sets[q.set].emoji+" "+M.series;
+    $("lockedCard").classList.toggle("hidden",!incoming);if(incoming)$("lockName").textContent=incoming.n;
+    $("nameIn").value=state.name;$("sealBtn").textContent=incoming?"기억 열어보기 💕":"답 봉인하기 🔒";
+    const box=$("fields");box.innerHTML="";
+    q.fields.forEach((f,i)=>{
+      const w=document.createElement("div");w.className="field";
+      const lab=document.createElement("label");lab.textContent=f.label;w.appendChild(lab);
+      if(f.type==="ym"){
+        const ym=document.createElement("div");ym.className="ym";
+        const ys=document.createElement("select");ys.innerHTML='<option value="">년</option>'+Array.from({length:NOW-1979},(_,k)=>NOW-k).map(y=>`<option>${y}</option>`).join("");
+        const ms=document.createElement("select");ms.innerHTML='<option value="">월</option>'+Array.from({length:12},(_,k)=>k+1).map(m=>`<option>${m}</option>`).join("");
+        const upd=()=>{state.vals[i]=(ys.value&&ms.value)?`${ys.value}-${String(ms.value).padStart(2,"0")}`:undefined;bl.setAttribute("aria-pressed","false");};
+        ys.onchange=upd;ms.onchange=upd;ym.appendChild(ys);ym.appendChild(ms);w.appendChild(ym);
+      }else if(f.type==="pick"){
+        const pk=document.createElement("div");pk.className="pick";
+        const me=incoming?"나":"나", other=incoming?incoming.n:"상대";
+        [me,other].forEach((t,v)=>{const b=document.createElement("button");b.type="button";b.textContent=t;b.setAttribute("aria-pressed","false");
+          b.onclick=()=>{state.vals[i]=v;[...pk.children].forEach((c,j)=>c.setAttribute("aria-pressed",j===v));bl.setAttribute("aria-pressed","false");};pk.appendChild(b);});
+        w.appendChild(pk);
+      }else{
+        const inp=document.createElement("input");inp.type="text";inp.maxLength=20;inp.placeholder=f.ph||"";
+        const cnt=document.createElement("div");cnt.className="cnt";cnt.textContent="0 / 20";
+        inp.oninput=()=>{state.vals[i]=inp.value.trim()||undefined;cnt.textContent=inp.value.length+" / 20";bl.setAttribute("aria-pressed","false");};
+        w.appendChild(inp);w.appendChild(cnt);
+      }
+      const bl=document.createElement("button");bl.type="button";bl.className="blank";bl.textContent="기억 안 나…";bl.setAttribute("aria-pressed","false");
+      bl.onclick=()=>{const on=bl.getAttribute("aria-pressed")!=="true";bl.setAttribute("aria-pressed",on);state.vals[i]=on?null:undefined;
+        w.querySelectorAll("input,select").forEach(x=>{x.disabled=on;if(on)x.value="";});w.querySelectorAll(".pick button").forEach(x=>{x.disabled=on;x.setAttribute("aria-pressed","false");});};
+      w.appendChild(bl);box.appendChild(w);
+    });
+    show("s-answer");
+  }
+  $("nameIn").oninput=e=>{state.name=e.target.value.trim();};
+  $("backHome").onclick=()=>{renderHome();show("s-home");history.replaceState(null,"",location.pathname);};
+  $("sealBtn").onclick=()=>{
+    if(!state.name){toast("이름을 먼저 적어주세요");$("nameIn").focus();return;}
+    if(state.vals.some(v=>v===undefined)){toast("모든 칸에 답하거나 '기억 안 나'를 눌러주세요");return;}
+    if(state.incoming){
+      const p=state.incoming;let a;try{a=unseal(p.k,p.x);}catch(e){toast("링크가 손상됐어요");return;}
+      renderResult({q:state.q,aName:p.n,a,bName:state.name,b:state.vals.slice(),judge:null,viewer:"b"});return;
+    }
+    const {k,x}=seal(state.vals);
+    const url=baseUrl()+"#i="+encP({v:1,q:state.q.id,n:state.name,k,x});
+    $("linkbox").textContent=url;$("sandboxNote").classList.toggle("hidden",!isSandbox());
+    $("linkLead").textContent=`"${state.q.title}" — 상대가 답하면 둘의 기억이 같이 열려.`;
+    $("kakaoBtn").onclick=()=>share({url,btn:"기억 맞춰보기",img:M.og.sq,title:`${state.q.emoji} ${state.q.title}`,desc:`${state.name}: ${state.q.hook}`},()=>copy(url,"카톡 공유를 못 열어 링크를 복사했어요"));
+    $("copyBtn").onclick=()=>copy(url,"복사됐어요. 카톡에 붙여넣으세요");
+    track("memory_q",{q:state.q.id});
+    show("s-link");
+  };
+
+  /* ---- 결과 ---- */
+  function autoJudge(f,av,bv,viewerIsB){
+    if(av===null||bv===null) return av===null&&bv===null?"bb":"ob";
+    if(f.type==="ym") return av===bv?"s":"d";
+    if(f.type==="pick"){ // a: 0=A자신,1=B / b: 0=B자신,1=A  → 같은 사람 가리키면 일치
+      const aPoints=av===0?"A":"B", bPoints=bv===0?"B":"A";
+      return aPoints===bPoints?"s":"d";
+    }
+    return null; // text → 사람이 판정
+  }
+  function valText(f,v,aName,bName,isA){
+    if(v===null)return "기억 안 나";
+    if(f.type==="ym")return ymLabel(v);
+    if(f.type==="pick")return isA?(v===0?aName:bName):(v===0?bName:aName);
+    return v;
+  }
+  function renderResult(R){
+    const q=R.q;$("rEmoji").textContent=q.emoji;$("rTitle").textContent=q.title;
+    const me=R.viewer==="b"?{n:R.bName}:{n:R.aName}, you=R.viewer==="b"?{n:R.aName}:{n:R.bName};
+    state.judge=q.fields.map((f,i)=>{const j=autoJudge(f,R.a[i],R.b[i]);return j!==null?j:(R.judge?R.judge[i]:null);});
+    const rows=$("frows");rows.innerHTML="";
+    q.fields.forEach((f,i)=>{
+      const av=R.a[i],bv=R.b[i];
+      const meV=R.viewer==="b"?valText(f,bv,R.aName,R.bName,false):valText(f,av,R.aName,R.bName,true);
+      const youV=R.viewer==="b"?valText(f,av,R.aName,R.bName,true):valText(f,bv,R.aName,R.bName,false);
+      const d=document.createElement("div");d.className="frow";
+      d.innerHTML=`<div class="fl">${esc(f.label)}</div><div class="two">
+        <div class="me"><div class="who">${esc(me.n)} (나)</div><div class="val ${meV==="기억 안 나"?"blank":""}">${esc(meV)}</div></div>
+        <div class="you"><div class="who">${esc(you.n)}</div><div class="val ${youV==="기억 안 나"?"blank":""}">${esc(youV)}</div></div></div>`;
+      const j=state.judge[i];
+      if(j===null&&R.viewer==="b"){
+        const jd=document.createElement("div");jd.className="judge";
+        [["s","같은 기억이야 💕"],["d","다른데…? 🤔"]].forEach(([k,t])=>{const b=document.createElement("button");b.type="button";b.className=k;b.textContent=t;b.setAttribute("aria-pressed","false");
+          b.onclick=()=>{state.judge[i]=k;[...jd.children].forEach(c=>c.setAttribute("aria-pressed",c===b));$("judgeDone").disabled=state.judge.some(x=>x===null);};jd.appendChild(b);});
+        d.appendChild(jd);
+      }else{
+        const v=document.createElement("span");v.className="verdict "+(j==="s"?"s":(j==="d"?"d":"b"));
+        v.textContent=j==="s"?"같은 기억":(j==="d"?"다른 기억":(j==="bb"?"둘 다 기억 없음":"한 명은 기억 없음"));d.appendChild(v);
+      }
+      rows.appendChild(d);
+    });
+    const needJudge=state.judge.some(x=>x===null);
+    $("judgeWrap").classList.toggle("hidden",!needJudge);$("final").classList.toggle("hidden",needJudge);
+    $("judgeDone").disabled=true;
+    if(needJudge){$("judgeDone").onclick=()=>{renderResult({...R,judge:state.judge.slice()});};show("s-result");return;}
+    // 최종
+    const total=q.fields.length, same=state.judge.filter(j=>j==="s").length, blanks=state.judge.filter(j=>j==="bb"||j==="ob");
+    const pct=Math.round(same/total*100);
+    $("pct").textContent=pct;$("pctLab").textContent=pct===100?"기억 일치 💕":(pct>0?"부분 일치":"기억이 갈렸다");
+    let line=pct===100?M.lines.all:(pct>=50?M.lines.most:(pct>0?M.lines.half:M.lines.none));
+    if(blanks.length===total)line=state.judge.every(j=>j==="bb")?M.lines.bothBlank:M.lines.oneBlank;
+    $("pctSub").textContent=line;
+    // 특별 (pick)
+    $("specialBox").classList.add("hidden");
+    q.fields.forEach((f,i)=>{if(f.type==="pick"&&q.special&&R.a[i]!==null&&R.b[i]!==null){
+      const t=(R.a[i]===0&&R.b[i]===0)?q.special.bothSelf:((R.a[i]===1&&R.b[i]===1)?q.special.bothOther:null);
+      if(t){$("specialTxt").textContent=t;$("specialBox").classList.remove("hidden");}}});
+    ["notYet","respActions","resLinkbox"].forEach(id=>$(id).classList.add("hidden"));
+    if(R.viewer==="b"){
+      $("notYet").classList.remove("hidden");$("respActions").classList.remove("hidden");
+      const rurl=baseUrl()+"#r="+encP({v:1,q:q.id,an:R.aName,a:R.a,bn:R.bName,b:R.b,j:state.judge});
+      $("sendResult").onclick=()=>copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");
+      $("kakaoRes").onclick=()=>share({url:rurl,btn:"결과 보기",img:M.og.sq,title:`${q.emoji} ${q.title} — 기억 ${pct}% 일치`,desc:line},()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
+    }
+    // 다음 추억
+    const nl=$("nextList");nl.innerHTML="";
+    Q.filter(x=>x.set===q.set&&x.id!==q.id).slice(0,4).forEach(x=>{const b=document.createElement("button");b.className="qcard";b.type="button";
+      b.innerHTML=`<span class="e">${x.emoji}</span><span><div class="t">${esc(x.title)}</div><div class="s">내가 먼저 답하고 보내기</div></span>`;
+      b.onclick=()=>{state.name=me.n;history.replaceState(null,"",location.pathname);startAnswer(x,null);};nl.appendChild(b);});
+    show("s-result");
+  }
+
+  /* ---- 진입 ---- */
+  const h=readHash();
+  if(h&&h.type==="i"&&h.p&&h.p.q){const q=Q.find(x=>x.id===h.p.q);if(q){startAnswer(q,h.p);}else{renderHome();show("s-home");}}
+  else if(h&&h.type==="r"&&h.p&&h.p.q){const q=Q.find(x=>x.id===h.p.q);if(q){renderResult({q,aName:h.p.an,a:h.p.a,bName:h.p.bn,b:h.p.b,judge:h.p.j,viewer:"a"});}else{renderHome();show("s-home");}}
+  else{renderHome();show("s-home");}
+})();
+</script>
+</body>
+</html>

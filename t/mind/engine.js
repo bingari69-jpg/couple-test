@@ -69,8 +69,8 @@
     <h1>내 답은 숨겨뒀어.<br><b>네 답이랑 맞는지</b> 보자.</h1>
     <p class="lead">상대가 같은 ${N}문항에 답하면, 둘의 유형과 조합이 나와.</p>
     <button class="btn btn-kakao" id="kakaoBtn">💬 카톡으로 보내기</button>
-    <button class="btn btn-sub" id="copyBtn">링크만 복사</button>
-    <div class="linkbox" id="linkbox"></div>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <div class="linkbox hidden" id="linkbox"></div>
     <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 열리지 않습니다. 배포 후 확인해 주세요.</p>
     <button class="btn btn-ghost" id="editBtn">답 다시 고르기</button>
   </section>
@@ -91,7 +91,7 @@
     <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과를 몰라요.</b> 결과 링크를 보내야 상대도 둘의 유형을 볼 수 있어요.</div>
     <div id="respActions" class="hidden">
       <button class="btn btn-kakao" id="kakaoRes">💬 카톡으로 결과 보내기</button>
-      <button class="btn btn-sub" id="sendResult">링크만 복사</button>
+      <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
       <div class="linkbox hidden" id="resLinkbox"></div>
     </div>
     <button class="btn btn-sub" id="restart">나도 처음부터 해보기</button>
@@ -175,7 +175,7 @@
     if(R.viewer==="b"){
       $("respActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
       const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
-      $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;$("resLinkbox").classList.remove("hidden");copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
+      $("sendResult").onclick=()=>copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");
       $("kakaoRes").onclick=()=>share({url:rurl,btn:"결과 보기",img:T.og.sq,
         title:`${R.aName} ${ta.name} + ${R.bName} ${tb.name} — ${pct}%`,desc:comboOf(ta.name,tb.name).slice(0,60)+"…"},()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
     }
