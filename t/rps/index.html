@@ -214,7 +214,7 @@
 const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/rps/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
 const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
-const OG_IMG = "https://bingari69-jpg.github.io/couple-test/og/og-rps.png";
+const OG_IMG = "https://bingari69-jpg.github.io/couple-test/og/og-rps-sq.png";   // 카카오 공유 카드용 정사각(800x800)
 
 /* ===== 카카오톡 공유 ===== */
 const KAKAO_KEY = "8983fdb327539fa37eea7e842e46f011";
@@ -225,7 +225,7 @@ function kakaoShare(o){
   try{
     Kakao.Share.sendDefault({
       objectType:"feed",
-      content:{ title:o.title, description:o.desc, imageUrl:OG_IMG,
+      content:{ title:o.title, description:o.desc, imageUrl:OG_IMG, imageWidth:800, imageHeight:800,
                 link:{ mobileWebUrl:o.url, webUrl:o.url } },
       buttons:[{ title:o.btn, link:{ mobileWebUrl:o.url, webUrl:o.url } }]
     });
