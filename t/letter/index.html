@@ -124,7 +124,7 @@
   .to i,.from i{font-family:'IBM Plex Mono',monospace;font-style:normal;font-size:11px;color:var(--ink-faint);letter-spacing:.14em;margin-right:7px}
   .days{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink-faint);letter-spacing:.12em;flex:none}
   .body{position:relative;z-index:1}
-  .rl{font-family:var(--serif);font-size:17.5px;line-height:2.15;margin-bottom:16px;opacity:0;transform:translateY(9px);animation:rise 1.05s ease forwards}
+  .rl{font-family:var(--serif);font-size:17.5px;line-height:2.15;margin-bottom:16px;opacity:0;transform:translateY(9px);animation:rise 1.25s ease forwards}
   .rl.blank{height:.6em;margin-bottom:0}   /* 본문의 빈 줄 = 문단 사이 간격 */
   @keyframes rise{to{opacity:1;transform:none}}
   .sign{margin-top:26px;padding-top:16px;border-top:1px solid var(--paper-line);display:flex;justify-content:space-between;align-items:flex-end;position:relative;z-index:1}
@@ -773,7 +773,7 @@ function showRead(p, preview){
       ls.forEach((t,i)=>{
         const d=document.createElement("p"); d.className=t?"rl":"rl blank"; d.textContent=t;
         /* 한 줄씩 떠오르는 간격. 줄이 많을수록 좁히되 너무 빨라지지는 않게 */
-        d.style.animationDelay=(560+i*Math.max(250, 560-ls.length*20))+"ms";
+        d.style.animationDelay=(700+i*Math.max(320, 700-ls.length*24))+"ms";
         box.appendChild(d);
       });
       const dots=document.querySelector(".dots");
