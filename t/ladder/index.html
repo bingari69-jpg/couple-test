@@ -280,7 +280,10 @@ function mappingOf(n, rows, rungs){
 }
 
 /* ===== 상태 ===== */
-const state={names:["",""],prizes:[],made:null,picked:new Set(),animating:false};
+/* revealed: 이미 공개된 결과 칸. rungsShown: 가로선을 그렸는지.
+   둘 다 스포일러를 막기 위한 것으로, 사다리 자체(시드로 만든 모양)와는 무관하다. */
+const state={names:["",""],prizes:[],made:null,picked:new Set(),animating:false,
+  revealed:new Set(),rungsShown:false};
 let madeUrl="";
 
 /* ===== 만들기 화면 ===== */
@@ -360,7 +363,8 @@ function openLadder(p){
   const n=p.ns.length;
   const {rows,rungs}=buildRungs(n, p.s);
   view={p, n, rows, rungs, map:mappingOf(n,rows,rungs)};
-  $("playLead").textContent=`${n}명이 참가했어. 자기 이름을 눌러봐. 결과는 이미 정해져 있어.`;
+  state.picked=new Set(); state.revealed=new Set(); state.rungsShown=false;
+  $("playLead").textContent=`${n}명이 참가했어. 결과 칸은 아직 ? 야. 자기 이름을 눌러야 열려.`;
   renderPicks(); drawLadder();
   $("result").innerHTML=""; $("result").classList.add("hidden");
   $("allBox").innerHTML=""; $("allBox").classList.add("hidden");
@@ -391,25 +395,34 @@ function geom(){
   return {w:GEO.w, h, colGap, rowH, x:i=>GEO.padX+colGap*i, y:r=>GEO.top+rowH*r};
 }
 const cut=(s,n)=>s.length>n ? s.slice(0,n)+"…" : s;
-function drawLadder(traceCols){
+/* 스포일러 방지:
+   - 이름을 누르기 전에는 가로선을 아예 그리지 않는다. 미리 눈으로 따라갈 수 없게.
+   - 아래 결과 칸은 "?" 로 가려두고, 누군가 도착한 칸만 하나씩 공개한다(공개는 누적).
+   opt: {start, end, d}  d 가 있으면 경로를 애니메이션 없이 그대로 그린다. */
+function drawLadder(opt){
+  opt=opt||{};
   const g=geom(); view.geom=g;
   const n=view.n;
   const lab=Math.max(3, Math.floor(28/n)+2);   // 칸이 좁을수록 라벨을 짧게
   let s=`<svg id="svg" role="img" aria-label="사다리" viewBox="0 0 ${g.w} ${g.h}" xmlns="http://www.w3.org/2000/svg">`;
   for(let i=0;i<n;i++) s+=`<line class="rail" x1="${g.x(i)}" y1="${g.y(0)}" x2="${g.x(i)}" y2="${g.y(view.rows)}"/>`;
-  view.rungs.forEach(r=>{
-    s+=`<line class="rung" x1="${g.x(r.i)}" y1="${g.y(r.row+0.5)}" x2="${g.x(r.i+1)}" y2="${g.y(r.row+0.5)}"/>`;
-  });
+  if(state.rungsShown){
+    view.rungs.forEach(r=>{
+      s+=`<line class="rung" x1="${g.x(r.i)}" y1="${g.y(r.row+0.5)}" x2="${g.x(r.i+1)}" y2="${g.y(r.row+0.5)}"/>`;
+    });
+  }
   /* 위 = 참가자, 아래 = 결과 */
   view.p.ns.forEach((nm,i)=>{
-    const on = traceCols && traceCols.start===i;
+    const on = opt.start===i;
     s+=`<text class="capL${on?" hit":""}" x="${g.x(i)}" y="${g.y(0)-12}" text-anchor="middle">${esc(cut(nm,lab))}</text>`;
   });
   view.p.rs.forEach((rs,i)=>{
-    const hit = traceCols && traceCols.end===i;
-    s+=`<text class="capL${hit?" hit":" dim"}" x="${g.x(i)}" y="${g.y(view.rows)+18}" text-anchor="middle">${esc(cut(rs,lab))}</text>`;
+    const open = state.revealed.has(i);
+    const hit  = open && opt.end===i;
+    const txt  = open ? cut(rs,lab) : "?";
+    s+=`<text class="capL${hit?" hit":(open?"":" dim")}" x="${g.x(i)}" y="${g.y(view.rows)+18}" text-anchor="middle">${esc(txt)}</text>`;
   });
-  s+=`<path id="tracePath" class="trace hidden" d=""/>`;
+  s+=`<path id="tracePath" class="trace${opt.d?"":" hidden"}" d="${opt.d||""}"/>`;
   s+=`</svg>`;
   $("svg").outerHTML=s;
 }
@@ -426,7 +439,8 @@ function pick(i){
   $("result").classList.add("hidden"); $("result").innerHTML="";
   track("ladder_pick",{who:i+1, of:view.n});
 
-  drawLadder({start:i, end:w.end});
+  state.rungsShown=true;                 // 이제부터 가로선을 보여준다
+  drawLadder({start:i});                 // 도착 칸은 아직 "?" 인 채로
   const el=document.getElementById("tracePath");
   el.classList.remove("hidden");
   el.setAttribute("d", pathD(w.path));
@@ -445,6 +459,8 @@ function pick(i){
 function finish(i,w){
   state.animating=false;
   state.picked.add(i);
+  state.revealed.add(w.end);             // 도착한 칸만 공개 (누적)
+  drawLadder({start:i, end:w.end, d:pathD(w.path)});   // 경로는 그대로 둔 채 라벨만 갱신
   const nm=view.p.ns[i], rs=view.p.rs[w.end];
   const box=$("result");
   box.className="";
@@ -461,6 +477,9 @@ function finish(i,w){
 }
 $("showAll").onclick=()=>{
   track("ladder_all",{of:view.n});
+  state.rungsShown=true;
+  view.p.rs.forEach((_,i)=>state.revealed.add(i));
+  drawLadder();
   const rowsHtml=view.p.ns.map((nm,i)=>{
     const e=view.map[i];
     return `<tr class="${e===0?"win":""}"><td>${esc(nm)}</td><td class="r">${esc(view.p.rs[e])}</td></tr>`;
