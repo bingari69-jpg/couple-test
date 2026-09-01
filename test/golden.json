@@ -2698,5 +2698,409 @@
         "result": false
       }
     }
+  },
+  "rps": {
+    "entry_fresh": {
+      "makeLead": "내가 고른 패는 상대가 고르기 전까지 공개되지 않아요.",
+      "tieNote": "\n    <div class=\"who\">이전 판 결과</div>\n    <div id=\"tieHist\" style=\"font-size:14px;color:var(--sub)\"></div>\n    <div style=\"margin-top:8px;font-size:15px;font-weight:700\">비겼어요. 이번엔 <span style=\"color:var(--gold)\">내가 먼저</span> 냅니다.</div>\n  ",
+      "tieNoteHidden": true,
+      "tieHist": "",
+      "nameIn": "",
+      "betBoxHidden": false,
+      "betPressed": [],
+      "betCustom": "",
+      "stateBet": "",
+      "stateRv": 0,
+      "histLen": 0,
+      "_screen": {
+        "make": false,
+        "open": true,
+        "result": true
+      }
+    },
+    "bet_words": {
+      "lunch": {
+        "title": "🍱 점심 걸고 — ",
+        "open": "이기면 점심!",
+        "loseThem": "민수가 점심 산다 😂",
+        "loseMe": "내가 점심 산다 😂",
+        "tie": "무승부 — 내기는 다음 판으로"
+      },
+      "custom": {
+        "title": "🎯 노래방 걸고 — ",
+        "line": "내기: 노래방 — 민수 패"
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        ""
+      ]
+    },
+    "link_named": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MSwiaCI6W10sInJ2IjowfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MSwiaCI6W10sInJ2IjowfQ"
+    },
+    "kakao_named": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MSwiaCI6W10sInJ2IjowfQ",
+      "btn": "도전 받기",
+      "title": "지은의 가위바위보 도전장 🔒",
+      "desc": "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
+    },
+    "link_noname": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W10sInJ2IjowfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W10sInJ2IjowfQ"
+    },
+    "kakao_noname": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W10sInJ2IjowfQ",
+      "btn": "도전 받기",
+      "title": "가위바위보 도전장 🔒",
+      "desc": "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
+    },
+    "link_bet": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi7KCQ7IusIn0",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi7KCQ7IusIn0"
+    },
+    "kakao_bet": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0MDY4NiwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi7KCQ7IusIn0",
+      "btn": "도전 받기",
+      "title": "🍱 점심 걸고 — 지은의 가위바위보 도전장 🔒",
+      "desc": "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
+    },
+    "link_betCustom": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo1NjUyNCwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi64W4656Y67CpIn0",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo1NjUyNCwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi64W4656Y67CpIn0"
+    },
+    "kakao_betCustom": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo1NjUyNCwibSI6MCwiaCI6W10sInJ2IjowLCJiIjoi64W4656Y67CpIn0",
+      "btn": "도전 받기",
+      "title": "🎯 노래방 걸고 — 지은의 가위바위보 도전장 🔒",
+      "desc": "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
+    },
+    "open_named": {
+      "openName": "지은",
+      "openMsg": "이번엔 가위다.",
+      "openRounds": "",
+      "betOpen": "",
+      "betOpenHidden": true,
+      "betBoxHidden": true,
+      "stateBet": "",
+      "_screen": {
+        "make": true,
+        "open": false,
+        "result": true
+      }
+    },
+    "open_noname": {
+      "openName": "상대",
+      "openMsg": "(아무 말도 남기지 않았습니다)",
+      "openRounds": "",
+      "betOpen": "",
+      "betOpenHidden": true,
+      "betBoxHidden": true,
+      "stateBet": "",
+      "_screen": {
+        "make": true,
+        "open": false,
+        "result": true
+      }
+    },
+    "open_bet": {
+      "openName": "지은",
+      "openMsg": "(아무 말도 남기지 않았습니다)",
+      "openRounds": "",
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "stateBet": "점심",
+      "_screen": {
+        "make": true,
+        "open": false,
+        "result": true
+      }
+    },
+    "result_challenger_wins": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은",
+      "handB": "🖐",
+      "nameB": "민수 (나)",
+      "verdict": "졌습니다",
+      "subVerdict": "보가 가위에 졌어요. 지은 승리.",
+      "betResult": "",
+      "titleBadge": "🏅 정직한 강자",
+      "lieBox": "<b>지은</b>의 선언 — \"이번엔 가위다.\"<br>실제로 낸 것: <b>가위</b><span class=\"flag t\">진실이었습니다</span>",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": false,
+        "lieBox": false,
+        "notYet": false,
+        "tieActions": true,
+        "doneActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "kakao_result_cwin": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDAsMiwxLCJhYmMxMjMiLCJ6eno5OTkiXV0sImNuIjoi7KeA7J2AIiwicm4iOiLrr7zsiJgiLCJydiI6MH0",
+      "btn": "결과 보기",
+      "title": "지은 ✌️ vs 민수 🖐 — 지은 승",
+      "desc": "가위바위보 결과가 나왔어요. 복수전은 여기서."
+    },
+    "result_url_cwin": "https://bingari69-jpg.github.io/couple-test/t/rps/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDAsMiwxLCJhYmMxMjMiLCJ6eno5OTkiXV0sImNuIjoi7KeA7J2AIiwicm4iOiLrr7zsiJgiLCJydiI6MH0",
+    "result_responder_wins": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은",
+      "handB": "✊",
+      "nameB": "민수 (나)",
+      "verdict": "이겼습니다",
+      "subVerdict": "가위가 바위에 졌어요. 민수 승리.",
+      "betResult": "",
+      "titleBadge": "🏅 정직을 이용한 자",
+      "lieBox": "<b>지은</b>의 선언 — \"이번엔 가위다.\"<br>실제로 낸 것: <b>가위</b><span class=\"flag t\">진실이었습니다</span>",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": false,
+        "lieBox": false,
+        "notYet": false,
+        "tieActions": true,
+        "doneActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "result_url_rwin": "https://bingari69-jpg.github.io/couple-test/t/rps/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDAsMSwxLCJhYmMxMjMiLCJ6eno5OTkiXV0sImNuIjoi7KeA7J2AIiwicm4iOiLrr7zsiJgiLCJydiI6MH0",
+    "revenge_next": {
+      "makeLead": "복수전 도전장입니다. 상대는 고른 뒤에야 내 패를 볼 수 있어요.",
+      "tieNote": "\n    <div class=\"who\">이전 판 결과</div>\n    <div id=\"tieHist\" style=\"font-size:14px;color:var(--sub)\">지난 판 지은 ✌️ vs 민수 ✊ → <b>민수 승</b></div>\n    <div style=\"margin-top:8px;font-size:15px;font-weight:700\"><span style=\"color:var(--red)\">복수전</span>입니다. 이번엔 내가 먼저 냅니다. 이 도전장에 지난 판 결과가 같이 실려요.</div>\n  ",
+      "tieNoteHidden": false,
+      "tieHist": "지난 판 지은 ✌️ vs 민수 ✊ → <b>민수 승</b>",
+      "nameIn": "민수",
+      "betBoxHidden": false,
+      "betPressed": [],
+      "betCustom": "",
+      "stateBet": "",
+      "stateRv": 1,
+      "histLen": 0,
+      "_screen": {
+        "make": false,
+        "open": true,
+        "result": true
+      }
+    },
+    "revenge_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W10sInJ2IjoxLCJwcmV2IjpbIuyngOydgCIsMCwxLDEsIuuvvOyImCIsImFiYzEyMyIsInp6ejk5OSJdfQ"
+    },
+    "result_tie": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은",
+      "handB": "✌️",
+      "nameB": "민수 (나)",
+      "verdict": "비겼습니다",
+      "subVerdict": "가위 vs 가위. 승부가 나지 않았어요.",
+      "betResult": "",
+      "titleBadge": "",
+      "lieBox": "<b>지은</b>의 선언 — \"이번엔 가위다.\"<br>실제로 낸 것: <b>가위</b><span class=\"flag t\">진실이었습니다</span>",
+      "_cls": {
+        "sideA": "side",
+        "sideB": "side",
+        "verdict": "verdict tie"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": true,
+        "lieBox": false,
+        "notYet": true,
+        "tieActions": false,
+        "doneActions": true,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "tie_next": {
+      "makeLead": "비겼으니 이번엔 내가 먼저 냅니다. 상대는 고른 뒤에야 볼 수 있어요.",
+      "tieNote": "\n    <div class=\"who\">이전 판 결과</div>\n    <div id=\"tieHist\" style=\"font-size:14px;color:var(--sub)\">1판 · 지은 ✌️ vs ✌️ 비김</div>\n    <div style=\"margin-top:8px;font-size:15px;font-weight:700\">비겼어요. 이번엔 <span style=\"color:var(--gold)\">내가 먼저</span> 냅니다.</div>\n  ",
+      "tieNoteHidden": false,
+      "tieHist": "1판 · 지은 ✌️ vs ✌️ 비김",
+      "nameIn": "민수",
+      "betBoxHidden": false,
+      "betPressed": [],
+      "betCustom": "",
+      "stateBet": "",
+      "stateRv": 0,
+      "histLen": 1,
+      "_screen": {
+        "make": false,
+        "open": true,
+        "result": true
+      }
+    },
+    "tie_next_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W1si7KeA7J2AIiwwLDAsMSwiYWJjMTIzIiwienp6OTk5Il1dLCJydiI6MH0"
+    },
+    "bet_result_lose": {
+      "verdict": "졌습니다",
+      "betResult": "내가 점심 산다 😂"
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDAsMiwwLCJhYmMxMjMiLCJ6eno5OTkiXV0sImNuIjoi7KeA7J2AIiwicm4iOiLrr7zsiJgiLCJydiI6MCwiYiI6IuygkOyLrCJ9",
+      "btn": "결과 보기",
+      "title": "지은 ✌️ vs 민수 🖐 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/rps/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDAsMiwwLCJhYmMxMjMiLCJ6eno5OTkiXV0sImNuIjoi7KeA7J2AIiwicm4iOiLrr7zsiJgiLCJydiI6MCwiYiI6IuygkOyLrCJ9",
+    "bet_revenge": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_revenge_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/rps/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4Ijo0ODYwNSwibSI6MCwiaCI6W10sInJ2IjoxLCJiIjoi7KCQ7IusIiwicHJldiI6WyLsp4DsnYAiLDAsMiwwLCLrr7zsiJgiLCJhYmMxMjMiLCJ6eno5OTkiXX0"
+    },
+    "bet_result_view": {
+      "verdict": "이겼습니다",
+      "betResult": "민수가 점심 산다 😂",
+      "stateBet": "점심"
+    },
+    "bet_result_tie": {
+      "verdict": "비겼습니다",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_open": {
+      "betOpen": "이기면 노래방!"
+    },
+    "bet_custom_result": {
+      "verdict": "이겼습니다",
+      "betResult": "내기: 노래방 — 지은 패"
+    },
+    "result_view_cwin": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은 (나)",
+      "handB": "🖐",
+      "nameB": "민수",
+      "verdict": "이겼습니다",
+      "subVerdict": "보가 가위에 졌어요. 지은 승리.",
+      "betResult": "",
+      "titleBadge": "🏅 정직한 강자",
+      "lieBox": "<b>지은</b>의 선언 — \"이번엔 가위다.\"<br>실제로 낸 것: <b>가위</b><span class=\"flag t\">진실이었습니다</span>",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": false,
+        "lieBox": false,
+        "notYet": true,
+        "tieActions": true,
+        "doneActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "result_view_rwin": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은 (나)",
+      "handB": "✊",
+      "nameB": "민수",
+      "verdict": "졌습니다",
+      "subVerdict": "가위가 바위에 졌어요. 민수 승리.",
+      "betResult": "",
+      "titleBadge": "🏅 정직을 이용한 자",
+      "lieBox": "<b>지은</b>의 선언 — \"이번엔 가위다.\"<br>실제로 낸 것: <b>가위</b><span class=\"flag t\">진실이었습니다</span>",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": false,
+        "lieBox": false,
+        "notYet": true,
+        "tieActions": true,
+        "doneActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "handA": "✌️",
+      "nameA": "지은 (나)",
+      "handB": "✊",
+      "nameB": "민수",
+      "verdict": "졌습니다",
+      "subVerdict": "가위가 바위에 졌어요. 민수 승리.",
+      "betResult": "",
+      "titleBadge": "🏅 한 방 승부사",
+      "lieBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "betResult": true,
+        "titleBadge": false,
+        "lieBox": true,
+        "notYet": true,
+        "tieActions": true,
+        "doneActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "make": true,
+        "open": true,
+        "result": false
+      }
+    },
+    "broken_hash": {
+      "c": false,
+      "r": false
+    }
   }
 }
