@@ -2699,6 +2699,1356 @@
       }
     }
   },
+  "stroop": {
+    "entry_fresh": {
+      "playTag": "색깔 함정",
+      "playHead": "글자 말고<br><b>색깔</b>을 답해.",
+      "playLead": "둘이 <b>똑같은 문제</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltdfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltdfQ"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+      "title": "지은의 색깔 함정 도전장 🔒",
+      "desc": "글자 말고 글자색을 답하는 놀이. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltbIuyngOydgCIsMjEsIuuvvOyImCIsMjcsImFiYzEyMyIsInp6ejk5OSJdXX0"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltbIuyngOydgCIsMjEsIuuvvOyImCIsMjcsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+      "title": "지은의 색깔 함정 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 문제야. 더 맞혀.",
+      "playLead": "둘이 <b>똑같은 문제</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "21<small>개</small>",
+      "dA": "<i class=\"g\">정답 27</i> · <i class=\"b\">오답 4</i><br>정답률 87%",
+      "nameB": "지은",
+      "tB": "27<small>개</small>",
+      "dB": "<i class=\"g\">정답 27</i> · <i class=\"b\">오답 4</i><br>정답률 87%",
+      "verdict": "상대가 더 맞혔어",
+      "subVerdict": "21개 vs 27개 — 지은이 6개 더 맞혔어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI3LCLrr7zsiJgiLDIxLCJhYmMxMjMiLCJ6eno5OTkiLFsyNyw0XSxbMjcsNF1dXX0",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI3LCLrr7zsiJgiLDIxLCJhYmMxMjMiLCJ6eno5OTkiLFsyNyw0XSxbMjcsNF1dXX0",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+      "title": "민수 21개 vs 지은 27개 — 지은 승",
+      "desc": "20초, 같은 문제. 누가 더 맞혔을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 문제야. 더 맞혀.",
+      "playLead": "둘이 <b>똑같은 문제</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "27<small>개</small>",
+      "dA": "<i class=\"g\">정답 27</i> · <i class=\"b\">오답 4</i><br>정답률 87%",
+      "nameB": "민수",
+      "tB": "21<small>개</small>",
+      "dB": "<i class=\"g\">정답 27</i> · <i class=\"b\">오답 4</i><br>정답률 87%",
+      "verdict": "내가 더 맞혔어!",
+      "subVerdict": "27개 vs 21개 — 지은이 6개 더 맞혔어.",
+      "titleBadge": "🏅 눈이 빠르다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 27개 vs 민수 21개<br>2판 · 민수 21개 vs 지은 27개<br>3판 · 지은 27개 vs 민수 27개<br>4판 · 상대 27개 vs 나 21개",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 색깔 함정 도전장 🔒",
+      "desc": "글자 말고 글자색을 답하는 놀이. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltdfQ",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 문제야. 더 맞혀.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "21개 vs 27개 — 지은이 6개 더 맞혔어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI3LCLrr7zsiJgiLDIxLCJhYmMxMjMiLCJ6eno5OTkiLFsyNyw0XSxbMjcsNF1dXSwiYiI6IuygkOyLrCJ9",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+      "title": "민수 21개 vs 지은 27개 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI3LCLrr7zsiJgiLDIxLCJhYmMxMjMiLCJ6eno5OTkiLFsyNyw0XSxbMjcsNF1dXSwiYiI6IuygkOyLrCJ9",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDI3LCLrr7zsiJgiLDIxLCJhYmMxMjMiLCJ6eno5OTkiLFsyNyw0XSxbMjcsNF1dXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "27개 vs 21개 — 지은이 6개 더 맞혔어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stroop/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "27<small>개</small>",
+      "dA": "<i class=\"g\">정답 0</i> · <i class=\"b\">오답 0</i><br>정답률 0%",
+      "nameB": "민수",
+      "tB": "21<small>개</small>",
+      "dB": "<i class=\"g\">정답 0</i> · <i class=\"b\">오답 0</i><br>정답률 0%",
+      "verdict": "내가 더 맞혔어!",
+      "subVerdict": "27개 vs 21개 — 지은이 6개 더 맞혔어.",
+      "titleBadge": "🏅 눈이 빠르다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "arrow": {
+    "entry_fresh": {
+      "playTag": "화살표 함정",
+      "playHead": "화살표대로.<br><b>가끔은 반대로.</b>",
+      "playLead": "둘이 <b>똑같은 화살표</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W119",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W119"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W119",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-arrow-sq.png",
+      "title": "지은의 화살표 함정 도전장 🔒",
+      "desc": "화살표대로 밀되 빨간 테두리면 반대로. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W1si7KeA7J2AIiwyNCwi66-87IiYIiwzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W1si7KeA7J2AIiwyNCwi66-87IiYIiwzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-arrow-sq.png",
+      "title": "지은의 화살표 함정 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 화살표야. 더 맞혀.",
+      "playLead": "둘이 <b>똑같은 화살표</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "24<small>개</small>",
+      "dA": "<i class=\"g\">정답 31</i> · <i class=\"b\">오답 5</i><br><i class=\"t\">함정 8개 통과</i> · 정답률 86%",
+      "nameB": "지은",
+      "tB": "31<small>개</small>",
+      "dB": "<i class=\"g\">정답 31</i> · <i class=\"b\">오답 5</i><br><i class=\"t\">함정 8개 통과</i> · 정답률 86%",
+      "verdict": "상대가 더 맞혔어",
+      "subVerdict": "24개 vs 31개 — 지은이 7개 더 맞혔어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDMxLCLrr7zsiJgiLDI0LCJhYmMxMjMiLCJ6eno5OTkiLFszMSw1LDhdLFszMSw1LDhdXV19",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDMxLCLrr7zsiJgiLDI0LCJhYmMxMjMiLCJ6eno5OTkiLFszMSw1LDhdLFszMSw1LDhdXV19",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-arrow-sq.png",
+      "title": "민수 24개 vs 지은 31개 — 지은 승",
+      "desc": "20초, 같은 화살표. 누가 더 맞혔을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 화살표야. 더 맞혀.",
+      "playLead": "둘이 <b>똑같은 화살표</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "31<small>개</small>",
+      "dA": "<i class=\"g\">정답 31</i> · <i class=\"b\">오답 5</i><br><i class=\"t\">함정 8개 통과</i> · 정답률 86%",
+      "nameB": "민수",
+      "tB": "24<small>개</small>",
+      "dB": "<i class=\"g\">정답 31</i> · <i class=\"b\">오답 5</i><br><i class=\"t\">함정 8개 통과</i> · 정답률 86%",
+      "verdict": "내가 더 맞혔어!",
+      "subVerdict": "31개 vs 24개 — 지은이 7개 더 맞혔어.",
+      "titleBadge": "🏅 손이 먼저 안다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 31개 vs 민수 24개<br>2판 · 민수 24개 vs 지은 31개<br>3판 · 지은 31개 vs 민수 31개<br>4판 · 상대 31개 vs 나 24개",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-arrow-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 화살표 함정 도전장 🔒",
+      "desc": "화살표대로 밀되 빨간 테두리면 반대로. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W119",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 화살표야. 더 맞혀.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "24개 vs 31개 — 지은이 7개 더 맞혔어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDMxLCLrr7zsiJgiLDI0LCJhYmMxMjMiLCJ6eno5OTkiLFszMSw1LDhdLFszMSw1LDhdXV0sImIiOiLsoJDsi6wifQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-arrow-sq.png",
+      "title": "민수 24개 vs 지은 31개 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDMxLCLrr7zsiJgiLDI0LCJhYmMxMjMiLCJ6eno5OTkiLFszMSw1LDhdLFszMSw1LDhdXV0sImIiOiLsoJDsi6wifQ",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMzEsIuuvvOyImCIsMjQsImFiYzEyMyIsInp6ejk5OSIsWzMxLDUsOF0sWzMxLDUsOF1dXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "31개 vs 24개 — 지은이 7개 더 맞혔어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/arrow/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "31<small>개</small>",
+      "dA": "<i class=\"g\">정답 0</i> · <i class=\"b\">오답 0</i><br><i class=\"t\">함정 0개 통과</i> · 정답률 0%",
+      "nameB": "민수",
+      "tB": "24<small>개</small>",
+      "dB": "<i class=\"g\">정답 0</i> · <i class=\"b\">오답 0</i><br><i class=\"t\">함정 0개 통과</i> · 정답률 0%",
+      "verdict": "내가 더 맞혔어!",
+      "subVerdict": "31개 vs 24개 — 지은이 7개 더 맞혔어.",
+      "titleBadge": "🏅 손이 먼저 안다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "stop": {
+    "entry_fresh": {
+      "playTag": "딱 멈춰",
+      "playHead": "왔다갔다하는 바를<br><b>한가운데</b>서 멈춰.",
+      "playLead": "둘이 <b>똑같은 속도</b>로 받아. <b>5번</b> 멈추고 오차를 더해 — 적은 쪽이 이겨. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbXX0",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbXX0"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stop-sq.png",
+      "title": "지은의 딱 멈춰 도전장 🔒",
+      "desc": "왔다갔다하는 바를 한가운데서 멈추기. 5번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbWyLsp4DsnYAiLDIwNSwi66-87IiYIiwxMzcsImFiYzEyMyIsInp6ejk5OSJdXX0"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbWyLsp4DsnYAiLDIwNSwi66-87IiYIiwxMzcsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stop-sq.png",
+      "title": "지은의 딱 멈춰 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 속도야. 더 정확히.",
+      "playLead": "둘이 <b>똑같은 속도</b>로 받아. <b>5번</b> 멈추고 오차를 더해 — 적은 쪽이 이겨. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "20.5<small>오차</small>",
+      "dA": "1회 2.1 · 2회 4.4 · 3회 1.2 · 4회 3.8 · 5회 2.2",
+      "nameB": "지은",
+      "tB": "13.7<small>오차</small>",
+      "dB": "1회 2.1 · 2회 4.4 · 3회 1.2 · 4회 3.8 · 5회 2.2",
+      "verdict": "상대가 더 정확해",
+      "subVerdict": "20.5 vs 13.7 — 지은이 6.8만큼 덜 빗나갔어.",
+      "titleBadge": "🏅 조급한 손",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/stop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDEzNywi66-87IiYIiwyMDUsImFiYzEyMyIsInp6ejk5OSIsWzIxLDQ0LDEyLDM4LDIyXSxbMjEsNDQsMTIsMzgsMjJdXV19",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDEzNywi66-87IiYIiwyMDUsImFiYzEyMyIsInp6ejk5OSIsWzIxLDQ0LDEyLDM4LDIyXSxbMjEsNDQsMTIsMzgsMjJdXV19",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stop-sq.png",
+      "title": "민수 오차 20.5 vs 지은 오차 13.7 — 지은 승",
+      "desc": "5번 멈춰서 오차 합. 누가 더 정확했을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 속도야. 더 정확히.",
+      "playLead": "둘이 <b>똑같은 속도</b>로 받아. <b>5번</b> 멈추고 오차를 더해 — 적은 쪽이 이겨. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "13.7<small>오차</small>",
+      "dA": "1회 2.1 · 2회 4.4 · 3회 1.2 · 4회 3.8 · 5회 2.2",
+      "nameB": "민수",
+      "tB": "20.5<small>오차</small>",
+      "dB": "1회 2.1 · 2회 4.4 · 3회 1.2 · 4회 3.8 · 5회 2.2",
+      "verdict": "내가 더 정확해!",
+      "subVerdict": "13.7 vs 20.5 — 지은이 6.8만큼 덜 빗나갔어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 13.7 vs 민수 20.5<br>2판 · 민수 20.5 vs 지은 13.7<br>3판 · 지은 13.7 vs 민수 13.7<br>4판 · 상대 13.7 vs 나 20.5",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJiIjoi7KCQ7IusIiwiaCI6W119",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJiIjoi7KCQ7IusIiwiaCI6W119",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stop-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 딱 멈춰 도전장 🔒",
+      "desc": "왔다갔다하는 바를 한가운데서 멈추기. 5번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJoIjpbXX0",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 속도야. 더 정확히.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "20.5 vs 13.7 — 지은이 6.8만큼 덜 빗나갔어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDEzNywi66-87IiYIiwyMDUsImFiYzEyMyIsInp6ejk5OSIsWzIxLDQ0LDEyLDM4LDIyXSxbMjEsNDQsMTIsMzgsMjJdXV0sImIiOiLsoJDsi6wifQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-stop-sq.png",
+      "title": "민수 오차 20.5 vs 지은 오차 13.7 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/stop/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDEzNywi66-87IiYIiwyMDUsImFiYzEyMyIsInp6ejk5OSIsWzIxLDQ0LDEyLDM4LDIyXSxbMjEsNDQsMTIsMzgsMjJdXV0sImIiOiLsoJDsi6wifQ",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJiIjoi7KCQ7IusIiwiaCI6W1si7KeA7J2AIiwxMzcsIuuvvOyImCIsMjA1LCJhYmMxMjMiLCJ6eno5OTkiLFsyMSw0NCwxMiwzOCwyMl0sWzIxLDQ0LDEyLDM4LDIyXV1dfQ"
+    },
+    "bet_result_view": {
+      "subVerdict": "13.7 vs 20.5 — 지은이 6.8만큼 덜 빗나갔어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/stop/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NTA2LCJjIjpbMjEsNDQsMTIsMzgsMjJdLCJiIjoi64W4656Y67CpIiwiaCI6W119",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "13.7<small>오차</small>",
+      "dA": "회차 기록 없음",
+      "nameB": "민수",
+      "tB": "20.5<small>오차</small>",
+      "dB": "회차 기록 없음",
+      "verdict": "내가 더 정확해!",
+      "subVerdict": "13.7 vs 20.5 — 지은이 6.8만큼 덜 빗나갔어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
   "rps": {
     "entry_fresh": {
       "makeLead": "내가 고른 패는 상대가 고르기 전까지 공개되지 않아요.",

@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>색깔 함정</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="색깔 함정 — 글자 말고 색깔을 답해">
+<meta property="og:description" content="20초. 알고도 틀린다. 너 몇 개?">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-stroop.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/stroop/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/bet.js"></script>
+<script src="../../assets/duel-engine.js"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E;
+    --c-red:#E23B3B; --c-blue:#2563EB; --c-green:#15A34A; --c-yellow:#E8A400; --c-purple:#8B45D6;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:14px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 규칙 보기 */
+  .demo{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:14px;font-size:14px;color:var(--sub);font-weight:700;flex-wrap:wrap}
+  .demo .w{font-size:26px;font-weight:900;color:var(--c-blue)}
+  .demo b{color:var(--ink)}
+
+  /* 상단 표시 */
+  .hud{display:flex;align-items:center;gap:8px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:12px 14px;margin:0 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:11.5px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(24px,8vw,32px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
+  .hud .ok{text-align:center} .hud .ok .v{color:var(--green)}
+  .hud .no{text-align:right} .hud .no .v{color:var(--red)}
+
+  /* 문제판 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;
+    padding:30px 16px;text-align:center;margin-bottom:10px;touch-action:manipulation}
+  .word{font-size:clamp(50px,17vw,74px);font-weight:900;letter-spacing:-.02em;line-height:1.1;min-height:1.15em}
+  .word.shake{animation:shake .3s ease}
+  @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+  .askline{font-size:14px;font-weight:700;color:var(--sub);margin-top:8px}
+  .askline b{color:var(--ink)}
+
+  .opts{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px}
+  .opt{background:#fff;border:3px solid var(--line);border-radius:18px;padding:17px 8px;
+    font:inherit;font-size:19px;font-weight:900;color:var(--ink);cursor:pointer;
+    touch-action:manipulation;-webkit-tap-highlight-color:transparent;transition:transform .07s}
+  .opt:active{transform:scale(.97)}
+  .opt.good{border-color:var(--green);background:#F0FDF4}
+  .opt.bad{border-color:var(--red);background:#FEF2F2}
+  .opt:disabled{opacity:.55;cursor:default}
+
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:19px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:5}
+  .cover .cd{font-size:clamp(56px,18vw,80px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700;line-height:1.6}
+  .side .d i{font-style:normal} .side .d .g{color:var(--green)} .side .d .b{color:var(--red)}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">색깔 함정</span>
+  <h1 id="playHead">글자 말고<br><b>색깔</b>을 답해.</h1>
+  <p class="lead" id="playLead">둘이 <b>똑같은 문제</b>를 받아. 20초 동안 몇 개나 맞힐까. 기회는 한 번.</p>
+
+  <div class="demo">
+    <span class="w">빨강</span>
+    <span>이렇게 쓰여 있으면 답은 <b>파랑</b> — 글자가 아니라 <b>글자색</b>.</span>
+  </div>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clock">20.0</div></div>
+    <div class="c ok"><div class="lab">정답</div><div class="v" id="okN">0</div></div>
+    <div class="c no"><div class="lab">오답</div><div class="v" id="noN">0</div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="word" id="word">준비</div>
+    <div class="askline">이 글자의 <b>색깔</b>은?</div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 시작</div></div>
+  </div>
+
+  <div class="opts" id="opts"></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 문제를 끝내면 둘의 정답 수가 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 한 판 더</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 한 판 더</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 색깔 함정 (스트룹) =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 문제판과 문제 만들기만 남는다. */
+const GAME_MS=20000, WRONG_LOCK=400;      // 틀리면 0.4초 잠깐 잠근다
+/* 이름과 실제 색. 답은 언제나 "글자색" 이다. */
+const COLORS=[
+  {name:"빨강", css:"var(--c-red)"},
+  {name:"파랑", css:"var(--c-blue)"},
+  {name:"초록", css:"var(--c-green)"},
+  {name:"노랑", css:"var(--c-yellow)"},
+  {name:"보라", css:"var(--c-purple)"}
+];
+const N_OPT=4;                            // 보기 4개
+const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
+const rate=(ok,no)=>(ok+no)?Math.round(ok/(ok+no)*100):0;
+function titleFor(n){
+  if(n>=34) return "함정 무시";
+  if(n>=26) return "눈이 빠르다";
+  if(n>=18) return "보통 사람";
+  if(n>=10) return "글자에 속는 중";
+  return "함정에 빠짐";
+}
+const NEXT=[
+  {path:"../arrow/",  title:"화살표 함정",   desc:"화살표대로. 가끔은 반대로."},
+  {path:"../stop/",   title:"딱 멈춰",      desc:"왔다갔다하는 바를 한가운데서."},
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."}
+];
+
+/* ===== 문제 만들기 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   글자·글자색·보기 배치가 모두 이 시드로만 정해져 링크에 실리므로,
+   도전자와 응전자가 완전히 같은 문제를 푼다. 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+/* 반환: [{w 글자, c 글자색, o 보기(색 번호 4개)}] — 20초에 다 못 풀 만큼 넉넉히 */
+const N_Q=120;
+function quizOf(seed){
+  const rnd=mulberry32(seed>>>0);
+  const out=[];
+  for(let i=0;i<N_Q;i++){
+    const c=Math.floor(rnd()*COLORS.length);              // 글자색 = 정답
+    let w=c;
+    if(rnd()<0.8){                                        // 80% 는 글자와 색이 다르다
+      w=Math.floor(rnd()*(COLORS.length-1));
+      if(w>=c) w++;
+    }
+    /* 보기: 정답을 넣고 나머지를 섞어 4개 */
+    const pool=[]; for(let k=0;k<COLORS.length;k++) if(k!==c) pool.push(k);
+    for(let k=pool.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); const t=pool[k];pool[k]=pool[j];pool[j]=t; }
+    const o=[c].concat(pool.slice(0,N_OPT-1));
+    for(let k=o.length-1;k>0;k--){ const j=Math.floor(rnd()*(k+1)); const t=o[k];o[k]=o[j];o[j]=t; }
+    out.push({w,c,o});
+  }
+  return out;
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+const state = Duel.setup({
+  deployBase:"https://bingari69-jpg.github.io/couple-test/t/stroop/",
+  og:"https://bingari69-jpg.github.io/couple-test/og/og-stroop-sq.png",
+  gameName:"색깔 함정",
+  challengeDesc:"글자 말고 글자색을 답하는 놀이. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 정답이 많을수록 이긴다
+  hasSeed:true,                     // 같은 문제를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  /* c: [정답, 오답] */
+  state:{seed:0,quiz:[],idx:0,ok:0,no:0,stat:null,locked:false,
+         running:false,t0:0,raf:0,done:false,cdTimer:0,lockTimer:0},
+  linkExtra:st=>({c:st.stat}),
+  roundExtra:(p,st)=>[p.c||[0,0], st.stat],
+  extraKey:"c", extraDefault:[0,0],
+  recordCell:x=>x.v+"<small>개</small>",
+  detailCell:x=>`<i class="g">정답 ${x.c[0]}</i> · <i class="b">오답 ${x.c[1]}</i><br>정답률 ${rate(x.c[0],x.c[1])}%`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}개 vs ${esc(who(r[2],!isA))} ${r[3]}개`,
+  verdictText:o=> o==="win"?"내가 더 맞혔어!":o==="lose"?"상대가 더 맞혔어":"완전 똑같아?!",
+  /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" */
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"개수까지 같은 건 거의 기적."
+      :`${me.v}개 vs ${them.v}개 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}개 더 맞혔어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 문제야. 더 맞혀.`,
+  againHead:()=>`재도전. <b>새 문제</b>로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}개 vs ${nm(them.n)}${them.v}개${tail}`,
+  resultDesc:"20초, 같은 문제. 누가 더 맞혔을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.quiz=quizOf(state.seed); },
+  newRound(){ state.seed=newSeed(); state.quiz=quizOf(state.seed); },
+  resetPlay(){
+    state.stat=null;state.done=false;state.idx=0;state.ok=0;state.no=0;state.locked=false;
+    $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
+    $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");
+    $("okN").textContent="0";$("noN").textContent="0";
+    $("word").textContent="준비";$("word").style.color="";
+    drawOpts(null);
+    $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+  }
+});
+
+/* ===== 문제판 ===== */
+/* 보기 버튼은 네 개를 미리 만들어 두고 글자만 갈아 끼운다 */
+(function(){
+  const box=$("opts");
+  for(let i=0;i<N_OPT;i++){
+    const b=document.createElement("button");
+    b.type="button"; b.className="opt"; b.dataset.i=i; b.disabled=true;
+    box.appendChild(b);
+  }
+  box.addEventListener("pointerdown",e=>{
+    const b=e.target.closest && e.target.closest(".opt"); if(!b||b.disabled) return;
+    e.preventDefault(); answer(+b.dataset.i);
+  });
+  box.addEventListener("contextmenu",e=>e.preventDefault());
+})();
+function drawOpts(q){
+  const box=$("opts");
+  for(let i=0;i<N_OPT;i++){
+    const b=box.children[i];
+    b.className="opt";
+    if(q){ b.textContent=COLORS[q.o[i]].name; b.disabled=!state.running; }
+    else { b.textContent="—"; b.disabled=true; }
+  }
+}
+function showQ(){
+  const q=state.quiz[state.idx % state.quiz.length];
+  $("word").textContent=COLORS[q.w].name;
+  $("word").style.color=COLORS[q.c].css;
+  drawOpts(q);
+}
+function answer(i){
+  if(!state.running || state.done || state.locked) return;
+  const q=state.quiz[state.idx % state.quiz.length];
+  const picked=q.o[i];
+  const box=$("opts");
+  if(picked===q.c){
+    state.ok++; $("okN").textContent=state.ok;
+    box.children[i].classList.add("good");
+    state.idx++;
+    setTimeout(()=>{ if(state.running) showQ(); },70);
+  }else{
+    state.no++; $("noN").textContent=state.no;
+    box.children[i].classList.add("bad");
+    $("word").classList.remove("shake"); void $("word").offsetWidth; $("word").classList.add("shake");
+    state.locked=true;
+    for(let k=0;k<N_OPT;k++) box.children[k].disabled=true;
+    state.lockTimer=setTimeout(()=>{
+      state.locked=false;
+      if(state.running){ state.idx++; showQ(); }
+    },WRONG_LOCK);
+  }
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  $("cover").classList.remove("hidden"); $("cdSub").textContent="곧 시작해요";
+  let n=3; $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation="";
+             state.cdTimer=setTimeout(step,1000); return; }
+    $("cover").classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  state.running=true; state.done=false; state.idx=0; state.ok=0; state.no=0; state.locked=false;
+  state.t0=performance.now();
+  $("okN").textContent="0"; $("noN").textContent="0";
+  $("clock").textContent=fmtT(GAME_MS); $("clock").classList.remove("warn");
+  showQ();
+  const tick=()=>{
+    if(!state.running) return;
+    const el=performance.now()-state.t0;
+    if(el>=GAME_MS){ finishPlay(); return; }
+    $("clock").textContent=fmtT(GAME_MS-el);
+    $("clock").classList.toggle("warn", GAME_MS-el<=5000);
+    state.raf=requestAnimationFrame(tick);
+  };
+  state.raf=requestAnimationFrame(tick);
+}
+function finishPlay(){
+  state.running=false; state.done=true;
+  if(state.raf) cancelAnimationFrame(state.raf);
+  if(state.lockTimer) clearTimeout(state.lockTimer);
+  /* 최종 개수는 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("okN").textContent="🔒"; $("noN").textContent="🔒"; $("clock").textContent="0.0";
+  $("word").textContent="🔒"; $("word").style.color="";
+  drawOpts(null);
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인";
+  const b=$("bigBtn"); b.textContent="봉인됨"; b.disabled=true;
+  Duel.finish(state.ok, {stat:[state.ok, state.no]});   // 이 게임의 "기록" = 정답 수
+}
+
+Duel.start();
+</script>
+</body>
+</html>
