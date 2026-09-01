@@ -16,6 +16,7 @@
 
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/duel-engine.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -178,24 +179,10 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ===== 배포 주소 ===== */
-const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/tap/";
-const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
-const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
-
-/* ===== 승패 방향 =====
-   ten·react·num25 는 "기록이 낮을수록 승"이지만 연타는 "횟수가 많을수록 승"이다.
-   승패를 가르는 곳은 모두 beats() 하나만 쓰도록 모아, 이 플래그로 방향을 뒤집는다.
-   (콘텐츠마다 자기 파일에 엔진 사본을 갖고 있어 다른 게임에는 영향이 없다) */
-const HIGHER_WINS = true;
-const beats = (a,b) => HIGHER_WINS ? a>b : a<b;
-
+/* ===== 10초 연타 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 연타 패드 화면만 남는다. */
 const GAME_MS=10000;
-const NEXT=[
-  {path:"../mole/",   title:"두더지 잡기",   desc:"20초, 같은 두더지, 누가 더 잡나."},
-  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
-  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."}
-];
 function titleFor(n){
   if(n>=90) return "손가락이 두 개가 아님";
   if(n>=70) return "연타 장인";
@@ -204,48 +191,44 @@ function titleFor(n){
   return "느긋한 편";
 }
 const rate=n=>(n/(GAME_MS/1000)).toFixed(1);      // 초당 속도
+const NEXT=[
+  {path:"../mole/",   title:"두더지 잡기",   desc:"20초, 같은 두더지, 누가 더 잡나."},
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."}
+];
 
-/* ===== 잠금 · 해시 · 공통 ===== */
-function lockNum(v){const k=Math.floor(Math.random()*0xFFFF);return {k,x:(v+k*7)%1000003};}
-function unlockNum(k,x){let v=(x-k*7)%1000003;if(v<0)v+=1000003;return v;}
-function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
-function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
-function readHash(){const m=location.hash.match(/^#([cr])=(.+)$/);if(!m)return null;try{return {type:m[1],p:JSON.parse(b64d(m[2]))};}catch(e){return null;}}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-const $=id=>document.getElementById(id);
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
-let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
-async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해줘");}
-const track=(e,p)=>{try{window.track&&window.track(e,p);}catch(x){}};
-
-/* ===== 이름(선택) · 플레이어 식별자 ===== */
-const NAME_KEY="gh_name";
-function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
-function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
-function rid(){return Math.random().toString(36).slice(2,8);}
-const who=(nm,isMe)=>nm||(isMe?"나":"상대");
-const JOSA={"나":["내가","나는","나를"],"상대":["상대가","상대는","상대를"]};
-/* 이름 뒤 주격조사: 받침 있으면 "이", 없으면 "가". */
-const hasJong=s=>{const c=String(s).charCodeAt(String(s).length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0;};
-const subj =l=>JOSA[l]?JOSA[l][0]:l+(hasJong(l)?"이":"가");
-
-function meIsA(r,meId,meName){
-  const ai=r[4],bi=r[5];
-  if(meId){ if(ai===meId) return true; if(bi===meId) return false; }
-  return r[0]===meName;
-}
-function myIdFrom(hist,theirId){
-  for(const r of hist){ const ai=r[4],bi=r[5];
-    if(ai&&bi){ if(ai===theirId) return bi; if(bi===theirId) return ai; } }
-  return "";
-}
-
-/* ===== 상태 ===== */
-const state={name:"",id:"",theirId:"",n:0,ms:null,
-  hist:[],incoming:null,running:false,t0:0,raf:0,done:false,cdTimer:0,
-  down:new Set()};       // 지금 눌려 있는 pointerId — 손가락마다 한 번만 세려고
-let madeUrl="";
 const padEl=$("pad"), cntEl=$("count"), clockEl=$("clock");
+
+const state = Duel.setup({
+  deployBase:"https://bingari69-jpg.github.io/couple-test/t/tap/",
+  og:"https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+  gameName:"10초 연타",
+  challengeDesc:"10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 많이 누를수록 이긴다
+  scrollToShare:true,
+  /* down: 지금 눌려 있는 pointerId — 손가락마다 한 번만 세려고 */
+  state:{n:0,running:false,t0:0,raf:0,done:false,cdTimer:0,down:new Set()},
+  recordCell:x=>x.v+"<small>회</small>",
+  detailCell:x=>"초당 "+rate(x.v)+"회",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}회 vs ${esc(who(r[2],!isA))} ${r[3]}회`,
+  verdictText:o=> o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!",
+  /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" (예: "87회 vs 74회 — 내가 13회 더") */
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"횟수까지 같은 건 거의 기적."
+      :`${me.v}회 vs ${them.v}회 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}회 더.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>10초, 더 많이.`,
+  againHead:()=>`재도전. <b>한 판 더.</b>`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}회 vs ${nm(them.n)}${them.v}회${tail}`,
+  resultDesc:"10초 동안 누가 더 많이 눌렀을까. 재도전은 여기서.",
+  resetPlay(){
+    state.done=false;state.n=0;state.down.clear();
+    $("cover").classList.add("hidden");$("cd").textContent="3";
+    clockEl.textContent="10.0";clockEl.classList.remove("warn");cntEl.textContent="0";
+    padEl.disabled=false;padEl.firstChild.nodeValue="시작";$("padSub").textContent="눌러서 3초 뒤 시작";
+  }
+});
 
 /* ===== 연타 =====
    탭마다 DOM 을 만들지 않는다. 숫자는 textContent 로 직접 쓰고,
@@ -269,7 +252,6 @@ $("arena").addEventListener("touchstart",e=>{ if(state.running) e.preventDefault
 $("arena").addEventListener("touchmove", e=>{ if(state.running) e.preventDefault(); },{passive:false});
 
 /* ===== 진행 ===== */
-$("nameIn").oninput=e=>{state.name=e.target.value.trim();saveName(state.name);};
 padEl.addEventListener("click",()=>{ if(!state.running && !state.done) countdown(); });
 
 function countdown(){
@@ -305,118 +287,13 @@ function startPlay(){
 function finishPlay(){
   state.running=false; state.done=true; state.down.clear();
   if(state.raf) cancelAnimationFrame(state.raf);
-  state.ms=state.n;                          // 이 게임의 "기록" = 누른 횟수
   /* 최종 횟수는 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
   cntEl.textContent="🔒"; clockEl.textContent="0.0";
   padEl.disabled=true; padEl.firstChild.nodeValue="봉인됨"; $("padSub").textContent="기록 봉인";
-  if(state.incoming){ setTimeout(()=>respond(),600); return; }
-  makeLink(); $("afterPlay").classList.remove("hidden");
-  $("afterPlay").scrollIntoView({block:"nearest",behavior:"smooth"});
+  Duel.finish(state.n);                      // 이 게임의 "기록" = 누른 횟수
 }
 
-function makeLink(){
-  const {k,x}=lockNum(state.ms);
-  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify({v:1,n:state.name,i:state.id,k,x,h:state.hist}));
-  $("linkbox").textContent=madeUrl;$("sandboxNote").classList.toggle("hidden",!isSandbox());
-  track("link_made");
-}
-$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어. 카톡에 붙여넣어");
-$("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"도전 받기",img:"https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
-  title:`${state.name?state.name+"의 ":""}10초 연타 도전장 🔒`,
-  desc: state.hist.length ? `${state.hist.length+1}판째. 전적이 같이 실려 있어.` : "10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개."},
-  ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어"));
-
-/* ===== 응답자 ===== */
-function tallyOf(hist,meId,meName){
-  let w=0,l=0,t=0;hist.forEach(r=>{const isA=meIsA(r,meId,meName);
-    const mine=isA?r[1]:r[3], theirs=isA?r[3]:r[1];
-    if(beats(mine,theirs))w++;else if(beats(theirs,mine))l++;else t++;});
-  return {w,l,t};
-}
-function histRows(hist,meId,meName){return hist.map((r,i)=>{const isA=meIsA(r,meId,meName);
-  return `${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}회 vs ${esc(who(r[2],!isA))} ${r[3]}회`;}).join("<br>");}
-function openChallenge(p){
-  state.incoming=p;state.hist=p.h||[];
-  state.theirId=p.i||"";state.id=myIdFrom(state.hist,state.theirId)||state.id||rid();
-  $("playTag").textContent="도전장 도착";
-  $("playHead").innerHTML=`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>10초, 더 많이.`;
-  $("lockName").textContent=p.n||"상대";$("lockedCard").classList.remove("hidden");
-  if(state.hist.length){$("tallyText").innerHTML=`<b>지금까지 ${state.hist.length}판</b><br>${histRows(state.hist,state.id,state.name)}`;$("tallyCard").classList.remove("hidden");}
-  show("s-play");
-}
-function respond(){
-  const p=state.incoming;const theirN=unlockNum(p.k,p.x);
-  const round=[p.n,theirN,state.name,state.ms,p.i||"",state.id];
-  renderResult({hist:[...state.hist,round],round,viewer:"b"});
-}
-
-/* ===== 결과 ===== */
-function renderResult(R){
-  const [aN,aCt,bN,bCt,aId,bId]=R.round;
-  const meId = R.viewer==="b"?(bId||""):(aId||"");
-  const me   = R.viewer==="b"?{n:bN,c:bCt}:{n:aN,c:aCt};
-  const them = R.viewer==="b"?{n:aN,c:aCt}:{n:bN,c:bCt};
-  const meL=who(me.n,true), themL=who(them.n,false);
-  const o = beats(me.c,them.c)?"win":(beats(them.c,me.c)?"lose":"tie");
-  $("nameA").textContent=me.n?me.n+" (나)":"나";$("tA").innerHTML=me.c+"<small>회</small>";$("dA").textContent="초당 "+rate(me.c)+"회";
-  $("nameB").textContent=themL;$("tB").innerHTML=them.c+"<small>회</small>";$("dB").textContent="초당 "+rate(them.c)+"회";
-  $("sideA").className="side "+(o==="win"?"win":o==="lose"?"lose":"");
-  $("sideB").className="side "+(o==="lose"?"win":o==="win"?"lose":"");
-  $("verdict").className="verdict "+o;
-  $("verdict").textContent= o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!";
-  /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" (예: "87회 vs 74회 — 내가 13회 더") */
-  const winL = o==="win" ? meL : themL;
-  $("subVerdict").textContent= o==="tie"?"횟수까지 같은 건 거의 기적."
-    :`${me.c}회 vs ${them.c}회 — ${subj(winL)} ${Math.abs(me.c-them.c)}회 더.`;
-  $("titleBadge").textContent="🏅 "+titleFor(me.c);
-  $("resTag").textContent=`${R.hist.length}판 결과`;
-  if(R.hist.length>1){const t=tallyOf(R.hist,meId,me.n);$("tallyBox").innerHTML=`전적<div class="big"><b>${t.w}승</b> ${t.l}패${t.t?` ${t.t}무`:""}</div><div class="rows">${histRows(R.hist,meId,me.n)}</div>`;$("tallyBox").classList.remove("hidden");}
-  else $("tallyBox").classList.add("hidden");
-  ["respActions","viewActions","resLinkbox","notYet"].forEach(id=>$(id).classList.add("hidden"));
-  if(R.viewer==="b"){
-    $("respActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
-    const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,h:R.hist}));
-    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크 복사됐어. 상대에게 보내");};
-    { const nm=n=>n?n+" ":"";
-      const wn = o==="tie"?null:(o==="win"?me.n:them.n);
-      const tail = o==="tie" ? " — 무승부" : (wn?` — ${wn} 승`:"");
-      $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
-        title:`${nm(me.n)}${me.c}회 vs ${nm(them.n)}${them.c}회${tail}`,
-        desc:"10초 동안 누가 더 많이 눌렀을까. 재도전은 여기서."},
-        ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어")); }
-    $("again").onclick=()=>startNext(R.hist,bN,bId||"");
-  }else{
-    $("viewActions").classList.remove("hidden");
-    $("again2").onclick=()=>startNext(R.hist,aN,aId||"");
-  }
-  $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
-  show("s-result");
-}
-function startNext(hist,myName,myId){
-  state.hist=hist;state.name=myName;state.id=myId||rid();
-  state.ms=null;state.incoming=null;state.done=false;state.n=0;state.down.clear();
-  $("nameIn").value=myName;$("lockedCard").classList.add("hidden");
-  $("playTag").textContent=`${hist.length+1}판째`;
-  $("playHead").innerHTML=`재도전. <b>한 판 더.</b>`;
-  $("playLead").textContent="이 도전장에 지금까지 전적이 같이 실려.";
-  const t=tallyOf(hist,state.id,myName);
-  $("tallyText").innerHTML=`<b>전적 ${t.w}승 ${t.l}패${t.t?` ${t.t}무`:""}</b><br>${histRows(hist,state.id,myName)}`;$("tallyCard").classList.remove("hidden");
-  $("afterPlay").classList.add("hidden");
-  $("cover").classList.add("hidden");$("cd").textContent="3";
-  clockEl.textContent="10.0";clockEl.classList.remove("warn");cntEl.textContent="0";
-  padEl.disabled=false;padEl.firstChild.nodeValue="시작";$("padSub").textContent="눌러서 3초 뒤 시작";
-  history.replaceState(null,"",location.pathname);show("s-play");
-}
-
-/* ===== 진입 ===== */
-(function(){
-  state.id=rid();
-  state.name=loadName();$("nameIn").value=state.name;
-  const h=readHash();
-  if(h&&h.type==="c"&&h.p&&typeof h.p.k==="number"){openChallenge(h.p);return;}
-  if(h&&h.type==="r"&&h.p&&Array.isArray(h.p.h)&&h.p.h.length){renderResult({hist:h.p.h,round:h.p.h[h.p.h.length-1],viewer:"a"});return;}
-  show("s-play");
-})();
+Duel.start();
 </script>
 </body>
 </html>

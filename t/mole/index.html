@@ -16,6 +16,7 @@
 
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/kakao-share.js"></script>
+<script src="../../assets/duel-engine.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -211,25 +212,12 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ===== 배포 주소 ===== */
-const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/mole/";
-const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
-const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
-
-/* ===== 승패 방향 =====
-   ten·react·num25 는 "기록이 낮을수록 승"이지만 두더지는 "점수가 높을수록 승"이다.
-   엔진에서 승패를 가르는 곳은 모두 beats() 하나만 쓰도록 모아, 이 플래그로 방향을 뒤집는다.
-   (콘텐츠마다 자기 파일에 엔진 사본을 갖고 있어 다른 게임에는 영향이 없다) */
-const HIGHER_WINS = true;
-const beats = (a,b) => HIGHER_WINS ? a>b : a<b;
-
+/* ===== 두더지 잡기 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 두더지 밭과 순서 만들기만 남는다. */
 const GAME_MS=20000, HOLES=9, SCORE_OFF=1000;
 const PT=[1,3,-3];                 // 0 일반 / 1 황금 / 2 폭탄
-const NEXT=[
-  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
-  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."},
-  {path:"../ten/",    title:"10초 맞추기",   desc:"안 보고 10초 세다가 멈추기."}
-];
+const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
 function titleFor(sc){
   if(sc>=30) return "두더지 천적";
   if(sc>=22) return "손이 빠르다";
@@ -237,46 +225,11 @@ function titleFor(sc){
   if(sc>=6)  return "폭탄을 조심해";
   return "두더지 편";
 }
-const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
-
-/* ===== 잠금 · 해시 · 공통 ===== */
-function lockNum(v){const k=Math.floor(Math.random()*0xFFFF);return {k,x:(v+k*7)%1000003};}
-function unlockNum(k,x){let v=(x-k*7)%1000003;if(v<0)v+=1000003;return v;}
-function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=String.fromCharCode(c));return btoa(x).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");}
-function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
-function readHash(){const m=location.hash.match(/^#([cr])=(.+)$/);if(!m)return null;try{return {type:m[1],p:JSON.parse(b64d(m[2]))};}catch(e){return null;}}
-function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
-const $=id=>document.getElementById(id);
-function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.add("hidden"));$(id).classList.remove("hidden");window.scrollTo(0,0);}
-let tt;function toast(m){const e=$("toast");e.textContent=m;e.style.opacity="1";e.style.transform="translate(-50%,0)";clearTimeout(tt);tt=setTimeout(()=>{e.style.opacity="0";e.style.transform="translate(-50%,20px)";},2400);}
-async function copy(url,ok){let d=false;try{await navigator.clipboard.writeText(url);d=true;}catch(e){const ta=document.createElement("textarea");ta.value=url;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{d=document.execCommand("copy");}catch(e2){}ta.remove();}toast(d?ok:"링크를 길게 눌러 복사해줘");}
-const track=(e,p)=>{try{window.track&&window.track(e,p);}catch(x){}};
-
-/* ===== 이름(선택) · 플레이어 식별자 ===== */
-/* 이름은 안 적어도 된다. 링크에는 빈 문자열 그대로 싣고,
-   화면에 그릴 때만 보는 사람 기준으로 "나"/"상대" 를 채운다.
-   여러 판 전적은 이름 대신 링크에 실린 짧은 무작위 id 로 구분한다.
-   (localStorage 에는 이름만 저장한다. 점수·전적은 저장하지 않는다.) */
-const NAME_KEY="gh_name";
-function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
-function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
-function rid(){return Math.random().toString(36).slice(2,8);}
-const who=(nm,isMe)=>nm||(isMe?"나":"상대");
-const JOSA={"나":["내가","나는","나를"],"상대":["상대가","상대는","상대를"]};
-/* 이름 뒤 주격조사: 받침 있으면 "이", 없으면 "가". */
-const hasJong=s=>{const c=String(s).charCodeAt(String(s).length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0;};
-const subj =l=>JOSA[l]?JOSA[l][0]:l+(hasJong(l)?"이":"가");
-
-function meIsA(r,meId,meName){
-  const ai=r[4],bi=r[5];
-  if(meId){ if(ai===meId) return true; if(bi===meId) return false; }
-  return r[0]===meName;
-}
-function myIdFrom(hist,theirId){
-  for(const r of hist){ const ai=r[4],bi=r[5];
-    if(ai&&bi){ if(ai===theirId) return bi; if(bi===theirId) return ai; } }
-  return "";
-}
+const NEXT=[
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."},
+  {path:"../ten/",    title:"10초 맞추기",   desc:"안 보고 10초 세다가 멈추기."}
+];
 
 /* ===== 두더지 순서 (시드 난수) =====
    Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
@@ -312,12 +265,46 @@ function scheduleOf(seed){
   }
   return out;
 }
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
 
-/* ===== 상태 ===== */
-const state={name:"",id:"",theirId:"",seed:0,sched:[],hit:null,
-  score:0,cnt:[0,0,0],el:0,ms:null,stat:null,
-  hist:[],incoming:null,running:false,t0:0,raf:0,done:false,cdTimer:0};
-let madeUrl="";
+const state = Duel.setup({
+  deployBase:"https://bingari69-jpg.github.io/couple-test/t/mole/",
+  og:"https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+  gameName:"두더지 잡기",
+  challengeDesc:"20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 점수가 클수록 이긴다
+  hasSeed:true,                     // 같은 두더지를 나눠 쓰므로 시드를 링크에 싣는다
+  lockOffset:SCORE_OFF,             // 점수는 음수도 되므로 offset 을 더해 잠근다
+  scrollToShare:true,
+  state:{seed:0,sched:[],hit:null,score:0,cnt:[0,0,0],el:0,stat:null,
+         running:false,t0:0,raf:0,done:false,cdTimer:0},
+  linkExtra:st=>({c:st.stat}),
+  roundExtra:(p,st)=>[p.c||[0,0,0], st.stat],
+  extraKey:"c", extraDefault:[0,0,0],
+  recordCell:x=>x.v+"<small>점</small>",
+  detailCell:x=>`두더지 <i>${x.c[0]}</i> · <i class="g">황금 ${x.c[1]}</i> · <i class="b">폭탄 ${x.c[2]}</i>`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}점 vs ${esc(who(r[2],!isA))} ${r[3]}점`,
+  verdictText:o=> o==="win"?"내가 더 잡았어!":o==="lose"?"상대가 더 잡았어":"완전 똑같아?!",
+  /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" 로 (예: "24점 vs 19점 — 내가 5점 더 잡았어") */
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"점수까지 같은 건 거의 기적."
+      :`${me.v}점 vs ${them.v}점 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}점 더 잡았어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>같은 두더지야. 더 잡아.`,
+  againHead:()=>`재도전. <b>새 두더지</b>로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}점 vs ${nm(them.n)}${them.v}점${tail}`,
+  resultDesc:"20초, 같은 두더지. 누가 더 잡았을까. 재도전은 여기서.",
+  onInit(){ state.hit=new Set(); },
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.sched=scheduleOf(state.seed); state.hit=new Set(); renderField(); },
+  newRound(){ state.seed=newSeed(); state.sched=scheduleOf(state.seed); renderField(); },
+  resetPlay(){
+    state.stat=null;state.done=false;state.score=0;state.cnt=[0,0,0];state.hit=new Set();
+    $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
+    $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");$("score").textContent="0";
+    $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+  }
+});
 
 /* ===== 밭 ===== */
 function renderField(){
@@ -380,7 +367,6 @@ function tapHole(h){
 }
 
 /* ===== 진행 ===== */
-$("nameIn").oninput=e=>{state.name=e.target.value.trim();saveName(state.name);};
 $("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
 
 function countdown(){
@@ -415,128 +401,14 @@ function startPlay(){
 function finishPlay(){
   state.running=false; state.done=true;
   if(state.raf) cancelAnimationFrame(state.raf);
-  state.ms=state.score;                       // 이 게임의 "기록" = 점수
-  state.stat=state.cnt.slice();
   /* 최종 점수는 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
   $("score").textContent="🔒"; $("clock").textContent="0.0";
   $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="점수 봉인";
   const b=$("bigBtn"); b.textContent="봉인됨"; b.disabled=true;
-  if(state.incoming){ setTimeout(()=>respond(),600); return; }
-  makeLink(); $("afterPlay").classList.remove("hidden");
-  $("afterPlay").scrollIntoView({block:"nearest",behavior:"smooth"});
+  Duel.finish(state.score, {stat:state.cnt.slice()});   // 이 게임의 "기록" = 점수
 }
 
-function makeLink(){
-  const {k,x}=lockNum(state.ms+SCORE_OFF);     // 점수는 음수도 되므로 offset 을 더해 잠근다
-  madeUrl=baseUrl()+"#c="+b64e(JSON.stringify({v:1,n:state.name,i:state.id,s:state.seed,k,x,c:state.stat,h:state.hist}));
-  $("linkbox").textContent=madeUrl;$("sandboxNote").classList.toggle("hidden",!isSandbox());
-  track("link_made");
-}
-$("copyBtn").onclick=()=>copy(madeUrl,"복사됐어. 카톡에 붙여넣어");
-$("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"도전 받기",img:"https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
-  title:`${state.name?state.name+"의 ":""}두더지 잡기 도전장 🔒`,
-  desc: state.hist.length ? `${state.hist.length+1}판째. 전적이 같이 실려 있어.` : "20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개."},
-  ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어"));
-
-/* ===== 응답자 ===== */
-function tallyOf(hist,meId,meName){
-  let w=0,l=0,t=0;hist.forEach(r=>{const isA=meIsA(r,meId,meName);
-    const mine=isA?r[1]:r[3], theirs=isA?r[3]:r[1];
-    if(beats(mine,theirs))w++;else if(beats(theirs,mine))l++;else t++;});
-  return {w,l,t};
-}
-function histRows(hist,meId,meName){return hist.map((r,i)=>{const isA=meIsA(r,meId,meName);
-  return `${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}점 vs ${esc(who(r[2],!isA))} ${r[3]}점`;}).join("<br>");}
-function openChallenge(p){
-  state.incoming=p;state.hist=p.h||[];
-  state.theirId=p.i||"";state.id=myIdFrom(state.hist,state.theirId)||state.id||rid();
-  state.seed=p.s>>>0; state.sched=scheduleOf(state.seed); state.hit=new Set(); renderField();
-  $("playTag").textContent="도전장 도착";
-  $("playHead").innerHTML=`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>같은 두더지야. 더 잡아.`;
-  $("lockName").textContent=p.n||"상대";$("lockedCard").classList.remove("hidden");
-  if(state.hist.length){$("tallyText").innerHTML=`<b>지금까지 ${state.hist.length}판</b><br>${histRows(state.hist,state.id,state.name)}`;$("tallyCard").classList.remove("hidden");}
-  show("s-play");
-}
-function respond(){
-  const p=state.incoming;const theirScore=unlockNum(p.k,p.x)-SCORE_OFF;
-  const round=[p.n,theirScore,state.name,state.ms,p.i||"",state.id,p.c||[0,0,0],state.stat];
-  renderResult({hist:[...state.hist,round],round,viewer:"b"});
-}
-
-/* ===== 결과 ===== */
-function renderResult(R){
-  const [aN,aSc,bN,bSc,aId,bId,aCt,bCt]=R.round;
-  const meId = R.viewer==="b"?(bId||""):(aId||"");
-  const me   = R.viewer==="b"?{n:bN,sc:bSc,c:bCt||[0,0,0]}:{n:aN,sc:aSc,c:aCt||[0,0,0]};
-  const them = R.viewer==="b"?{n:aN,sc:aSc,c:aCt||[0,0,0]}:{n:bN,sc:bSc,c:bCt||[0,0,0]};
-  const meL=who(me.n,true), themL=who(them.n,false);
-  const o = beats(me.sc,them.sc)?"win":(beats(them.sc,me.sc)?"lose":"tie");
-  const detail=x=>`두더지 <i>${x.c[0]}</i> · <i class="g">황금 ${x.c[1]}</i> · <i class="b">폭탄 ${x.c[2]}</i>`;
-  $("nameA").textContent=me.n?me.n+" (나)":"나";$("tA").innerHTML=me.sc+"<small>점</small>";$("dA").innerHTML=detail(me);
-  $("nameB").textContent=themL;$("tB").innerHTML=them.sc+"<small>점</small>";$("dB").innerHTML=detail(them);
-  $("sideA").className="side "+(o==="win"?"win":o==="lose"?"lose":"");
-  $("sideB").className="side "+(o==="lose"?"win":o==="win"?"lose":"");
-  $("verdict").className="verdict "+o;
-  $("verdict").textContent= o==="win"?"내가 더 잡았어!":o==="lose"?"상대가 더 잡았어":"완전 똑같아?!";
-  /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" 로 (예: "24점 vs 19점 — 내가 5점 더 잡았어") */
-  const winL = o==="win" ? meL : themL;
-  $("subVerdict").textContent= o==="tie"?"점수까지 같은 건 거의 기적."
-    :`${me.sc}점 vs ${them.sc}점 — ${subj(winL)} ${Math.abs(me.sc-them.sc)}점 더 잡았어.`;
-  $("titleBadge").textContent="🏅 "+titleFor(me.sc);
-  $("resTag").textContent=`${R.hist.length}판 결과`;
-  if(R.hist.length>1){const t=tallyOf(R.hist,meId,me.n);$("tallyBox").innerHTML=`전적<div class="big"><b>${t.w}승</b> ${t.l}패${t.t?` ${t.t}무`:""}</div><div class="rows">${histRows(R.hist,meId,me.n)}</div>`;$("tallyBox").classList.remove("hidden");}
-  else $("tallyBox").classList.add("hidden");
-  ["respActions","viewActions","resLinkbox","notYet"].forEach(id=>$(id).classList.add("hidden"));
-  if(R.viewer==="b"){
-    $("respActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
-    const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,h:R.hist}));
-    $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크 복사됐어. 상대에게 보내");};
-    { const nm=n=>n?n+" ":"";
-      const wn = o==="tie"?null:(o==="win"?me.n:them.n);
-      const tail = o==="tie" ? " — 무승부" : (wn?` — ${wn} 승`:"");
-      $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
-        title:`${nm(me.n)}${me.sc}점 vs ${nm(them.n)}${them.sc}점${tail}`,
-        desc:"20초, 같은 두더지. 누가 더 잡았을까. 재도전은 여기서."},
-        ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어")); }
-    $("again").onclick=()=>startNext(R.hist,bN,bId||"");
-  }else{
-    $("viewActions").classList.remove("hidden");
-    $("again2").onclick=()=>startNext(R.hist,aN,aId||"");
-  }
-  $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
-  show("s-result");
-}
-/* 재도전 — 새 시드로 새 두더지 */
-function startNext(hist,myName,myId){
-  state.hist=hist;state.name=myName;state.id=myId||rid();
-  state.ms=null;state.stat=null;state.incoming=null;state.done=false;
-  state.score=0;state.cnt=[0,0,0];state.hit=new Set();
-  state.seed=newSeed(); state.sched=scheduleOf(state.seed); renderField();
-  $("nameIn").value=myName;$("lockedCard").classList.add("hidden");
-  $("playTag").textContent=`${hist.length+1}판째`;
-  $("playHead").innerHTML=`재도전. <b>새 두더지</b>로 다시.`;
-  $("playLead").textContent="이 도전장에 지금까지 전적이 같이 실려.";
-  const t=tallyOf(hist,state.id,myName);
-  $("tallyText").innerHTML=`<b>전적 ${t.w}승 ${t.l}패${t.t?` ${t.t}무`:""}</b><br>${histRows(hist,state.id,myName)}`;$("tallyCard").classList.remove("hidden");
-  $("afterPlay").classList.add("hidden");
-  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
-  $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");$("score").textContent="0";
-  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
-  history.replaceState(null,"",location.pathname);show("s-play");
-}
-const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
-
-/* ===== 진입 ===== */
-(function(){
-  state.id=rid();
-  state.name=loadName();$("nameIn").value=state.name;
-  state.hit=new Set();
-  const h=readHash();
-  if(h&&h.type==="c"&&h.p&&typeof h.p.k==="number"&&typeof h.p.s==="number"){openChallenge(h.p);return;}
-  if(h&&h.type==="r"&&h.p&&Array.isArray(h.p.h)&&h.p.h.length){renderResult({hist:h.p.h,round:h.p.h[h.p.h.length-1],viewer:"a"});return;}
-  state.seed=newSeed(); state.sched=scheduleOf(state.seed); renderField();
-  show("s-play");
-})();
+Duel.start();
 </script>
 </body>
 </html>
