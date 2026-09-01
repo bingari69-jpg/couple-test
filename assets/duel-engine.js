@@ -62,6 +62,10 @@
   const subj  = l => JOSA[l] ? JOSA[l][0] : l + (hasJong(l) ? "이"   : "가");
   const topic = l => JOSA[l] ? JOSA[l][1] : l + (hasJong(l) ? "은"   : "는");
   const objp  = l => JOSA[l] ? JOSA[l][2] : l + (hasJong(l) ? "을"   : "를");
+  /* 이름만 굵게 그리고 조사는 밖에 둘 때 쓰는 조사 조각.
+     "나"는 조사와 붙어 "내가" 로 모양이 바뀌어 쪼갤 수 없으므로
+     여기에는 이름이나 "상대" 만 넣는다. */
+  const subjTail = l => hasJong(l) ? "이" : "가";
 
   /* ===== 봉인 · 해시 ===== */
   function lockNum(v) { const k = Math.floor(Math.random() * 0xFFFF); return { k, x: (v + k * 7) % 1000003 }; }
@@ -108,7 +112,7 @@
   Object.assign(window, {
     $, esc, show, toast, copy, track,
     lockNum, unlockNum, b64e, b64d, readHash,
-    loadName, saveName, rid, who, subj, topic, objp, hasJong,
+    loadName, saveName, rid, who, subj, topic, objp, subjTail, hasJong,
     meIsA, myIdFrom
   });
 
@@ -165,9 +169,7 @@
     }
 
     $("copyBtn").onclick = () => copy(madeUrl, "복사됐어. 카톡에 붙여넣어");
-    /* 도전장 카톡 버튼.
-       반응속도(react)는 지금 이 버튼이 아무 동작도 하지 않는다 — 공통화하면서
-       고치면 동작이 바뀌므로 shareChallenge:false 로 현재 상태를 그대로 둔다. */
+    /* 도전장 카톡 버튼 */
     if (cfg.shareChallenge !== false) {
       $("kakaoBtn").onclick = () => kakaoShare({
         url: madeUrl, btn: "도전 받기", img: cfg.og,

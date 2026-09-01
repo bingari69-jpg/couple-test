@@ -1,0 +1,1442 @@
+{
+  "ten": {
+    "entry_fresh": {
+      "playTag": "10초 맞추기",
+      "playHead": "안 보고 <b>10초</b>.<br>딱 맞춰 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
+      "title": "지은의 10초 맞추기 도전장 🔒",
+      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltbIuyngOydgCIsMTAyNTAsIuuvvOyImCIsOTg0MCwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltbIuyngOydgCIsMTAyNTAsIuuvvOyImCIsOTg0MCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
+      "title": "지은의 10초 맞추기 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "10.25<small>초</small>",
+      "dA": "차이 0.25",
+      "nameB": "지은",
+      "tB": "9.84<small>초</small>",
+      "dB": "차이 0.16",
+      "verdict": "상대가 더 가까워",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
+      "title": "민수 10.25 vs 지은 9.84 — 지은 승",
+      "desc": "10초에 누가 더 가까웠을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "9.84<small>초</small>",
+      "dA": "차이 0.16",
+      "nameB": "민수",
+      "tB": "10.25<small>초</small>",
+      "dB": "차이 0.25",
+      "verdict": "내가 더 가까워!",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "titleBadge": "🏅 감각 좋은데?",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 9.84 vs 민수 10.25<br>2판 · 민수 10.25 vs 지은 9.84<br>3판 · 지은 9.84 vs 민수 9.84<br>4판 · 상대 9.84 vs 나 10.25",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "9.84<small>초</small>",
+      "dA": "차이 0.16",
+      "nameB": "민수",
+      "tB": "10.25<small>초</small>",
+      "dB": "차이 0.25",
+      "verdict": "내가 더 가까워!",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "titleBadge": "🏅 감각 좋은데?",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "react": {
+    "entry_fresh": {
+      "playTag": "반응속도",
+      "playHead": "초록으로 바뀌면<br><b>바로 눌러.</b>",
+      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
+      "title": "지은의 반응속도 도전장 🔒",
+      "desc": "초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltbIuyngOydgCIsMjY4LCLrr7zsiJgiLDIzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltbIuyngOydgCIsMjY4LCLrr7zsiJgiLDIzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
+      "title": "지은의 반응속도 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>더 빨리 눌러봐.",
+      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "0.268<small>초</small>",
+      "dA": "3회 평균",
+      "nameB": "지은",
+      "tB": "0.231<small>초</small>",
+      "dB": "3회 평균",
+      "verdict": "상대가 더 빨라",
+      "subVerdict": "지은이 0.037초 더 빨랐어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
+      "title": "민수 0.268 vs 지은 0.231 — 지은 승",
+      "desc": "반응속도 3회 평균. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>더 빨리 눌러봐.",
+      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "0.231<small>초</small>",
+      "dA": "3회 평균",
+      "nameB": "민수",
+      "tB": "0.268<small>초</small>",
+      "dB": "3회 평균",
+      "verdict": "내가 더 빨라!",
+      "subVerdict": "지은이 0.037초 더 빨랐어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 0.231 vs 민수 0.268<br>2판 · 민수 0.268 vs 지은 0.231<br>3판 · 지은 0.231 vs 민수 0.231<br>4판 · 상대 0.231 vs 나 0.268",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "0.231<small>초</small>",
+      "dA": "3회 평균",
+      "nameB": "민수",
+      "tB": "0.268<small>초</small>",
+      "dB": "3회 평균",
+      "verdict": "내가 더 빨라!",
+      "subVerdict": "지은이 0.037초 더 빨랐어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "num25": {
+    "entry_fresh": {
+      "playTag": "1에서 25까지",
+      "playHead": "1부터 25까지<br><b>순서대로 빨리.</b>",
+      "playLead": "숫자가 흩어져 있어. 1을 찾아 누르고, 2, 3… 25까지. 틀리면 <b>0.5초 벌점</b>. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbXX0",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbXX0"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
+      "title": "지은의 1에서 25까지 도전장 🔒",
+      "desc": "같은 판, 같은 숫자. 1부터 25까지 순서대로 최대한 빨리. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbWyLsp4DsnYAiLDE5ODcwLCLrr7zsiJgiLDIxMzQwLCJhYmMxMjMiLCJ6eno5OTkiXV19"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbWyLsp4DsnYAiLDE5ODcwLCLrr7zsiJgiLDIxMzQwLCJhYmMxMjMiLCJ6eno5OTkiXV19",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
+      "title": "지은의 1에서 25까지 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 판이야. 더 빨리.",
+      "playLead": "숫자가 흩어져 있어. 1을 찾아 누르고, 2, 3… 25까지. 틀리면 <b>0.5초 벌점</b>. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "19.87<small>초</small>",
+      "dA": "시간 18.87 · 벌점 <b>+1.00</b>",
+      "nameB": "지은",
+      "tB": "21.34<small>초</small>",
+      "dB": "시간 20.34 · 벌점 <b>+1.00</b>",
+      "verdict": "내가 더 빨라!",
+      "subVerdict": "19.87초 vs 21.34초 — 민수가 1.47초 빨랐어.",
+      "titleBadge": "🏅 평균 이상",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/num25/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIxMzQwLCLrr7zsiJgiLDE5ODcwLCJhYmMxMjMiLCJ6eno5OTkiLDIsMl1dfQ",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIxMzQwLCLrr7zsiJgiLDE5ODcwLCJhYmMxMjMiLCJ6eno5OTkiLDIsMl1dfQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
+      "title": "민수 19.87초 vs 지은 21.34초 — 민수 승",
+      "desc": "같은 판, 같은 숫자. 누가 더 빨랐을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 판이야. 더 빨리.",
+      "playLead": "숫자가 흩어져 있어. 1을 찾아 누르고, 2, 3… 25까지. 틀리면 <b>0.5초 벌점</b>. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "21.34<small>초</small>",
+      "dA": "시간 20.34 · 벌점 <b>+1.00</b>",
+      "nameB": "민수",
+      "tB": "19.87<small>초</small>",
+      "dB": "시간 18.87 · 벌점 <b>+1.00</b>",
+      "verdict": "상대가 더 빨라",
+      "subVerdict": "21.34초 vs 19.87초 — 민수가 1.47초 빨랐어.",
+      "titleBadge": "🏅 평균 이상",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":1,\"l\":2,\"t\":1}",
+    "tally_byname": "{\"w\":1,\"l\":2,\"t\":1}",
+    "histRows": "1판 · 지은 21.34 vs 민수 19.87<br>2판 · 민수 19.87 vs 지은 21.34<br>3판 · 지은 21.34 vs 민수 21.34<br>4판 · 상대 21.34 vs 나 19.87",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "21.34<small>초</small>",
+      "dA": "시간 21.34 · 벌점 없음",
+      "nameB": "민수",
+      "tB": "19.87<small>초</small>",
+      "dB": "시간 19.87 · 벌점 없음",
+      "verdict": "상대가 더 빨라",
+      "subVerdict": "21.34초 vs 19.87초 — 민수가 1.47초 빨랐어.",
+      "titleBadge": "🏅 평균 이상",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "mole": {
+    "entry_fresh": {
+      "playTag": "두더지 잡기",
+      "playHead": "20초.<br><b>누가 더 잡나.</b>",
+      "playLead": "둘이 <b>똑같은 두더지</b>를 받아. 빈 구멍을 쳐도 손해는 없어. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W119",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W119"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W119",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+      "title": "지은의 두더지 잡기 도전장 🔒",
+      "desc": "20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyNCwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyNCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+      "title": "지은의 두더지 잡기 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 두더지야. 더 잡아.",
+      "playLead": "둘이 <b>똑같은 두더지</b>를 받아. 빈 구멍을 쳐도 손해는 없어. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "19<small>점</small>",
+      "dA": "두더지 <i>18</i> · <i class=\"g\">황금 3</i> · <i class=\"b\">폭탄 1</i>",
+      "nameB": "지은",
+      "tB": "24<small>점</small>",
+      "dB": "두더지 <i>18</i> · <i class=\"g\">황금 3</i> · <i class=\"b\">폭탄 1</i>",
+      "verdict": "상대가 더 잡았어",
+      "subVerdict": "19점 vs 24점 — 지은이 5점 더 잡았어.",
+      "titleBadge": "🏅 보통 사람",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/mole/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI0LCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsxOCwzLDFdLFsxOCwzLDFdXV19",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI0LCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsxOCwzLDFdLFsxOCwzLDFdXV19",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+      "title": "민수 19점 vs 지은 24점 — 지은 승",
+      "desc": "20초, 같은 두더지. 누가 더 잡았을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 두더지야. 더 잡아.",
+      "playLead": "둘이 <b>똑같은 두더지</b>를 받아. 빈 구멍을 쳐도 손해는 없어. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "24<small>점</small>",
+      "dA": "두더지 <i>18</i> · <i class=\"g\">황금 3</i> · <i class=\"b\">폭탄 1</i>",
+      "nameB": "민수",
+      "tB": "19<small>점</small>",
+      "dB": "두더지 <i>18</i> · <i class=\"g\">황금 3</i> · <i class=\"b\">폭탄 1</i>",
+      "verdict": "내가 더 잡았어!",
+      "subVerdict": "24점 vs 19점 — 지은이 5점 더 잡았어.",
+      "titleBadge": "🏅 손이 빠르다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 24점 vs 민수 19점<br>2판 · 민수 19점 vs 지은 24점<br>3판 · 지은 24점 vs 민수 24점<br>4판 · 상대 24점 vs 나 19점",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "24<small>점</small>",
+      "dA": "두더지 <i>0</i> · <i class=\"g\">황금 0</i> · <i class=\"b\">폭탄 0</i>",
+      "nameB": "민수",
+      "tB": "19<small>점</small>",
+      "dB": "두더지 <i>0</i> · <i class=\"g\">황금 0</i> · <i class=\"b\">폭탄 0</i>",
+      "verdict": "내가 더 잡았어!",
+      "subVerdict": "24점 vs 19점 — 지은이 5점 더 잡았어.",
+      "titleBadge": "🏅 손이 빠르다",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  },
+  "tap": {
+    "entry_fresh": {
+      "playTag": "10초 연타",
+      "playHead": "10초.<br><b>몇 번 누를 수 있어?</b>",
+      "playLead": "<b>두 손가락도 돼.</b> 10초 안에 최대한 많이. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltdfQ",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltdfQ"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+      "title": "지은의 10초 연타 도전장 🔒",
+      "desc": "10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltbIuyngOydgCIsNzQsIuuvvOyImCIsODgsImFiYzEyMyIsInp6ejk5OSJdXX0"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltbIuyngOydgCIsNzQsIuuvvOyImCIsODgsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+      "title": "지은의 10초 연타 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 많이.",
+      "playLead": "<b>두 손가락도 돼.</b> 10초 안에 최대한 많이. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "74<small>회</small>",
+      "dA": "초당 7.4회",
+      "nameB": "지은",
+      "tB": "88<small>회</small>",
+      "dB": "초당 8.8회",
+      "verdict": "상대가 더 빨라",
+      "subVerdict": "74회 vs 88회 — 지은이 14회 더.",
+      "titleBadge": "🏅 연타 장인",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/tap/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDg4LCLrr7zsiJgiLDc0LCJhYmMxMjMiLCJ6eno5OTkiXV19",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDg4LCLrr7zsiJgiLDc0LCJhYmMxMjMiLCJ6eno5OTkiXV19",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+      "title": "민수 74회 vs 지은 88회 — 지은 승",
+      "desc": "10초 동안 누가 더 많이 눌렀을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>10초, 더 많이.",
+      "playLead": "<b>두 손가락도 돼.</b> 10초 안에 최대한 많이. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "88<small>회</small>",
+      "dA": "초당 8.8회",
+      "nameB": "민수",
+      "tB": "74<small>회</small>",
+      "dB": "초당 7.4회",
+      "verdict": "내가 더 빨라!",
+      "subVerdict": "88회 vs 74회 — 지은이 14회 더.",
+      "titleBadge": "🏅 연타 장인",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 88회 vs 민수 74회<br>2판 · 민수 74회 vs 지은 88회<br>3판 · 지은 88회 vs 민수 88회<br>4판 · 상대 88회 vs 나 74회",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "88<small>회</small>",
+      "dA": "초당 8.8회",
+      "nameB": "민수",
+      "tB": "74<small>회</small>",
+      "dB": "초당 7.4회",
+      "verdict": "내가 더 빨라!",
+      "subVerdict": "88회 vs 74회 — 지은이 14회 더.",
+      "titleBadge": "🏅 연타 장인",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
+  }
+}

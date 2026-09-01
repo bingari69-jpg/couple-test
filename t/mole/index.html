@@ -291,7 +291,7 @@ const state = Duel.setup({
   subVerdictText:(o,me,them,meL,themL)=>
     o==="tie"?"점수까지 같은 건 거의 기적."
       :`${me.v}점 vs ${them.v}점 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}점 더 잡았어.`,
-  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>같은 두더지야. 더 잡아.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 두더지야. 더 잡아.`,
   againHead:()=>`재도전. <b>새 두더지</b>로 다시.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}점 vs ${nm(them.n)}${them.v}점${tail}`,
   resultDesc:"20초, 같은 두더지. 누가 더 잡았을까. 재도전은 여기서.",

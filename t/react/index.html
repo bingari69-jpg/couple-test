@@ -186,9 +186,8 @@ const NEXT=[
 const state = Duel.setup({
   deployBase:"https://bingari69-jpg.github.io/couple-test/t/react/",
   og:"https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
-  /* 이 게임의 "카톡으로 도전장 보내기" 버튼은 예전부터 아무 동작도 하지 않는다.
-     공통화하면서 고치면 동작이 바뀌므로 지금 상태를 그대로 둔다. */
-  shareChallenge:false,
+  gameName:"반응속도",
+  challengeDesc:"초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개.",
   next:NEXT,
   titleFor,                         // 값이 작을수록 빠르다 = 기본 비교 그대로
   state:{phase:"idle",tries:[],t0:0,timer:0},
@@ -198,7 +197,7 @@ const state = Duel.setup({
   verdictText:o=> o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL,em,et)=>
     o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${subj(o==="win"?meL:themL)} ${fmt(Math.abs(em-et))}초 더 빨랐어.`,
-  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>더 빨리 눌러봐.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>더 빨리 눌러봐.`,
   againHead:()=>`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)} vs ${nm(them.n)}${fmt(them.v)}${tail}`,
   resultDesc:"반응속도 3회 평균. 재도전은 여기서.",

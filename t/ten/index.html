@@ -193,7 +193,7 @@ const state = Duel.setup({
   verdictText:o=> o==="win"?"내가 더 가까워!":o==="lose"?"상대가 더 가까워":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL,em,et)=>
     o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${subj(o==="win"?meL:themL)} 10초에 ${fmt(Math.abs(em-et))}초 더 가까웠어.`,
-  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>10초, 더 가까이 멈춰봐.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>10초, 더 가까이 멈춰봐.`,
   againHead:()=>`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)} vs ${nm(them.n)}${fmt(them.v)}${tail}`,
   resultDesc:"10초에 누가 더 가까웠을까. 재도전은 여기서.",

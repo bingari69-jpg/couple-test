@@ -218,7 +218,7 @@ const state = Duel.setup({
   subVerdictText:(o,me,them,meL,themL)=>
     o==="tie"?"횟수까지 같은 건 거의 기적."
       :`${me.v}회 vs ${them.v}회 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}회 더.`,
-  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${p.n?"이(가)":"가"} 도전했다.<br>10초, 더 많이.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>10초, 더 많이.`,
   againHead:()=>`재도전. <b>한 판 더.</b>`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}회 vs ${nm(them.n)}${them.v}회${tail}`,
   resultDesc:"10초 동안 누가 더 많이 눌렀을까. 재도전은 여기서.",
