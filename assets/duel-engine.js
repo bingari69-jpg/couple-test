@@ -5,6 +5,7 @@
    똑같이 갖고 있던 부분을 한곳에 모았다.
 
      · 도전장 만들기 / 봉인(lockNum) / 링크 인코딩(#c= #r=)
+     · 내기 걸기(선택) — assets/bet.js 를 먼저 읽어 둘 것
      · 플레이어 id, 이름 저장(gh_name), 조사 헬퍼(subj·topic·objp)
      · 전적 계산(tallyOf) · 이력 표시(histRows) · 재도전(startNext)
      · 결과 화면 그리기 · 카톡 공유 붙이기 · 진입 분기
@@ -126,7 +127,7 @@
 
     /* hist: [[aName, a기록, bName, b기록, aId, bId, (a덧, b덧)], ...] */
     const state = {
-      name: "", id: "", theirId: "", ms: null,
+      name: "", id: "", theirId: "", ms: null, bet: "",
       hist: [], incoming: null
     };
     if (cfg.state) Object.assign(state, cfg.state);
@@ -160,11 +161,12 @@
       if (cfg.hasSeed) pay.s = state.seed;
       pay.k = k; pay.x = x;
       if (cfg.linkExtra) Object.assign(pay, cfg.linkExtra(state));
+      Bet.put(pay, state.bet);
       pay.h = state.hist;
       madeUrl = baseUrl() + "#c=" + b64e(JSON.stringify(pay));
       $("linkbox").textContent = madeUrl;
       $("sandboxNote").classList.toggle("hidden", !isSandbox());
-      track("link_made");
+      track("link_made", Bet.gaParams(state.bet));
       return madeUrl;
     }
 
@@ -173,7 +175,7 @@
     if (cfg.shareChallenge !== false) {
       $("kakaoBtn").onclick = () => kakaoShare({
         url: madeUrl, btn: "도전 받기", img: cfg.og,
-        title: `${state.name ? state.name + "의 " : ""}${cfg.gameName} 도전장 🔒`,
+        title: `${Bet.titlePrefix(state.bet)}${state.name ? state.name + "의 " : ""}${cfg.gameName} 도전장 🔒`,
         desc: state.hist.length ? `${state.hist.length + 1}판째. 전적이 같이 실려 있어.` : cfg.challengeDesc
       }, () => copy(madeUrl, "카톡 공유를 못 열어 링크를 복사했어"));
     }
@@ -181,10 +183,13 @@
     /* ── 도전장 받기 ── */
     function openChallenge(p) {
       state.incoming = p; state.hist = p.h || [];
+      state.bet = Bet.read(p);                    // 내기는 도전한 쪽이 정한다
       state.theirId = p.i || ""; state.id = myIdFrom(state.hist, state.theirId) || state.id || rid();
       if (cfg.onOpenChallenge) cfg.onOpenChallenge(p);
       $("playTag").textContent = "도전장 도착";
       $("playHead").innerHTML = cfg.challengeHead(p);
+      betOpen(state.bet);
+      $("betBox").classList.add("hidden");        // 받는 쪽은 내기를 바꿀 수 없다
       $("lockName").textContent = p.n || "상대";
       $("lockedCard").classList.remove("hidden");
       if (state.hist.length) {
@@ -230,6 +235,14 @@
       $("verdict").className = "verdict " + o;
       $("verdict").textContent = cfg.verdictText(o);
       $("subVerdict").textContent = cfg.subVerdictText(o, me, them, meL, themL, em, et);
+      /* 내기 결과는 진 쪽 기준. 보는 사람이 졌으면 이름이 있어도 "내가".
+         카톡 카드는 상대가 읽으므로 "내가"의 기준을 받는 사람(도전한 쪽)으로 뒤집는다. */
+      const betNow = R.bet !== undefined ? R.bet : state.bet;
+      const betLoser = o === "win" ? them.n : me.n;
+      const betLine = Bet.resultLine(betNow, betLoser, o === "lose", o === "tie");
+      const betCard = Bet.resultLine(betNow, betLoser, o === "win", o === "tie");
+      $("betResult").textContent = betLine;
+      $("betResult").classList.toggle("hidden", !betLine);
       $("titleBadge").textContent = "🏅 " + cfg.titleFor(em);
       $("resTag").textContent = `${R.hist.length}판 결과`;
 
@@ -242,7 +255,7 @@
       ["respActions", "viewActions", "resLinkbox", "notYet"].forEach(id => $(id).classList.add("hidden"));
       if (isB) {
         $("respActions").classList.remove("hidden"); $("notYet").classList.remove("hidden");
-        const rurl = baseUrl() + "#r=" + b64e(JSON.stringify({ v: 1, h: R.hist }));
+        const rurl = baseUrl() + "#r=" + b64e(JSON.stringify(Bet.put({ v: 1, h: R.hist }, betNow)));
         $("sendResult").onclick = () => { $("resLinkbox").textContent = rurl; copy(rurl, "결과 링크 복사됐어. 상대에게 보내"); };
         {
           const nm = n => n ? n + " " : "";
@@ -251,7 +264,7 @@
           $("kakaoRes").onclick = () => kakaoShare({
             url: rurl, btn: "결과 보기", img: cfg.og,
             title: cfg.resultTitle(me, them, tail, nm),
-            desc: cfg.resultDesc
+            desc: betCard || cfg.resultDesc
           }, () => copy(rurl, "카톡 공유를 못 열어 링크를 복사했어"));
         }
         $("again").onclick = () => startNext(R.hist, bN, bId || "");
@@ -269,6 +282,9 @@
       state.ms = null; state.incoming = null;
       if (cfg.newRound) cfg.newRound();
       $("nameIn").value = myName;
+      Bet.set(state.bet);                          // 지난 판 내기를 채워 두고 바꿀 수 있게
+      $("betBox").classList.remove("hidden");
+      betOpen("");
       $("lockedCard").classList.add("hidden");
       $("playTag").textContent = `${hist.length + 1}판째`;
       $("playHead").innerHTML = cfg.againHead();
@@ -299,13 +315,32 @@
       if (cfg.onInit) cfg.onInit();
       const h = readHash();
       if (h && h.type === "c" && h.p && typeof h.p.k === "number" && (!cfg.hasSeed || typeof h.p.s === "number")) { openChallenge(h.p); return; }
-      if (h && h.type === "r" && h.p && Array.isArray(h.p.h) && h.p.h.length) { renderResult({ hist: h.p.h, round: h.p.h[h.p.h.length - 1], viewer: "a" }); return; }
+      if (h && h.type === "r" && h.p && Array.isArray(h.p.h) && h.p.h.length) {
+        state.bet = Bet.read(h.p);
+        renderResult({ hist: h.p.h, round: h.p.h[h.p.h.length - 1], viewer: "a", bet: state.bet }); return;
+      }
       if (cfg.newRound) cfg.newRound();
       show("s-play");
     };
 
-    /* 이름 칸은 다섯 게임이 똑같이 쓴다 */
+    /* 이름 칸은 여섯 게임이 똑같이 쓴다 */
     $("nameIn").oninput = e => { state.name = e.target.value.trim(); saveName(state.name); };
+
+    /* 내기 자리 — 이름 칸 바로 아래 */
+    Bet.mount($("nameIn"), v => { state.bet = v; });
+    /* 도전장 열기 화면 한 줄 (헤드라인 아래) */
+    const bo = document.createElement("p");
+    bo.className = "bet-open hidden"; bo.id = "betOpen";
+    $("playHead").parentNode.insertBefore(bo, $("playHead").nextSibling);
+    /* 결과 화면 내기 결과 (승자 문구 다음 줄) */
+    const br = document.createElement("p");
+    br.className = "bet-result hidden"; br.id = "betResult";
+    $("subVerdict").parentNode.insertBefore(br, $("subVerdict").nextSibling);
+    function betOpen(b) {
+      const line = Bet.openLine(b);
+      $("betOpen").textContent = line;
+      $("betOpen").classList.toggle("hidden", !line);
+    }
 
     /* 게임 쪽에서 필요할 때 쓸 수 있게 열어 둔다 */
     Duel.state = state;

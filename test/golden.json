@@ -257,6 +257,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 10초 맞추기 도전장 🔒",
+      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
+      "title": "민수 10.25 vs 지은 9.84 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
@@ -545,6 +707,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 반응속도 도전장 🔒",
+      "desc": "초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>더 빨리 눌러봐.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "지은이 0.037초 더 빨랐어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
+      "title": "민수 0.268 vs 지은 0.231 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "지은이 0.037초 더 빨랐어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
@@ -833,6 +1157,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJiIjoi7KCQ7IusIiwiaCI6W119",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJiIjoi7KCQ7IusIiwiaCI6W119",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 1에서 25까지 도전장 🔒",
+      "desc": "같은 판, 같은 숫자. 1부터 25까지 순서대로 최대한 빨리. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJoIjpbXX0",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 판이야. 더 빨리.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "19.87초 vs 21.34초 — 민수가 1.47초 빨랐어.",
+      "betResult": "지은이 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIxMzQwLCLrr7zsiJgiLDE5ODcwLCJhYmMxMjMiLCJ6eno5OTkiLDIsMl1dLCJiIjoi7KCQ7IusIn0",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
+      "title": "민수 19.87초 vs 지은 21.34초 — 민수 승",
+      "desc": "내가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/num25/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIxMzQwLCLrr7zsiJgiLDE5ODcwLCJhYmMxMjMiLCJ6eno5OTkiLDIsMl1dLCJiIjoi7KCQ7IusIn0",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJiIjoi7KCQ7IusIiwiaCI6W1si7KeA7J2AIiwyMTM0MCwi66-87IiYIiwxOTg3MCwiYWJjMTIzIiwienp6OTk5IiwyLDJdXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "21.34초 vs 19.87초 — 민수가 1.47초 빨랐어.",
+      "betResult": "내가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/num25/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJiIjoi64W4656Y67CpIiwiaCI6W119",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 상대 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
@@ -1121,6 +1607,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 두더지 잡기 도전장 🔒",
+      "desc": "20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiaCI6W119",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 두더지야. 더 잡아.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "19점 vs 24점 — 지은이 5점 더 잡았어.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI0LCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsxOCwzLDFdLFsxOCwzLDFdXV0sImIiOiLsoJDsi6wifQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-mole-sq.png",
+      "title": "민수 19점 vs 지은 24점 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/mole/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDI0LCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsxOCwzLDFdLFsxOCwzLDFdXV0sImIiOiLsoJDsi6wifQ",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMjQsIuuvvOyImCIsMTksImFiYzEyMyIsInp6ejk5OSIsWzE4LDMsMV0sWzE4LDMsMV1dXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "24점 vs 19점 — 지은이 5점 더 잡았어.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/mole/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
@@ -1409,6 +2057,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 10초 연타 도전장 🔒",
+      "desc": "10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltdfQ",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 많이.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "74회 vs 88회 — 지은이 14회 더.",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDg4LCLrr7zsiJgiLDc0LCJhYmMxMjMiLCJ6eno5OTkiXV0sImIiOiLsoJDsi6wifQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-tap-sq.png",
+      "title": "민수 74회 vs 지은 88회 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/tap/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDg4LCLrr7zsiJgiLDc0LCJhYmMxMjMiLCJ6eno5OTkiXV0sImIiOiLsoJDsi6wifQ",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDg4LCLrr7zsiJgiLDc0LCJhYmMxMjMiLCJ6eno5OTkiXV19"
+    },
+    "bet_result_view": {
+      "subVerdict": "88회 vs 74회 — 지은이 14회 더.",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/tap/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
@@ -1697,6 +2507,168 @@
         "back": 999999
       }
     ],
+    "bet_words": {
+      "presets": [
+        {
+          "label": "커피 한 잔",
+          "emoji": "☕",
+          "tag": "coffee",
+          "title": "☕ 커피 한 잔 걸고 — ",
+          "open": "이기면 커피 한 잔!",
+          "loseThem": "민수가 커피 한 잔 산다 😂",
+          "loseMe": "내가 커피 한 잔 산다 😂",
+          "loseNoName": "상대가 커피 한 잔 산다 😂"
+        },
+        {
+          "label": "점심",
+          "emoji": "🍱",
+          "tag": "lunch",
+          "title": "🍱 점심 걸고 — ",
+          "open": "이기면 점심!",
+          "loseThem": "민수가 점심 산다 😂",
+          "loseMe": "내가 점심 산다 😂",
+          "loseNoName": "상대가 점심 산다 😂"
+        },
+        {
+          "label": "아이스크림",
+          "emoji": "🍦",
+          "tag": "icecream",
+          "title": "🍦 아이스크림 걸고 — ",
+          "open": "이기면 아이스크림!",
+          "loseThem": "민수가 아이스크림 산다 😂",
+          "loseMe": "내가 아이스크림 산다 😂",
+          "loseNoName": "상대가 아이스크림 산다 😂"
+        },
+        {
+          "label": "꿀밤 한 대",
+          "emoji": "🌰",
+          "tag": "flick",
+          "title": "🌰 꿀밤 한 대 걸고 — ",
+          "open": "이기면 꿀밤 한 대!",
+          "loseThem": "민수가 꿀밤 맞는다 😂",
+          "loseMe": "내가 꿀밤 맞는다 😂",
+          "loseNoName": "상대가 꿀밤 맞는다 😂"
+        },
+        {
+          "label": "소원 하나",
+          "emoji": "⭐",
+          "tag": "wish",
+          "title": "⭐ 소원 하나 걸고 — ",
+          "open": "이기면 소원 하나!",
+          "loseThem": "민수가 소원 들어준다 😂",
+          "loseMe": "내가 소원 들어준다 😂",
+          "loseNoName": "상대가 소원 들어준다 😂"
+        },
+        {
+          "label": "100원",
+          "emoji": "💰",
+          "tag": "coin",
+          "title": "💰 100원 걸고 — ",
+          "open": "이기면 100원!",
+          "loseThem": "민수가 100원 낸다 😂",
+          "loseMe": "내가 100원 낸다 😂",
+          "loseNoName": "상대가 100원 낸다 😂"
+        }
+      ],
+      "custom": {
+        "emoji": "🎯",
+        "tag": "custom",
+        "title": "🎯 노래방 걸고 — ",
+        "open": "이기면 노래방!",
+        "loseThem": "내기: 노래방 — 민수 패",
+        "loseMe": "내기: 노래방 — 나 패"
+      },
+      "tie": "무승부 — 내기는 다음 판으로",
+      "none": {
+        "title": "",
+        "open": "",
+        "line": ""
+      },
+      "ga": {
+        "on": {
+          "bet": 1,
+          "bet_kind": "lunch"
+        },
+        "custom": {
+          "bet": 1,
+          "bet_kind": "custom"
+        },
+        "off": {
+          "bet": 0
+        }
+      },
+      "read": [
+        "점심",
+        "",
+        "",
+        "",
+        ""
+      ],
+      "subjMatch": true
+    },
+    "bet_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "stateBet": "점심"
+    },
+    "bet_kakao": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ufo-sq.png",
+      "title": "🍱 점심 걸고 — 지은의 UFO 요격 도전장 🔒",
+      "desc": "20초에 미사일 40발. 황금 모선 +3, 아군 드론 −3. 내 점수와 명중률은 네가 끝낸 뒤 공개."
+    },
+    "bet_off_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W119",
+      "stateBet": ""
+    },
+    "bet_open": {
+      "betOpen": "이기면 점심!",
+      "betOpenHidden": false,
+      "betBoxHidden": true,
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 편대야. 더 떨궈.",
+      "stateBet": "점심"
+    },
+    "bet_result": {
+      "subVerdict": "19점 vs 23점 — 지은이 4점 더 (명중률 77%)",
+      "betResult": "내가 점심 산다 😂",
+      "betResultHidden": false
+    },
+    "bet_kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzLCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsyMCwyLDEsMzBdLFsyMCwyLDEsMzBdXV0sImIiOiLsoJDsi6wifQ",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ufo-sq.png",
+      "title": "민수 19점 vs 지은 23점 — 지은 승",
+      "desc": "민수가 점심 산다 😂"
+    },
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzLCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsyMCwyLDEsMzBdLFsyMCwyLDEsMzBdXV0sImIiOiLsoJDsi6wifQ",
+    "bet_again": {
+      "stateBet": "점심",
+      "betBoxHidden": false,
+      "betOpenHidden": true,
+      "pressed": [
+        "점심"
+      ]
+    },
+    "bet_again_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMjMsIuuvvOyImCIsMTksImFiYzEyMyIsInp6ejk5OSIsWzIwLDIsMSwzMF0sWzIwLDIsMSwzMF1dXX0"
+    },
+    "bet_result_view": {
+      "subVerdict": "23점 vs 19점 — 지은이 4점 더 (명중률 77%)",
+      "betResult": "민수가 점심 산다 😂"
+    },
+    "bet_tie_noname": {
+      "betOpen": "이기면 꿀밤 한 대!",
+      "verdict": "완전 똑같아?!",
+      "betResult": "무승부 — 내기는 다음 판으로"
+    },
+    "bet_custom_link": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
+      "stateBet": "노래방"
+    },
+    "bet_custom": {
+      "betOpen": "이기면 노래방!",
+      "betResult": "내기: 노래방 — 나 패"
+    },
     "legacy_result": {
       "resTag": "1판 결과",
       "nameA": "지은 (나)",

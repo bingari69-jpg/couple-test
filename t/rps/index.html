@@ -16,6 +16,7 @@
 
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js" crossorigin="anonymous"></script>
 <script src="../../assets/analytics.js"></script>
+<script src="../../assets/bet.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -311,7 +312,7 @@ function myIdFrom(rows,theirId){
 
 /* ===== 상태 ===== */
 const state = {
-  name:"", id:"", theirId:"", hand:null, msg:0,
+  name:"", id:"", theirId:"", hand:null, msg:0, bet:"",
   hist:[],          // [[cName, cHand, rHand, cMsg, cId, rId], ...]  이전 라운드들
   rv:0,             // 복수전 여부
   prev:null,        // 복수전일 때 지난 판 결과 [cName, cHand, rHand, cMsg, rName, cId, rId]
@@ -362,22 +363,37 @@ handsInto("makeHands",(i,box)=>{
   });
 })();
 $("nameIn").oninput=e=>{state.name=e.target.value.trim(); saveName(state.name); hideLink();};
+/* 내기 걸기 (선택) — 이름 칸 아래. 기록 대결과 같은 낱말·같은 문장을 쓴다 */
+Bet.mount($("nameIn"), v=>{ state.bet=v; hideLink(); });
+(function(){
+  const bo=document.createElement("p"); bo.className="bet-open hidden"; bo.id="betOpen";
+  const head=document.querySelector("#s-open h1"); head.parentNode.insertBefore(bo, head.nextSibling);
+  const br=document.createElement("p"); br.className="bet-result hidden"; br.id="betResult";
+  $("subVerdict").parentNode.insertBefore(br, $("subVerdict").nextSibling);
+})();
+function betOpen(b){
+  const line=Bet.openLine(b);
+  $("betOpen").textContent=line;
+  $("betOpen").classList.toggle("hidden", !line);
+}
 function hideLink(){ ["linkbox","copyBtn","kakaoBtn","sandboxNote"].forEach(id=>$(id).classList.add("hidden")); $("makeBtn").textContent="도전장 만들기"; madeUrl=""; }
 
 $("makeBtn").onclick=()=>{
   if(state.hand==null){toast("패를 먼저 골라주세요");return;}
   const {k,x}=lockHand(state.hand);
   const p={v:1, n:state.name, i:state.id, k, x, m:state.msg, h:state.hist, rv:state.rv};
+  Bet.put(p, state.bet);                 // 내기가 없으면 필드를 안 붙여 옛 링크와 바이트가 같다
   if(state.prev) p.prev=state.prev;
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   $("linkbox").textContent=madeUrl;
   $("copyBtn").classList.remove("hidden"); $("kakaoBtn").classList.remove("hidden");
   $("kakaoBtn").onclick=()=>kakaoShare({
     url:madeUrl, btn:"도전 받기",
-    title:`${state.name?state.name+"의 ":""}가위바위보 도전장 🔒`,
+    title:`${Bet.titlePrefix(state.bet)}${state.name?state.name+"의 ":""}가위바위보 도전장 🔒`,
     desc: state.hist.length ? `${state.hist.length}판 비긴 뒤 ${state.hist.length+1}판째. 내 패는 네가 고른 뒤 공개.` : "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
   });
   $("makeBtn").textContent="도전장 다시 만들기";
+  track("link_made", Bet.gaParams(state.bet));
   $("sandboxNote").classList.toggle("hidden",!isSandbox());
   toast("도전장이 만들어졌어요");
 };
@@ -386,6 +402,9 @@ $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으�
 /* ===== 도전장 열기 ===== */
 function openChallenge(p){
   state.incoming=p;
+  state.bet=Bet.read(p);                 // 내기는 도전한 쪽이 정한다
+  betOpen(state.bet);
+  $("betBox").classList.add("hidden");
   state.theirId=p.i||"";
   state.id=myIdFrom(p.h,state.theirId)||myIdFrom([prevRow(p.prev)],state.theirId)||state.id||rid();
   $("openName").textContent=p.n||"상대"; $("openName2").textContent=p.n||"상대";
@@ -475,6 +494,14 @@ function renderResult(R){
     $("verdict").textContent = iWon ? "이겼습니다" : "졌습니다";
     $("subVerdict").textContent=`${HANDS[lHand].l}가 ${HANDS[wHand].l}에 졌어요. ${wName} 승리.`;
   }
+  /* 내기 결과는 진 쪽 기준. 보는 사람이 졌으면 이름이 있어도 "내가".
+     카톡 카드는 상대가 읽으므로 "내가"의 기준을 받는 사람(도전한 쪽)으로 뒤집는다. */
+  const betNow = R.bet!==undefined ? R.bet : state.bet;
+  const loserName = o==="tie" ? "" : (o==="c" ? R.rName : R.cName);
+  const betLine = Bet.resultLine(betNow, loserName, o!=="tie" && o!==me, o==="tie");
+  const betCard = Bet.resultLine(betNow, loserName, o==="r", o==="tie");
+  $("betResult").textContent = betLine;
+  $("betResult").classList.toggle("hidden", !betLine);
   $("resTag").textContent = `${R.hist.length}판 결과` + (R.rv?" · 복수전":"");
 
   // 선언 진위
@@ -503,7 +530,7 @@ function renderResult(R){
   }else if(R.viewer==="responder"){
     $("doneActions").classList.remove("hidden");
     $("notYet").classList.remove("hidden");
-    const rp={v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv};
+    const rp=Bet.put({v:1, h:R.hist, cn:R.cName, rn:R.rName, rv:R.rv}, betNow);
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
     $("sendResult").onclick=()=>{ $("resLinkbox").textContent=rurl; copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요"); };
     { const nm=n=>n?n+" ":"";
@@ -512,7 +539,7 @@ function renderResult(R){
       $("kakaoRes").onclick=()=>kakaoShare({
         url:rurl, btn:"결과 보기",
         title:`${nm(R.cName)}${HANDS[R.cHand].e} vs ${nm(R.rName)}${HANDS[R.rHand].e}${tail}`,
-        desc:"가위바위보 결과가 나왔어요. 복수전은 여기서."
+        desc: betCard || "가위바위보 결과가 나왔어요. 복수전은 여기서."
       }); }
     const prev=[R.cName,R.cHand,R.rHand,R.cMsg,R.rName,R.cId||"",R.rId||""];
     $("revenge").onclick=()=>{ startNext([], R.rName, 1, prev, R.rId||""); };
@@ -530,6 +557,8 @@ function startNext(hist, myName, rv, prev, myId){
   state.hist=hist; state.rv=rv; state.prev=prev||null; state.hand=null; state.msg=0; state.name=myName;
   state.id=myId||state.id||rid();
   $("nameIn").value=myName; hideLink();
+  Bet.set(state.bet);                    // 지난 판 내기를 채워 두고 바꿀 수 있게
+  $("betBox").classList.remove("hidden"); betOpen("");
   [...$("makeHands").children].forEach(c=>c.setAttribute("aria-pressed","false"));
   [...$("msgChips").children].forEach((c,j)=>c.setAttribute("aria-pressed",j===0));
   $("makeBtn").disabled=true;
@@ -559,9 +588,10 @@ function startNext(hist, myName, rv, prev, myId){
   if(h.type==="c" && h.p && typeof h.p.k==="number"){ openChallenge(h.p); return; }
   if(h.type==="r" && h.p && Array.isArray(h.p.h) && h.p.h.length){
     const last=h.p.h[h.p.h.length-1];
+    state.bet=Bet.read(h.p);
     renderResult({ hist:h.p.h, rv:h.p.rv||0, cName:last[0], rName:h.p.rn||"",
       cId:last[4]||"", rId:last[5]||"",
-      cHand:last[1], rHand:last[2], cMsg:last[3]||0, viewer:"challenger" });
+      cHand:last[1], rHand:last[2], cMsg:last[3]||0, viewer:"challenger", bet:state.bet });
     return;
   }
   show("s-make");

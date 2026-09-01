@@ -241,7 +241,132 @@ function run(game) {
     w.close();
   }
 
-  /* 9. 옛 형식(플레이어 id 가 없던) 결과 링크도 열리는지 */
+  /* 9. 내기 걸기 (선택) — 걸었을 때만 달라져야 한다 */
+  {
+    /* 9-1. 낱말·문장 — 여섯 게임이 같은 값이어야 한다 */
+    const w = load(game).window;
+    out.bet_words = w.__ev(`(function(){
+      var out={presets:[],custom:null,tie:null,none:null,ga:{}};
+      Bet.PRESETS.forEach(function(p){
+        out.presets.push({label:p.label, emoji:Bet.emoji(p.label), tag:Bet.tag(p.label),
+          title:Bet.titlePrefix(p.label), open:Bet.openLine(p.label),
+          loseThem:Bet.resultLine(p.label,"민수",false,false),
+          loseMe:Bet.resultLine(p.label,"지은",true,false),
+          loseNoName:Bet.resultLine(p.label,"",false,false)});
+      });
+      out.custom={emoji:Bet.emoji("노래방"), tag:Bet.tag("노래방"),
+        title:Bet.titlePrefix("노래방"), open:Bet.openLine("노래방"),
+        loseThem:Bet.resultLine("노래방","민수",false,false),
+        loseMe:Bet.resultLine("노래방","지은",true,false)};
+      out.tie=Bet.resultLine("점심","민수",false,true);
+      out.none={title:Bet.titlePrefix(""), open:Bet.openLine(""),
+        line:Bet.resultLine("","민수",false,false)};
+      out.ga={on:Bet.gaParams("점심"), custom:Bet.gaParams("노래방"), off:Bet.gaParams("")};
+      /* 빈 문자열·미존재·숫자 모두 "내기 없음" 이어야 한다 */
+      out.read=[Bet.read({b:"점심"}),Bet.read({b:""}),Bet.read({}),Bet.read({b:0}),Bet.read(null)];
+      /* 조사 헬퍼가 엔진 것과 같은지 */
+      out.subjMatch=["지은","민수","윤","Amy","나","상대"].every(function(n){ return Bet.subj(n)===subj(n); });
+      return out;
+    })()`);
+    w.close();
+  }
+  {
+    /* 9-2. 내기를 건 도전장 링크 + 카톡 카드 */
+    const w = load(game).window;
+    w.__ev(`Math.random=function(){return 0.5;};
+            document.querySelector('[data-bet="점심"]').click();
+            state.name="지은"; state.id="abc123"; state.hist=[];
+            ${setRec(game)}
+            __fn("makeLink")();`);
+    const burl = w.__url();
+    out.bet_link = { url: burl, stateBet: w.__ev("state.bet") };
+    out.bet_kakao = grabKakao(w, "kakaoBtn");
+    /* 칩을 다시 누르면 해제되고 링크가 원래대로 돌아온다 */
+    w.__ev(`document.querySelector('[data-bet="점심"]').click(); __fn("makeLink")();`);
+    out.bet_off_link = { url: w.__url(), stateBet: w.__ev("state.bet") };
+    w.close();
+
+    /* 9-3. 도전장 열기 — 헤드라인 아래 한 줄, 받는 쪽은 못 바꾼다 */
+    const o = load(game, burl.slice(burl.indexOf("#"))).window;
+    out.bet_open = {
+      betOpen: txt(o, "betOpen"),
+      betOpenHidden: hid(o, "betOpen"),
+      betBoxHidden: hid(o, "betBox"),
+      playHead: htm(o, "playHead"),
+      stateBet: o.__ev("state.bet"),
+    };
+    /* 9-4. 결과 — 승패 */
+    o.__ev(`Math.random=function(){return 0.5;};
+            state.name="민수"; state.id="zzz999";
+            ${setRec(game)}
+            state.ms=${JSON.stringify(REC[game].theirRaw)};
+            __fn("respond")();`);
+    out.bet_result = {
+      subVerdict: txt(o, "subVerdict"),
+      betResult: txt(o, "betResult"),
+      betResultHidden: hid(o, "betResult"),
+    };
+    out.bet_kakao_result = grabKakao(o, "kakaoRes");
+    el(o, "sendResult").click();
+    const rurl = txt(o, "resLinkbox");
+    out.bet_result_url = rurl;
+    /* 9-5. 재도전 — 내기 승계, 다시 고를 수 있게 */
+    el(o, "again").click();
+    out.bet_again = {
+      stateBet: o.__ev("state.bet"),
+      betBoxHidden: hid(o, "betBox"),
+      betOpenHidden: hid(o, "betOpen"),
+      pressed: o.__ev(`[...document.querySelectorAll(".bet-chip")].filter(function(b){return b.getAttribute("aria-pressed")==="true";}).map(function(b){return b.dataset.bet;})`),
+    };
+    o.__ev(`Math.random=function(){return 0.5;}; ${setRec(game)} __fn("makeLink")();`);
+    out.bet_again_link = { url: o.__url() };
+    o.close();
+
+    /* 9-6. 반대 시점 (결과 링크) — 이긴 쪽이 보는 문구 */
+    const v = load(game, rurl.slice(rurl.indexOf("#"))).window;
+    out.bet_result_view = { subVerdict: txt(v, "subVerdict"), betResult: txt(v, "betResult") };
+    v.close();
+  }
+  {
+    /* 9-7. 무승부 · 이름 없음 · 직접 입력 */
+    const w = load(game).window;
+    w.__ev(`Math.random=function(){return 0.5;};
+            document.querySelector('[data-bet="꿀밤 한 대"]').click();
+            state.name=""; state.id="abc123"; state.hist=[];
+            ${setRec(game)}
+            __fn("makeLink")();`);
+    const u = w.__url(); w.close();
+    const t = load(game, u.slice(u.indexOf("#"))).window;
+    t.__ev(`Math.random=function(){return 0.5;};
+            state.name=""; state.id="zzz999";
+            ${setRec(game)}
+            __fn("respond")();`);          // 같은 기록 → 무승부
+    out.bet_tie_noname = { betOpen: txt(t, "betOpen"), verdict: txt(t, "verdict"), betResult: txt(t, "betResult") };
+    t.close();
+
+    /* 이름 없이 진 쪽 */
+    const w2 = load(game).window;
+    w2.__ev(`Math.random=function(){return 0.5;};
+             document.querySelector('[data-bet="__custom__"]').click();
+             document.getElementById("betCustom").value="노래방";
+             document.getElementById("betCustom").dispatchEvent(new window.Event("input"));
+             state.name=""; state.id="abc123"; state.hist=[];
+             ${setRec(game)}
+             __fn("makeLink")();`);
+    const u2 = w2.__url();
+    out.bet_custom_link = { url: u2, stateBet: w2.__ev("state.bet") };
+    w2.close();
+    const c = load(game, u2.slice(u2.indexOf("#"))).window;
+    c.__ev(`Math.random=function(){return 0.5;};
+            state.name=""; state.id="zzz999";
+            ${setRec(game)}
+            state.ms=${JSON.stringify(REC[game].theirRaw)};
+            __fn("respond")();`);
+    out.bet_custom = { betOpen: txt(c, "betOpen"), betResult: txt(c, "betResult") };
+    c.close();
+  }
+
+  /* 10. 옛 형식(플레이어 id 가 없던) 결과 링크도 열리는지 */
   {
     const a = REC[game].fields.ms, b = REC[game].theirRaw;
     const legacy = Buffer.from(JSON.stringify({ v: 1, h: [["지은", a, "민수", b]] }), "utf8")
