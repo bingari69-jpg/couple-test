@@ -10,7 +10,7 @@ const { JSDOM, VirtualConsole } = require("jsdom");
 const ROOT = path.join(__dirname, "..");
 
 /* 기록 대결 게임 목록 — 새 게임을 만들면 여기에 추가 */
-const GAMES = ["ten", "react", "num25", "mole", "tap"];
+const GAMES = ["ten", "react", "num25", "mole", "tap", "ufo"];
 
 /* 게임별로 "기록"을 어디에 담는지. 앱 코드는 건드리지 않는다.
      fields   : 봉인 직전 state 에 넣을 값
@@ -21,6 +21,7 @@ const REC = {
   tap:   { fields: { ms: 88 },                                theirRaw: 74 },
   num25: { fields: { ms: 21340, pen: 2, seed: 12345 },        theirRaw: 19870 },
   mole:  { fields: { ms: 24, stat: [18, 3, 1], seed: 12345 }, theirRaw: 19 },
+  ufo:   { fields: { ms: 23, stat: [20, 2, 1, 30], seed: 12345 }, theirRaw: 19 },
 };
 
 /* 외부 리소스를 타지 않도록 로컬 asset 을 인라인으로 바꿔 넣는다 */

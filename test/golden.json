@@ -1438,5 +1438,293 @@
         "result": false
       }
     }
+  },
+  "ufo": {
+    "entry_fresh": {
+      "playTag": "UFO 요격",
+      "playHead": "20초, 미사일 <b>40발</b>.<br>몇 기나 떨굴래?",
+      "playLead": "둘이 <b>똑같은 편대</b>를 받아. 화면을 누르면 그 자리로 미사일이 날아가. 빗나가도 탄약은 줄어. 기회는 한 번.",
+      "lockName": "",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": true,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "josa": [
+      {
+        "n": "지은",
+        "subj": "지은이",
+        "topic": "지은은",
+        "objp": "지은을",
+        "tail": "이"
+      },
+      {
+        "n": "민수",
+        "subj": "민수가",
+        "topic": "민수는",
+        "objp": "민수를",
+        "tail": "가"
+      },
+      {
+        "n": "현우",
+        "subj": "현우가",
+        "topic": "현우는",
+        "objp": "현우를",
+        "tail": "가"
+      },
+      {
+        "n": "다인",
+        "subj": "다인이",
+        "topic": "다인은",
+        "objp": "다인을",
+        "tail": "이"
+      },
+      {
+        "n": "윤",
+        "subj": "윤이",
+        "topic": "윤은",
+        "objp": "윤을",
+        "tail": "이"
+      },
+      {
+        "n": "박선영",
+        "subj": "박선영이",
+        "topic": "박선영은",
+        "objp": "박선영을",
+        "tail": "이"
+      },
+      {
+        "n": "나",
+        "subj": "내가",
+        "topic": "나는",
+        "objp": "나를",
+        "tail": "가"
+      },
+      {
+        "n": "상대",
+        "subj": "상대가",
+        "topic": "상대는",
+        "objp": "상대를",
+        "tail": "가"
+      },
+      {
+        "n": "Amy",
+        "subj": "Amy가",
+        "topic": "Amy는",
+        "objp": "Amy를",
+        "tail": "가"
+      },
+      {
+        "n": "",
+        "subj": "가",
+        "topic": "는",
+        "objp": "를",
+        "tail": "가"
+      }
+    ],
+    "who": [
+      "나",
+      "상대",
+      "지은",
+      "지은"
+    ],
+    "link_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W119",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W119"
+    },
+    "kakao_challenge": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W119",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ufo-sq.png",
+      "title": "지은의 UFO 요격 도전장 🔒",
+      "desc": "20초에 미사일 40발. 황금 모선 +3, 아군 드론 −3. 내 점수와 명중률은 네가 끝낸 뒤 공개."
+    },
+    "link_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyMywiYWJjMTIzIiwienp6OTk5Il1dfQ"
+    },
+    "kakao_challenge_hist": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyMywiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "btn": "도전 받기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ufo-sq.png",
+      "title": "지은의 UFO 요격 도전장 🔒",
+      "desc": "2판째. 전적이 같이 실려 있어."
+    },
+    "open_challenge": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 편대야. 더 떨궈.",
+      "playLead": "둘이 <b>똑같은 편대</b>를 받아. 화면을 누르면 그 자리로 미사일이 날아가. 빗나가도 탄약은 줄어. 기회는 한 번.",
+      "lockName": "지은",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "respond_result": {
+      "resTag": "1판 결과",
+      "nameA": "민수 (나)",
+      "tA": "19<small>점</small>",
+      "dA": "UFO <i>20</i> · <i class=\"g\">황금 2</i> · <i class=\"b\">아군 1</i><br>명중률 77% <i>(23/30)</i>",
+      "nameB": "지은",
+      "tB": "23<small>점</small>",
+      "dB": "UFO <i>20</i> · <i class=\"g\">황금 2</i> · <i class=\"b\">아군 1</i><br>명중률 77% <i>(23/30)</i>",
+      "verdict": "상대가 더 떨궜어",
+      "subVerdict": "19점 vs 23점 — 지은이 4점 더 (명중률 77%)",
+      "titleBadge": "🏅 보통 사수",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side lose",
+        "sideB": "side win",
+        "verdict": "verdict lose"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": false,
+        "respActions": false,
+        "viewActions": true,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "respond_hist": "[]",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzLCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsyMCwyLDEsMzBdLFsyMCwyLDEsMzBdXV19",
+    "kakao_result": {
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ufo/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzLCLrr7zsiJgiLDE5LCJhYmMxMjMiLCJ6eno5OTkiLFsyMCwyLDEsMzBdLFsyMCwyLDEsMzBdXV19",
+      "btn": "결과 보기",
+      "img": "https://bingari69-jpg.github.io/couple-test/og/og-ufo-sq.png",
+      "title": "민수 19점 vs 지은 23점 — 지은 승",
+      "desc": "20초, 미사일 40발. 누가 더 떨궜을까. 재도전은 여기서."
+    },
+    "open_challenge_noname": {
+      "playTag": "도전장 도착",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 편대야. 더 떨궈.",
+      "playLead": "둘이 <b>똑같은 편대</b>를 받아. 화면을 누르면 그 자리로 미사일이 날아가. 빗나가도 탄약은 줄어. 기회는 한 번.",
+      "lockName": "상대",
+      "tallyText": "",
+      "_hidden": {
+        "lockedCard": false,
+        "tallyCard": true
+      },
+      "_screen": {
+        "play": false,
+        "result": true
+      }
+    },
+    "result_view": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "23<small>점</small>",
+      "dA": "UFO <i>20</i> · <i class=\"g\">황금 2</i> · <i class=\"b\">아군 1</i><br>명중률 77% <i>(23/30)</i>",
+      "nameB": "민수",
+      "tB": "19<small>점</small>",
+      "dB": "UFO <i>20</i> · <i class=\"g\">황금 2</i> · <i class=\"b\">아군 1</i><br>명중률 77% <i>(23/30)</i>",
+      "verdict": "내가 더 떨궜어!",
+      "subVerdict": "23점 vs 19점 — 지은이 4점 더 (명중률 77%)",
+      "titleBadge": "🏅 보통 사수",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    },
+    "tally": "{\"w\":2,\"l\":1,\"t\":1}",
+    "tally_byname": "{\"w\":2,\"l\":1,\"t\":1}",
+    "histRows": "1판 · 지은 23점 vs 민수 19점<br>2판 · 민수 19점 vs 지은 23점<br>3판 · 지은 23점 vs 민수 23점<br>4판 · 상대 23점 vs 나 19점",
+    "b64": {
+      "e": "eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImgiOltdfQ",
+      "back": "{\"v\":1,\"n\":\"지은\",\"i\":\"abc123\",\"h\":[]}",
+      "ok": true
+    },
+    "lock": [
+      {
+        "v": 0,
+        "k": 32767,
+        "x": 229369,
+        "back": 0
+      },
+      {
+        "v": 1,
+        "k": 32767,
+        "x": 229370,
+        "back": 1
+      },
+      {
+        "v": 25,
+        "k": 32767,
+        "x": 229394,
+        "back": 25
+      },
+      {
+        "v": 9840,
+        "k": 32767,
+        "x": 239209,
+        "back": 9840
+      },
+      {
+        "v": 21340,
+        "k": 32767,
+        "x": 250709,
+        "back": 21340
+      },
+      {
+        "v": 999999,
+        "k": 32767,
+        "x": 229365,
+        "back": 999999
+      }
+    ],
+    "legacy_result": {
+      "resTag": "1판 결과",
+      "nameA": "지은 (나)",
+      "tA": "23<small>점</small>",
+      "dA": "UFO <i>0</i> · <i class=\"g\">황금 0</i> · <i class=\"b\">아군 0</i><br>명중률 0% <i>(0/0)</i>",
+      "nameB": "민수",
+      "tB": "19<small>점</small>",
+      "dB": "UFO <i>0</i> · <i class=\"g\">황금 0</i> · <i class=\"b\">아군 0</i><br>명중률 0% <i>(0/0)</i>",
+      "verdict": "내가 더 떨궜어!",
+      "subVerdict": "23점 vs 19점 — 지은이 4점 더 (명중률 0%)",
+      "titleBadge": "🏅 보통 사수",
+      "tallyBox": "",
+      "_cls": {
+        "sideA": "side win",
+        "sideB": "side lose",
+        "verdict": "verdict win"
+      },
+      "_hidden": {
+        "tallyBox": true,
+        "notYet": true,
+        "respActions": true,
+        "viewActions": false,
+        "resLinkbox": true
+      },
+      "_screen": {
+        "play": true,
+        "result": false
+      }
+    }
   }
 }
