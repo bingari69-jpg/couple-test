@@ -263,7 +263,9 @@ function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
 function rid(){return Math.random().toString(36).slice(2,8);}
 const who=(nm,isMe)=>nm||(isMe?"나":"상대");
 const JOSA={"나":["내가","나는","나를"],"상대":["상대가","상대는","상대를"]};
-const subj =l=>JOSA[l]?JOSA[l][0]:l+"이(가)";
+/* 이름 뒤 주격조사: 받침 있으면 "이", 없으면 "가". */
+const hasJong=s=>{const c=String(s).charCodeAt(String(s).length-1);return c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0;};
+const subj =l=>JOSA[l]?JOSA[l][0]:l+(hasJong(l)?"이":"가");
 
 function meIsA(r,meId,meName){
   const ai=r[4],bi=r[5];
@@ -477,7 +479,7 @@ function renderResult(R){
   $("verdict").className="verdict "+o;
   $("verdict").textContent= o==="win"?"내가 더 잡았어!":o==="lose"?"상대가 더 잡았어":"완전 똑같아?!";
   /* 이긴 쪽이 보는 사람 자신이면 이름 대신 "내가" 로 (예: "24점 vs 19점 — 내가 5점 더 잡았어") */
-  const winL = o==="win" ? "나" : themL;
+  const winL = o==="win" ? meL : themL;
   $("subVerdict").textContent= o==="tie"?"점수까지 같은 건 거의 기적."
     :`${me.sc}점 vs ${them.sc}점 — ${subj(winL)} ${Math.abs(me.sc-them.sc)}점 더 잡았어.`;
   $("titleBadge").textContent="🏅 "+titleFor(me.sc);
