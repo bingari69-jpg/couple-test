@@ -11,3 +11,12 @@
 @media(max-width:420px){.letter-paper{padding-left:28px;padding-right:28px}.sample-copy{font-size:21px}.preview-callout{gap:8px;padding:13px}.preview-callout>span{display:none}.topbar h1{font-size:16px}}
 
 .challenge p{width:52%;line-height:1.7}.challenge .character{width:42%;right:-4px;bottom:10px}.game-tile strong{font-size:16px;max-width:53%;word-break:keep-all}.game-tile .character{width:55%;left:-5px}.hero-art{background:var(--bg)}
+
+/* The invisible characters reserve line breaks and prevent the paper from jumping. */
+.letter-glyph{visibility:hidden}
+.letter-glyph.is-visible{visibility:visible}
+.letter-accessible-text{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:pre-wrap}
+.reveal-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.reveal-skip{flex-shrink:0;border:1px solid #f3c9c0;border-radius:999px;background:#fff8f4;color:#a43e32;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer;min-height:40px}
+.reveal-skip:hover{background:#ffe8e1}
+.reveal-skip:focus-visible{outline:2px solid #d8493a;outline-offset:3px}

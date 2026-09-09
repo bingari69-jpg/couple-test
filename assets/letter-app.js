@@ -6,13 +6,16 @@
  const fonts={sans:"'Malgun Gothic',system-ui,sans-serif",serif:"'Batang','Noto Serif KR',serif",hand:"'Gatchi Hand','Malgun Gothic',sans-serif"};
  const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:'',from:'',body:'',font:'hand',size:22,occasion:'plain',number:100};
  let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
+ let activeReveal;
+ function stopReveal(){if(activeReveal){activeReveal.finish();activeReveal=null;}}
+ function startReveal(body,button){stopReveal();activeReveal=window.revealLetter($(body),$(button));}
  const titles={library:'편지지 고르기',detail:'편지지 미리보기',compose:'마음 쓰기',send:'편지 보내기',reader:'도착한 편지',error:'편지 확인'};
  const template=id=>templates.find(t=>t.id===(id||draft.template))||templates[0];
  function paint(el,t){el.style.setProperty('--px',t.x+'%');el.style.setProperty('--py',t.y+'%');el.style.setProperty('--tint',t.color);}
  function typography(el,p){el.style.setProperty('--letter-font',fonts[p.font]||fonts.sans);el.style.setProperty('--letter-size',(p.size||19)+'px');}
  function toast(msg){clearTimeout(toastTimer);$('toast').textContent=msg;$('toast').hidden=false;toastTimer=setTimeout(()=>$('toast').hidden=true,2800);}
  function show(next,{historyMode='push',focus=true}={}){
-   clearTimeout(animationTimer);view=next;
+   clearTimeout(animationTimer);stopReveal();view=next;
    Object.keys(titles).forEach(id=>$(id).hidden=id!==next);
    $('pageTitle').textContent=titles[next];document.title=titles[next]+' — 같이놀자';
    $('steps').hidden=['reader','error'].includes(next);$('bottomNav').hidden=['reader','send','error'].includes(next);
@@ -41,12 +44,13 @@
      b.onclick=()=>{draft.template=t.id;madeUrl='';[...$('templateGrid').children].forEach(el=>el.setAttribute('aria-pressed',String(el===b)));};$('templateGrid').append(b);
    });
  }
- function setPreviewTab(envelope){$('paperPreview').hidden=envelope;$('envelopePreview').hidden=!envelope;$('paperTab').setAttribute('aria-pressed',String(!envelope));$('envelopeTab').setAttribute('aria-pressed',String(envelope));$('sampleEnvelope').classList.remove('opening');}
+ function setPreviewTab(envelope){clearTimeout(animationTimer);stopReveal();$('paperPreview').hidden=envelope;$('envelopePreview').hidden=!envelope;$('paperTab').setAttribute('aria-pressed',String(!envelope));$('envelopeTab').setAttribute('aria-pressed',String(envelope));$('sampleEnvelope').classList.remove('opening');}
  function renderDetail(){const t=template();$('detailTitle').textContent=t.name;$('detailLine').textContent=t.line;$('detailTags').replaceChildren();t.tag.split(' · ').forEach(x=>{const s=document.createElement('span');s.className='tag';s.textContent=x;$('detailTags').append(s);});paint($('samplePaper'),t);paint($('sampleEnvelope'),t);setPreviewTab(false);}
  function animateEnvelope(el,done){if(el.classList.contains('opening'))return;el.classList.add('opening');const reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;animationTimer=setTimeout(()=>{el.classList.remove('opening');done();},reduce?0:600);}
  $('viewTemplate').onclick=()=>go('detail');$('otherTemplate').onclick=()=>go('library');$('paperTab').onclick=()=>setPreviewTab(false);$('envelopeTab').onclick=()=>setPreviewTab(true);
- $('sampleEnvelope').onclick=()=>animateEnvelope($('sampleEnvelope'),()=>setPreviewTab(false));
- $('openSample').onclick=()=>{setPreviewTab(true);$('envelopePreview').scrollIntoView({block:'center'});animateEnvelope($('sampleEnvelope'),()=>setPreviewTab(false));};
+ function openSamplePaper(){setPreviewTab(false);startReveal('sampleBody','skipSample');$('samplePaper').scrollIntoView({block:'start'});}
+ $('sampleEnvelope').onclick=()=>animateEnvelope($('sampleEnvelope'),openSamplePaper);
+ $('openSample').onclick=()=>{setPreviewTab(true);$('envelopePreview').scrollIntoView({block:'center'});animateEnvelope($('sampleEnvelope'),openSamplePaper);};
  $('resetFilters').onclick=()=>{occasion='전체';season='';renderLibrary();};
  $('useTemplate').onclick=()=>{if(!changingPaper&&!draft.body){draft.occasion=occasion==='생일'?'bday':occasion==='기념일'?'day':occasion==='고마워'?'thanks':'plain';}changingPaper=false;go('compose');};
  function syncDraft(){draft.to=$('recipient').value.slice(0,24);draft.from=$('sender').value.slice(0,24);draft.body=$('letterBody').value.slice(0,480);$('letterCount').textContent=draft.body.length+' / 480';madeUrl='';}
@@ -81,7 +85,7 @@
  function renderSend(){paint($('packedEnvelope'),template());$('packedName').textContent=draft.to?draft.to+'에게':'너에게';madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;}
  $('packLetter').onclick=()=>{if(validDraft())go('send');};$('editLetter').onclick=()=>go('compose');
  function read(p,isPreview){
-   incoming=p;preview=isPreview;$('returnPreview').hidden=!isPreview;$('replyLetter').hidden=isPreview;
+   stopReveal();incoming=p;preview=isPreview;$('returnPreview').hidden=!isPreview;$('replyLetter').hidden=isPreview;
    const t=template(p.tpl);paint($('readPaper'),t);paint($('readerEnvelope'),t);typography($('readPaper'),{font:fonts[p.font]?p.font:'sans',size:Number.isFinite(p.size)?Math.max(16,Math.min(26,p.size)):19});
    $('readerTitle').textContent=p.n?p.n+'에게, 편지가 도착했어요.':'편지가 도착했어요.';$('readerLead').textContent=p.f?p.f+'님이 전하고 싶은 마음이 있어요.':'당신에게 전하고 싶은 마음이 있어요.';
    $('readTo').textContent=p.n?'To. '+p.n:'너에게';$('readFrom').textContent=p.f?'From. '+p.f:'';const occasionLabel=p.k===0?(p.num||100)+'일':p.k===1?(p.num||1)+'주년':p.k===2?'결혼기념일':p.k===3?'생일':'';$('readDate').textContent=[p.d,occasionLabel].filter(Boolean).join(' · ');$('readerEnvelopeName').textContent=p.n||'너에게';
@@ -89,7 +93,7 @@
  }
  function previewDraft(){if(!validDraft())return;returnFromPreview=view;read(payload(),true);show('reader');}
  $('draftPreview').onclick=previewDraft;$('packedEnvelope').onclick=()=>{returnFromPreview='send';read(payload(),true);show('reader');};
- $('readerEnvelope').onclick=()=>animateEnvelope($('readerEnvelope'),()=>{$('readerEnvelopeStage').hidden=true;$('openedLetter').hidden=false;$('readPaper').scrollIntoView({block:'start'});});
+ $('readerEnvelope').onclick=()=>animateEnvelope($('readerEnvelope'),()=>{$('readerEnvelopeStage').hidden=true;$('openedLetter').hidden=false;startReveal('readBody','skipRead');$('readPaper').scrollIntoView({block:'start'});});
  $('returnPreview').onclick=()=>go(returnFromPreview);
  $('replyLetter').onclick=()=>{draft.to=incoming&&incoming.f||'';draft.from=incoming&&incoming.n||'';draft.body='';draft.template=template(incoming&&incoming.tpl).id;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('library',{historyMode:'replace'});};
  async function copyLink(){
