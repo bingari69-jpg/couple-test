@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>같이해봐 — 보내고, 답을 맞춰보세요</title>
+<title>같이놀자 — 너에게 보내고 싶은 게 있어</title>
 <meta property="og:type" content="website">
-<meta property="og:title" content="같이해봐">
+<meta property="og:title" content="같이놀자">
 <meta property="og:description" content="보내면 상대도 답합니다. 두 사람의 선택을 나란히 보세요.">
 <meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-home.png">
 <meta property="og:image:width" content="1200">
@@ -17,190 +17,16 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<style>
-  :root{
-    --bg:#FAFAF7; --ink:#171719; --sub:#6B7280; --line:#E8E8E3;
-    --card:#FFFFFF; --kakao:#FAE300;
-    --c-couple:#F0688A; --c-married:#7C6BE8; --c-friend:#31A9A0; --c-family:#E8933C;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{-webkit-text-size-adjust:100%}
-  body{
-    background:var(--bg);color:var(--ink);
-    font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;
-    line-height:1.6;padding:20px 20px 60px;min-height:100vh;
-  }
-  .wrap{max-width:520px;margin:0 auto}
-
-  header{padding:34px 0 26px}
-  .brand{font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--sub);letter-spacing:.14em}
-  h1{font-size:27px;line-height:1.4;margin-top:12px;letter-spacing:-.02em}
-  h1 em{font-style:normal;background:linear-gradient(transparent 62%,#FFE8C2 62%)}
-  .lead{color:var(--sub);font-size:14.5px;margin-top:12px;line-height:1.75}
-
-  .filters{display:flex;gap:7px;overflow-x:auto;padding:4px 0 18px;-webkit-overflow-scrolling:touch}
-  .filters::-webkit-scrollbar{display:none}
-  .f{
-    flex:none;background:#fff;border:1px solid var(--line);color:var(--sub);
-    border-radius:999px;padding:8px 15px;font:inherit;font-size:13.5px;cursor:pointer;
-    transition:background .15s,color .15s,border-color .15s;
-  }
-  .f[aria-pressed=true]{background:var(--ink);color:#fff;border-color:var(--ink);font-weight:600}
-  .f:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-
-  .list{display:flex;flex-direction:column;gap:12px}
-  .card{
-    display:block;background:var(--card);border:1px solid var(--line);border-radius:20px;
-    padding:20px;text-decoration:none;color:inherit;position:relative;overflow:hidden;
-    transition:transform .12s,box-shadow .18s;
-  }
-  .card:hover{transform:translateY(-2px);box-shadow:0 10px 26px rgba(23,23,25,.07)}
-  .card:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
-  .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
-  .tags{display:flex;gap:6px;align-items:center;margin-bottom:11px;flex-wrap:wrap}
-  .tag{
-    font-size:11.5px;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em;
-    border-radius:6px;padding:4px 8px;background:#F4F4F0;color:var(--sub);
-  }
-  .tag.rel{background:color-mix(in srgb,var(--accent) 13%,#fff);color:var(--accent);font-weight:500}
-  .card h2{font-size:18.5px;letter-spacing:-.01em}
-  .card p{color:var(--sub);font-size:14px;margin-top:7px;line-height:1.7}
-  .card .go{
-    margin-top:14px;font-size:13.5px;font-weight:600;color:var(--ink);
-    display:flex;align-items:center;gap:5px;
-  }
-
-  .empty{color:var(--sub);font-size:14px;text-align:center;padding:40px 0}
-  footer{margin-top:38px;padding-top:22px;border-top:1px solid var(--line);color:#9CA0AA;font-size:12.5px;line-height:1.8}
-  @media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important}}
-</style>
+ <link rel="stylesheet" href="assets/social-ui.css">
 </head>
-<body>
-<div class="wrap">
-  <header>
-    <div class="brand">GATCHI HAEBWA</div>
-    <h1>보내면 상대도 답합니다.<br><em>둘의 선택을 나란히</em> 보세요.</h1>
-    <p class="lead">가입 없이 2분. 링크를 카톡으로 보내면 끝입니다.</p>
-  </header>
-
-  <div class="filters" role="group" aria-label="관계로 고르기" id="filters"></div>
-  <div class="list" id="list"></div>
-
-  <footer>
-    답변은 서버에 저장되지 않고 링크 주소 안에만 담깁니다.<br>
-    © 같이해봐
-  </footer>
-</div>
-
-<script>
-/* 새 콘텐츠는 여기에 한 줄만 추가하면 됩니다. */
-const ITEMS = [
-  { path:"t/marriage/",  rel:"부부",  kind:"비교형",
-    title:"결혼 전에 맞춰봐야 할 것들",
-    desc:"돈, 가족, 집안일, 아이. 결혼 전에 확인해야 할 20가지를 각자 답하고 갈린 지점만 봅니다." },
-  { path:"t/letter/",    rel:"연인",  kind:"편지형",
-    title:"기념일 편지 만들기",
-    desc:"생일·100일·결혼기념일. 몇 가지만 고르면 편지가 완성되고, 직접 쓸 수도 있습니다." },
-  { path:"t/crash/",     rel:"친구",  kind:"딜레마형",
-    title:"20분 후 추락합니다",
-    desc:"정답이 없는 10개의 극한 상황. 당신과 상대가 같은 자리에 설지 확인합니다." },
-  { path:"t/rps/",       rel:"친구",  kind:"대결",
-    title:"가위바위보 도전장",
-    desc:"내가 먼저 낸다. 네가 고르기 전까진 안 보여준다. 거짓말도 가능." },
-  { path:"t/delivery/",  rel:"친구",  kind:"예측",
-    title:"배달 텔레파시",
-    desc:"내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 사. 찍을 때마다 정답 공개." },
-  { path:"t/ten/",       rel:"친구",  kind:"대결",
-    title:"10초 맞추기",
-    desc:"안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 나 9.98초, 이겨봐." },
-  { path:"t/seat/",      rel:"친구",  kind:"심리",
-    title:"늦게 온 당신, 어디에 앉나요",
-    desc:"웃음소리 쪽? 창가 끝? 하나 고르면 성향이 나오고, 상대 것도 나란히." },
-  { path:"t/mbti/",      rel:"친구",  kind:"예측",
-    title:"내 MBTI 몇 글자나 맞힐래?",
-    desc:"4문항으로 나온 내 네 글자. 너는 나를 몇 글자나 알까. 진짜 MBTI랑도 비교." },
-  { path:"t/react/",     rel:"친구",  kind:"대결",
-    title:"반응속도 대결",
-    desc:"초록으로 바뀌는 순간 눌러. 3번 평균. 나 0.21초, 넌?" },
-  { path:"t/mind/fight/", rel:"연인",  kind:"심리",
-    title:"싸우면 어떻게 끝날까",
-    desc:"나의 심리 너의 심리 · 우리 싸우면 누가 먼저 연락하는지 답해놨어." },
-  { path:"t/memory/",    rel:"연인",  kind:"기억",
-    title:"우리의 기억 — 같은 걸 기억하고 있을까",
-    desc:"첫 키스, 첫 데이트, 처음 준 선물. 한 문제씩. 나는 답했어, 너는?" },
-  { path:"t/ladder/",    rel:"친구",  kind:"내기",
-    title:"사다리타기 — 오늘 커피는 누가 쏠까",
-    desc:"이름 넣고 링크 하나면 끝. 단체톡에 던져봐. 결과는 이미 봉인됐어." },
-  { path:"t/groups/",    rel:"친구",  kind:"내기",
-    title:"골프 조편성 — 이번엔 누구랑 한 조?",
-    desc:"이름 넣고 뽑기 한 번. 총무 눈치 볼 일 없이 기계가 정해드림." },
-  { path:"t/num25/",     rel:"친구",  kind:"대결",
-    title:"1에서 25까지 — 누가 더 빨라?",
-    desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리. 네 기록은 봉인됐어." },
-  { path:"t/mole/",      rel:"친구",  kind:"대결",
-    title:"두더지 잡기 — 20초, 같은 두더지, 누가 더 잡나",
-    desc:"황금은 +3, 폭탄은 −3. 네 기록은 봉인됐어." },
-  { path:"t/ufo/",       rel:"친구",  kind:"대결",
-    title:"UFO 요격 — 미사일 40발, 20초",
-    desc:"황금 모선 +3, 아군 드론 쏘면 −3. 명중률까지 봉인." },
-  { path:"t/tap/",       rel:"친구",  kind:"대결",
-    title:"10초 연타 — 몇 번 누를 수 있어?",
-    desc:"두 손가락도 돼. 10초 안에 최대한 많이. 네 기록은 봉인됐어." },
-  { path:"t/stroop/",    rel:"친구",  kind:"대결",
-    title:"색깔 함정 — 글자 말고 색깔을 답해",
-    desc:"20초. 알고도 틀린다. 네 기록은 봉인됐어." },
-  { path:"t/arrow/",     rel:"친구",  kind:"대결",
-    title:"화살표 함정 — 가끔은 반대로",
-    desc:"빨간 테두리면 반대로 밀기. 20초, 네 기록은 봉인됐어." },
-  { path:"t/stop/",      rel:"친구",  kind:"대결",
-    title:"딱 멈춰 — 한가운데서 멈출 수 있어?",
-    desc:"5번 멈춰서 오차 합. 적은 쪽이 이겨." },
-  { path:"t/exam/",      rel:"가족",  kind:"공부",
-    title:"시험지 보내기 — 카톡으로 단어 시험",
-    desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." }
-];
-const REL_COLOR={ "연인":"var(--c-couple)","부부":"var(--c-married)","친구":"var(--c-friend)","가족":"var(--c-family)" };
-const RELS=["전체","연인","부부","친구","가족"];
-let filter="전체";
-
-function renderFilters(){
-  const box=document.getElementById("filters"); box.innerHTML="";
-  RELS.forEach(r=>{
-    const b=document.createElement("button");
-    b.className="f"; b.type="button"; b.textContent=r;
-    b.setAttribute("aria-pressed", filter===r);
-    b.onclick=()=>{filter=r;renderFilters();renderList();};
-    box.appendChild(b);
-  });
-}
-function renderList(){
-  const box=document.getElementById("list"); box.innerHTML="";
-  const items=ITEMS.filter(it=>filter==="전체"||it.rel===filter);
-  if(!items.length){
-    box.innerHTML='<p class="empty">이 관계에 맞는 테스트를 준비하고 있습니다.</p>';
-    return;
-  }
-  items.forEach(it=>{
-    const a=document.createElement("a");
-    a.className="card"; a.href=it.path;
-    a.style.setProperty("--accent", REL_COLOR[it.rel]||"var(--sub)");
-    a.innerHTML=`
-      <div class="tags">
-        <span class="tag rel">${it.rel}</span>
-        <span class="tag">${it.kind}</span>
-      </div>
-      <h2>${it.title}</h2>
-      <p>${it.desc}</p>
-      <div class="go">시작하기 <span aria-hidden="true">→</span></div>`;
-    box.appendChild(a);
-  });
-}
-renderFilters(); renderList();
-
-/* 예전에 뿌린 루트 링크(#i=)를 결혼 전 테스트로 넘겨줍니다. */
-if(location.hash.startsWith("#i=")||location.hash.startsWith("#r=")){
-  location.replace("t/marriage/"+location.hash);
-}
-</script>
-</body>
-</html>
+<body><main class="shell">
+<header class="topbar"><a class="brand" href="./">같이놀자<b aria-hidden="true">♥</b></a><button class="icon-button" id="menuButton" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu"><span data-icon="menu"></span></button></header>
+<nav id="menu" class="menu-panel" aria-label="메뉴" hidden><a href="t/letter/">편지 쓰기</a><a href="#play">나랑 한판</a><a href="#all" id="menuAll">전체 놀이 보기</a></nav>
+<section aria-labelledby="heroTitle"><h1 class="heading" id="heroTitle"><span class="accent">너에게</span> 보내고<br>싶은 게 있어.</h1><p class="lead">특별한 날에도, 그냥 네 생각이 난 날에도.</p><a class="hero-open" href="t/letter/?template=spring&amp;view=preview"><img class="hero-art" src="assets/art/envelope-hero.png" alt="꽃과 하트로 꾸민 편지 봉투" width="1536" height="1024"><span>눌러서 열어봐</span></a><a class="primary" href="t/letter/">편지 한 장 보내기 <span data-icon="arrow"></span></a></section>
+<section aria-labelledby="occasionsTitle"><h2 class="section-title" id="occasionsTitle">어떤 마음을 보낼까요?</h2><div class="occasion-grid"><a class="occasion" href="t/letter/?occasion=birthday"><div class="paper-art" style="--px:50%;--py:0%" role="img" aria-label="케이크 생일 편지지"></div>생일</a><a class="occasion" href="t/letter/?occasion=anniversary"><div class="paper-art" style="--px:100%;--py:0%" role="img" aria-label="달과 별 기념일 편지지"></div>100일</a><a class="occasion" href="t/letter/?occasion=plain"><div class="paper-art" role="img" aria-label="꽃 편지지"></div>그냥</a></div></section>
+<section class="challenge" id="play"><h2>편지가 쑥스러워?<br>그럼 <span class="accent">가위바위보</span> 한판</h2><p>이것도 너한테 말 거는 방법이니까.</p><div class="character" role="img" aria-label="머리띠를 두른 장난스러운 토끼"></div><a class="primary" href="t/rps/">나 먼저 낼게 <span data-icon="arrow"></span></a></section>
+<section><h2 class="section-title">조금 더 놀다 갈래?</h2><div class="game-pair"><a class="game-tile" href="t/ten/"><div class="character" style="--character:50%" aria-hidden="true"></div><strong>10초<br>맞추기<span data-icon="arrow"></span></strong></a><a class="game-tile" href="t/delivery/"><div class="character" style="--character:100%" aria-hidden="true"></div><strong>배달<br>텔레파시<span data-icon="arrow"></span></strong></a></div><button class="text-button full" id="allButton" aria-expanded="false" aria-controls="all">다른 놀이 모두 보기 ↓</button></section>
+<section id="all" class="catalog" hidden><h2 class="section-title">우리, 뭘 하고 놀까?</h2><div id="catalogFilters" class="filters" role="group" aria-label="관계로 고르기"></div><div class="catalog-grid" id="catalogList"></div></section>
+<footer class="footer">소중한 사람과, 조금 더 가까이.<br>© 같이놀자</footer></main>
+<nav class="bottom-nav" aria-label="하단 메뉴"><a href="./" aria-current="page"><span data-icon="home"></span>홈</a><a href="t/letter/"><span data-icon="letter"></span>편지</a><a href="#play"><span data-icon="play"></span>놀이</a></nav>
+<script src="assets/home-catalog.js"></script><script src="assets/ui.js"></script><script src="assets/home.js"></script></body></html>
