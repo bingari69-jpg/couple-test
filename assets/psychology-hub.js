@@ -1,7 +1,7 @@
 (function(){
  'use strict';
  const items=[
-  {href:'../personality/',icon:'🦊',category:'성격',title:'나의 마음 동물',desc:'작은 선택 여섯 번. 내 안에는 어떤 동물이 살까?',tag:'NEW · 6문항 · 약 1분'},
+  {href:'../personality/',icon:'🦊',category:'성격',title:'나와 너의 마음동물',desc:'내 마음을 봉인해 보내면, 친구도 답한 뒤 둘의 동물이 함께 공개!',tag:'둘이 함께 · 각자 6문항'},
   {href:'../fortune/',icon:'🔮',category:'운세',title:'오늘의 운세 카드',desc:'마음이 가는 카드 한 장. 오늘을 위한 작은 힌트.',tag:'NEW · 하루 한 장 · 10초'},
   {href:'../mbti/',icon:'🐱',category:'성격',title:'내 MBTI 맞혀봐',desc:'내 네 글자를 친구는 얼마나 맞힐까? 서로의 예상 비교.',tag:'MBTI 놀이 · 4문항'},
   {href:'../seat/',icon:'🪑',category:'성격',title:'어디에 앉을래?',desc:'늦게 도착한 모임. 빈자리 하나에 담긴 나의 성향.',tag:'상황 선택 · 1문항'},

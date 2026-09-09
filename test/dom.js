@@ -12,7 +12,7 @@ function prepHtml(game) {
   html = html.replace(/<link rel="stylesheet"[^>]*>/g, "");
   html = html.replace(/<script src="(\.\.\/\.\.\/assets\/[^"]+)"><\/script>/g, (m, rel) => {
     /* 파일 머리말 주석에 </script> 가 들어 있어 그대로 넣으면 태그가 끊긴다 */
-    const js = fs.readFileSync(path.join(ROOT, "t", game, rel), "utf8").replace(/<\/script/g, "<\\/script");
+    const js = fs.readFileSync(path.join(ROOT, "t", game, rel.split('?')[0]), "utf8").replace(/<\/script/g, "<\\/script");
     return "<script>\n" + js + "\n</script>";
   });
   return html;
