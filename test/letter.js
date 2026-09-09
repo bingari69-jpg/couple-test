@@ -9,7 +9,7 @@ function load(relative='t/letter/index.html',suffix=''){
  const file=path.join(root,relative),base=path.dirname(file);
  let html=fs.readFileSync(file,'utf8').replace(/<script src="([^"]+)"><\/script>/g,(all,src)=>{
    if(src.includes('analytics'))return '';
-   return '<script>'+fs.readFileSync(path.resolve(base,src),'utf8').replace(/<\/script/g,'<\\/script')+'</script>';
+   return '<script>'+fs.readFileSync(path.resolve(base,src.split('?')[0]),'utf8').replace(/<\/script/g,'<\\/script')+'</script>';
  });
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
  return new JSDOM(html,{url:'https://bingari69-jpg.github.io/couple-test/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};}});

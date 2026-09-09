@@ -4,7 +4,7 @@ const path = require('node:path');
 const {JSDOM} = require('jsdom');
 const page = path.join(__dirname, '../t/letter/index.html');
 const html = fs.readFileSync(page, 'utf8').replace(/<script src="([^"]+)"><\/script>/g, (_, src) =>
-  '<script>' + fs.readFileSync(path.resolve(path.dirname(page), src), 'utf8').replace(/<\/script/g, '<\\/script') + '</script>');
+  '<script>' + fs.readFileSync(path.resolve(path.dirname(page), src.split('?')[0]), 'utf8').replace(/<\/script/g, '<\\/script') + '</script>');
 const body = '한글👩‍❤️‍👨\n다음 줄.\n\n고마워 <b>♥</b>';
 const hash = '#l=' + Buffer.from(JSON.stringify({v:4, w:body, n:'친구'})).toString('base64url');
 let now = 0, id = 0;
