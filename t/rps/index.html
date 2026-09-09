@@ -8,13 +8,13 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="가위바위보 도전장이 왔어요">
 <meta property="og:description" content="상대가 먼저 냈습니다. 당신이 고르기 전까지는 공개되지 않아요.">
-<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-rps.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/rps.png?v=20260910-unified">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
 <meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/rps/">
 <meta name="twitter:card" content="summary_large_image">
 
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js" crossorigin="anonymous"></script>
+<script src="../../assets/kakao-share.js?v=20260910-unified"></script>
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/bet.js"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -121,19 +121,8 @@ const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.p
 const OG_IMG = "https://bingari69-jpg.github.io/couple-test/og/og-rps-sq.png";   // 카카오 공유 카드용 정사각(800x800)
 
 /* ===== 카카오톡 공유 ===== */
-const KAKAO_KEY = "8983fdb327539fa37eea7e842e46f011";
-try{ if(window.Kakao && !Kakao.isInitialized()) Kakao.init(KAKAO_KEY); }catch(e){}
-function kakaoShare(o){
-  const ready = window.Kakao && Kakao.isInitialized && Kakao.isInitialized();
-  if(!ready){ copy(o.url, "카톡 공유를 못 열어서 링크를 복사했어요. 붙여넣으세요"); return; }
-  try{
-    Kakao.Share.sendDefault({
-      objectType:"feed",
-      content:{ title:o.title, description:o.desc, imageUrl:OG_IMG, imageWidth:800, imageHeight:800,
-                link:{ mobileWebUrl:o.url, webUrl:o.url } },
-      buttons:[{ title:o.btn, link:{ mobileWebUrl:o.url, webUrl:o.url } }]
-    });
-  }catch(e){ copy(o.url, "카톡 공유를 못 열어서 링크를 복사했어요. 붙여넣으세요"); }
+function shareRps(o){
+  return window.kakaoShare(o,()=>copy(o.url,"카톡 공유를 못 열어서 링크를 복사했어요. 붙여넣으세요"));
 }
 
 /* ===== 게임 정의 ===== */
@@ -288,7 +277,7 @@ $("makeBtn").onclick=()=>{
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   $("linkbox").textContent=madeUrl;
   $("copyBtn").classList.remove("hidden"); $("kakaoBtn").classList.remove("hidden");
-  $("kakaoBtn").onclick=()=>kakaoShare({
+  $("kakaoBtn").onclick=()=>shareRps({
     url:madeUrl, btn:"도전 받기",
     title:`${Bet.titlePrefix(state.bet)}${state.name?state.name+"의 ":""}가위바위보 도전장 🔒`,
     desc: state.hist.length ? `${state.hist.length}판 비긴 뒤 ${state.hist.length+1}판째. 내 패는 네가 고른 뒤 공개.` : "내가 먼저 냈어. 네가 이길 수 있는지 골라봐. 내 패는 네가 고른 뒤 공개."
@@ -438,7 +427,7 @@ function renderResult(R){
     { const nm=n=>n?n+" ":"";
       const wRaw = o==="c"?R.cName:R.rName;
       const tail = wRaw?` — ${wRaw} 승`:"";
-      $("kakaoRes").onclick=()=>kakaoShare({
+      $("kakaoRes").onclick=()=>shareRps({
         url:rurl, btn:"결과 보기",
         title:`${nm(R.cName)}${HANDS[R.cHand].e} vs ${nm(R.rName)}${HANDS[R.rHand].e}${tail}`,
         desc: betCard || "가위바위보 결과가 나왔어요. 복수전은 여기서."

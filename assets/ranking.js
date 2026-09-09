@@ -94,7 +94,7 @@
   }
   async function share(kind){
     const button=kind==='invite'?$('sendInvite'):$('sendResult');button.disabled=true;
-    const options={title:kind==='invite'?challenge.n+'님의 취향 맞혀봐':result.n+'님이 내 취향을 맞혀봤어!',desc:kind==='invite'?PACKS[challenge.p].name+' 세 문제. 보기 세 개 중 내가 가장 좋아하는 것 하나를 맞혀봐!':'내 선택과 친구의 예상을 나란히 확인해봐.',url:shareUrl,btn:kind==='invite'?'취향 맞히기':'결과 보기',textOnly:true};
+    const options={title:kind==='invite'?challenge.n+'님의 취향 맞혀봐':result.n+'님이 내 취향을 맞혀봤어!',desc:kind==='invite'?PACKS[challenge.p].name+' 세 문제. 보기 세 개 중 내가 가장 좋아하는 것 하나를 맞혀봐!':'내 선택과 친구의 예상을 나란히 확인해봐.',url:shareUrl,btn:kind==='invite'?'취향 맞히기':'결과 보기',textOnly:false};
     try{if(window.kakaoShare){const ok=await window.kakaoShare(options,()=>copy(kind));if(ok)track(kind+'_shared',{method:'kakao'});}else await copy(kind);}
     catch(e){await copy(kind);}finally{button.disabled=false;}
   }

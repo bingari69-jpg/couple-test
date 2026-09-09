@@ -6,7 +6,7 @@ const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, '../assets/kakao-share.js'), 'utf8');
 async function main() {
   let message, fail = false, copied = 0;
-  const sandbox = { Kakao: { isInitialized: () => true, Share: {
+  const sandbox = { URL, Kakao: { isInitialized: () => true, Share: {
     sendDefault: async value => { if (fail) throw new Error('SDK failure'); message = value; }
   } } };
   sandbox.window = sandbox;
@@ -30,6 +30,18 @@ async function main() {
   assert.equal(message.link.webUrl, url);
   assert.ok(message.text.length <= 200);
   assert.ok(!message.text.includes(payload.w));
+  const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/share-cards/catalog.json'),'utf8'));
+  for(const slug of Object.keys(catalog)){
+    for(const fragment of ['#c=sealed','#r=result']){
+      const target='https://bingari69-jpg.github.io/couple-test/t/'+slug+'/'+fragment;
+      assert.equal(await sandbox.kakaoShare({url:target,title:'친구의 도전',desc:'함께 해봐',btn:'열어보기'}),true);
+      assert.equal(message.objectType,'feed');assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);
+      assert.equal(message.content.link.webUrl,target);assert.equal(message.content.link.mobileWebUrl,target);assert.equal(message.buttons,undefined);
+      assert.ok(message.content.imageUrl.endsWith(slug.replace('/','-')+'.png?v=20260910-unified'));
+      const bytes=fs.readFileSync(path.join(__dirname,'../assets/share-cards/'+slug.replace('/','-')+'.png'));
+      assert.equal(bytes.readUInt32BE(16),800);assert.equal(bytes.readUInt32BE(20),480);
+    }
+  }
   fail = true;
   assert.equal(await sandbox.kakaoShare(input, async () => { await Promise.resolve(); copied++; }), false);
   assert.equal(copied, 1);

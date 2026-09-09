@@ -114,7 +114,7 @@
  }
  $('copyLetter').onclick=copyLink;
  // Third-party sharing code is loaded only after an explicit share action. No analytics on letters.
- function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
+ function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260910-unified';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  $('kakaoSend').onclick=async()=>{const b=$('kakaoSend');b.disabled=true;try{await loadShare();window.kakaoShare({url:madeUrl||urlFor(payload()),btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},copyLink);}catch(e){await copyLink();}finally{b.disabled=false;}};
  function back(){if(view==='library'){if(changingPaper){changingPaper=false;go('compose');}else location.href='../../';}else if(view==='detail')go('library');else if(view==='compose')go('detail');else if(view==='send')go('compose');else if(view==='reader'&&preview)go(returnFromPreview);else location.href='../../';}
  $('back').onclick=back;$('letterNav').onclick=e=>{e.preventDefault();if(view==='compose')syncDraft();go('library');};

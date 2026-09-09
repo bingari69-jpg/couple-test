@@ -17,5 +17,5 @@
  document.querySelectorAll('[data-draw]').forEach(b=>b.onclick=()=>{const bytes=new Uint32Array(1);crypto.getRandomValues(bytes);const i=Math.floor(bytes[0]/4294967296*cards.length);const d=day();try{localStorage.setItem('gatchi-fortune-v1',JSON.stringify({d,i}));}catch(e){}reveal(d,i,false);if(window.track)track('responded');});
  $('drawMine').onclick=own;
  function entry(){if(!location.hash){own();return;}const m=location.hash.match(/^#r=1-(\d{4}-\d{2}-\d{2})-([0-5])$/);if(m&&validDate(m[1]))reveal(m[1],Number(m[2]),true);else show('invalid');}window.addEventListener('hashchange',entry);entry();
- window.psyShareData=()=>({title:drawnDay+' · '+cards[selected][1]+' '+cards[selected][0],desc:'오늘을 위한 작은 힌트. 너도 운세 카드 한 장 뽑아볼래?',url:location.origin+location.pathname+'#r=1-'+drawnDay+'-'+selected,btn:'오늘의 카드 보기',textOnly:true});
+ window.psyShareData=()=>({title:drawnDay+' · '+cards[selected][1]+' '+cards[selected][0],desc:'오늘을 위한 작은 힌트. 너도 운세 카드 한 장 뽑아볼래?',url:location.origin+location.pathname+'#r=1-'+drawnDay+'-'+selected,btn:'오늘의 카드 보기',textOnly:false});
 })();

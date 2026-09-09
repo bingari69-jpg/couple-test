@@ -18,7 +18,7 @@ const answers=[[0],[1],[2]];
 choose(maker,answers[0]);el(maker,'next').click();el(maker,'previous').click();
 assert.equal(el(maker,'choices').children[0].getAttribute('aria-pressed'),'true');el(maker,'next').click();
 complete(maker,answers.slice(1));assert.ok(shown(maker,'share'));
-const invitation=grabKakao(maker,'sendInvite');assert.equal(invitation.textOnly,true);
+const invitation=grabKakao(maker,'sendInvite');assert.equal(invitation.textOnly,false);
 assert.ok(invitation.url.includes('/couple-test/t/ranking/#c='));assert.ok(invitation.url.length<1500);
 const hash=invitation.url.slice(invitation.url.indexOf('#'));
 const guest=open(hash);assert.ok(shown(guest,'invite'));assert.equal(el(guest,'hostName').textContent,'다람🐿️');

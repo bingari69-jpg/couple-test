@@ -4,6 +4,8 @@
 (function(){
   const KEY = "8983fdb327539fa37eea7e842e46f011";
   const SDK = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
+  const CARD_TITLES = {"ten": "10초 맞추기", "delivery": "배달 텔레파시", "mbti": "MBTI 맞히기", "react": "반응속도 대결", "crash": "20분 후 추락합니다", "seat": "어디에 앉나요", "marriage": "결혼 전에 맞춰볼 것들", "mind/fight": "싸우면 어떻게 끝날까", "memory": "우리의 기억", "ladder": "사다리타기", "groups": "골프 조편성", "num25": "1에서 25까지", "mole": "두더지 잡기", "ufo": "UFO 요격", "tap": "10초 연타", "stroop": "색깔 함정", "arrow": "화살표 함정", "stop": "딱 멈춰", "exam": "시험지 보내기", "rps": "가위바위보", "ranking": "내 취향 맞혀봐", "personality": "나와 너의 마음동물", "fortune": "오늘의 운세 카드", "tarot": "나와 너의 타로", "letter": "너에게 보내는 편지"};
+  const CARD_ROOT = "https://bingari69-jpg.github.io/couple-test/assets/share-cards/";
   let loading = null;
 
   function init(){ try{ if(window.Kakao && !Kakao.isInitialized()) Kakao.init(KEY); }catch(e){} }
@@ -27,6 +29,9 @@
       if(!ok){ if(fallback) await fallback(); return false; }
       try{
         const link = { mobileWebUrl:o.url, webUrl:o.url };
+        let slug='',isResult=false;
+        try{const u=new URL(o.url);const m=u.pathname.match(/\/t\/(.+?)\/?$/);slug=m?m[1]:'';isResult=u.hash.startsWith('#r=');}catch(e){}
+        const cardTitle=CARD_TITLES[slug];
         const message = o.textOnly ? {
           objectType:"text",
           text:[o.title,o.desc].filter(Boolean).join("\n").slice(0,200),
@@ -35,8 +40,10 @@
         } : {
           objectType:"feed",
           content:{
-            title:o.title, description:o.desc,
-            imageUrl:o.img, imageWidth:800, imageHeight:800,
+            title:cardTitle ? (slug==='letter'?'너에게 편지가 도착했어요':cardTitle+(isResult?' · 결과 도착':' · 초대 도착')) : o.title,
+            description:cardTitle ? Array.from([o.title,o.desc].filter(Boolean).join(' · ')).slice(0,100).join('') : o.desc,
+            imageUrl:cardTitle ? CARD_ROOT+slug.replace('/','-')+'.png?v=20260910-unified' : o.img,
+            imageWidth:800, imageHeight:cardTitle?480:800,
             link
           },
           // The default button inherits content.link; do not duplicate a long letter URL.

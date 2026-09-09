@@ -53,6 +53,6 @@
    $('inviteName').textContent=invite.n;show('invitation');
   }catch(e){show('invalid');}
  }
- window.psyShareData=()=>({title:pair?'나와 너의 마음동물 · 둘의 결과가 열렸어!':invite.n+'님이 마음동물을 봉인했어',desc:pair?'두 사람의 동물과 닮은 선택을 같이 확인해봐.':'너도 여섯 문항에 답하면 두 사람의 마음동물이 함께 열려.',url:location.origin+location.pathname+shareHash,btn:pair?'둘의 결과 보기':'나도 답하고 봉인 열기',textOnly:true});
+ window.psyShareData=()=>({title:pair?'나와 너의 마음동물 · 둘의 결과가 열렸어!':invite.n+'님이 마음동물을 봉인했어',desc:pair?'두 사람의 동물과 닮은 선택을 같이 확인해봐.':'너도 여섯 문항에 답하면 두 사람의 마음동물이 함께 열려.',url:location.origin+location.pathname+shareHash,btn:pair?'둘의 결과 보기':'나도 답하고 봉인 열기',textOnly:false});
  window.addEventListener('hashchange',entry);entry();
 })();
