@@ -327,7 +327,7 @@
     $("nameIn").oninput = e => { state.name = e.target.value.trim(); saveName(state.name); };
 
     /* 내기 자리 — 이름 칸 바로 아래 */
-    Bet.mount($("nameIn"), v => { state.bet = v; });
+    Bet.mount($("nameIn"), v => { state.bet = v; if (state.ms !== null && !state.incoming) makeLink(); });
     /* 도전장 열기 화면 한 줄 (헤드라인 아래) */
     const bo = document.createElement("p");
     bo.className = "bet-open hidden"; bo.id = "betOpen";

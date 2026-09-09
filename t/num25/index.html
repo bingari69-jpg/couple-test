@@ -16,8 +16,8 @@
 
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/kakao-share.js?v=20260910-unified"></script>
-<script src="../../assets/bet.js"></script>
-<script src="../../assets/duel-engine.js"></script>
+<script src="../../assets/bet.js?v=20260910-bets2"></script>
+<script src="../../assets/duel-engine.js?v=20260910-bets2"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -119,8 +119,8 @@
   .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
-<link rel="stylesheet" href="../../assets/game-ui.css?v=20260910-release">
-<script defer src="../../assets/game-ui.js?v=20260910-release"></script>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260910-bets2">
+<script defer src="../../assets/game-ui.js?v=20260910-bets2"></script>
 </head>
 <body class="game-page" data-game="num25">
 <div class="wrap">
@@ -191,7 +191,7 @@
 
 <script>
 /* ===== 1에서 25까지 =====
-   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260910-bets2 에 있다.
    여기에는 격자 화면과 판 만들기만 남는다. */
 const N_CELL=25, PENALTY=500;      // 오답 한 번에 0.5초
 const fmt=ms=>(ms/1000).toFixed(2);

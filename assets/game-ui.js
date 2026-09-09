@@ -91,14 +91,14 @@
       const options = document.createElement('details');
       options.className = 'game-options';
       const summary = document.createElement('summary');
-      summary.textContent = bet ? '이름 · 내기 추가하기 (선택)' : '이름 추가하기 (선택)';
+      summary.textContent = '이름 추가하기 (선택)';
       (label || name).before(options);
       options.append(summary);
       const content = document.createElement('div'); content.className = 'game-options-content';
       options.append(content);
       if (label) content.append(label);
       content.append(name);
-      if (bet) content.append(bet);
+      if (bet) options.before(bet);
     }
     wrap.querySelectorAll('#s-result, #s-score, #s-report, #v-mine, #v-compare').forEach(screen => {
       const banner = document.createElement('div');

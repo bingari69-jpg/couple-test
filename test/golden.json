@@ -4057,7 +4057,9 @@
       "tieHist": "",
       "nameIn": "",
       "betBoxHidden": false,
-      "betPressed": [],
+      "betPressed": [
+        ""
+      ],
       "betCustom": "",
       "stateBet": "",
       "stateRv": 0,
@@ -4248,7 +4250,9 @@
       "tieHist": "지난 판 지은 ✌️ vs 민수 ✊ → <b>민수 승</b>",
       "nameIn": "민수",
       "betBoxHidden": false,
-      "betPressed": [],
+      "betPressed": [
+        ""
+      ],
       "betCustom": "",
       "stateBet": "",
       "stateRv": 1,
@@ -4301,7 +4305,9 @@
       "tieHist": "1판 · 지은 ✌️ vs ✌️ 비김",
       "nameIn": "민수",
       "betBoxHidden": false,
-      "betPressed": [],
+      "betPressed": [
+        ""
+      ],
       "betCustom": "",
       "stateBet": "",
       "stateRv": 0,
