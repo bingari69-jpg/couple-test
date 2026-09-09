@@ -30,17 +30,17 @@ async function main(){
  $('packLetter').click();assert.equal($('compose').hidden,false);
  const body='소중한 글 ♥\n\n<script>alert(1)</script> & 친구에게';
  const input=(id,value)=>{$(id).value=value;$(id).dispatchEvent(new w.Event('input',{bubbles:true}));};
- input('letterBody','가'.repeat(459));assert.equal($('letterMeter').classList.contains('near-limit'),false);
- input('letterBody','가'.repeat(460));assert.equal($('letterMeter').classList.contains('near-limit'),true);assert.ok($('letterRemaining').textContent.includes('20자'));
- input('letterBody','가'.repeat(480));assert.equal($('packLetter').disabled,false);assert.equal($('letterCount').textContent,'480 / 480자');
+ input('letterBody','가'.repeat(429));assert.equal($('letterMeter').classList.contains('near-limit'),false);
+ input('letterBody','가'.repeat(430));assert.equal($('letterMeter').classList.contains('near-limit'),true);assert.ok($('letterRemaining').textContent.includes('20자'));
+ input('letterBody','가'.repeat(450));assert.equal($('packLetter').disabled,false);assert.equal($('letterCount').textContent,'450/450');
  $('packLetter').click();assert.equal($('send').hidden,false);
  const full=JSON.parse(Buffer.from($('shareLink').value.split('#l=')[1],'base64url'));
- const fullReader=load('t/letter/index.html',hash(full));assert.equal(fullReader.window.document.getElementById('readBody').textContent,'가'.repeat(480));fullReader.window.close();
- $('editLetter').click();input('letterBody','가'.repeat(481));assert.equal($('packLetter').disabled,true);assert.equal($('draftPreview').disabled,true);assert.equal($('letterBody').value.length,481);assert.ok($('letterRemaining').textContent.includes('1자 줄여'));
- $('changePaper').click();$('viewTemplate').click();$('useTemplate').click();assert.equal($('letterBody').value.length,481);assert.equal($('packLetter').disabled,true);
- input('letterBody','가'.repeat(478)+'♥');assert.equal($('packLetter').disabled,false);
- input('letterBody','가'.repeat(478)+'💌');assert.equal($('letterCount').textContent,'480 / 480자');
- input('letterBody','가 나\n다');assert.equal($('letterCount').textContent,'5 / 480자');
+ const fullReader=load('t/letter/index.html',hash(full));assert.equal(fullReader.window.document.getElementById('readBody').textContent,'가'.repeat(450));fullReader.window.close();
+ $('editLetter').click();input('letterBody','가'.repeat(451));assert.equal($('packLetter').disabled,true);assert.equal($('draftPreview').disabled,true);assert.equal($('letterBody').value.length,451);assert.ok($('letterRemaining').textContent.includes('1자 줄여'));
+ $('changePaper').click();$('viewTemplate').click();$('useTemplate').click();assert.equal($('letterBody').value.length,451);assert.equal($('packLetter').disabled,true);
+ input('letterBody','가'.repeat(448)+'♥');assert.equal($('packLetter').disabled,false);
+ input('letterBody','가'.repeat(448)+'💌');assert.equal($('letterCount').textContent,'450/450');
+ input('letterBody','가 나\n다');assert.equal($('letterCount').textContent,'5/450');
  input('recipient','지민');input('sender','민수');input('letterBody',body);
  $('changePaper').click();$('templateGrid').children[5].click();$('viewTemplate').click();$('useTemplate').click();assert.equal($('letterBody').value,body);assert.equal($('recipient').value,'지민');
  $('fontChoice').value='serif';$('fontChoice').dispatchEvent(new w.Event('change'));$('sizeChoice').value='23';$('sizeChoice').dispatchEvent(new w.Event('input'));
@@ -71,6 +71,6 @@ async function main(){
    const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
    assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,21);h.window.close();
  }
- assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 480자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
+ assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 450자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
 }
 main().catch(e=>{console.error(e);process.exit(1);});
