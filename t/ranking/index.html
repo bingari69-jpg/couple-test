@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>내 취향 맞혀봐 · 같이놀자</title>
+<meta name="description" content="보기 세 개 중 가장 좋아하는 것 하나만 골라요. 카톡으로 보내면 친구가 내 선택을 맞혀요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="내 취향 맞혀봐">
+<meta property="og:description" content="세 가지 중 내가 가장 좋아하는 건? 세 문제로 맞혀보는 취향.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-home.png">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/ranking/">
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js"></script>
+<link rel="stylesheet" href="../../assets/ranking.css">
+</head>
+<body>
+<main class="wrap">
+<header class="header"><a href="../../#all" class="back" aria-label="놀이 목록으로 돌아가기">‹</a><span>취향 맞히기</span><a class="brand" href="../../">같이놀자<b>♥</b></a></header>
+<section id="intro" class="screen" aria-labelledby="introTitle">
+ <div class="hero"><span class="eyebrow">너는 나를 얼마나 알아?</span><h1 id="introTitle">내 취향<br><em>맞혀봐!</em></h1><p>세 가지 중 내 최애는?<br>너라면 알 것 같은데?</p><img src="../../assets/art/ranking-squirrel.png" alt="좋아하는 것을 고르는 다람쥐" width="320" height="320"></div>
+ <ol class="steps"><li><b>1</b> 내 최애 고르기</li><li><b>2</b> 카톡 보내기</li><li><b>3</b> 친구가 맞히기</li></ol>
+ <h2 class="section-title">어떤 취향이 궁금해?</h2><div id="packs" class="packs" role="group" aria-label="문제 주제"></div>
+ <label for="makerName">내 이름 <small>선택 · 12자까지</small></label><input id="makerName" maxlength="12" placeholder="비워두면 ‘친구’로 보여요" autocomplete="nickname">
+ <button id="start" class="primary">내 최애 고르기 <span aria-hidden="true">→</span></button><p class="hint">3문제 · 약 1분 · 가입 없이 즐겨요</p>
+</section>
+<section id="invite" class="screen" hidden aria-labelledby="inviteTitle">
+ <div class="hero"><span class="eyebrow">취향 도전장이 도착했어</span><h1 id="inviteTitle"><span id="hostName"></span>님의<br><em>최애는 뭘까?</em></h1><p>내가 아는 그 사람을 떠올려봐.<br>세 문제를 다 고르면 정답 공개!</p><img src="../../assets/art/ranking-squirrel.png" alt="취향을 숨겨 둔 다람쥐" width="320" height="320"></div>
+ <div class="note" id="invitePack"></div><label for="guestName">내 이름 <small>선택 · 12자까지</small></label><input id="guestName" maxlength="12" placeholder="비워두면 ‘도전자’로 보여요" autocomplete="nickname">
+ <button id="guessStart" class="primary">취향 맞히러 가기 →</button><p class="hint">가장 좋아할 것 하나만 골라줘.</p>
+</section>
+<section id="play" class="screen" hidden aria-labelledby="question">
+ <div class="progress-label"><span id="modeLabel"></span><span id="progressText"></span></div><div class="progress"><div id="progressBar"></div></div>
+ <span id="questionTag" class="eyebrow"></span><h1 id="question" class="question" tabindex="-1"></h1><p class="sub" id="instruction"></p>
+ <div class="rank-note"><b>보기 3개</b><span>하나만 고르면 돼!</span></div>
+ <div id="choices" class="choices" role="group" aria-label="가장 좋아하는 것 하나 선택"></div>
+ <p id="selection" class="selection" role="status" aria-live="polite"></p>
+ <button id="next" class="primary" disabled>다음 취향 →</button><button id="previous" class="secondary">← 이전</button>
+</section>
+<section id="share" class="screen" hidden aria-labelledby="shareTitle">
+ <div class="done-art"><img src="../../assets/art/ranking-squirrel.png" alt="도전장을 들고 있는 다람쥐" width="160" height="160"></div><span class="eyebrow">도전장 준비 완료</span><h1 id="shareTitle">내 최애,<br><em>몇 개나 맞힐까?</em></h1><p class="sub">친구는 세 문제를 모두 고른 뒤<br>네가 고른 답을 볼 수 있어.</p>
+ <div class="note" id="shareSummary"></div><button id="sendInvite" class="kakao">카톡으로 맞혀보라고 보내기</button><button id="copyInvite" class="secondary">도전장 링크 복사</button><button id="edit" class="text-button full">내 선택 수정하기</button><p class="hint">단톡방에 보내도 친구마다 따로 도전할 수 있어요.</p>
+</section>
+<section id="result" class="screen" hidden aria-labelledby="resultTitle">
+ <span class="eyebrow">취향을 열어봤어!</span><h1 id="resultTitle" tabindex="-1"></h1><p id="resultNames" class="sub"></p>
+ <div class="score-card"><p>맞힌 취향</p><strong id="score"></strong><p id="scoreNote"></p></div><div id="comparisons"></div>
+ <button id="sendResult" class="kakao">카톡으로 결과 보내기</button><button id="copyResult" class="secondary">결과 링크 복사</button><button id="newGame" class="primary">이번엔 내 취향 맞혀봐 →</button><p class="hint">결과를 보내면 상대도 선택과 예상을 함께 볼 수 있어요.</p>
+</section>
+<section id="invalid" class="screen" hidden><div class="done-art"><img src="../../assets/art/ranking-squirrel.png" alt="" width="160" height="160"></div><h1>도전장을<br>읽을 수 없어.</h1><p class="sub">링크가 잘렸거나 지원하지 않는 도전장이에요.<br>보낸 친구에게 링크를 다시 받아줘.</p><button id="invalidNew" class="primary">새 도전장 만들기</button></section>
+<div id="manualCopy" class="manual-copy" hidden><label for="shareUrl">아래 링크를 길게 눌러 복사해줘.</label><input id="shareUrl" readonly aria-label="복사할 링크"><button id="closeCopy" class="text-button">닫기</button></div>
+<footer><a href="../../#all">다른 놀이도 해볼래? →</a></footer>
+</main><div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="../../assets/ranking.js"></script>
+</body></html>

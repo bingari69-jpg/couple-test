@@ -64,6 +64,7 @@
 .catalog-card:hover{transform:translateY(-2px);box-shadow:0 6px 16px #ad865118}
 .catalog-art{display:grid;place-items:center;align-self:stretch;min-height:136px;border-radius:13px;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#fff9,var(--card-color));position:relative}
 .catalog-mascot{background-repeat:no-repeat;mix-blend-mode:multiply}
+.catalog-mascot.ranking{width:110%;aspect-ratio:1;background-image:url('art/ranking-squirrel.png');background-size:contain;background-position:center}
 .catalog-mascot.atlas{width:100%;aspect-ratio:1;background-image:url('art/catalog-mascots.png');background-size:300% 600%;background-position:var(--sprite-x) var(--sprite-y)}
 .catalog-mascot.classic{width:90%;aspect-ratio:2/3;background-image:url('art/game-characters.png');background-size:300% 100%;background-position:var(--sprite-x) 50%}
 .catalog-mascot.letter{width:140%;aspect-ratio:1.5;background-image:url('art/envelope-hero.png');background-size:contain;background-position:center}

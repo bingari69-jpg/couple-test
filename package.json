@@ -4,7 +4,7 @@
   "private": true,
   "description": "같이해봐 — 기록 대결 골든 테스트",
   "scripts": {
-    "test": "node test/run.js && node test/letter.js && node test/letter-reveal.js && node test/rps-ui.js",
+    "test": "node test/run.js && node test/letter.js && node test/letter-reveal.js && node test/rps-ui.js && node test/ranking.js && node test/psychology.js",
     "test:update": "node test/update.js"
   },
   "devDependencies": {

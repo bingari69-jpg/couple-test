@@ -1,4 +1,7 @@
 const ITEMS = [
+  { path:"t/ranking/", rel:"친구", kind:"예측",
+    title:"내 취향 맞혀봐",
+    desc:"보기 세 개 중 내 최애 하나를 골라 카톡으로 보내면 친구가 맞혀요." },
   { path:"t/marriage/",  rel:"부부",  kind:"비교형",
     title:"결혼 전에 맞춰봐야 할 것들",
     desc:"돈, 가족, 집안일, 아이. 결혼 전에 확인해야 할 20가지를 각자 답하고 갈린 지점만 봅니다." },
@@ -66,6 +69,7 @@ const ITEMS = [
 
 // The catalogue order and artwork follow the browsing cards on the home screen.
 const CARDS = [
+ ['ranking','ranking',0,'#f9edcc',['친구','연인','가족'],'세 가지 중 내 최애는? 하나씩 골라 친구에게 보내봐.'],
  ['ten','classic',1,'#fff0ae',['친구','연인','가족'],'안 보고 10초 세다가 멈추기. 둘 다 딱 한 번!'],
  ['rps','classic',0,'#ffe1e5',['친구','연인','가족'],'내가 먼저 낸다. 네 선택 전까지는 비밀!'],
  ['delivery','classic',2,'#d4f5ee',['친구','연인'],'내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 쏴.'],
