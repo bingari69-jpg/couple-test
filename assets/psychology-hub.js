@@ -1,7 +1,7 @@
 (function(){
  'use strict';
  const items=[
-  {href:'../tarot/',icon:'🌙',category:'운세',title:'나와 너의 타로',desc:'각자 카드 한 장을 골라 봉인하면, 우리를 위한 조언까지 함께 공개!',tag:'NEW · 둘이 함께 · 타로 22장'},
+  {href:'../tarot/',icon:'🌙',category:'운세',title:'나와 너의 타로',desc:'내 카드는 먼저 보고, 네가 고르면 나·너·우리의 이야기가 열려!',tag:'NEW · 둘이 함께 · 타로 22장'},
   {href:'../personality/',icon:'🦊',category:'성격',title:'나와 너의 마음동물',desc:'내 마음을 봉인해 보내면, 친구도 답한 뒤 둘의 동물이 함께 공개!',tag:'둘이 함께 · 각자 6문항'},
   {href:'../fortune/',icon:'🔮',category:'운세',title:'오늘의 운세 카드',desc:'마음이 가는 카드 한 장. 오늘을 위한 작은 힌트.',tag:'NEW · 하루 한 장 · 10초'},
   {href:'../mbti/',icon:'🐱',category:'성격',title:'내 MBTI 맞혀봐',desc:'내 네 글자를 친구는 얼마나 맞힐까? 서로의 예상 비교.',tag:'MBTI 놀이 · 4문항'},

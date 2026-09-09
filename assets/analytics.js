@@ -44,6 +44,8 @@
     try{ gtag("event", ev, Object.assign({ game, entry }, params||{})); }catch(e){}
   };
 
+  if(document.currentScript && document.currentScript.hasAttribute("data-manual-events")) return;
+
   /* 진입 유형 */
   if(entry==="invite") track("invite_opened");
   else if(entry==="result") track("result_opened");

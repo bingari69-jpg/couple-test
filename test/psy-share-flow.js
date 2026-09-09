@@ -12,8 +12,8 @@ async function check(w){
  w.navigator.clipboard.writeText=async()=>{throw Error('denied');};el(w,'sharePsy').click();await tick();await tick();assert.equal(el(w,'manualCopy').hidden,false);assert.equal(el(w,'shareUrl').value,expected.url);
 }
 (async()=>{
- const a=open('tarot');el(a,'begin').click();a.document.querySelector('[data-pick="0"]').click();await check(a);
- const invite=a.psyShareData().url.split('#')[1],b=open('tarot','#'+invite);el(b,'join').click();b.document.querySelector('[data-pick="1"]').click();await check(b);
+ const a=open('tarot');el(a,'begin').click();a.document.querySelector('[data-pick="0"]').click();el(a,"confirmPick").click();await check(a);
+ const invite=a.psyShareData().url.split('#')[1],b=open('tarot','#'+invite);el(b,'join').click();b.document.querySelector('[data-pick="1"]').click();el(b,"confirmPick").click();for(let i=0;i<3;i++)b.document.querySelector("[data-reveal=\""+i+"\"]").click();await check(b);
  const c=open('personality');el(c,'begin').click();for(let i=0;i<6;i++){el(c,'answers').children[1].click();el(c,'nextQuestion').click();}await check(c);
  const d=open('fortune');d.document.querySelector('[data-draw="0"]').click();await check(d);
  opened.forEach(w=>w.close());assert.deepEqual(PAGE_ERRORS,[]);console.log('실제 공유 버튼 검사 통과: 타로 봉인/결과·마음동물·운세 → 텍스트 SDK 메시지, 대기 상태, 오류 시 정확한 링크 복사');
