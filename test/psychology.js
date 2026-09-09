@@ -4,8 +4,8 @@ const opened=[];
 function open(slug,hash){const w=load(slug,hash).window;opened.push(w);return w;}
 function complete(w,type){el(w,'begin').click();for(let i=0;i<6;i++){assert.equal(el(w,'answers').children.length,3);el(w,'answers').children[type].click();el(w,'nextQuestion').click();}}
 (async()=>{
- const hub=open('psychology');assert.equal(el(hub,'tests').children.length,6);
- for(const [cat,count] of [['성격',3],['관계',2],['운세',1],['전체',6]]){hub.document.querySelector('[data-category="'+cat+'"]').click();assert.equal(el(hub,'tests').children.length,count);}
+ const hub=open('psychology');assert.equal(el(hub,'tests').children.length,7);
+ for(const [cat,count] of [['성격',3],['관계',2],['운세',2],['전체',7]]){hub.document.querySelector('[data-category="'+cat+'"]').click();assert.equal(el(hub,'tests').children.length,count);}
  for(const [i,title] of ['포근한 곰','반짝이는 여우','느긋한 고양이'].entries()){
   const w=open('personality');el(w,'makerName').value='나';complete(w,i);
   assert.equal(el(w,'sealed').hidden,false);assert.equal(el(w,'outcome').hidden,true);assert.equal(el(w,'animals').children.length,0);
