@@ -1,0 +1,32 @@
+/* Exercise the new share panel through actual game controls. */
+const assert=require('node:assert/strict');
+const {load,el,hid,PAGE_ERRORS}=require('./dom');
+const maker=load('rps').window;
+assert.equal(el(maker,'makeBtn').disabled,true);
+assert.equal(hid(maker,'sharePanel'),true);
+el(maker,'makeHands').children[0].click();
+assert.equal(el(maker,'makeBtn').disabled,false);
+el(maker,'makeBtn').click();
+assert.equal(hid(maker,'sharePanel'),false);
+assert.equal(maker.document.querySelector('.rps-steps li[aria-current]').textContent,'2카톡 보내기');
+const first=maker.__ev('madeUrl');
+el(maker,'nameIn').value='친구';el(maker,'nameIn').dispatchEvent(new maker.Event('input'));
+assert.equal(hid(maker,'sharePanel'),true);assert.equal(maker.__ev('madeUrl'),'');
+assert.equal(maker.document.querySelector('.rps-steps li[aria-current]').textContent,'1내 패 고르기');
+el(maker,'makeBtn').click();assert.notEqual(maker.__ev('madeUrl'),first);
+el(maker,'makeHands').children[2].click();assert.equal(hid(maker,'sharePanel'),true);
+el(maker,'makeBtn').click();const challenge=maker.__ev('madeUrl');
+const receiver=load('rps',challenge.slice(challenge.indexOf('#'))).window;
+assert.equal(hid(receiver,'s-open'),false);
+receiver.setTimeout=fn=>{fn();return 0;};
+// Maker played paper; receiver chooses scissors through the real input handler.
+el(receiver,'openHands').children[0].click();
+assert.equal(hid(receiver,'s-result'),false);assert.equal(el(receiver,'verdict').textContent,'이겼습니다');
+assert.equal(el(receiver,'rpsPageTitle').textContent,'승부 결과');
+el(receiver,'revenge').click();
+assert.equal(hid(receiver,'s-make'),false);assert.equal(hid(receiver,'sharePanel'),true);
+assert.equal(el(receiver,'makeBtn').disabled,true);
+assert.equal(receiver.document.querySelectorAll('#makeHands [aria-pressed=true]').length,0);
+assert.ok(el(receiver,'selectionNote').textContent.includes('골라주세요'));
+maker.close();receiver.close();assert.deepEqual(PAGE_ERRORS,[]);
+console.log('가위바위보 화면 검사 통과 — 선택, 공유 영역, 수정 시 링크 무효화, 상대 응답, 복수전 초기화');
