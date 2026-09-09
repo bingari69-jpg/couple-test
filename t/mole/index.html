@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>두더지 잡기</title>
 
 <meta property="og:type" content="website">
@@ -140,8 +140,10 @@
   .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260910-release">
+<script defer src="../../assets/game-ui.js?v=20260910-release"></script>
 </head>
-<body>
+<body class="game-page" data-game="mole">
 <div class="wrap">
 
 <!-- ============ 플레이 (도전자·응답자 공용) ============ -->
