@@ -1,2 +1,7 @@
 .claude/
 node_modules/
+
+# Local preview, nested release checkout, and intermediate artifacts
+tmp/
+design-previews/
+output/
