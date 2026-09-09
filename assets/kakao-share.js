@@ -1,6 +1,6 @@
 /* 같이해봐 — 카카오톡 공유 공통 모듈
    사용: <script src="../../assets/kakao-share.js"></script>
-   호출: kakaoShare({title, desc, url, img, btn}, fallbackFn) */
+   호출: kakaoShare({title, desc, url, img, btn, textOnly?}, fallbackFn) */
 (function(){
   const KEY = "8983fdb327539fa37eea7e842e46f011";
   const SDK = "https://t1.kakaocdn.net/kakao_js_sdk/2.8.1/kakao.min.js";
@@ -23,19 +23,29 @@
   }
 
   window.kakaoShare = function(o, fallback){
-    load().then(ok=>{
-      if(!ok){ fallback && fallback(); return; }
+    return load().then(async ok=>{
+      if(!ok){ if(fallback) await fallback(); return false; }
       try{
-        Kakao.Share.sendDefault({
+        const link = { mobileWebUrl:o.url, webUrl:o.url };
+        const message = o.textOnly ? {
+          objectType:"text",
+          text:[o.title,o.desc].filter(Boolean).join("\n").slice(0,200),
+          link,
+          buttonTitle:o.btn||"열어보기"
+        } : {
           objectType:"feed",
           content:{
             title:o.title, description:o.desc,
             imageUrl:o.img, imageWidth:800, imageHeight:800,
-            link:{ mobileWebUrl:o.url, webUrl:o.url }
+            link
           },
-          buttons:[{ title:o.btn||"열어보기", link:{ mobileWebUrl:o.url, webUrl:o.url } }]
-        });
-      }catch(e){ fallback && fallback(); }
+          // The default button inherits content.link; do not duplicate a long letter URL.
+          buttonTitle:o.btn||"열어보기"
+        };
+        await Kakao.Share.sendDefault(message);
+        // This reports SDK dispatch, not delivery: remote picker errors are not returned here.
+        return true;
+      }catch(e){ if(fallback) await fallback(); return false; }
     });
   };
   window.kakaoReady = ready;
