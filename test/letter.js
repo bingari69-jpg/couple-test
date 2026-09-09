@@ -5,14 +5,14 @@ const path = require('node:path');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.join(__dirname,'..');
 const errors=[];
-function load(relative='t/letter/index.html',suffix=''){
+function load(relative='t/letter/index.html',suffix='',random=0.25){
  const file=path.join(root,relative),base=path.dirname(file);
  let html=fs.readFileSync(file,'utf8').replace(/<script src="([^"]+)"><\/script>/g,(all,src)=>{
    if(src.includes('analytics'))return '';
    return '<script>'+fs.readFileSync(path.resolve(base,src.split('?')[0]),'utf8').replace(/<\/script/g,'<\\/script')+'</script>';
  });
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- return new JSDOM(html,{url:'https://bingari69-jpg.github.io/couple-test/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};}});
+ return new JSDOM(html,{url:'https://bingari69-jpg.github.io/couple-test/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.Math.random=()=>random;w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};}});
 }
 const hash=p=>'#l='+Buffer.from(JSON.stringify(p)).toString('base64url');
 const tick=()=>new Promise(r=>setTimeout(r,10));
@@ -30,6 +30,17 @@ async function main(){
  $('packLetter').click();assert.equal($('compose').hidden,false);
  const body='소중한 글 ♥\n\n<script>alert(1)</script> & 친구에게';
  const input=(id,value)=>{$(id).value=value;$(id).dispatchEvent(new w.Event('input',{bubbles:true}));};
+ input('letterBody','가'.repeat(459));assert.equal($('letterMeter').classList.contains('near-limit'),false);
+ input('letterBody','가'.repeat(460));assert.equal($('letterMeter').classList.contains('near-limit'),true);assert.ok($('letterRemaining').textContent.includes('20자'));
+ input('letterBody','가'.repeat(480));assert.equal($('packLetter').disabled,false);assert.equal($('letterCount').textContent,'480 / 480자');
+ $('packLetter').click();assert.equal($('send').hidden,false);
+ const full=JSON.parse(Buffer.from($('shareLink').value.split('#l=')[1],'base64url'));
+ const fullReader=load('t/letter/index.html',hash(full));assert.equal(fullReader.window.document.getElementById('readBody').textContent,'가'.repeat(480));fullReader.window.close();
+ $('editLetter').click();input('letterBody','가'.repeat(481));assert.equal($('packLetter').disabled,true);assert.equal($('draftPreview').disabled,true);assert.equal($('letterBody').value.length,481);assert.ok($('letterRemaining').textContent.includes('1자 줄여'));
+ $('changePaper').click();$('viewTemplate').click();$('useTemplate').click();assert.equal($('letterBody').value.length,481);assert.equal($('packLetter').disabled,true);
+ input('letterBody','가'.repeat(478)+'♥');assert.equal($('packLetter').disabled,false);
+ input('letterBody','가'.repeat(478)+'💌');assert.equal($('letterCount').textContent,'480 / 480자');
+ input('letterBody','가 나\n다');assert.equal($('letterCount').textContent,'5 / 480자');
  input('recipient','지민');input('sender','민수');input('letterBody',body);
  $('changePaper').click();$('templateGrid').children[5].click();$('viewTemplate').click();$('useTemplate').click();assert.equal($('letterBody').value,body);assert.equal($('recipient').value,'지민');
  $('fontChoice').value='serif';$('fontChoice').dispatchEvent(new w.Event('change'));$('sizeChoice').value='23';$('sizeChoice').dispatchEvent(new w.Event('input'));
@@ -44,6 +55,10 @@ async function main(){
  const oldText=load('t/letter/index.html',hash({v:3,k:3,n:'친구',w:'예전 편지 그대로',f:'나'}));assert.equal(oldText.window.document.getElementById('readBody').textContent,'예전 편지 그대로');oldText.window.close();
  for(const bad of ['#l=%%%','#l='+Buffer.from('{bad').toString('base64url'),hash({v:4,w:{bad:true}}),hash({v:99,w:'future'})]){const e=load('t/letter/index.html',bad);assert.equal(e.window.document.getElementById('error').hidden,false);e.window.close();}
  const home=load('index.html');assert.equal(home.window.document.getElementById('catalogList').children.length,21);home.window.document.getElementById('allButton').click();assert.equal(home.window.document.getElementById('all').hidden,false);home.window.close();
- assert.deepEqual(errors,[]);w.close();console.log('편지 검사 통과 — 필터, 작성 유지, 서체·크기, 공유 링크, 미리보기, 옛 링크, 잘못된 링크, 안전한 본문 표시, 전체 놀이');
+ for(const [query,random,expected] of [['',0.49,'letter'],['',0.5,'play'],['?home=letter',0.9,'letter'],['?home=play',0.1,'play'],['?home=unknown',0.9,'play']]){
+   const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
+   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,21);h.window.close();
+ }
+ assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 480자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
 }
 main().catch(e=>{console.error(e);process.exit(1);});

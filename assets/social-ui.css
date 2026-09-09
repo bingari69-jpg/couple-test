@@ -20,3 +20,33 @@
 .reveal-skip{flex-shrink:0;border:1px solid #f3c9c0;border-radius:999px;background:#fff8f4;color:#a43e32;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer;min-height:40px}
 .reveal-skip:hover{background:#ffe8e1}
 .reveal-skip:focus-visible{outline:2px solid #d8493a;outline-offset:3px}
+
+.letter-limit-note{margin:0 0 16px;padding:13px 16px;border-radius:16px;background:#ffede7;color:#754e40;font-size:14px}
+.letter-limit-note strong,.letter-limit-note span{display:block}
+.letter-limit-note span{font-size:12px;margin-top:3px}
+.letter-meter{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin:0 0 20px;padding:10px 12px;border-radius:12px;background:#fffaf4eb;color:#796052;font-size:13px}
+.letter-meter strong{font-size:16px;font-variant-numeric:tabular-nums}
+.letter-meter.near-limit{color:#ae422e;background:#fff0e3}
+.letter-meter.over-limit{color:#ad2929;background:#ffe4e4;outline:1px solid #e2aaaa}
+.letter-limit-status{color:#aa392c;font-size:14px;font-weight:650;margin:0 0 12px}
+.letter-limit-status:empty{display:none}
+
+.home-switch{display:flex;gap:5px;background:#f1ece4;padding:4px;border-radius:30px;margin:0 0 24px}
+.home-switch a{flex:1;text-align:center;padding:9px 8px;border-radius:24px;color:#84766a;font-size:14px;font-weight:700}
+.home-switch a[aria-current=page]{background:#fffdfa;color:#c44939;box-shadow:0 2px 8px #6144220c}
+.challenge.game-hero{margin-top:0;padding:25px 22px 22px;min-height:490px;background:radial-gradient(ellipse at 70% 50%,#fffbe5,#fff0ba);border:1px solid #ffe7a3}
+.game-hero .heading{font-size:clamp(32px,8.8vw,46px);position:relative;z-index:1;margin:10px 0 12px;max-width:100%}
+.game-hero .play-eyebrow{font-size:14px;color:#9a6925;font-weight:800;margin:0;width:auto}
+.game-hero .play-lead{font-size:15px;line-height:1.7;width:60%;margin:0}
+.game-hero .character{width:53%;max-width:240px;right:8px;bottom:74px;aspect-ratio:.667}
+.game-hero .primary{width:100%;margin-top:215px;font-size:18px}
+.play-bubble{position:absolute;right:48%;bottom:210px;z-index:1;border:2px solid #4b3928;background:#fffdf7;border-radius:50% 50% 8px 50%;padding:10px 16px;font-family:'Gatchi Title',sans-serif;font-weight:900;font-size:21px;transform:rotate(-12deg)}
+.game-letter{display:flex;align-items:center;position:relative;margin-top:24px;padding:21px 18px;border:1px solid #f8d9d2;background:#fff0eb;border-radius:24px;overflow:hidden}
+.game-letter>div{position:relative;z-index:1;width:72%}
+.game-letter-eyebrow{font-size:12px!important;color:#b46c5d!important;margin:0 0 8px!important;font-weight:750}
+.game-letter h2{font-size:24px;line-height:1.4;letter-spacing:-1px;margin:0 0 8px}
+.game-letter p{color:#806c61;font-size:13px;margin:0 0 18px;word-break:keep-all}
+.game-letter img{width:52%;height:auto;position:absolute;right:-36px;bottom:27px;transform:rotate(-10deg);mix-blend-mode:multiply}
+.game-letter .outline{display:inline-flex;align-items:center;gap:9px;font-size:14px}
+.game-letter .outline svg{width:18px;height:18px}
+@media(max-width:360px){.challenge.game-hero{padding:22px 17px}.game-hero .primary{margin-top:190px}.game-letter h2{font-size:21px}.game-letter>div{width:78%}.game-letter img{right:-45px}}

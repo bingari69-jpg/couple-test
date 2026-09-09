@@ -1,5 +1,15 @@
 (function(){
 const $=id=>document.getElementById(id);
+// A fresh visit chooses either home equally; explicit links allow direct previews.
+const requestedHome=new URLSearchParams(location.search).get('home');
+const home=['letter','play'].includes(requestedHome)?requestedHome:(Math.random()<0.5?'letter':'play');
+const playing=home==='play';
+document.body.dataset.home=home;
+$('letterHome').hidden=playing;$('letterChallenge').hidden=playing;
+$('playHero').hidden=!playing;$('gameLetter').hidden=!playing;
+$('play').classList.toggle('game-hero',playing);
+$(playing?'playHomeLink':'letterHomeLink').setAttribute('aria-current','page');
+document.title=playing?'같이놀자 — 가위바위보로 한판 할래?':'같이놀자 — 너에게 보내고 싶은 게 있어';
 $('menuButton').onclick=()=>{const open=$('menu').hidden;$('menu').hidden=!open;$('menuButton').setAttribute('aria-expanded',String(open));};
 const openCatalog=()=>{$('all').hidden=false;$('allButton').setAttribute('aria-expanded','true');};
 $('allButton').onclick=()=>{const open=$('all').hidden;$('all').hidden=!open;$('allButton').setAttribute('aria-expanded',String(open));if(open)$('all').scrollIntoView({block:'start'});};

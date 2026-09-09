@@ -2,6 +2,7 @@
  'use strict';
  const $=id=>document.getElementById(id),templates=window.LETTER_TEMPLATES;
  const params=new URLSearchParams(location.search),initialHash=location.hash;
+ const MAX_LETTER=480,WARN_AT=460;
  const occasionMap={birthday:'생일',anniversary:'기념일',plain:'그냥',thanks:'고마워'};
  const fonts={sans:"'Malgun Gothic',system-ui,sans-serif",serif:"'Batang','Noto Serif KR',serif",hand:"'Gatchi Hand','Malgun Gothic',sans-serif"};
  const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:'',from:'',body:'',font:'hand',size:22,occasion:'plain',number:100};
@@ -53,9 +54,20 @@
  $('openSample').onclick=()=>{setPreviewTab(true);$('envelopePreview').scrollIntoView({block:'center'});animateEnvelope($('sampleEnvelope'),openSamplePaper);};
  $('resetFilters').onclick=()=>{occasion='전체';season='';renderLibrary();};
  $('useTemplate').onclick=()=>{if(!changingPaper&&!draft.body){draft.occasion=occasion==='생일'?'bday':occasion==='기념일'?'day':occasion==='고마워'?'thanks':'plain';}changingPaper=false;go('compose');};
- function syncDraft(){draft.to=$('recipient').value.slice(0,24);draft.from=$('sender').value.slice(0,24);draft.body=$('letterBody').value.slice(0,480);$('letterCount').textContent=draft.body.length+' / 480';madeUrl='';}
+ function renderCount(){
+   const count=draft.body.length,over=count>MAX_LETTER;
+   $('letterCount').textContent=count+' / '+MAX_LETTER+'자';
+   $('letterRemaining').textContent=over?(count-MAX_LETTER)+'자 줄여주세요':count===MAX_LETTER?'480자를 모두 썼어요.':(MAX_LETTER-count)+'자 더 쓸 수 있어요.';
+   $('letterMeter').classList.toggle('near-limit',count>=WARN_AT);
+   $('letterMeter').classList.toggle('over-limit',over);
+   $('letterBody').setAttribute('aria-invalid',String(over));
+   $('packLetter').disabled=over;$('draftPreview').disabled=over;
+   const message=over?'편지는 최대 480자까지 보낼 수 있어요. '+(count-MAX_LETTER)+'자를 줄여주세요.':count===MAX_LETTER?'최대 480자에 도달했어요. 봉투에 담아 보낼 수 있어요.':count>=WARN_AT?'한도까지 '+(MAX_LETTER-count)+'자 남았어요.':'';
+   if($('letterLimitStatus').textContent!==message)$('letterLimitStatus').textContent=message;
+ }
+ function syncDraft(){draft.to=$('recipient').value.slice(0,24);draft.from=$('sender').value.slice(0,24);draft.body=$('letterBody').value;renderCount();madeUrl='';}
  ['recipient','sender','letterBody'].forEach(id=>$(id).addEventListener('input',syncDraft));
- function renderCompose(){paint($('composePaper'),template());typography($('composePaper'),draft);$('recipient').value=draft.to;$('sender').value=draft.from;$('letterBody').value=draft.body;$('letterCount').textContent=draft.body.length+' / 480';$('fontChoice').value=draft.font;$('sizeChoice').value=draft.size;$('sizeValue').textContent=draft.size;$('occasionChoice').value=draft.occasion;$('anniversaryNumber').value=draft.number;renderOccasion();}
+ function renderCompose(){paint($('composePaper'),template());typography($('composePaper'),draft);$('recipient').value=draft.to;$('sender').value=draft.from;$('letterBody').value=draft.body;renderCount();$('fontChoice').value=draft.font;$('sizeChoice').value=draft.size;$('sizeValue').textContent=draft.size;$('occasionChoice').value=draft.occasion;$('anniversaryNumber').value=draft.number;renderOccasion();}
  function renderOccasion(){const numbered=['day','year','wed'].includes(draft.occasion);$('numberLabel').hidden=!numbered;$('numberText').textContent=draft.occasion==='day'?'일수':'주년';renderSuggestions();}
  $('occasionChoice').onchange=e=>{draft.occasion=e.target.value;draft.number=draft.occasion==='day'?100:1;$('anniversaryNumber').value=draft.number;renderOccasion();madeUrl='';};
  $('anniversaryNumber').onchange=e=>{draft.number=Math.max(1,Math.min(9999,parseInt(e.target.value,10)||1));e.target.value=draft.number;madeUrl='';};
@@ -66,9 +78,9 @@
  function renderSuggestions(){
    const generic=['별일은 없고, 그냥 네 생각이 났어.','말로는 쑥스러워서 이렇게 써.','오늘 꼭 고맙다고 말하고 싶었어.'];
    const lines=draft.occasion==='bday'?['생일 축하해. 오늘은 온전히 네 날이야.','네가 태어나줘서, 내 곁에 있어줘서 고마워.','오늘 하루는 좋은 일로 가득했으면 좋겠어.']:['day','year','wed'].includes(draft.occasion)?['함께한 날들이 어느새 이렇게 쌓였네.','너와 보낸 평범한 날들이 내겐 특별해.','앞으로도 우리, 좋은 기억 많이 만들자.']:generic;
-   $('suggestions').replaceChildren();lines.forEach(s=>{const b=document.createElement('button');b.textContent=s;b.onclick=()=>{const add=(draft.body?'\n\n':'')+s;if(draft.body.length+add.length>480){toast('480자 안에서 마음을 담아주세요.');return;}draft.body+=add;$('letterBody').value=draft.body;syncDraft();toast('쓴 글 뒤에 문장을 더했어요.');$('letterBody').focus();};$('suggestions').append(b);});
+   $('suggestions').replaceChildren();lines.forEach(s=>{const b=document.createElement('button');b.textContent=s;b.onclick=()=>{const add=(draft.body?'\n\n':'')+s;if(draft.body.length+add.length>MAX_LETTER){toast('이 문장을 더하면 480자를 넘어요. 글을 조금 줄여주세요.');return;}draft.body+=add;$('letterBody').value=draft.body;syncDraft();toast('쓴 글 뒤에 문장을 더했어요.');$('letterBody').focus();};$('suggestions').append(b);});
  }
- function validDraft(){syncDraft();if(!draft.body.trim()){toast('편지 내용을 먼저 써주세요.');$('letterBody').focus();return false;}return true;}
+ function validDraft(){syncDraft();if(draft.body.length>MAX_LETTER){toast('480자까지 보낼 수 있어요. '+(draft.body.length-MAX_LETTER)+'자를 줄여주세요.');$('letterBody').focus();return false;}if(!draft.body.trim()){toast('편지 내용을 먼저 써주세요.');$('letterBody').focus();return false;}return true;}
  function dateText(){const d=new Date();return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;}
  function payload(){return {v:4,w:draft.body,n:draft.to.trim(),f:draft.from.trim(),d:dateText(),tpl:draft.template,font:draft.font,size:draft.size,k:({day:0,year:1,wed:2,bday:3,plain:4,thanks:4})[draft.occasion],num:draft.number,rel:0};}
  function encode(p){const bytes=new TextEncoder().encode(JSON.stringify(p));let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
