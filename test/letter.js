@@ -54,7 +54,19 @@ async function main(){
  const old=load('t/letter/index.html',hash({v:3,k:0,n:'옛친구',rel:0,num:100,i:[0,0,0,0],t:1,s:3}));assert.equal(old.window.document.getElementById('reader').hidden,false);assert.ok(old.window.document.getElementById('readBody').textContent.includes('100일'));old.window.close();
  const oldText=load('t/letter/index.html',hash({v:3,k:3,n:'친구',w:'예전 편지 그대로',f:'나'}));assert.equal(oldText.window.document.getElementById('readBody').textContent,'예전 편지 그대로');oldText.window.close();
  for(const bad of ['#l=%%%','#l='+Buffer.from('{bad').toString('base64url'),hash({v:4,w:{bad:true}}),hash({v:99,w:'future'})]){const e=load('t/letter/index.html',bad);assert.equal(e.window.document.getElementById('error').hidden,false);e.window.close();}
- const home=load('index.html');assert.equal(home.window.document.getElementById('catalogList').children.length,21);home.window.document.getElementById('allButton').click();assert.equal(home.window.document.getElementById('all').hidden,false);home.window.close();
+ const home=load('index.html'),hd=home.window.document;
+ assert.equal(hd.getElementById('catalogList').children.length,21);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
+ const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
+ assert.deepEqual(catalogCards.slice(0,7).map(a=>a.getAttribute('href')),['t/ten/','t/rps/','t/delivery/','t/mbti/','t/react/','t/crash/','t/letter/']);
+ assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,21);
+ for(const a of catalogCards){assert.ok(fs.existsSync(path.join(root,a.getAttribute('href'),'index.html')));assert.ok(a.querySelector('.catalog-mascot'));assert.ok(a.querySelector('h3').textContent);assert.ok(a.querySelector('.catalog-tags').children.length);assert.equal(a.querySelector('.catalog-start').textContent,'시작하기 →');}
+ for(const rel of ['연인','부부','친구','가족','전체']){
+   [...hd.getElementById('catalogFilters').children].find(b=>b.textContent===rel).click();
+   const shown=[...hd.querySelectorAll('#catalogList > a')];assert.ok(shown.length>0);
+   if(rel==='전체')assert.equal(shown.length,21);else assert.ok(shown.every(a=>[...a.querySelectorAll('.catalog-tags span')].some(t=>t.textContent===rel)));
+   assert.equal(hd.getElementById('all').hidden,false);
+ }
+ home.window.close();
  for(const [query,random,expected] of [['',0.49,'letter'],['',0.5,'play'],['?home=letter',0.9,'letter'],['?home=play',0.1,'play'],['?home=unknown',0.9,'play']]){
    const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
    assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,21);h.window.close();

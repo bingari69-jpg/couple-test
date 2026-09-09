@@ -64,4 +64,30 @@ const ITEMS = [
     desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." }
 ];
 
-window.HOME_ITEMS=ITEMS;
+// The catalogue order and artwork follow the browsing cards on the home screen.
+const CARDS = [
+ ['ten','classic',1,'#fff0ae',['친구','연인','가족'],'안 보고 10초 세다가 멈추기. 둘 다 딱 한 번!'],
+ ['rps','classic',0,'#ffe1e5',['친구','연인','가족'],'내가 먼저 낸다. 네 선택 전까지는 비밀!'],
+ ['delivery','classic',2,'#d4f5ee',['친구','연인'],'내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 쏴.'],
+ ['mbti','atlas',0,'#e9dffc',['친구','연인'],'너는 나를 얼마나 알까? 네 글자로 맞혀봐.'],
+ ['react','atlas',1,'#dceeff',['친구','연인','가족'],'초록으로 바뀌는 순간 눌러! 누가 더 빠를까?'],
+ ['crash','atlas',2,'#e5f2cb',['친구','연인'],'정답 없는 10개의 극한 상황. 너의 선택은?'],
+ ['letter','letter',0,'#ffedcf',['연인','부부','친구','가족'],'특별한 날에도, 그냥 네 생각이 난 날에도.'],
+ ['seat','atlas',3,'#dff0e7',['친구','연인'],'어디에 앉을래? 한 번의 선택으로 보는 성향.'],
+ ['marriage','atlas',4,'#fbe1df',['연인','부부'],'돈, 가족, 집안일. 우리의 생각을 나란히.'],
+ ['mind/fight','atlas',5,'#ece2f9',['연인','부부'],'싸우고 나면 누가 먼저 연락할까?'],
+ ['memory','atlas',6,'#ffe6ee',['연인','부부'],'첫 데이트, 첫 선물. 같은 기억을 떠올릴까?'],
+ ['ladder','atlas',7,'#fff0d3',['친구','가족'],'오늘 커피는 누가 쏠까? 이름 넣고 사다리!'],
+ ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
+ ['num25','atlas',9,'#e0eafa',['친구','연인','가족'],'1부터 25까지 순서대로! 같은 판으로 대결.'],
+ ['mole','atlas',10,'#ffead4',['친구','연인','가족'],'20초 동안 두더지 잡기. 황금은 놓치지 마!'],
+ ['ufo','atlas',11,'#e7e0fa',['친구','연인','가족'],'미사일 40발, 제한 시간 20초. 명중시켜봐!'],
+ ['tap','atlas',12,'#ffe0da',['친구','연인','가족'],'10초 동안 몇 번 누를까? 두 손가락도 OK.'],
+ ['stroop','atlas',13,'#e4f2d3',['친구','연인','가족'],'글자 말고 색깔을 답해. 알고도 헷갈려!'],
+ ['arrow','atlas',14,'#dceffa',['친구','연인','가족'],'빨간 테두리면 반대로! 순간 판단 대결.'],
+ ['stop','atlas',15,'#fff0c9',['친구','연인','가족'],'한가운데서 딱 멈춰! 오차가 적은 쪽이 승리.'],
+ ['exam','atlas',16,'#e9e5fa',['친구','가족'],'단어로 시험지 만들기. 채점까지 한 번에.']
+];
+window.HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
+ ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
+}));

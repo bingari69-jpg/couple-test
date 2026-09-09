@@ -9,3 +9,5 @@ Original production illustrations generated with the built-in image_gen tool for
 The full prompts used in the design session are retained locally in `design-previews/implementation-art-prompts.txt`.
 
 No uploaded personal photographs or letter contents were used to generate these assets.
+
+- `catalog-mascots.png`: original generated 3-column × 6-row sprite atlas for the always-open home catalogue. Cat quiz, racing dog, detective, seat, couple, conversation, memory, coffee ladder, golf, number tiles, mole, UFO, tapping, colors, arrows, target, study, gift. Text-free illustrations.
