@@ -14,6 +14,17 @@
 */
 (function(){
   const ID = "G-E0P7KBM0FD";
+  const analyticsScript = document.currentScript;
+  const PROJECT_URL = "https://iqwggvijxptehvmdbmub.supabase.co";
+  const PUBLISHABLE_KEY = "sb_publishable_D6Iqs7Xovd1ihHV5BYeQrg_xyvHG04Z";
+
+  /* 게시된 관리자 설정은 모든 페이지에서 같은 런타임으로 적용한다. */
+  if(!window.__GATCHI_APP_CONFIG__ && !window.__GATCHI_APP_CONFIG_LOADER__ && analyticsScript && analyticsScript.src){
+    window.__GATCHI_APP_CONFIG_LOADER__=true;
+    const appConfig=document.createElement("script");
+    appConfig.src=new URL("app-config.js?v=20260911-admin1",analyticsScript.src).href;
+    document.head.appendChild(appConfig);
+  }
 
   /* gtag 로드 */
   const s=document.createElement("script"); s.async=true;
@@ -30,7 +41,7 @@
   });
 
   /* 게임 이름: /couple-test/t/rps/ → rps, 홈 → home */
-  const m=location.pathname.match(/\/t\/([^/]+)\/?/);
+  const m=location.pathname.match(/\/t\/(.+?)\/?$/);
   const game = m ? m[1] : "home";
   const entry = (function(){
     const h=(location.hash||location.search).slice(1);
@@ -40,9 +51,39 @@
     return "direct";
   })();
 
+  function sessionId(){
+    try{
+      let id=localStorage.getItem("gatchi_analytics_session");
+      if(!id){id=Math.random().toString(36).slice(2)+Date.now().toString(36);localStorage.setItem("gatchi_analytics_session",id);}
+      return id.slice(0,40);
+    }catch(e){return null;}
+  }
+  function supabaseEvent(ev,params){
+    if(typeof fetch!=="function")return;
+    const allowed=["page_view","game_started","game_completed","link_made","invite_opened","responded","invite_shared","result_opened","result_shared","replay","letter_opened"];
+    let normalized=ev;
+    if(/(?:^|_)start(?:ed)?$/.test(ev))normalized="game_started";
+    else if(/(?:^|_)(?:finish|finished|graded)$/.test(ev))normalized="game_completed";
+    if(!allowed.includes(normalized))return;
+    try{fetch(PROJECT_URL+"/rest/v1/rpc/track_app_event",{
+      method:"POST",keepalive:true,headers:{apikey:PUBLISHABLE_KEY,"Content-Type":"application/json"},
+      body:JSON.stringify({p_event:normalized,p_game:game,p_entry:entry,p_method:params&&params.method||null,p_session_id:sessionId()})
+    }).catch(()=>{});}catch(e){}
+  }
+
+  let completionSent=false;
+
   window.track=function(ev, params){
     try{ gtag("event", ev, Object.assign({ game, entry }, params||{})); }catch(e){}
+    const finishingEvent=/(?:^|_)(?:finish|finished|graded)$/.test(ev);
+    if(!completionSent && (ev==="link_made" || ev==="responded" || finishingEvent)){
+      completionSent=true;
+      if(!finishingEvent&&ev!=="game_completed")supabaseEvent("game_completed",params||{});
+    }
+    supabaseEvent(ev,params||{});
   };
+
+  supabaseEvent("page_view",{});
 
   if(document.currentScript && document.currentScript.hasAttribute("data-manual-events")) return;
 
@@ -64,6 +105,17 @@
     const b=e.target.closest("button,a"); if(!b||!b.id) return;
     const c=classify(b.id); if(c) track(c[0], c[1]?{method:c[1]}:{});
   }, true);
+
+  /* 게임 화면에서 처음 의미 있는 조작을 한 시점을 시작으로 센다. */
+  if(game!=="home"){
+    let started=false;
+    document.addEventListener("click",function(e){
+      if(started)return;
+      const b=e.target.closest("button");
+      if(!b||!b.closest("main")||/kakao|copy|share|back|menu|help|font|size|other|change|preview/i.test(b.id||""))return;
+      started=true;supabaseEvent("game_started",{});
+    },true);
+  }
 
   /* 초대로 들어온 사람이 결과 화면에 도달 → responded (한 번만) */
   if(entry==="invite"){

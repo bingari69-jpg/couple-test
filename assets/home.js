@@ -24,6 +24,7 @@ function render(){
    const art=document.createElement('div');art.className='catalog-art';art.setAttribute('aria-hidden','true');
    const mascot=document.createElement('div');mascot.className='catalog-mascot '+it.art;
    mascot.style.setProperty('--sprite-x',(it.index%3)*50+'%');mascot.style.setProperty('--sprite-y',Math.floor(it.index/3)*20+'%');art.append(mascot);
+   if(it.thumbnailUrl){art.style.backgroundImage='url("'+String(it.thumbnailUrl).replace(/["\\]/g,'')+'")';art.style.backgroundSize='cover';art.style.backgroundPosition='center';mascot.hidden=true;}
    const content=document.createElement('div');content.className='catalog-content';
    const title=document.createElement('h3');title.textContent=it.title.split(' — ')[0];
    const description=document.createElement('p');description.textContent=it.summary;

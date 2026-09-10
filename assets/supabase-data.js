@@ -35,8 +35,19 @@
     return rows[0] || null;
   }
 
+  async function getPublishedAppConfig() {
+    const response = await fetch(API_URL + "/rpc/get_published_app_config", {
+      method: "POST",
+      headers: { apikey: PUBLISHABLE_KEY, Accept: "application/json", "Content-Type": "application/json" },
+      body: "{}"
+    });
+    if (!response.ok) throw new Error("Supabase config read failed: " + response.status);
+    return response.json();
+  }
+
   window.SupabaseData = {
     getGameCatalog,
-    getSiteSettings
+    getSiteSettings,
+    getPublishedAppConfig
   };
 })();

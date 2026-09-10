@@ -119,6 +119,20 @@
     const footer = document.createElement('p'); footer.className = 'game-footer';
     footer.textContent = '별거 아닌 한판이, 같이 웃는 시간이 되도록 ♥';
     wrap.append(footer);
+
+    function applyManagedGame(event) {
+      const managed = event && event.detail;
+      if (!managed || !Array.isArray(managed.games)) return;
+      const item = managed.games.find(game => game.slug === slug);
+      if (!item) return;
+      if (item.title) {
+        const headerTitle = wrap.querySelector('.game-header > span');
+        if (headerTitle) headerTitle.textContent = item.title;
+        document.title = item.title + ' · ' + ((managed.site && managed.site.name) || '같이놀자');
+      }
+    }
+    window.addEventListener('app-config-ready', applyManagedGame);
+    if (window.APP_PUBLISHED_CONFIG) applyManagedGame({ detail: window.APP_PUBLISHED_CONFIG });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();

@@ -101,10 +101,41 @@ const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=
 }));
 window.HOME_ITEMS=LOCAL_HOME_ITEMS;
 
+let publishedCatalogApplied=false;
+function applyPublishedCatalog(config){
+  if(!config||!Array.isArray(config.games))return false;
+  const localBySlug=new Map(LOCAL_HOME_ITEMS.map(item=>[
+    item.path.replace(/^t\//,'').replace(/\/$/,''),item
+  ]));
+  const merged=config.games
+    .filter(row=>(row.visibility||'listed')==='listed')
+    .sort((a,b)=>(Number(a.sortOrder)||0)-(Number(b.sortOrder)||0))
+    .map(row=>{
+      const local=localBySlug.get(row.slug);
+      if(!local)return null;
+      return {
+        ...local,
+        path:row.path||local.path,
+        title:row.title||local.title,
+        summary:row.summary||local.summary,
+        relationships:Array.isArray(row.relationships)&&row.relationships.length?row.relationships:local.relationships,
+        thumbnailUrl:row.thumbnailUrl||''
+      };
+    }).filter(Boolean);
+  if(!merged.length)return false;
+  publishedCatalogApplied=true;
+  window.HOME_ITEMS=merged;
+  window.dispatchEvent(new CustomEvent('home-catalog-updated'));
+  return true;
+}
+window.addEventListener('app-config-ready',event=>applyPublishedCatalog(event.detail));
+if(window.APP_PUBLISHED_CONFIG)applyPublishedCatalog(window.APP_PUBLISHED_CONFIG);
+
 // Supabase가 열리면 제목·설명·순서·공개 여부를 서버 값으로 덮어쓴다.
 // 연결에 실패하거나 아직 등록되지 않은 항목은 기존 로컬 목록을 그대로 쓴다.
 if(window.SupabaseData){
   window.SupabaseData.getGameCatalog().then(rows=>{
+    if(publishedCatalogApplied)return;
     if(!Array.isArray(rows)||!rows.length)return;
     const localBySlug=new Map(LOCAL_HOME_ITEMS.map(item=>[
       item.path.replace(/^t\//,'').replace(/\/$/,''),item

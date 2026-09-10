@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <title>같이놀자 관리센터</title>
+  <link rel="stylesheet" href="admin.css?v=20260911-1">
+</head>
+<body>
+  <section class="login-view" id="loginView">
+    <div class="login-card">
+      <a class="login-brand" href="../">같이놀자<span>♥</span></a>
+      <p class="eyebrow">MANAGEMENT CENTER</p>
+      <h1>관리센터</h1>
+      <p class="login-copy">메뉴와 게임, 디자인, 광고를 한곳에서 관리합니다.</p>
+      <form id="loginForm">
+        <label>관리자 이메일<input id="email" type="email" autocomplete="username" required placeholder="name@example.com"></label>
+        <label>비밀번호<input id="password" type="password" autocomplete="current-password" required minlength="6" placeholder="비밀번호"></label>
+        <button class="button primary" type="submit">로그인</button>
+      </form>
+      <p class="form-status" id="loginStatus" role="status"></p>
+      <a class="back-site" href="../">← 사이트로 돌아가기</a>
+    </div>
+  </section>
+
+  <div class="admin-app" id="adminApp" hidden>
+    <aside class="sidebar">
+      <a class="side-brand" href="../">같이놀자<span>♥</span><small>관리센터</small></a>
+      <nav id="adminNav" aria-label="관리 메뉴">
+        <button data-view="dashboard" class="active"><span>⌂</span>운영 현황</button>
+        <button data-view="games"><span>▦</span>게임 관리</button>
+        <button data-view="menus"><span>☰</span>메뉴 관리</button>
+        <button data-view="design"><span>◐</span>디자인</button>
+        <button data-view="ads"><span>AD</span>광고</button>
+        <button data-view="versions"><span>↶</span>게시 이력</button>
+      </nav>
+      <div class="side-user"><strong id="adminName">운영자</strong><span id="adminRole">owner</span><button id="logoutBtn">로그아웃</button></div>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-header">
+        <div><p class="eyebrow">같이놀자 운영</p><h1 id="viewTitle">운영 현황</h1></div>
+        <div class="publish-bar">
+          <span class="save-state" id="saveState">게시된 상태</span>
+          <button class="button ghost" id="previewBtn">미리보기</button>
+          <button class="button secondary" id="saveDraftBtn">임시 저장</button>
+          <button class="button primary" id="publishBtn">게시하기</button>
+        </div>
+      </header>
+
+      <div class="notice" id="notice" role="status" hidden></div>
+
+      <section class="view active" data-panel="dashboard">
+        <div class="welcome-card">
+          <div><p class="eyebrow">TODAY'S PLAY</p><h2>오늘도 같이 웃을<br>이유를 만들어요.</h2><p>변경 사항은 임시 저장한 뒤 미리보고 게시할 수 있습니다.</p></div>
+          <div class="welcome-chick" aria-hidden="true">🐣</div>
+        </div>
+        <div class="period-tabs" id="periodTabs" role="group" aria-label="통계 기간">
+          <button data-days="1">오늘</button><button data-days="7" class="active">7일</button><button data-days="30">30일</button>
+        </div>
+        <div class="metric-grid" id="metricGrid"></div>
+        <section class="panel">
+          <div class="panel-head"><div><p class="eyebrow">GAME FLOW</p><h2>게임별 이용 흐름</h2></div><span class="muted" id="statsPeriod">최근 7일</span></div>
+          <div class="table-wrap"><table><thead><tr><th>게임</th><th>방문</th><th>시작</th><th>완료</th><th>공유</th><th>친구 참여</th><th>완료율</th></tr></thead><tbody id="statsBody"></tbody></table></div>
+          <p class="empty" id="statsEmpty" hidden>아직 모인 이용 기록이 없습니다. 게시 후부터 흐름이 쌓입니다.</p>
+        </section>
+      </section>
+
+      <section class="view" data-panel="games">
+        <div class="panel-head page-tools"><div><p class="eyebrow">CONTENTS</p><h2>게임과 테스트</h2><p class="muted">숨기기는 목록에서만 제외하고, 점검은 기존 링크에도 안내를 표시합니다.</p></div><div class="tool-row"><input id="gameSearch" type="search" placeholder="게임 검색"><button class="button secondary" id="addGameBtn">+ 게임 등록</button></div></div>
+        <div class="games-layout"><div class="game-list" id="gameList"></div><form class="editor-card" id="gameEditor" hidden>
+          <div class="editor-title"><div><p class="eyebrow">GAME DETAIL</p><h2 id="gameEditorTitle">게임 수정</h2></div><button type="button" class="icon-close" id="closeGameEditor" aria-label="닫기">×</button></div>
+          <input id="gameSlug" type="hidden">
+          <label>게임 제목<input id="gameTitle" maxlength="80" required></label>
+          <label>한 줄 설명<textarea id="gameSummary" maxlength="180" rows="3"></textarea></label>
+          <div class="field-grid"><label>카테고리<select id="gameCategory"><option>게임</option><option>심리테스트</option><option>운세</option><option>편지</option><option>단체방</option></select></label><label>표시 상태<select id="gameVisibility"><option value="listed">목록에 공개</option><option value="hidden">목록에서 숨김</option><option value="maintenance">서비스 점검</option></select></label></div>
+          <label>연결 주소<input id="gamePath" placeholder="t/rps/"></label>
+          <label>함께하기 대상<input id="gameRelationships" placeholder="친구, 연인, 가족"></label>
+          <label>썸네일 주소<div class="upload-row"><input id="gameThumbnail" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input id="gameImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label>
+          <div class="field-grid"><label class="check"><input id="gameFeatured" type="checkbox"> 홈 추천</label><label>광고<select id="gameAdsMode"><option value="inherit">공통 설정</option><option value="off">사용 안 함</option></select></label></div>
+          <div class="editor-actions"><button type="button" class="button danger" id="removeGameBtn">목록에서 삭제</button><button class="button primary" type="submit">수정 적용</button></div>
+        </form></div>
+      </section>
+
+      <section class="view" data-panel="menus">
+        <div class="panel-head"><div><p class="eyebrow">NAVIGATION</p><h2>공통 메뉴</h2><p class="muted">위아래 버튼으로 순서를 바꾸고, 필요한 메뉴만 표시할 수 있습니다.</p></div><button class="button secondary" id="addMenuBtn">+ 메뉴 추가</button></div>
+        <div class="panel menu-editor" id="menuEditor"></div>
+      </section>
+
+      <section class="view" data-panel="design">
+        <div class="design-grid">
+          <form class="panel form-panel" id="designForm">
+            <p class="eyebrow">BRAND STYLE</p><h2>공통 디자인</h2>
+            <label>서비스 이름<input id="siteName" maxlength="40"></label>
+            <label>제목 글꼴<select id="headingFont"><option value="jua">둥근 제목체</option><option value="pretendard">단정한 고딕체</option><option value="gaegu">손글씨체</option></select></label>
+            <label>본문 글꼴<select id="bodyFont"><option value="pretendard">프리텐다드</option><option value="system">기본 고딕체</option><option value="gaegu">손글씨체</option></select></label>
+            <label>기본 글자 크기<select id="fontScale"><option value="0.95">작게</option><option value="1">보통</option><option value="1.06">크게</option></select></label>
+            <div class="field-grid"><label>강조 색상<input id="primaryColor" type="color"></label><label>보조 색상<input id="secondaryColor" type="color"></label></div>
+            <label>바탕 색상<input id="backgroundColor" type="color"></label>
+          </form>
+          <div class="phone-panel"><div class="preview-switch"><button data-preview="home" class="active">홈</button><button data-preview="game">게임</button><button data-preview="tarot">타로</button></div><div class="phone" id="designPreview"></div><p class="muted center">타로처럼 고유 테마가 있는 콘텐츠는 색상을 유지합니다.</p></div>
+        </div>
+      </section>
+
+      <section class="view" data-panel="ads">
+        <div class="panel-head"><div><p class="eyebrow">AD PLACEMENT</p><h2>광고 관리</h2><p class="muted">첫 적용 위치는 게임 결과 아래를 권장합니다.</p></div><label class="switch"><input id="adsEnabled" type="checkbox"><span></span>전체 광고</label></div>
+        <div class="ad-list" id="adList"></div>
+        <button class="button secondary full" id="addAdBtn">+ 광고 자리 추가</button>
+      </section>
+
+      <section class="view" data-panel="versions">
+        <div class="panel-head"><div><p class="eyebrow">PUBLISH HISTORY</p><h2>게시 이력</h2><p class="muted">복원하면 선택한 설정이 새로운 버전으로 다시 게시됩니다.</p></div></div>
+        <div class="panel version-list" id="versionList"></div>
+      </section>
+    </main>
+  </div>
+
+  <dialog id="publishDialog"><form method="dialog" id="publishForm"><button class="dialog-close" id="closePublishDialog" type="button" aria-label="닫기">×</button><p class="eyebrow">PUBLISH</p><h2>변경 내용을 게시할까요?</h2><p>게시하는 순간 새로 방문하는 사용자에게 적용됩니다.</p><label>게시 메모<input id="publishNote" maxlength="200" placeholder="예: 가을 배너와 게임 순서 변경"></label><div class="dialog-actions"><button class="button secondary" id="cancelPublish" type="button">취소</button><button class="button primary" id="confirmPublish" value="default">게시하기</button></div></form></dialog>
+
+  <script src="../assets/supabase-data.js?v=20260911-admin"></script>
+  <script src="../assets/home-catalog.js?v=20260911-admin"></script>
+  <script src="admin-api.js?v=20260911-1"></script>
+  <script src="admin.js?v=20260911-1"></script>
+</body>
+</html>
