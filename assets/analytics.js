@@ -26,6 +26,19 @@
     document.head.appendChild(appConfig);
   }
 
+  /* 처음 온 사람도 바로 시작할 수 있도록 공통 게임 설명을 붙인다. */
+  if(!window.__GATCHI_GUIDE_LOADER__ && analyticsScript && analyticsScript.src){
+    window.__GATCHI_GUIDE_LOADER__=true;
+    const guideData=document.createElement("script");
+    guideData.src=new URL("guide-data.js?v=20260911-guide1",analyticsScript.src).href;
+    guideData.onload=function(){
+      const helpGuide=document.createElement("script");
+      helpGuide.src=new URL("help-guide.js?v=20260911-guide1",analyticsScript.src).href;
+      document.head.appendChild(helpGuide);
+    };
+    document.head.appendChild(guideData);
+  }
+
   /* gtag 로드 */
   const s=document.createElement("script"); s.async=true;
   s.src="https://www.googletagmanager.com/gtag/js?id="+ID; document.head.appendChild(s);

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>같이놀자 관리센터</title>
-  <link rel="stylesheet" href="admin.css?v=20260911-1">
+  <link rel="stylesheet" href="admin.css?v=20260911-guide1">
 </head>
 <body>
   <section class="login-view" id="loginView">
@@ -35,7 +35,7 @@
         <button data-view="ads"><span>AD</span>광고</button>
         <button data-view="versions"><span>↶</span>게시 이력</button>
       </nav>
-      <div class="side-user"><strong id="adminName">운영자</strong><span id="adminRole">owner</span><button id="logoutBtn">로그아웃</button></div>
+      <div class="side-user"><strong id="adminName">운영자</strong><span id="adminRole">owner</span><a class="manual-link" href="guide/">? 관리자 사용법</a><button id="logoutBtn">로그아웃</button></div>
     </aside>
 
     <main class="workspace">
@@ -53,7 +53,7 @@
 
       <section class="view active" data-panel="dashboard">
         <div class="welcome-card">
-          <div><p class="eyebrow">TODAY'S PLAY</p><h2>오늘도 같이 웃을<br>이유를 만들어요.</h2><p>변경 사항은 임시 저장한 뒤 미리보고 게시할 수 있습니다.</p></div>
+          <div><p class="eyebrow">TODAY'S PLAY</p><h2>오늘도 같이 웃을<br>이유를 만들어요.</h2><p>변경 사항은 임시 저장한 뒤 미리보고 게시할 수 있습니다.</p><a class="button secondary welcome-manual" href="guide/">처음이라면 사용법 보기</a></div>
           <div class="welcome-chick" aria-hidden="true">🐣</div>
         </div>
         <div class="period-tabs" id="periodTabs" role="group" aria-label="통계 기간">
@@ -77,6 +77,13 @@
           <div class="field-grid"><label>카테고리<select id="gameCategory"><option>게임</option><option>심리테스트</option><option>운세</option><option>편지</option><option>단체방</option></select></label><label>표시 상태<select id="gameVisibility"><option value="listed">목록에 공개</option><option value="hidden">목록에서 숨김</option><option value="maintenance">서비스 점검</option></select></label></div>
           <label>연결 주소<input id="gamePath" placeholder="t/rps/"></label>
           <label>함께하기 대상<input id="gameRelationships" placeholder="친구, 연인, 가족"></label>
+          <fieldset class="guide-fields"><legend>사용자에게 보여줄 게임 방법</legend>
+            <p>어린이도 이해할 수 있는 짧은 말로 적어 주세요.</p>
+            <label>한 줄 규칙<textarea id="gameRule" maxlength="140" rows="2" placeholder="무엇을 하는 게임인지 한 문장으로 적어요."></textarea></label>
+            <div class="guide-step-fields"><label>1단계<input id="gameStep1" maxlength="40"></label><label>2단계<input id="gameStep2" maxlength="40"></label><label>3단계<input id="gameStep3" maxlength="40"></label></div>
+            <label>도움말<input id="gameTip" maxlength="100" placeholder="헷갈리기 쉬운 점을 알려 주세요."></label>
+            <label>짧은 연습<select id="gamePractice"><option value="">연습 없음</option><option value="tap">누르기 연습</option><option value="reaction">반응속도 연습</option><option value="stop">멈추기 연습</option><option value="choice">고르기 연습</option></select></label>
+          </fieldset>
           <label>썸네일 주소<div class="upload-row"><input id="gameThumbnail" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input id="gameImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label>
           <div class="field-grid"><label class="check"><input id="gameFeatured" type="checkbox"> 홈 추천</label><label>광고<select id="gameAdsMode"><option value="inherit">공통 설정</option><option value="off">사용 안 함</option></select></label></div>
           <div class="editor-actions"><button type="button" class="button danger" id="removeGameBtn">목록에서 삭제</button><button class="button primary" type="submit">수정 적용</button></div>
@@ -120,7 +127,8 @@
 
   <script src="../assets/supabase-data.js?v=20260911-admin"></script>
   <script src="../assets/home-catalog.js?v=20260911-admin"></script>
+  <script src="../assets/guide-data.js?v=20260911-guide1"></script>
   <script src="admin-api.js?v=20260911-1"></script>
-  <script src="admin.js?v=20260911-1"></script>
+  <script src="admin.js?v=20260911-guide1"></script>
 </body>
 </html>

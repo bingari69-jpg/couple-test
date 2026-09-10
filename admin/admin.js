@@ -15,9 +15,15 @@
   let statsDays = 7;
 
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function guideFor(slug) {
+    const guide = window.GATCHI_GUIDES && window.GATCHI_GUIDES[slug];
+    return guide ? { rule:guide.rule||'', steps:clone(guide.steps||[]), tip:guide.tip||'', practice:guide.practice||'' } : { rule:'', steps:['','',''], tip:'', practice:'' };
+  }
   function localGames() {
-    return (window.HOME_ITEMS || []).map((item, index) => ({
-      slug: item.path.replace(/^t\//, '').replace(/\/$/, ''),
+    return (window.HOME_ITEMS || []).map((item, index) => {
+      const slug=item.path.replace(/^t\//, '').replace(/\/$/, '');
+      return ({
+      slug: slug,
       path: item.path,
       title: item.title,
       summary: item.summary || item.desc || '',
@@ -27,8 +33,9 @@
       featured: index < 6,
       sortOrder: index + 1,
       adsMode: ['letter', 'tarot'].includes(item.path.replace(/^t\//, '').replace(/\/$/, '')) ? 'off' : 'inherit',
-      thumbnailUrl: ''
-    }));
+      thumbnailUrl: '',
+      guide: guideFor(slug)
+    });});
   }
   function defaults() {
     return {
@@ -52,10 +59,16 @@
     next.site = Object.assign(base.site, next.site || {});
     next.site.menu = Array.isArray(next.site.menu) ? next.site.menu : base.site.menu;
     next.games = Array.isArray(next.games) && next.games.length ? next.games : base.games;
-    next.games = next.games.map((game, index) => Object.assign({
+    next.games = next.games.map((game, index) => {
+      const normalized=Object.assign({
       slug:'game-' + (index + 1), path:'', title:'새 게임', summary:'', category:'게임', relationships:['친구'],
       visibility:'hidden', featured:false, sortOrder:index + 1, adsMode:'inherit', thumbnailUrl:''
-    }, game));
+      }, game);
+      normalized.guide=Object.assign(guideFor(normalized.slug),normalized.guide||{});
+      normalized.guide.steps=Array.isArray(normalized.guide.steps)?normalized.guide.steps.slice(0,3):['','',''];
+      while(normalized.guide.steps.length<3)normalized.guide.steps.push('');
+      return normalized;
+    });
     next.ads = Object.assign(base.ads, next.ads || {});
     next.ads.slots = Array.isArray(next.ads.slots) ? next.ads.slots : base.ads.slots;
     return next;
@@ -145,17 +158,19 @@
     editingIndex = index; const game = config.games[index];
     $('gameEditor').hidden=false; $('gameEditorTitle').textContent=game.title;
     $('gameSlug').value=game.slug;$('gameTitle').value=game.title;$('gameSummary').value=game.summary||'';$('gameCategory').value=game.category||'게임';$('gameVisibility').value=game.visibility||'listed';$('gamePath').value=game.path||'';$('gameRelationships').value=(game.relationships||[]).join(', ');$('gameThumbnail').value=game.thumbnailUrl||'';$('gameFeatured').checked=!!game.featured;$('gameAdsMode').value=game.adsMode||'inherit';
+    const guide=Object.assign(guideFor(game.slug),game.guide||{});const steps=guide.steps||[];$('gameRule').value=guide.rule||'';$('gameStep1').value=steps[0]||'';$('gameStep2').value=steps[1]||'';$('gameStep3').value=steps[2]||'';$('gameTip').value=guide.tip||'';$('gamePractice').value=guide.practice||'';
   }
   function saveGame(event) {
     event.preventDefault(); if (editingIndex < 0) return;
     const game = config.games[editingIndex];
     game.title=$('gameTitle').value.trim();game.summary=$('gameSummary').value.trim();game.category=$('gameCategory').value;game.visibility=$('gameVisibility').value;game.path=$('gamePath').value.trim();game.relationships=$('gameRelationships').value.split(',').map(v=>v.trim()).filter(Boolean);game.thumbnailUrl=$('gameThumbnail').value.trim();game.featured=$('gameFeatured').checked;game.adsMode=$('gameAdsMode').value;
+    game.guide={rule:$('gameRule').value.trim(),steps:[$('gameStep1').value.trim(),$('gameStep2').value.trim(),$('gameStep3').value.trim()],tip:$('gameTip').value.trim(),practice:$('gamePractice').value};
     if (!game.title) return notice('게임 제목을 입력해 주세요.', true);
     changed(); renderGames(); $('gameEditor').hidden=true; editingIndex=-1; notice('게임 수정이 초안에 반영됐습니다.');
   }
   function addGame() {
     const number = config.games.length + 1;
-    config.games.push({slug:'new-game-'+number,path:'t/new-game-'+number+'/',title:'새 게임',summary:'게임 설명을 입력하세요.',category:'게임',relationships:['친구'],visibility:'hidden',featured:false,sortOrder:number,adsMode:'inherit',thumbnailUrl:''});
+    config.games.push({slug:'new-game-'+number,path:'t/new-game-'+number+'/',title:'새 게임',summary:'게임 설명을 입력하세요.',category:'게임',relationships:['친구'],visibility:'hidden',featured:false,sortOrder:number,adsMode:'inherit',thumbnailUrl:'',guide:guideFor('new-game-'+number)});
     changed(); renderGames(); openGame(config.games.length-1);
   }
   function removeGame() {
