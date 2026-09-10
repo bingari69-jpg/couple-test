@@ -68,7 +68,7 @@ async function main(){
  assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/mobile-hero/);
  assert.equal(hd.getElementById('catalogList').children.length,22);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
- assert.deepEqual(catalogCards.slice(0,8).map(a=>a.getAttribute('href')),['t/ranking/','t/ten/','t/rps/','t/delivery/','t/mbti/','t/react/','t/crash/','t/letter/']);
+ assert.deepEqual(catalogCards.slice(0,11).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/num25/','t/ufo/','t/stop/','t/ten/','t/tap/','t/react/','t/delivery/','t/stroop/','t/arrow/']);
  assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,22);
  for(const a of catalogCards){assert.ok(fs.existsSync(path.join(root,a.getAttribute('href'),'index.html')));assert.ok(a.querySelector('.catalog-mascot'));assert.ok(a.querySelector('h3').textContent);assert.ok(a.querySelector('.catalog-tags').children.length);assert.equal(a.querySelector('.catalog-start').textContent,'시작하기 →');}
  for(const rel of ['연인','부부','친구','가족','전체']){
