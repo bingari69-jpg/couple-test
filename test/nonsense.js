@@ -1,5 +1,7 @@
 const assert=require('node:assert/strict');
-const {load,el,PAGE_ERRORS}=require('./dom');
+const fs=require('node:fs');
+const path=require('node:path');
+const {ROOT,load,el,PAGE_ERRORS}=require('./dom');
 
 const opened=[];
 const open=hash=>{const d=load('nonsense',hash);opened.push(d.window);return d.window;};
@@ -8,6 +10,8 @@ const input=(w,id,value)=>{const e=el(w,id);e.value=value;e.dispatchEvent(new w.
 
 (async()=>{
   const maker=open();
+  const shareCard=fs.readFileSync(path.join(ROOT,'assets/share-cards/nonsense.png'));
+  assert.equal(shareCard.readUInt32BE(16),1672);assert.equal(shareCard.readUInt32BE(20),941);
   const bank=maker.NONSENSE_QUESTIONS;
   assert.equal(bank.length,100);
   assert.equal(new Set(bank.map(q=>q.id)).size,100);
@@ -25,7 +29,7 @@ const input=(w,id,value)=>{const e=el(w,id);e.value=value;e.dispatchEvent(new w.
   assert.equal(el(maker,'myScore').textContent,'5 / 5');
   assert.equal(el(maker,'afterPlay').classList.contains('hidden'),false);
   const inviteUrl=maker.Duel.url();assert.ok(inviteUrl.includes('#c='));assert.ok(inviteUrl.length<650);
-  let inviteShare;maker.kakaoShare=o=>{inviteShare=o;return Promise.resolve(true);};el(maker,'kakaoBtn').click();assert.equal(inviteShare.btn,'도전 받기');assert.match(inviteShare.desc,/100문제/);assert.equal(inviteShare.imageWidth,1200);assert.equal(inviteShare.imageHeight,630);
+  let inviteShare;maker.kakaoShare=o=>{inviteShare=o;return Promise.resolve(true);};el(maker,'kakaoBtn').click();assert.equal(inviteShare.btn,'도전 받기');assert.match(inviteShare.desc,/100문제/);assert.match(inviteShare.img,/share-cards\/nonsense\.png/);assert.equal(inviteShare.imageWidth,1672);assert.equal(inviteShare.imageHeight,941);
 
   const inviteHash=new URL(inviteUrl).hash;
   const guest=open(inviteHash);
