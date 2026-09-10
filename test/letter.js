@@ -66,7 +66,7 @@ async function main(){
  const home=load('index.html'),hd=home.window.document;
  const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');
  assert.match(homeCss,/\.hero-art\{height:auto\}/);
- assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/menu4/);
+ assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/menu5/);
  assert.equal(hd.getElementById('catalogList').children.length,23);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
  assert.deepEqual(catalogCards.slice(0,12).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/nonsense/','t/num25/','t/ufo/','t/stop/','t/ten/','t/tap/','t/react/','t/delivery/','t/stroop/','t/arrow/']);
