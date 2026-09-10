@@ -5,14 +5,14 @@ const path = require('node:path');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.join(__dirname,'..');
 const errors=[];
-function load(relative='t/letter/index.html',suffix='',random=0.25){
+function load(relative='t/letter/index.html',suffix='',random=0.25,userAgent=''){
  const file=path.join(root,relative),base=path.dirname(file);
  let html=fs.readFileSync(file,'utf8').replace(/<script src="([^"]+)"><\/script>/g,(all,src)=>{
    if(src.includes('analytics'))return '';
    return '<script>'+fs.readFileSync(path.resolve(base,src.split('?')[0]),'utf8').replace(/<\/script/g,'<\\/script')+'</script>';
  });
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- return new JSDOM(html,{url:'https://bingari69-jpg.github.io/couple-test/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.Math.random=()=>random;w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};}});
+ return new JSDOM(html,{url:'https://bingari69-jpg.github.io/couple-test/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.Math.random=()=>random;w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};if(userAgent)Object.defineProperty(w.navigator,'userAgent',{value:userAgent,configurable:true});}});
 }
 const hash=p=>'#l='+Buffer.from(JSON.stringify(p)).toString('base64url');
 const tick=()=>new Promise(r=>setTimeout(r,10));
@@ -50,12 +50,15 @@ async function main(){
  let sent,done;
  w.kakaoShare=(options)=>{sent=options;return new Promise(resolve=>{done=resolve;});};
  $('kakaoSend').click();await tick();assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);
+ const sharingLeave=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(sharingLeave);assert.equal(sharingLeave.defaultPrevented,false);
  done(true);await tick();assert.equal($('kakaoSend').disabled,false);
+ const editingLeave=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(editingLeave);assert.equal(editingLeave.defaultPrevented,true);
  $('kakaoSendText').click();await tick();assert.equal(sent.textOnly,true);assert.equal(sent.url,url);done(true);await tick();assert.equal($('kakaoSendText').disabled,false);
  $('packedEnvelope').click();assert.equal($('reader').hidden,false);$('readerEnvelope').click();await tick();assert.equal($('readBody').textContent,body);assert.equal($('readBody').children.length,0);assert.equal($('openedLetter').hidden,false);
  $('returnPreview').click();assert.equal($('send').hidden,false);$('editLetter').click();assert.equal($('letterBody').value,body);
  $('helpButton').click();$('suggestions').firstElementChild.click();assert.ok($('letterBody').value.startsWith(body+'\n\n'));
  const r=load('t/letter/index.html',hash(p));assert.equal(r.window.document.getElementById('reader').hidden,false);assert.equal(r.window.document.getElementById('readBody').textContent,body);assert.equal(r.window.document.querySelectorAll('script[src*="kakao"],script[src*="analytics"]').length,0);r.window.close();
+ const kr=load('t/letter/index.html',hash({...p,n:'지민',f:'민수'}),0.25,'Mozilla/5.0 (Linux; Android 14; wv) KAKAOTALK/10.8.3 (INAPP)');let outside;kr.window.open=(url,target)=>{outside={url,target};return {};};kr.window.document.getElementById('replyLetter').click();assert.equal(outside.target,'_blank');assert.match(outside.url,/^intent:\/\/bingari69-jpg.github.io\/couple-test\/t\/letter\/\?reply=1/);assert.match(outside.url,/#Intent;scheme=https;/);assert.equal(kr.window.document.getElementById('reader').hidden,false);const replyQuery='?'+outside.url.split('?')[1].split('#Intent;')[0],reply=load('t/letter/index.html',replyQuery);reply.window.document.getElementById('viewTemplate').click();reply.window.document.getElementById('useTemplate').click();assert.equal(reply.window.document.getElementById('recipient').value,'민수');assert.equal(reply.window.document.getElementById('sender').value,'지민');reply.window.close();kr.window.close();
  const old=load('t/letter/index.html',hash({v:3,k:0,n:'옛친구',rel:0,num:100,i:[0,0,0,0],t:1,s:3}));assert.equal(old.window.document.getElementById('reader').hidden,false);assert.ok(old.window.document.getElementById('readBody').textContent.includes('100일'));old.window.close();
  const oldText=load('t/letter/index.html',hash({v:3,k:3,n:'친구',w:'예전 편지 그대로',f:'나'}));assert.equal(oldText.window.document.getElementById('readBody').textContent,'예전 편지 그대로');oldText.window.close();
  for(const bad of ['#l=%%%','#l='+Buffer.from('{bad').toString('base64url'),hash({v:4,w:{bad:true}}),hash({v:99,w:'future'})]){const e=load('t/letter/index.html',bad);assert.equal(e.window.document.getElementById('error').hidden,false);e.window.close();}

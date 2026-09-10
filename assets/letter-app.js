@@ -5,8 +5,9 @@
  const MAX_LETTER=450,WARN_AT=430;
  const occasionMap={birthday:'생일',anniversary:'기념일',plain:'그냥',thanks:'고마워'};
  const fonts={sans:"'Malgun Gothic',system-ui,sans-serif",serif:"'Batang','Noto Serif KR',serif",hand:"'Gatchi Hand','Malgun Gothic',sans-serif"};
- const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:'',from:'',body:'',font:'hand',size:22,occasion:'plain',number:100};
- let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
+ const replyMode=params.get('reply')==='1',queryText=key=>(params.get(key)||'').slice(0,24);
+ const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:replyMode?queryText('to'):'',from:replyMode?queryText('from'):'',body:'',font:'hand',size:22,occasion:'plain',number:100};
+ let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise,intentionalLeave=false;
  let activeReveal;
  function stopReveal(){if(activeReveal){activeReveal.finish();activeReveal=null;}}
  function startReveal(body,button){stopReveal();activeReveal=window.revealLetter($(body),$(button));}
@@ -94,6 +95,10 @@
    return p;
  }
  function urlFor(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';const base=local?'https://bingari69-jpg.github.io/couple-test/t/letter/':location.origin+location.pathname;return base+'#l='+encode(p);}
+ function replyUrl(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:',base=local?'https://bingari69-jpg.github.io/couple-test/t/letter/':location.origin+location.pathname,u=new URL(base);u.searchParams.set('reply','1');u.searchParams.set('template',template(p&&p.tpl).id);if(p&&p.f)u.searchParams.set('to',p.f.slice(0,24));if(p&&p.n)u.searchParams.set('from',p.n.slice(0,24));return u.href;}
+ function externalUrl(target){const ua=navigator.userAgent||'';if(/Android/i.test(ua)){const u=new URL(target);return 'intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end';}return 'kakaotalk://web/openExternal?url='+encodeURIComponent(target);}
+ function beginReplyHere(p){draft.to=p&&p.f||'';draft.from=p&&p.n||'';draft.body='';draft.template=template(p&&p.tpl).id;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('library',{historyMode:'replace'});}
+ function beginReply(){const letter=incoming;if(!letter)return;if(!/KAKAOTALK/i.test(navigator.userAgent||'')){beginReplyHere(letter);return;}const outside=externalUrl(replyUrl(letter)),opened=window.open(outside,'_blank');if(!opened)location.href=outside;}
  function renderSend(){paint($('packedEnvelope'),template());$('packedName').textContent=draft.to?draft.to+'에게':'너에게';madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;}
  $('packLetter').onclick=()=>{if(validDraft())go('send');};$('editLetter').onclick=()=>go('compose');
  function read(p,isPreview){
@@ -107,7 +112,7 @@
  $('draftPreview').onclick=previewDraft;$('packedEnvelope').onclick=()=>{returnFromPreview='send';read(payload(),true);show('reader');};
  $('readerEnvelope').onclick=()=>animateEnvelope($('readerEnvelope'),()=>{$('readerEnvelopeStage').hidden=true;$('openedLetter').hidden=false;startReveal('readBody','skipRead');$('readPaper').scrollIntoView({block:'start'});});
  $('returnPreview').onclick=()=>go(returnFromPreview);
- $('replyLetter').onclick=()=>{draft.to=incoming&&incoming.f||'';draft.from=incoming&&incoming.n||'';draft.body='';draft.template=template(incoming&&incoming.tpl).id;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('library',{historyMode:'replace'});};
+ $('replyLetter').onclick=beginReply;
  async function copyLink(){
    if(!madeUrl)madeUrl=urlFor(payload());let success=false;try{await navigator.clipboard.writeText(madeUrl);success=true;}catch(e){$('shareLink').hidden=false;$('shareLink').value=madeUrl;$('shareLink').focus();$('shareLink').select();try{success=document.execCommand('copy');}catch(err){}}
    toast(success?'링크를 복사했어요. 카톡에 붙여넣어주세요.':'아래 링크를 길게 눌러 복사해주세요.');
@@ -117,8 +122,8 @@
  function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260910-unified';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  async function sendLetter(textOnly=false){
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{await loadShare();await window.kakaoShare({url:madeUrl||urlFor(payload()),textOnly,btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},copyLink);}
-   catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
+   try{await loadShare();intentionalLeave=true;await window.kakaoShare({url:madeUrl||urlFor(payload()),textOnly,btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},copyLink);}
+   catch(e){await copyLink();}finally{intentionalLeave=false;buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();
  $('kakaoSendText').onclick=()=>sendLetter(true);
@@ -126,7 +131,7 @@
  $('back').onclick=back;$('letterNav').onclick=e=>{e.preventDefault();if(view==='compose')syncDraft();go('library');};
  window.addEventListener('popstate',e=>{const next=e.state&&e.state.letterScreen;if(next&&titles[next])go(next,{historyMode:'none'});else go('library',{historyMode:'replace'});});
  window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#l='))openIncoming(location.hash);});
- window.addEventListener('beforeunload',e=>{if(draft.body.trim()){e.preventDefault();e.returnValue='';}});
+ window.addEventListener('beforeunload',e=>{if(draft.body.trim()&&!intentionalLeave){e.preventDefault();e.returnValue='';}});
  function openIncoming(hash){try{read(decode(hash),false);show('reader',{historyMode:'replace',focus:false});}catch(e){show('error',{historyMode:'replace',focus:false});}}
  if(initialHash.startsWith('#l='))openIncoming(initialHash);else{renderLibrary();if(params.get('view')==='preview')go('detail',{historyMode:'replace',focus:false});else go('library',{historyMode:'replace',focus:false});}
 })();
