@@ -18,7 +18,7 @@
 <script src="../../assets/analytics.js"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<link rel="stylesheet" href="../../assets/rps-ui.css?v=20260909-rps">
+<link rel="stylesheet" href="../../assets/rps-ui.css?v=20260910-moving-hands">
 </head>
 <body>
 <main class="wrap">
@@ -225,10 +225,17 @@ async function copy(url, ok){
 function handsInto(boxId, onPick){
   const box=$(boxId); box.innerHTML="";
   HANDS.forEach((h,i)=>{
-    const b=document.createElement("button"); b.className="hand"; b.type="button";
+    const b=document.createElement("button"); b.className="hand hand-motion-"+i; b.type="button";
     b.innerHTML=`<span class="e">${h.e}</span><span class="l">${h.l}</span>`;
+    b.style.setProperty("--hand-delay",`${i*-.16}s`);
     b.setAttribute("aria-pressed","false"); b.setAttribute("aria-label",h.l);
-    b.onclick=()=>onPick(i,box); box.appendChild(b);
+    b.onclick=()=>{
+      [...box.children].forEach(c=>c.classList.remove("is-throwing"));
+      void b.offsetWidth;
+      b.classList.add("is-throwing");
+      onPick(i,box);
+    };
+    box.appendChild(b);
   });
 }
 function histText(hist,meId,meName){

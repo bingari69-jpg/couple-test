@@ -6,6 +6,8 @@ assert.equal(el(maker,'makeBtn').disabled,true);
 assert.equal(hid(maker,'sharePanel'),true);
 el(maker,'makeHands').children[0].click();
 assert.equal(el(maker,'makeBtn').disabled,false);
+assert.equal(el(maker,'makeHands').children[0].classList.contains('is-throwing'),true);
+assert.equal(el(maker,'makeHands').children[0].classList.contains('hand-motion-0'),true);
 el(maker,'makeBtn').click();
 assert.equal(hid(maker,'sharePanel'),false);
 assert.equal(maker.document.querySelector('.rps-steps li[aria-current]').textContent,'2카톡 보내기');
