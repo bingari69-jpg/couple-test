@@ -98,11 +98,12 @@
  function replyUrl(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:',base=local?'https://bingari69-jpg.github.io/couple-test/t/letter/':location.origin+location.pathname,u=new URL(base);u.searchParams.set('reply','1');u.searchParams.set('template',template(p&&p.tpl).id);if(p&&p.f)u.searchParams.set('to',p.f.slice(0,24));if(p&&p.n)u.searchParams.set('from',p.n.slice(0,24));return u.href;}
  function externalUrl(target){const ua=navigator.userAgent||'';if(/Android/i.test(ua)){const u=new URL(target);return 'intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;end';}return 'kakaotalk://web/openExternal?url='+encodeURIComponent(target);}
  function beginReplyHere(p){draft.to=p&&p.f||'';draft.from=p&&p.n||'';draft.body='';draft.template=template(p&&p.tpl).id;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('library',{historyMode:'replace'});}
- function beginReply(){const letter=incoming;if(!letter)return;if(!/KAKAOTALK/i.test(navigator.userAgent||'')){beginReplyHere(letter);return;}const outside=externalUrl(replyUrl(letter)),opened=window.open(outside,'_blank');if(!opened)location.href=outside;}
+ function beginReply(e){const letter=incoming;if(!letter){e.preventDefault();return;}if(/KAKAOTALK/i.test(navigator.userAgent||''))return;e.preventDefault();beginReplyHere(letter);}
  function renderSend(){paint($('packedEnvelope'),template());$('packedName').textContent=draft.to?draft.to+'에게':'너에게';madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;}
  $('packLetter').onclick=()=>{if(validDraft())go('send');};$('editLetter').onclick=()=>go('compose');
  function read(p,isPreview){
    stopReveal();incoming=p;preview=isPreview;$('returnPreview').hidden=!isPreview;$('replyLetter').hidden=isPreview;
+   $('replyLetter').href=/KAKAOTALK/i.test(navigator.userAgent||'')?externalUrl(replyUrl(p)):'./';
    const t=template(p.tpl);paint($('readPaper'),t);paint($('readerEnvelope'),t);typography($('readPaper'),{font:fonts[p.font]?p.font:'sans',size:Number.isFinite(p.size)?Math.max(16,Math.min(26,p.size)):19});
    $('readerTitle').textContent=p.n?p.n+'에게, 편지가 도착했어요.':'편지가 도착했어요.';$('readerLead').textContent=p.f?p.f+'님이 전하고 싶은 마음이 있어요.':'당신에게 전하고 싶은 마음이 있어요.';
    $('readTo').textContent=p.n?'To. '+p.n:'너에게';$('readFrom').textContent=p.f?'From. '+p.f:'';const occasionLabel=p.k===0?(p.num||100)+'일':p.k===1?(p.num||1)+'주년':p.k===2?'결혼기념일':p.k===3?'생일':'';$('readDate').textContent=[p.d,occasionLabel].filter(Boolean).join(' · ');$('readerEnvelopeName').textContent=p.n||'너에게';
