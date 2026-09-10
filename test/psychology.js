@@ -5,6 +5,7 @@ function open(slug,hash){const w=load(slug,hash).window;opened.push(w);return w;
 function complete(w,type){el(w,'begin').click();for(let i=0;i<6;i++){assert.equal(el(w,'answers').children.length,3);el(w,'answers').children[type].click();el(w,'nextQuestion').click();}}
 (async()=>{
  const hub=open('psychology');assert.equal(el(hub,'tests').children.length,7);
+ const homeSwitch=[...hub.document.querySelectorAll('.home-switch a')];assert.deepEqual(homeSwitch.map(a=>a.textContent),['마음 전하기','나랑 한판','심리테스트']);assert.equal(homeSwitch[0].getAttribute('href'),'../../?home=letter');assert.equal(homeSwitch[1].getAttribute('href'),'../../?home=play#play');assert.equal(homeSwitch[2].getAttribute('aria-current'),'page');assert.equal(el(hub,'menu').hidden,true);el(hub,'menuButton').click();assert.equal(el(hub,'menu').hidden,false);assert.equal(el(hub,'menuButton').getAttribute('aria-expanded'),'true');el(hub,'menuButton').click();assert.equal(el(hub,'menu').hidden,true);
  for(const [cat,count] of [['성격',3],['관계',2],['운세',2],['전체',7]]){hub.document.querySelector('[data-category="'+cat+'"]').click();assert.equal(el(hub,'tests').children.length,count);}
  for(const [i,title] of ['포근한 곰','반짝이는 여우','느긋한 고양이'].entries()){
   const w=open('personality');el(w,'makerName').value='나';complete(w,i);

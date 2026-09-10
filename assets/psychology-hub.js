@@ -1,5 +1,7 @@
 (function(){
  'use strict';
+ const menu=document.getElementById('menu'),menuButton=document.getElementById('menuButton');
+ if(menu&&menuButton){menuButton.onclick=()=>{const open=menu.hidden;menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open));};menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.hidden=true;menuButton.setAttribute('aria-expanded','false');}));}
  const items=[
   {href:'../tarot/',icon:'🌙',category:'운세',title:'나와 너의 타로',desc:'내 카드는 먼저 보고, 네가 고르면 나·너·우리의 이야기가 열려!',tag:'NEW · 둘이 함께 · 타로 22장'},
   {href:'../personality/',icon:'🦊',category:'성격',title:'나와 너의 마음동물',desc:'내 마음을 봉인해 보내면, 친구도 답한 뒤 둘의 동물이 함께 공개!',tag:'둘이 함께 · 각자 6문항'},
