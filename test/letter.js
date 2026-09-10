@@ -50,9 +50,8 @@ async function main(){
  let sent,done;
  w.kakaoShare=(options)=>{sent=options;return new Promise(resolve=>{done=resolve;});};
  $('kakaoSend').click();await tick();assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);
- const sharingLeave=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(sharingLeave);assert.equal(sharingLeave.defaultPrevented,false);
  done(true);await tick();assert.equal($('kakaoSend').disabled,false);
- const editingLeave=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(editingLeave);assert.equal(editingLeave.defaultPrevented,true);
+ const leaveAfterShare=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(leaveAfterShare);assert.equal(leaveAfterShare.defaultPrevented,false);
  $('kakaoSendText').click();await tick();assert.equal(sent.textOnly,true);assert.equal(sent.url,url);done(true);await tick();assert.equal($('kakaoSendText').disabled,false);
  $('packedEnvelope').click();assert.equal($('reader').hidden,false);$('readerEnvelope').click();await tick();assert.equal($('readBody').textContent,body);assert.equal($('readBody').children.length,0);assert.equal($('openedLetter').hidden,false);
  $('returnPreview').click();assert.equal($('send').hidden,false);$('editLetter').click();assert.equal($('letterBody').value,body);

@@ -7,7 +7,7 @@
  const fonts={sans:"'Malgun Gothic',system-ui,sans-serif",serif:"'Batang','Noto Serif KR',serif",hand:"'Gatchi Hand','Malgun Gothic',sans-serif"};
  const replyMode=params.get('reply')==='1',queryText=key=>(params.get(key)||'').slice(0,24);
  const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:replyMode?queryText('to'):'',from:replyMode?queryText('from'):'',body:'',font:'hand',size:22,occasion:'plain',number:100};
- let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise,intentionalLeave=false;
+ let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
  let activeReveal;
  function stopReveal(){if(activeReveal){activeReveal.finish();activeReveal=null;}}
  function startReveal(body,button){stopReveal();activeReveal=window.revealLetter($(body),$(button));}
@@ -123,8 +123,8 @@
  function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260910-unified';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  async function sendLetter(textOnly=false){
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{await loadShare();intentionalLeave=true;await window.kakaoShare({url:madeUrl||urlFor(payload()),textOnly,btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},copyLink);}
-   catch(e){await copyLink();}finally{intentionalLeave=false;buttons.forEach(b=>b.disabled=false);}
+   try{await loadShare();await window.kakaoShare({url:madeUrl||urlFor(payload()),textOnly,btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},copyLink);}
+   catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();
  $('kakaoSendText').onclick=()=>sendLetter(true);
@@ -132,7 +132,6 @@
  $('back').onclick=back;$('letterNav').onclick=e=>{e.preventDefault();if(view==='compose')syncDraft();go('library');};
  window.addEventListener('popstate',e=>{const next=e.state&&e.state.letterScreen;if(next&&titles[next])go(next,{historyMode:'none'});else go('library',{historyMode:'replace'});});
  window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#l='))openIncoming(location.hash);});
- window.addEventListener('beforeunload',e=>{if(draft.body.trim()&&!intentionalLeave){e.preventDefault();e.returnValue='';}});
  function openIncoming(hash){try{read(decode(hash),false);show('reader',{historyMode:'replace',focus:false});}catch(e){show('error',{historyMode:'replace',focus:false});}}
  if(initialHash.startsWith('#l='))openIncoming(initialHash);else{renderLibrary();if(params.get('view')==='preview')go('detail',{historyMode:'replace',focus:false});else go('library',{historyMode:'replace',focus:false});}
 })();
