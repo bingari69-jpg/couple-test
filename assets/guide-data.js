@@ -2,17 +2,17 @@
   'use strict';
   const three=(a,b,c)=>[a,b,c];
   window.GATCHI_GUIDES={
-    rps:{title:'가위바위보',group:'기록 대결',icon:'✊',rule:'가위, 바위, 보 중 하나를 골라 친구와 승부해요.',steps:three('내 패 고르기','카톡으로 보내기','둘의 패 보기'),tip:'내 패는 친구가 고른 뒤에 보여요.',practice:'choice'},
+    rps:{title:'가위바위보',group:'기록 대결',icon:'✊',rule:'가위, 바위, 보 중 하나를 골라 친구와 승부해요.',steps:three('내 패 고르기','카톡으로 보내기','둘의 패 보기'),tip:'내 패는 친구가 고른 뒤에 보여요.',practice:'rps'},
     ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'stop'},
     react:{title:'반응속도 대결',group:'기록 대결',icon:'⚡',rule:'화면이 초록색으로 바뀌는 순간 빠르게 눌러요.',steps:three('화면을 보고 기다리기','초록색에 누르기','평균 기록 보내기'),tip:'초록색이 되기 전에 누르면 다시 해야 해요.',practice:'reaction'},
     num25:{title:'1에서 25까지',group:'기록 대결',icon:'🔢',rule:'1부터 25까지 숫자를 차례대로 눌러요.',steps:three('1부터 찾기','25까지 차례로 누르기','걸린 시간 비교'),tip:'같은 숫자판으로 친구와 겨뤄요.',practice:'tap'},
     mole:{title:'두더지 잡기',group:'기록 대결',icon:'🐹',rule:'20초 동안 나타나는 두더지를 빠르게 눌러요.',steps:three('시작 누르기','두더지 잡기','점수 보내기'),tip:'황금은 +3점, 폭탄은 −3점이에요.',practice:'tap'},
     ufo:{title:'UFO 요격',group:'기록 대결',icon:'🛸',rule:'20초 동안 UFO를 찾아 미사일로 맞혀요.',steps:three('미사일 준비','UFO 누르기','명중 기록 비교'),tip:'아군 드론을 누르면 점수가 줄어요.',practice:'tap'},
     tap:{title:'10초 연타',group:'기록 대결',icon:'👆',rule:'10초 동안 버튼을 최대한 많이 눌러요.',steps:three('손가락 준비','10초 동안 누르기','횟수 비교'),tip:'두 손가락을 사용해도 괜찮아요.',practice:'tap'},
-    stroop:{title:'색깔 함정',group:'기록 대결',icon:'🎨',rule:'글자가 뜻하는 색이 아니라 실제 보이는 색을 골라요.',steps:three('색깔 보기','보이는 색 누르기','정답 수 비교'),tip:'글자를 읽지 말고 색만 보세요.',practice:'choice'},
-    arrow:{title:'화살표 함정',group:'기록 대결',icon:'↔️',rule:'화살표 방향으로 밀고, 빨간 테두리일 때만 반대로 밀어요.',steps:three('화살표 보기','맞는 쪽으로 밀기','점수 비교'),tip:'빨간 테두리가 보이면 반대 방향이에요.',practice:'choice'},
+    stroop:{title:'색깔 함정',group:'기록 대결',icon:'🎨',rule:'글자가 뜻하는 색이 아니라 실제 보이는 색을 골라요.',steps:three('색깔 보기','보이는 색 누르기','정답 수 비교'),tip:'글자를 읽지 말고 색만 보세요.',practice:'color'},
+    arrow:{title:'화살표 함정',group:'기록 대결',icon:'↔️',rule:'화살표 방향으로 밀고, 빨간 테두리일 때만 반대로 밀어요.',steps:three('화살표 보기','맞는 쪽으로 밀기','점수 비교'),tip:'빨간 테두리가 보이면 반대 방향이에요.',practice:'arrow'},
     stop:{title:'딱 멈춰',group:'기록 대결',icon:'🎯',rule:'움직이는 표시가 한가운데 왔을 때 멈춰요.',steps:three('움직임 보기','가운데서 멈추기','오차 비교'),tip:'5번의 오차를 더해 더 작은 사람이 이겨요.',practice:'stop'},
-    nonsense:{title:'넌센스 대결',group:'기록 대결',icon:'💡',rule:'같은 다섯 문제를 풀고 점수와 시간을 비교해요.',steps:three('문제 풀기','정답 확인하기','친구에게 도전하기'),tip:'몰라도 재미있게 하나를 골라보세요.',practice:'choice'},
+    nonsense:{title:'넌센스 대결',group:'기록 대결',icon:'💡',rule:'같은 다섯 문제를 풀고 점수와 시간을 비교해요.',steps:three('문제 풀기','정답 확인하기','친구에게 도전하기'),tip:'몰라도 재미있게 하나를 골라보세요.',practice:'nonsense'},
     delivery:{title:'배달 텔레파시',group:'마음 맞히기',icon:'🍕',rule:'내가 먹고 싶은 메뉴를 친구가 맞히는 놀이예요.',steps:three('내 메뉴 고르기','친구에게 보내기','친구의 예상 보기'),tip:'친구가 고르기 전까지 정답은 보이지 않아요.'},
     ranking:{title:'내 취향 맞혀봐',group:'마음 맞히기',icon:'⭐',rule:'보기 세 개 중 내가 가장 좋아하는 것을 친구가 맞혀요.',steps:three('내 최애 고르기','친구에게 보내기','몇 개 맞혔는지 보기'),tip:'생각을 오래 하지 말고 가장 먼저 끌리는 것을 고르세요.'},
     mbti:{title:'MBTI 맞히기',group:'마음 맞히기',icon:'🧩',rule:'친구가 생각하는 나의 MBTI 네 글자를 맞혀봐요.',steps:three('내 답 만들기','친구에게 보내기','서로의 생각 비교'),tip:'정답보다 친구가 나를 어떻게 보는지 이야기해 보세요.'},

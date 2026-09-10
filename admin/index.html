@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>같이놀자 관리센터</title>
-  <link rel="stylesheet" href="admin.css?v=20260911-guide1">
+  <link rel="stylesheet" href="admin.css?v=20260911-guide2">
 </head>
 <body>
   <section class="login-view" id="loginView">
@@ -82,7 +82,7 @@
             <label>한 줄 규칙<textarea id="gameRule" maxlength="140" rows="2" placeholder="무엇을 하는 게임인지 한 문장으로 적어요."></textarea></label>
             <div class="guide-step-fields"><label>1단계<input id="gameStep1" maxlength="40"></label><label>2단계<input id="gameStep2" maxlength="40"></label><label>3단계<input id="gameStep3" maxlength="40"></label></div>
             <label>도움말<input id="gameTip" maxlength="100" placeholder="헷갈리기 쉬운 점을 알려 주세요."></label>
-            <label>짧은 연습<select id="gamePractice"><option value="">연습 없음</option><option value="tap">누르기 연습</option><option value="reaction">반응속도 연습</option><option value="stop">멈추기 연습</option><option value="choice">고르기 연습</option></select></label>
+            <label>짧은 연습<select id="gamePractice"><option value="">연습 없음</option><option value="tap">누르기 연습</option><option value="reaction">반응속도 연습</option><option value="stop">멈추기 연습</option><option value="rps">가위바위보 연습</option><option value="color">색깔 함정 연습</option><option value="arrow">화살표 함정 연습</option><option value="nonsense">넌센스 문제 연습</option></select></label>
           </fieldset>
           <label>썸네일 주소<div class="upload-row"><input id="gameThumbnail" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input id="gameImageFile" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label>
           <div class="field-grid"><label class="check"><input id="gameFeatured" type="checkbox"> 홈 추천</label><label>광고<select id="gameAdsMode"><option value="inherit">공통 설정</option><option value="off">사용 안 함</option></select></label></div>
@@ -127,8 +127,8 @@
 
   <script src="../assets/supabase-data.js?v=20260911-admin"></script>
   <script src="../assets/home-catalog.js?v=20260911-admin"></script>
-  <script src="../assets/guide-data.js?v=20260911-guide1"></script>
+  <script src="../assets/guide-data.js?v=20260911-guide2"></script>
   <script src="admin-api.js?v=20260911-1"></script>
-  <script src="admin.js?v=20260911-guide1"></script>
+  <script src="admin.js?v=20260911-guide2"></script>
 </body>
 </html>
