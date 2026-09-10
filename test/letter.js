@@ -47,6 +47,7 @@ async function main(){
  $('packLetter').click();assert.equal($('send').hidden,false);const url=$('shareLink').value;const p=JSON.parse(Buffer.from(url.split('#l=')[1],'base64url'));
  assert.equal(p.w,body);assert.equal(p.tpl,'winter');assert.equal(p.font,'serif');assert.equal(p.size,23);assert.equal(p.n,'지민');
  $('copyLetter').click();await tick();assert.equal(w.copied,url);
+ let nativeShared;w.navigator.share=async data=>{nativeShared=data;};$('kakaoSend').click();await tick();assert.deepEqual(Object.keys(nativeShared),['url']);assert.equal(nativeShared.url,url);delete w.navigator.share;
  let sent,done;
  w.kakaoShare=(options)=>{sent=options;return new Promise(resolve=>{done=resolve;});};
  $('kakaoSend').click();await tick();assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);

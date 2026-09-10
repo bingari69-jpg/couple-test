@@ -30,9 +30,7 @@
       try{
         let slug='',isResult=false;
         try{const u=new URL(o.url);const m=u.pathname.match(/\/t\/(.+?)\/?$/);slug=m?m[1]:'';isResult=u.hash.startsWith('#r=');}catch(e){}
-        // Letter URLs carry the full message. Keep the long URL only once, in the
-        // mobile field Kakao Talk uses on phones, to avoid packet duplication.
-        const link = slug==='letter' ? { mobileWebUrl:o.url } : { mobileWebUrl:o.url, webUrl:o.url };
+        const link = { mobileWebUrl:o.url, webUrl:o.url };
         const cardTitle=CARD_TITLES[slug];
         const message = o.textOnly ? {
           objectType:"text",
