@@ -23,6 +23,7 @@ const read=file=>fs.readFileSync(path.join(ROOT,file),'utf8');
   assert(read('index.html').includes('<small class="brand-tagline">카카오톡으로 보내고 같이 놀아요</small>'),'로고 아래 카카오톡 설명 누락');
   assert(!read('index.html').includes('class="kakao-intro"'),'메뉴 아래 중복 설명은 없어야 함');
   assert(!read('assets/help-guide.js').includes('처음이야? 10초면 알 수 있어!'),'홈의 큰 사용법 카드는 제거해야 함');
+  assert(!read('t/letter/index.html').includes('help-guide.js'),'편지 화면에는 게임 방법 창이 뜨면 안 됨');
 
   const runtime=read('assets/help-guide.js').replace(/<\/script/gi,'<\\/script');
   const data=read('assets/guide-data.js').replace(/<\/script/gi,'<\\/script');

@@ -47,9 +47,10 @@ async function main(){
  $('packLetter').click();assert.equal($('send').hidden,false);const url=$('shareLink').value;const p=JSON.parse(Buffer.from(url.split('#l=')[1],'base64url'));
  assert.equal(p.w,body);assert.equal(p.tpl,'winter');assert.equal(p.font,'serif');assert.equal(p.size,23);assert.equal(p.n,'지민');
  $('copyLetter').click();await tick();assert.equal(w.copied,url);
- Object.defineProperty(w.navigator,'userAgent',{value:'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36',configurable:true});let nativeShared;w.navigator.share=async data=>{nativeShared=data;};$('kakaoSend').click();await tick();assert.deepEqual(Object.keys(nativeShared),['url']);assert.equal(nativeShared.url,url);
+ Object.defineProperty(w.navigator,'userAgent',{value:'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36',configurable:true});let nativeShared,sent;w.navigator.share=async data=>{nativeShared=data;};w.kakaoShare=async options=>{sent=options;return true;};$('kakaoSend').click();await tick();assert.equal(nativeShared,undefined);assert.equal(sent.url,url);assert.equal(sent.textOnly,false);
+ w.kakaoShare=async(options,fallback)=>{await fallback();return false;};$('kakaoSend').click();await tick();assert.deepEqual(Object.keys(nativeShared),['url']);assert.equal(nativeShared.url,url);nativeShared=undefined;
  Object.defineProperty(w.navigator,'userAgent',{value:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',configurable:true});let windowsShareCount=0;w.navigator.share=async()=>{windowsShareCount++;};
- let sent,done;
+ let done;
  w.kakaoShare=(options)=>{sent=options;return new Promise(resolve=>{done=resolve;});};
  $('kakaoSend').click();await tick();assert.equal(windowsShareCount,0);assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);
  done(true);await tick();assert.equal($('kakaoSend').disabled,false);
@@ -67,6 +68,7 @@ async function main(){
  const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');
  assert.match(homeCss,/\.hero-art\{height:auto\}/);
  assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/menu5/);
+ assert.equal(fs.readFileSync(path.join(root,'t/letter/index.html'),'utf8').includes('help-guide.js'),false);
  assert.equal(hd.getElementById('catalogList').children.length,23);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
  assert.deepEqual(catalogCards.slice(0,12).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/nonsense/','t/num25/','t/ufo/','t/stop/','t/ten/','t/tap/','t/react/','t/delivery/','t/stroop/','t/arrow/']);
