@@ -47,10 +47,11 @@ async function main(){
  $('packLetter').click();assert.equal($('send').hidden,false);const url=$('shareLink').value;const p=JSON.parse(Buffer.from(url.split('#l=')[1],'base64url'));
  assert.equal(p.w,body);assert.equal(p.tpl,'winter');assert.equal(p.font,'serif');assert.equal(p.size,23);assert.equal(p.n,'지민');
  $('copyLetter').click();await tick();assert.equal(w.copied,url);
- let nativeShared;w.navigator.share=async data=>{nativeShared=data;};$('kakaoSend').click();await tick();assert.deepEqual(Object.keys(nativeShared),['url']);assert.equal(nativeShared.url,url);delete w.navigator.share;
+ Object.defineProperty(w.navigator,'userAgent',{value:'Mozilla/5.0 (Linux; Android 14) AppleWebKit/537.36 Chrome/126 Mobile Safari/537.36',configurable:true});let nativeShared;w.navigator.share=async data=>{nativeShared=data;};$('kakaoSend').click();await tick();assert.deepEqual(Object.keys(nativeShared),['url']);assert.equal(nativeShared.url,url);
+ Object.defineProperty(w.navigator,'userAgent',{value:'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/126 Safari/537.36',configurable:true});let windowsShareCount=0;w.navigator.share=async()=>{windowsShareCount++;};
  let sent,done;
  w.kakaoShare=(options)=>{sent=options;return new Promise(resolve=>{done=resolve;});};
- $('kakaoSend').click();await tick();assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);
+ $('kakaoSend').click();await tick();assert.equal(windowsShareCount,0);assert.equal(sent.url,url);assert.equal(sent.textOnly,false);assert.equal($('kakaoSend').disabled,true);assert.equal($('kakaoSendText').disabled,true);
  done(true);await tick();assert.equal($('kakaoSend').disabled,false);
  const leaveAfterShare=new w.Event('beforeunload',{cancelable:true});w.dispatchEvent(leaveAfterShare);assert.equal(leaveAfterShare.defaultPrevented,false);
  $('kakaoSendText').click();await tick();assert.equal(sent.textOnly,true);assert.equal(sent.url,url);done(true);await tick();assert.equal($('kakaoSendText').disabled,false);
