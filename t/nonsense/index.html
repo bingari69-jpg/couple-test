@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>넌센스 대결 — 이걸 맞힌다고?</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="넌센스 대결 — 이걸 맞힌다고?">
+<meta property="og:description" content="100문제 중 무작위 5문제. 같은 문제로 붙어보자!">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/og/og-home-v2.png?v=20260910-nonsense">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/nonsense/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js"></script>
+<script src="../../assets/kakao-share.js?v=20260910-nonsense"></script>
+<script src="../../assets/bet.js?v=20260910-bets2"></script>
+<script src="../../assets/duel-engine.js?v=20260910-bets2"></script>
+<script src="../../assets/nonsense-questions.js?v=20260910-100"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{--bg:#fff8ed;--card:#fffdf9;--line:#eddfd0;--ink:#30231d;--sub:#84766b;--dim:#ab9a8c;--coral:#f66b59;--violet:#8d70bd;--yellow:#ffd778;--sp:clamp(16px,4vw,24px)}
+  *{box-sizing:border-box;margin:0;padding:0}html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.55;min-height:100vh;padding:var(--sp) var(--sp) 60px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}.hidden{display:none!important}.screen{animation:fade .25s ease}@keyframes fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+  .tag{display:inline-block;font-size:12px;font-weight:800;color:#a55a45;background:#fff7ea;border:1px solid #e9cbb4;border-radius:999px;padding:5px 11px;margin-bottom:13px}
+  h1{font-size:clamp(29px,8vw,39px);line-height:1.25;font-weight:900;letter-spacing:-.035em;margin-bottom:10px}h1 b{color:var(--coral)}
+  .lead{font-size:15px;line-height:1.75;color:var(--sub);margin-bottom:18px;word-break:keep-all}.lead strong{color:var(--ink)}
+  .q{display:block;font-size:13px;color:var(--sub);font-weight:700;margin:16px 0 8px}input[type=text]{width:100%;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:14px;padding:13px 15px;font:inherit;font-size:17px;font-weight:700}input::placeholder{color:var(--dim);font-weight:500}input:focus{outline:none;border-color:var(--violet)}
+  .rules{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:16px 0 20px}.rules span{background:#fff;border:1px solid var(--line);border-radius:13px;padding:10px 5px;text-align:center;font-size:12px;color:var(--sub);line-height:1.5}.rules b{display:block;font-size:16px;color:var(--ink)}
+  .card{background:#fff;border:2px solid var(--line);border-radius:20px;padding:17px;margin:14px 0}.lockrow{display:flex;gap:10px;align-items:center;color:var(--sub);font-size:14px}.lockrow .e{font-size:25px}.lockrow b{color:var(--ink)}
+  .start-card{background:linear-gradient(145deg,#fff4cc,#ffe1d5);border:1px solid #f0d5ad;border-radius:24px;padding:22px 18px;text-align:center;margin-top:12px}.start-card .bubble{font-size:54px;line-height:1}.start-card p{font-size:14px;color:#8e6e58;margin:9px 0 16px}
+  .hud{display:flex;align-items:center;justify-content:space-between;margin:15px 0 10px;padding:0 2px}.progress{font-size:14px;font-weight:850;color:var(--coral)}.clock{font-variant-numeric:tabular-nums;font-size:14px;font-weight:800;color:var(--sub)}
+  .bar{height:7px;background:#efe3d8;border-radius:99px;overflow:hidden;margin-bottom:14px}.bar i{display:block;height:100%;width:20%;border-radius:99px;background:linear-gradient(90deg,var(--coral),#f4a251);transition:width .25s ease}
+  .quiz-card{background:#fff;border:2px solid var(--line);border-radius:24px;padding:22px 17px 18px;box-shadow:0 9px 30px #6b3f2010}.kind{font-size:11px;font-weight:850;letter-spacing:.08em;color:var(--violet);margin-bottom:10px}.question{font-size:clamp(22px,6.3vw,29px);font-weight:900;line-height:1.42;letter-spacing:-.025em;word-break:keep-all;min-height:74px;display:flex;align-items:center}
+  .answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.answer{min-height:62px;border:1px solid #e7d9cf;background:#fff8f1;color:var(--ink);border-radius:16px;padding:10px 8px;font:inherit;font-size:14px;font-weight:750;line-height:1.4;cursor:pointer;word-break:keep-all;transition:transform .08s,border-color .15s,background .15s}.answer:nth-child(even){background:#f5f0fb;border-color:#e1d8ed}.answer:active{transform:scale(.97)}.answer:disabled{cursor:default;opacity:.5}.answer.correct{background:#dcf5e9;border:2px solid #59a47f;color:#236d4d;opacity:1}.answer.wrong{background:#ffe4df;border:2px solid #e47b68;color:#9c4032;opacity:1}
+  .reveal{min-height:47px;margin-top:13px;border-radius:14px;background:#fff4d6;padding:11px 13px;font-size:14px;color:#845d2f;text-align:center;font-weight:750}.reveal.ok{background:#ddf4e9;color:#267052}.reveal.no{background:#ffe9e4;color:#984839}
+  .bigbtn,.btn{width:100%;border:0;border-radius:18px;padding:16px;font:inherit;font-size:17px;font-weight:850;cursor:pointer}.bigbtn{background:linear-gradient(110deg,#ff765e,#ff6459);color:white;font-size:21px}.btn{margin-top:10px}.btn-main{background:var(--yellow);color:var(--ink)}.btn-blue{background:var(--violet);color:#fff}.btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line)}.btn-ghost{background:transparent;color:#98877a;font-weight:600;font-size:14px}
+  .mine-score{text-align:center;padding:3px 0 4px}.mine-score strong{display:block;font-size:40px;color:var(--coral);line-height:1.2}.mine-score span{font-size:13px;color:var(--sub)}
+  .linkbox{margin-top:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:11px;font-family:ui-monospace,monospace;font-size:11px;color:var(--sub);word-break:break-all;max-height:70px;overflow:auto;-webkit-user-select:text;user-select:text}.hint,.homelink{display:block;text-align:center;color:var(--dim);font-size:12.5px;line-height:1.65;margin-top:12px}.homelink{text-decoration:none;margin-top:21px}
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:stretch;margin:16px 0 10px}.side{background:#fff;border:2px solid var(--line);border-radius:20px;padding:17px 7px;text-align:center}.side .n{font-size:13px;color:var(--sub);font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.side .t{font-size:clamp(31px,9vw,39px);font-weight:900;line-height:1.1;margin-top:6px}.side .t small{font-size:.4em;color:var(--sub)}.side .d{font-size:12px;color:var(--sub);margin-top:6px}.side.win{border-color:var(--coral);background:#fff2ed}.side.lose{opacity:.65}.vs{align-self:center;color:var(--dim);font-size:13px;font-weight:900}.verdict{text-align:center;font-size:clamp(25px,7vw,33px);font-weight:900;margin-top:8px}.verdict.win{color:var(--coral)}.verdict.lose{color:var(--violet)}.verdict.tie{color:#648e89}.sub-verdict{text-align:center;color:var(--sub);font-size:14px;line-height:1.65}.title-badge{display:table;margin:14px auto;background:#fff0c9;border:1px solid #ebce8e;border-radius:999px;padding:8px 15px;font-size:13px;font-weight:800}.tally,.notyet{margin-top:14px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:12px 14px;text-align:center;font-size:14px}.notyet{background:#fff3d9;color:#866841}.next{margin-top:22px}.next h3{font-size:13px;color:var(--sub);margin-bottom:9px}.next a{display:block;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;text-decoration:none;color:var(--ink);font-size:14px;font-weight:750;margin-bottom:8px}.next small{display:block;color:var(--dim);font-weight:500;margin-top:2px}
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:#46372e;color:#fff;font-size:14px;font-weight:750;padding:12px 20px;border-radius:99px;opacity:0;pointer-events:none;transition:.25s;max-width:90vw;text-align:center;z-index:50}
+  @media(max-width:350px){.answers{grid-template-columns:1fr}.question{font-size:23px}.rules span{font-size:11px}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260910-nonsense">
+<script defer src="../../assets/game-ui.js?v=20260910-nonsense"></script>
+</head>
+<body class="game-page" data-game="nonsense">
+<div class="wrap">
+  <section class="screen" id="s-play">
+    <span class="tag" id="playTag">넌센스 대결</span>
+    <h1 id="playHead">이걸 맞힌다고?<br><b>5문제만 붙어봐.</b></h1>
+    <p class="lead" id="playLead"><strong>100문제 중 무작위 5개.</strong> 정답 수가 같으면 더 빨리 푼 사람이 이겨요. 내가 받은 문제와 보기 그대로 상대에게 갑니다.</p>
+
+    <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 점수는 네가 다 푼 뒤 공개돼요.</span></div></div>
+    <div class="card hidden" id="tallyCard"><div id="tallyText"></div></div>
+
+    <label class="q" for="nameIn">내 이름 (선택)</label>
+    <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+    <div class="rules" id="rules"><span><b>100</b>문제은행</span><span><b>5</b>무작위 출제</span><span><b>1회</b>같은 문제 대결</span></div>
+    <div class="start-card" id="startCard"><div class="bubble" aria-hidden="true">🤔</div><p>시간은 시작 버튼을 누르는 순간부터 재요.</p><button class="bigbtn" id="startBtn">5문제 시작하기</button></div>
+
+    <div class="hidden" id="quizArea">
+      <div class="hud"><span class="progress" id="progress">1 / 5</span><span class="clock" id="clock">0.0초</span></div>
+      <div class="bar"><i id="barFill"></i></div>
+      <article class="quiz-card">
+        <div class="kind" id="kind">CLASSIC</div>
+        <div class="question" id="question"></div>
+        <div class="answers" id="answers"></div>
+        <div class="reveal hidden" id="reveal" role="status" aria-live="polite"></div>
+      </article>
+    </div>
+
+    <div class="hidden" id="afterPlay">
+      <div class="mine-score"><strong id="myScore">0 / 5</strong><span id="myTime">0.0초</span></div>
+      <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>내 점수를 봉인했어요.</b><br>상대가 같은 5문제를 풀면 함께 공개돼요.</span></div></div>
+      <div class="linkbox hidden" id="linkbox"></div>
+      <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+      <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+      <p class="hint hidden" id="sandboxNote">지금은 미리보기라 배포 주소로 링크를 만들었어요.</p>
+      <p class="hint">문제와 보기 순서까지 똑같아서 공평해요.</p>
+    </div>
+    <a class="homelink" href="../../#all">다른 놀이 보기 →</a>
+  </section>
+
+  <section class="screen hidden" id="s-result">
+    <span class="tag" id="resTag">결과</span>
+    <div class="versus">
+      <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+      <div class="vs">VS</div>
+      <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+    </div>
+    <div class="verdict" id="verdict"></div>
+    <p class="sub-verdict" id="subVerdict"></p>
+    <div class="title-badge" id="titleBadge"></div>
+    <div class="tally hidden" id="tallyBox"></div>
+    <div class="notyet hidden" id="notYet"><b>상대는 아직 결과를 몰라요.</b> 결과 링크를 보내주세요.</div>
+    <div class="hidden" id="respActions">
+      <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+      <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+      <div class="linkbox hidden" id="resLinkbox"></div>
+      <button class="btn btn-blue" id="again">새 5문제로 재도전</button>
+    </div>
+    <div class="hidden" id="viewActions"><button class="btn btn-blue" id="again2">새 5문제로 재도전</button></div>
+    <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+    <a class="btn btn-sub" href="../../#all" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+  </section>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+const ROUND_SIZE=5, SCORE_UNIT=100000;
+const LABEL={classic:'레전드 클래식',word:'말장난 주의',twist:'반전 수수께끼'};
+const NEXT=[
+  {path:'../rps/',title:'가위바위보 도전장',desc:'내가 먼저 내고 상대에게 보내기.'},
+  {path:'../num25/',title:'1에서 25까지',desc:'같은 숫자판으로 속도 대결.'},
+  {path:'../crash/',title:'20분 후 추락합니다',desc:'정답 없는 선택을 나란히 비교.'}
+];
+function mulberry32(a){return function(){a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function shuffle(list,rnd){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function packOf(seed){
+  const rnd=mulberry32(seed>>>0), picked=[];
+  [['classic',2],['word',2],['twist',1]].forEach(([category,count])=>{
+    const pool=shuffle(NONSENSE_QUESTIONS.filter(x=>x.category===category),rnd);
+    for(const q of pool){if(picked.some(x=>x.a===q.a))continue;picked.push(q);if(picked.filter(x=>x.category===category).length===count)break;}
+  });
+  return shuffle(picked,rnd).map(q=>{const options=shuffle([q.a].concat(q.w),rnd);return Object.assign({},q,{options,correct:options.indexOf(q.a)});});
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+const packValue=(score,ms)=>score*SCORE_UNIT+Math.min(SCORE_UNIT-1,Math.max(1,Math.round(ms/10)));
+const unpack=v=>({score:Math.floor(v/SCORE_UNIT),ms:(v%SCORE_UNIT)*10});
+const metric=v=>{const x=unpack(v);return x.score*SCORE_UNIT-Math.round(x.ms/10);};
+const fmt=ms=>(ms/1000).toFixed(1);
+const titleFor=m=>['말장난 철벽 방어','아직은 맑은 정신','슬슬 웃음이 새는 중','넌센스 적응 완료','숨은 말장난 고수','넌센스 유단자'][Math.max(0,Math.min(5,Math.ceil(m/SCORE_UNIT)))];
+
+const state=Duel.setup({
+  deployBase:'https://bingari69-jpg.github.io/couple-test/t/nonsense/',
+  og:'https://bingari69-jpg.github.io/couple-test/og/og-home-v2.png?v=20260910-nonsense',imageWidth:1200,imageHeight:630,
+  gameName:'넌센스 5문제',challengeDesc:'100문제 중 무작위 5개. 내가 받은 문제와 보기 그대로 풀고 점수로 붙어봐.',
+  next:NEXT,higherWins:true,metric,hasSeed:true,scrollToShare:true,
+  state:{seed:0,pack:[],index:0,score:0,mask:0,playing:false,t0:0,raf:0,nextTimer:0},
+  titleFor,
+  recordCell:x=>`${unpack(x.v).score}<small>/5</small>`,
+  detailCell:x=>`풀이 시간 ${fmt(unpack(x.v).ms)}초`,
+  histRow:(r,isA,i)=>{const a=unpack(r[1]),b=unpack(r[3]);return `${i+1}판 · ${esc(who(r[0],isA))} ${a.score}개 vs ${esc(who(r[2],!isA))} ${b.score}개`;},
+  verdictText:o=>o==='win'?'내가 이겼다!':o==='lose'?'상대가 이겼다':'완벽한 무승부!',
+  subVerdictText:(o,me,them,meL,themL)=>{const a=unpack(me.v),b=unpack(them.v);if(a.score!==b.score)return `${a.score}개 vs ${b.score}개 — 정답을 더 많이 맞힌 쪽이 승리!`;if(o==='tie')return `${a.score}개, ${fmt(a.ms)}초까지 완전히 같아요.`;return `둘 다 ${a.score}개 정답. ${fmt(Math.abs(a.ms-b.ms))}초 차이로 승부가 났어요.`;},
+  challengeHead:p=>`<b>${esc(p.n||'상대')}</b>${subjTail(p.n||'상대')} 문제를 보냈어.<br>같은 5문제로 붙어봐.`,
+  againHead:()=>`이번엔 <b>새로운 5문제.</b><br>다시 붙어봐.`,
+  resultTitle:(me,them,tail,nm)=>{const a=unpack(me.v),b=unpack(them.v);return `${nm(me.n)}${a.score}개 vs ${nm(them.n)}${b.score}개${tail}`;},
+  resultDesc:'100문제 중 같은 5문제로 붙었다. 누가 더 많이 맞혔을까?',
+  onOpenChallenge:p=>{state.seed=p.s>>>0;state.pack=packOf(state.seed);resetRound();},
+  newRound:()=>{state.seed=newSeed();state.pack=packOf(state.seed);resetRound();},
+  resetPlay:resetRound
+});
+
+function resetRound(){
+  cancelAnimationFrame(state.raf);clearTimeout(state.nextTimer);state.index=0;state.score=0;state.mask=0;state.playing=false;
+  $('quizArea').classList.add('hidden');$('afterPlay').classList.add('hidden');$('startCard').classList.remove('hidden');$('rules').classList.remove('hidden');$('startBtn').disabled=false;$('startBtn').textContent='5문제 시작하기';$('clock').textContent='0.0초';
+}
+function tick(){if(!state.playing)return;$('clock').textContent=fmt(performance.now()-state.t0)+'초';state.raf=requestAnimationFrame(tick);}
+function startRound(){
+  if(state.playing)return;state.index=0;state.score=0;state.mask=0;state.playing=true;state.t0=performance.now();
+  $('startCard').classList.add('hidden');$('rules').classList.add('hidden');$('quizArea').classList.remove('hidden');renderQuestion();tick();track('nonsense_start',{challenge:state.incoming?1:0});
+}
+function renderQuestion(){
+  const q=state.pack[state.index];$('progress').textContent=`${state.index+1} / ${ROUND_SIZE}`;$('barFill').style.width=((state.index+1)/ROUND_SIZE*100)+'%';$('kind').textContent=LABEL[q.category];$('question').textContent=q.q;
+  const box=$('answers');box.innerHTML='';$('reveal').className='reveal hidden';
+  q.options.forEach((text,i)=>{const btn=document.createElement('button');btn.className='answer';btn.type='button';btn.textContent=text;btn.onclick=()=>choose(i);box.append(btn);});
+}
+function choose(choice){
+  if(!state.playing)return;const q=state.pack[state.index],buttons=[...$('answers').children];buttons.forEach(b=>b.disabled=true);buttons[q.correct].classList.add('correct');
+  const ok=choice===q.correct;if(ok){state.score++;state.mask|=(1<<state.index);}else buttons[choice].classList.add('wrong');
+  $('reveal').textContent=ok?`정답! ${q.a} 🎉`:`정답은 ${q.a} 😆`;$('reveal').className='reveal '+(ok?'ok':'no');
+  state.nextTimer=setTimeout(()=>{state.index++;if(state.index<ROUND_SIZE)renderQuestion();else finishRound();},650);
+}
+function finishRound(){
+  state.playing=false;cancelAnimationFrame(state.raf);const elapsed=Math.max(10,performance.now()-state.t0);$('quizArea').classList.add('hidden');$('myScore').textContent=`${state.score} / 5`;$('myTime').textContent=fmt(elapsed)+'초';track('nonsense_finish',{score:state.score});Duel.finish(packValue(state.score,elapsed),{mask:state.mask});
+}
+$('startBtn').onclick=startRound;
+Duel.start();
+</script>
+</body>
+</html>

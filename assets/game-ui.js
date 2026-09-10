@@ -23,7 +23,8 @@
     stroop: ['색깔 함정', 'atlas', 13, '#e7f1d8', '속으면 안 돼!', '글자에 속지 말고 색깔만 봐.'],
     arrow: ['화살표 함정', 'atlas', 14, '#e0f0fa', '이쪽? 아니, 저쪽!', '빨간 테두리라면 반대로!'],
     stop: ['딱 멈춰', 'atlas', 15, '#fff0cf', '지금이야, 딱!', '가운데를 향해 감각을 집중해봐.'],
-    exam: ['시험지 보내기', 'atlas', 16, '#ece6f8', '같이 공부할래?', '단어를 담아 작은 시험지를 보내봐.']
+    exam: ['시험지 보내기', 'atlas', 16, '#ece6f8', '같이 공부할래?', '단어를 담아 작은 시험지를 보내봐.'],
+    nonsense: ['넌센스 대결', 'atlas', 16, '#fff0d3', '이걸 맞힌다고?', '100문제 중 같은 5문제로 붙어봐.']
   };
   function init() {
     const config = games[slug];
@@ -74,7 +75,7 @@
       steps.className = 'game-steps'; steps.setAttribute('aria-label', '놀이 방법');
       const labels = ['ladder', 'groups', 'exam'].includes(slug)
         ? ['내용 넣기', '링크 보내기', '함께 열기']
-        : ['ten', 'react', 'num25', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop'].includes(slug)
+        : ['ten', 'react', 'num25', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
           ? ['한판 하기', '도전장 보내기', '기록 비교'] : ['내 답 고르기', '링크 보내기', '함께 보기'];
       labels.forEach((label, i) => {
         const li = document.createElement('li');

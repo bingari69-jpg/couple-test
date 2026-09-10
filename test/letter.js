@@ -67,21 +67,21 @@ async function main(){
  const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');
  assert.match(homeCss,/\.hero-art\{height:auto\}/);
  assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/mobile-hero/);
- assert.equal(hd.getElementById('catalogList').children.length,22);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
+ assert.equal(hd.getElementById('catalogList').children.length,23);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
- assert.deepEqual(catalogCards.slice(0,11).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/num25/','t/ufo/','t/stop/','t/ten/','t/tap/','t/react/','t/delivery/','t/stroop/','t/arrow/']);
- assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,22);
+ assert.deepEqual(catalogCards.slice(0,12).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/nonsense/','t/num25/','t/ufo/','t/stop/','t/ten/','t/tap/','t/react/','t/delivery/','t/stroop/','t/arrow/']);
+ assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,23);
  for(const a of catalogCards){assert.ok(fs.existsSync(path.join(root,a.getAttribute('href'),'index.html')));assert.ok(a.querySelector('.catalog-mascot'));assert.ok(a.querySelector('h3').textContent);assert.ok(a.querySelector('.catalog-tags').children.length);assert.equal(a.querySelector('.catalog-start').textContent,'시작하기 →');}
  for(const rel of ['연인','부부','친구','가족','전체']){
    [...hd.getElementById('catalogFilters').children].find(b=>b.textContent===rel).click();
    const shown=[...hd.querySelectorAll('#catalogList > a')];assert.ok(shown.length>0);
-   if(rel==='전체')assert.equal(shown.length,22);else assert.ok(shown.every(a=>[...a.querySelectorAll('.catalog-tags span')].some(t=>t.textContent===rel)));
+   if(rel==='전체')assert.equal(shown.length,23);else assert.ok(shown.every(a=>[...a.querySelectorAll('.catalog-tags span')].some(t=>t.textContent===rel)));
    assert.equal(hd.getElementById('all').hidden,false);
  }
  home.window.close();
  for(const [query,random,expected] of [['',0.49,'letter'],['',0.5,'play'],['?home=letter',0.9,'letter'],['?home=play',0.1,'play'],['?home=unknown',0.9,'play']]){
    const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
-   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,22);h.window.close();
+   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,23);h.window.close();
  }
  assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 450자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
 }

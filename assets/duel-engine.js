@@ -174,7 +174,7 @@
     /* 도전장 카톡 버튼 */
     if (cfg.shareChallenge !== false) {
       $("kakaoBtn").onclick = () => kakaoShare({
-        url: madeUrl, btn: "도전 받기", img: cfg.og,
+        url: madeUrl, btn: "도전 받기", img: cfg.og, imageWidth:cfg.imageWidth, imageHeight:cfg.imageHeight,
         title: `${Bet.titlePrefix(state.bet)}${state.name ? state.name + "의 " : ""}${cfg.gameName} 도전장 🔒`,
         desc: state.hist.length ? `${state.hist.length + 1}판째. 전적이 같이 실려 있어.` : cfg.challengeDesc
       }, () => copy(madeUrl, "카톡 공유를 못 열어 링크를 복사했어"));
@@ -262,7 +262,7 @@
           const wn = o === "tie" ? null : (o === "win" ? me.n : them.n);
           const tail = o === "tie" ? " — 무승부" : (wn ? ` — ${wn} 승` : "");
           $("kakaoRes").onclick = () => kakaoShare({
-            url: rurl, btn: "결과 보기", img: cfg.og,
+            url: rurl, btn: "결과 보기", img: cfg.og, imageWidth:cfg.imageWidth, imageHeight:cfg.imageHeight,
             title: cfg.resultTitle(me, them, tail, nm),
             desc: betCard || cfg.resultDesc
           }, () => copy(rurl, "카톡 공유를 못 열어 링크를 복사했어"));

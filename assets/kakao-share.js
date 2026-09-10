@@ -43,7 +43,7 @@
             title:cardTitle ? (slug==='letter'?'너에게 편지가 도착했어요':cardTitle+(isResult?' · 결과 도착':' · 초대 도착')) : o.title,
             description:cardTitle ? Array.from([o.title,o.desc].filter(Boolean).join(' · ')).slice(0,100).join('') : o.desc,
             imageUrl:cardTitle ? CARD_ROOT+slug.replace('/','-')+'.png?v=20260910-unified' : o.img,
-            imageWidth:800, imageHeight:cardTitle?480:800,
+            imageWidth:o.imageWidth||800, imageHeight:o.imageHeight||(cardTitle?480:800),
             link
           },
           // The default button inherits content.link; do not duplicate a long letter URL.
