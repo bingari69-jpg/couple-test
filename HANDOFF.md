@@ -96,7 +96,9 @@
 - RLS상 보낸 사람만 자신의 완료 행을 읽는다. 상대는 비밀 완료 코드로 첫 결과만 기록할 수 있다. 답변/이름을 GA 이벤트에 보내지 않는다.
 - 코드: `assets/result-notify.js`, `sw.js`, `supabase/functions/clever-service/index.ts`, `supabase/migrations/20260911_result_notifications.sql`. Dashboard가 배포한 실제 함수 이름은 `clever-service`이며 프런트 호출도 여기에 맞췄다.
 - 로컬 비밀키: `supabase/.env.local`(gitignore). 절대 커밋하지 않는다.
-- 아직 필요한 운영 단계: 완료 알림 SQL migration 실행, Edge Function 배포, `.env.local`의 VAPID 3개 값을 Supabase Function Secrets에 등록, 실제 휴대폰 A/B 알림 검사.
+- 운영 적용 완료: 완료 알림 SQL migration 실행, Edge Function `clever-service` 배포, VAPID 3개 Supabase Secrets 등록.
+- 실제 Supabase에서 익명 사용자 A/B로 초대 생성 → B 완료 → A만 결과 조회 → Edge Function `200 OK`와 전송 준비(`sent: 0`, 아직 구독 기기 없음)까지 검사했다.
+- 남은 확인은 실제 휴대폰 A에서 브라우저 알림 허용 후, 휴대폰 B가 게임을 끝냈을 때 알림 수신·결과 열기 실기기 검사다.
 
 ## 테스트·배포 확인
 
@@ -106,6 +108,7 @@
 - Playwright/Edge로 10개 내기 패널 상시 노출, 해제·선택·반응, 320/390px 화면 점검.
 - 타로는 별도 A/B/새 브라우저 관점, 세 장 개봉, 질문 복사, 공유, 모바일 너비 확인.
 - 실제 휴대폰 카카오톡 수신 UI/발송 성공을 모두 실기기로 검증한 것은 아니다.
+- GitHub Pages 배포 커밋 `8a32eb2` 성공. 공개 `result-notify.js`, 게임 캐시 버전, `sw.js` 반영과 개인키 미노출 확인.
 - 배포 전 `git diff --check`, 명시적 파일 staging, commit, `git push origin main`.
 - 배포 후 GitHub Pages Actions 성공 및 공개 HTML의 버전 쿼리·JS·이미지 실제 내용을 확인한다.
 - 버전 쿼리는 함께 갱신할 것. 이전에 공통 파일 누락/캐시로 신규 화면과 예전 공유 모듈이 섞인 문제가 있었다.
