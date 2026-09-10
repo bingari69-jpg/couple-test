@@ -81,3 +81,4 @@
 
 /* Keep intrinsic HTML dimensions from turning into a fixed 1024px height in mobile in-app browsers. */
 .hero-art{height:auto}
+.admin-link{display:inline-block;margin-top:12px;padding:5px 10px;border-radius:999px;color:#a99b90;font-size:11px;letter-spacing:.06em;text-decoration:none;border:1px solid #eee5dd}.admin-link:hover{color:#795f51;border-color:#d9c8bb;background:#fffaf5}.admin-link:focus-visible{outline:2px solid #d76c5a;outline-offset:3px}

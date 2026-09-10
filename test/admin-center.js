@@ -27,6 +27,7 @@ function runtimeDom(url, value) {
   ['app_admins','app_config_state','app_config_versions','analytics_events','get_published_app_config','admin_save_app_draft','admin_publish_app_config','admin_restore_app_version','admin_get_app_stats'].forEach(name => assert(migration.includes(name), `migration ${name} 누락`));
   assert(migration.includes('enable row level security'), '관리 테이블 RLS 누락');
   assert(!migration.match(/service_role|sb_secret_/i), '비밀키가 파일에 들어가면 안 됨');
+  assert(read('index.html').includes('class="admin-link" href="admin/"'), '홈의 관리자 진입 링크 누락');
 
   const home = runtimeDom('https://example.test/couple-test/?admin_preview=1', config());
   await new Promise(resolve => setTimeout(resolve, 20));
