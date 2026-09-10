@@ -96,6 +96,33 @@ const CARDS = [
  ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
  ['exam','atlas',16,'#e9e5fa',['친구','가족'],'단어로 시험지 만들기. 채점까지 한 번에.']
 ];
-window.HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
+const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
  ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
 }));
+window.HOME_ITEMS=LOCAL_HOME_ITEMS;
+
+// Supabase가 열리면 제목·설명·순서·공개 여부를 서버 값으로 덮어쓴다.
+// 연결에 실패하거나 아직 등록되지 않은 항목은 기존 로컬 목록을 그대로 쓴다.
+if(window.SupabaseData){
+  window.SupabaseData.getGameCatalog().then(rows=>{
+    if(!Array.isArray(rows)||!rows.length)return;
+    const localBySlug=new Map(LOCAL_HOME_ITEMS.map(item=>[
+      item.path.replace(/^t\//,'').replace(/\/$/,''),item
+    ]));
+    const merged=rows.map(row=>{
+      const local=localBySlug.get(row.slug);
+      if(!local)return null;
+      return {
+        ...local,
+        path:row.path||local.path,
+        title:row.title||local.title,
+        summary:row.summary||local.summary,
+        relationships:Array.isArray(row.relationships)&&row.relationships.length
+          ?row.relationships:local.relationships
+      };
+    }).filter(Boolean);
+    if(!merged.length)return;
+    window.HOME_ITEMS=merged;
+    window.dispatchEvent(new CustomEvent('home-catalog-updated'));
+  }).catch(()=>{});
+}

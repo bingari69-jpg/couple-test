@@ -5,3 +5,6 @@ node_modules/
 tmp/
 design-previews/
 output/
+
+# Supabase Edge Function secrets (public VAPID key is kept in the app code)
+supabase/.env.local

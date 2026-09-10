@@ -42,6 +42,17 @@ async function main() {
       assert.equal(bytes.readUInt32BE(16),800);assert.equal(bytes.readUInt32BE(20),480);
     }
   }
+  let decorated=false,afterShare=false;
+  sandbox.ResultNotify={
+    decorateShareUrl(target){decorated=true;const u=new URL(target);u.searchParams.set('ch','ABCDEF123456');return u.href;},
+    afterShare(){afterShare=true;}
+  };
+  const challenge='https://bingari69-jpg.github.io/couple-test/t/rps/#c=sealed';
+  assert.equal(await sandbox.kakaoShare({url:challenge,title:'가위바위보',desc:'도전',btn:'도전 받기'}),true);
+  assert.equal(decorated,true);
+  assert.equal(afterShare,true);
+  assert.equal(new URL(message.content.link.webUrl).searchParams.get('ch'),'ABCDEF123456');
+  assert.equal(new URL(message.content.link.webUrl).hash,'#c=sealed');
   fail = true;
   assert.equal(await sandbox.kakaoShare(input, async () => { await Promise.resolve(); copied++; }), false);
   assert.equal(copied, 1);

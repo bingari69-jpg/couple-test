@@ -1,0 +1,66 @@
+@font-face{font-family:RoomTitle;src:url('https://bingari69-jpg.github.io/couple-test/assets/fonts/jua-regular.woff2') format('woff2');font-display:swap}
+:root{--cream:#fff8e7;--paper:#fffdf8;--ink:#3f3128;--sub:#7f6b5b;--line:#ecdcc4;--coffee:#8b5a3c;--yellow:#ffcf5c;--red:#ef6c58;--green:#4c9b6c;--shadow:0 16px 42px rgba(93,60,38,.11)}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:radial-gradient(circle at 50% 0,#fffdf5 0,var(--cream) 46%,#f9ecd9 100%);color:var(--ink);font-family:Pretendard,'Malgun Gothic',sans-serif;min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+.wrap{width:min(100%,480px);margin:auto;padding:24px 18px 54px}
+.screen{animation:enter .32s ease}
+@keyframes enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.hero-art{height:132px;position:relative;margin-bottom:8px}
+.mascot{position:absolute;left:50%;bottom:0;width:126px;height:126px;transform:translateX(-58%);background:url('https://bingari69-jpg.github.io/couple-test/assets/art/catalog-mascots.png') 50% 40%/300% 600% no-repeat;mix-blend-mode:multiply}
+.coffee{position:absolute;left:calc(50% + 48px);top:28px;font-size:48px;transform:rotate(8deg);filter:drop-shadow(0 5px 5px rgba(70,40,20,.14))}
+.eyebrow{display:inline-flex;align-items:center;min-height:30px;padding:6px 12px;border:1.5px solid #d9b58d;border-radius:99px;background:#fff8ec;color:var(--coffee);font-size:12px;font-weight:900;letter-spacing:.06em}
+h1{margin:13px 0 10px;font:44px/1.08 RoomTitle,'Malgun Gothic',sans-serif;letter-spacing:-.03em;word-break:keep-all}
+h1 em{font-style:normal;color:var(--red)}
+.lead{margin:0 0 20px;color:var(--sub);font-size:16px;line-height:1.65;word-break:keep-all}
+.sheet{background:var(--paper);border:1.5px solid var(--line);border-radius:25px;padding:20px;box-shadow:var(--shadow);margin:16px 0}
+label,legend{display:block;margin:0 0 9px;font-size:14px;font-weight:900;color:var(--ink)}
+fieldset{border:0;padding:0;margin:20px 0}
+input,select{width:100%;border:1.5px solid #d9c5ac;border-radius:15px;background:#fff;color:var(--ink);padding:14px 15px;font-size:16px;outline:0}
+input:focus,select:focus{border-color:var(--coffee);box-shadow:0 0 0 3px rgba(139,90,60,.12)}
+input::placeholder{color:#b8a896}
+.chips{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.chips button{border:1.5px solid var(--line);border-radius:14px;background:#fff;color:var(--ink);padding:12px 8px;font-size:13px;font-weight:800;min-height:46px}
+.chips button[aria-pressed=true]{border-color:var(--coffee);background:#f6e5d2;box-shadow:inset 0 0 0 1px var(--coffee)}
+#customStake{margin-top:9px}
+.primary,.secondary,.kakao,.link-button{display:block;width:100%;border:0;border-radius:17px;padding:16px 14px;text-align:center;text-decoration:none;font-weight:900;min-height:54px}
+.primary{background:linear-gradient(135deg,var(--yellow),#ffb84d);color:#4b351e;box-shadow:0 8px 18px rgba(212,145,36,.21)}
+.secondary,.link-button{background:#fff;color:var(--sub);border:1.5px solid var(--line)}
+.kakao{background:#fee500;color:#191600}
+.actions{display:grid;gap:9px;margin:14px 0}
+button:disabled{opacity:.45;cursor:default;box-shadow:none}
+.status{min-height:22px;margin:10px 0;color:var(--red);font-size:13px;font-weight:700;text-align:center}
+.hint{color:var(--sub);font-size:13px;line-height:1.55;text-align:center;margin:9px 0 0}
+.home-link{display:block;margin-top:24px;text-align:center;color:#9f8c7a;font-size:13px;text-decoration:none}
+.seal-art{width:120px;height:120px;margin:14px auto 18px;border-radius:50%;display:grid;place-items:center;background:#f5e1ca;border:2px dashed #d2a97f;font-size:54px;position:relative}
+.seal-art span{position:absolute;right:-6px;top:-6px;width:40px;height:40px;display:grid;place-items:center;border-radius:50%;background:var(--red);color:#fff;font:26px RoomTitle}
+.room-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.room-code{font-size:12px;color:var(--sub)}
+.room-code strong{color:var(--coffee);letter-spacing:.08em}
+.sheet-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.sheet-head h2{margin:0;font:28px RoomTitle}
+.sheet-head span{font-size:13px;color:var(--sub);font-weight:800}
+.members{display:grid;gap:8px}
+.member{display:flex;align-items:center;gap:10px;border-radius:15px;background:#fff7ea;padding:11px 12px}
+.member-icon{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;background:#f0d2ad;font-size:18px}
+.member-name{flex:1;min-width:0;font-weight:900;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.member-name small{display:block;color:var(--sub);font-size:11px;font-weight:700}
+.member-state{font-size:12px;font-weight:900;color:#a08b77}
+.member-state.ready,.member-state.done{color:var(--green)}
+.ritual{margin:18px 0;background:linear-gradient(160deg,#4a2f27,#6c4032);color:#fff7e9;border-radius:26px;padding:24px 20px;text-align:center;box-shadow:0 18px 38px rgba(62,34,26,.22)}
+.ritual .wax{width:78px;height:78px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 38% 30%,#ff9983,#be3f37 65%);border:4px double #ffd0b9;box-shadow:0 7px 14px rgba(0,0,0,.28);font:27px RoomTitle;transform:rotate(-8deg)}
+.ritual h2{font:30px RoomTitle;margin:0 0 8px}
+.ritual p{color:#e8cfbf;line-height:1.55}
+.ritual .primary{margin-top:14px}
+.result-card{margin:20px 0;background:#fff;border:3px solid var(--yellow);border-radius:28px;padding:26px 20px;text-align:center;box-shadow:var(--shadow);animation:pop .45s cubic-bezier(.2,.8,.2,1)}
+@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.result-overline{color:var(--coffee);font-size:12px;font-weight:900;letter-spacing:.08em}
+.result-cup{font-size:62px;margin:13px 0 4px}
+.result-card h2{font:42px RoomTitle;margin:0;color:var(--red);word-break:break-all}
+.result-card p{margin:8px 0 20px;color:var(--sub);font-size:17px;font-weight:800}
+.result-card .link-button{margin-top:9px}
+@media(max-width:360px){.wrap{padding-inline:14px}h1{font-size:39px}.sheet{padding:17px}.chips button{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}

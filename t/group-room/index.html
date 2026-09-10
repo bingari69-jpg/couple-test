@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>단체방 커피 내기 · 같이놀자</title>
+<meta name="description" content="단체톡 친구들이 각자 입장해 봉인을 찍으면 오늘 커피 살 한 사람이 공개돼요.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="☕ 단체방 커피 내기 — 네 자리 비워뒀어">
+<meta property="og:description" content="각자 입장해서 봉인을 찍으면 오늘의 당첨자가 공개돼요.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/ladder.png?v=20260910-unified">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<link rel="stylesheet" href="../../assets/group-room.css?v=20260911-1">
+<script src="../../assets/analytics.js?v=20260911-group"></script>
+<script src="../../assets/kakao-share.js?v=20260911-complete"></script>
+</head>
+<body>
+<main class="wrap">
+  <section id="createView" class="screen">
+    <div class="hero-art" aria-hidden="true"><span class="mascot"></span><span class="coffee">☕</span></div>
+    <span class="eyebrow">실시간 단체방 내기</span>
+    <h1>오늘 커피는<br><em>누가 살까?</em></h1>
+    <p class="lead">방을 만들어 단체톡에 보내세요. 친구들이 각자 들어와 봉인을 찍으면 한 명이 공개돼요.</p>
+
+    <div class="sheet">
+      <label for="hostNickname">내 닉네임</label>
+      <input id="hostNickname" maxlength="12" autocomplete="nickname" placeholder="예: 총무 민수">
+
+      <fieldset>
+        <legend>이번에 걸 것</legend>
+        <div id="stakeChips" class="chips">
+          <button type="button" data-stake="커피 한 잔" aria-pressed="true">☕ 커피 한 잔</button>
+          <button type="button" data-stake="밥 한 끼" aria-pressed="false">🍚 밥 한 끼</button>
+          <button type="button" data-stake="아이스크림" aria-pressed="false">🍦 아이스크림</button>
+          <button type="button" data-stake="소원 하나" aria-pressed="false">⭐ 소원 하나</button>
+          <button type="button" data-stake="custom" aria-pressed="false">✏️ 직접 입력</button>
+        </div>
+        <input id="customStake" maxlength="40" placeholder="우리만의 내기" hidden>
+      </fieldset>
+
+      <label for="maxPlayers">방 정원</label>
+      <select id="maxPlayers">
+        <option value="2">2명</option>
+        <option value="4" selected>4명</option>
+        <option value="6">6명</option>
+        <option value="8">8명</option>
+        <option value="10">10명</option>
+      </select>
+    </div>
+
+    <button id="createRoom" class="primary" type="button">단체방 만들기 →</button>
+    <p id="createStatus" class="status" role="status" aria-live="polite"></p>
+    <a class="home-link" href="../../">다른 놀이 보기</a>
+  </section>
+
+  <section id="joinView" class="screen" hidden>
+    <div class="seal-art" aria-hidden="true">☕<span>?</span></div>
+    <span class="eyebrow">단체방 초대 도착</span>
+    <h1>네 자리도<br><em>비워뒀어.</em></h1>
+    <p class="lead"><strong id="joinCode"></strong> 방에 들어갈 닉네임을 적어주세요.</p>
+    <div class="sheet">
+      <label for="joinNickname">내 닉네임</label>
+      <input id="joinNickname" maxlength="12" autocomplete="nickname" placeholder="단톡에서 쓰는 이름">
+    </div>
+    <button id="joinRoom" class="primary" type="button">이 방에 들어가기 →</button>
+    <p id="joinStatus" class="status" role="status" aria-live="polite"></p>
+    <a class="home-link" href="./">내가 새 방 만들기</a>
+  </section>
+
+  <section id="roomView" class="screen" hidden>
+    <div class="room-top">
+      <span id="roomStatusBadge" class="eyebrow"></span>
+      <span class="room-code">방 코드 <strong id="roomCode"></strong></span>
+    </div>
+    <h1 id="roomTitle">친구들을<br><em>기다리는 중.</em></h1>
+    <p id="roomLead" class="lead"></p>
+
+    <section class="sheet members-sheet" aria-labelledby="membersTitle">
+      <div class="sheet-head">
+        <h2 id="membersTitle">참가자</h2>
+        <span id="memberCount"></span>
+      </div>
+      <div id="members" class="members"></div>
+    </section>
+
+    <div id="shareActions" class="actions">
+      <button id="shareRoom" class="kakao" type="button">💬 단체톡에 초대 보내기</button>
+      <button id="copyRoom" class="secondary" type="button">초대 링크 복사</button>
+    </div>
+
+    <div id="lobbyActions" class="actions">
+      <button id="readyRoom" class="primary" type="button">나 준비됐어</button>
+      <button id="startRoom" class="primary" type="button" hidden>전원 준비 · 시작하기 →</button>
+      <p id="lobbyHint" class="hint"></p>
+    </div>
+
+    <div id="playingActions" class="ritual" hidden>
+      <div class="wax" aria-hidden="true">콕</div>
+      <h2>내 자리의 봉인을 찍어줘</h2>
+      <p>모두 찍을 때까지 결과는 아무도 볼 수 없어요.</p>
+      <button id="submitSeal" class="primary" type="button">내 봉인 찍기</button>
+      <button id="finishRoom" class="primary" type="button" hidden>모두 완료 · 결과 열기 →</button>
+      <p id="playingHint" class="hint"></p>
+    </div>
+
+    <section id="resultView" class="result-card" hidden>
+      <span class="result-overline">오늘의 단체방 당첨자</span>
+      <div class="result-cup" aria-hidden="true">☕</div>
+      <h2 id="resultName"></h2>
+      <p id="resultStake"></p>
+      <button id="shareResult" class="kakao" type="button">💬 결과를 단체톡에 알리기</button>
+      <a class="secondary link-button" href="./">새 단체방 만들기</a>
+    </section>
+
+    <p id="roomMessage" class="status" role="status" aria-live="polite"></p>
+    <a class="home-link" href="../../">다른 놀이 보기</a>
+  </section>
+</main>
+
+<script src="../../assets/group-room-service.js?v=20260911-1"></script>
+<script src="../../assets/group-room.js?v=20260911-1"></script>
+</body>
+</html>

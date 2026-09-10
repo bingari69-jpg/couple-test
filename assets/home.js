@@ -34,5 +34,6 @@ function render(){
  });
 }
 render();
+window.addEventListener('home-catalog-updated',render);
 if(/^#(?:i|r)=/.test(location.hash))location.replace('t/marriage/'+location.hash);
 })();
