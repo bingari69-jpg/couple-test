@@ -19,6 +19,12 @@
     const guide = window.GATCHI_GUIDES && window.GATCHI_GUIDES[slug];
     return guide ? { rule:guide.rule||'', steps:clone(guide.steps||[]), tip:guide.tip||'', practice:guide.practice||'' } : { rule:'', steps:['','',''], tip:'', practice:'' };
   }
+  function currentPractice(value, slug) {
+    if (value === 'tap') return slug === 'ufo' ? 'ufo' : slug === 'num25' ? 'numbers' : slug === 'tap' ? 'rapid' : 'mole';
+    if (value === 'choice') return slug === 'rps' ? 'rps' : slug === 'stroop' ? 'color' : slug === 'arrow' ? 'arrow' : slug === 'nonsense' ? 'nonsense' : '';
+    if (value === 'stop' && slug === 'ten') return 'timing';
+    return value || '';
+  }
   function localGames() {
     return (window.HOME_ITEMS || []).map((item, index) => {
       const slug=item.path.replace(/^t\//, '').replace(/\/$/, '');
@@ -66,6 +72,7 @@
       }, game);
       normalized.guide=Object.assign(guideFor(normalized.slug),normalized.guide||{});
       normalized.guide.steps=Array.isArray(normalized.guide.steps)?normalized.guide.steps.slice(0,3):['','',''];
+      normalized.guide.practice=currentPractice(normalized.guide.practice,normalized.slug);
       while(normalized.guide.steps.length<3)normalized.guide.steps.push('');
       return normalized;
     });

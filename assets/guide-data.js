@@ -3,12 +3,12 @@
   const three=(a,b,c)=>[a,b,c];
   window.GATCHI_GUIDES={
     rps:{title:'가위바위보',group:'기록 대결',icon:'✊',rule:'가위, 바위, 보 중 하나를 골라 친구와 승부해요.',steps:three('내 패 고르기','카톡으로 보내기','둘의 패 보기'),tip:'내 패는 친구가 고른 뒤에 보여요.',practice:'rps'},
-    ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'stop'},
+    ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'timing'},
     react:{title:'반응속도 대결',group:'기록 대결',icon:'⚡',rule:'화면이 초록색으로 바뀌는 순간 빠르게 눌러요.',steps:three('화면을 보고 기다리기','초록색에 누르기','평균 기록 보내기'),tip:'초록색이 되기 전에 누르면 다시 해야 해요.',practice:'reaction'},
-    num25:{title:'1에서 25까지',group:'기록 대결',icon:'🔢',rule:'1부터 25까지 숫자를 차례대로 눌러요.',steps:three('1부터 찾기','25까지 차례로 누르기','걸린 시간 비교'),tip:'같은 숫자판으로 친구와 겨뤄요.',practice:'tap'},
-    mole:{title:'두더지 잡기',group:'기록 대결',icon:'🐹',rule:'20초 동안 나타나는 두더지를 빠르게 눌러요.',steps:three('시작 누르기','두더지 잡기','점수 보내기'),tip:'황금은 +3점, 폭탄은 −3점이에요.',practice:'tap'},
-    ufo:{title:'UFO 요격',group:'기록 대결',icon:'🛸',rule:'20초 동안 UFO를 찾아 미사일로 맞혀요.',steps:three('미사일 준비','UFO 누르기','명중 기록 비교'),tip:'아군 드론을 누르면 점수가 줄어요.',practice:'tap'},
-    tap:{title:'10초 연타',group:'기록 대결',icon:'👆',rule:'10초 동안 버튼을 최대한 많이 눌러요.',steps:three('손가락 준비','10초 동안 누르기','횟수 비교'),tip:'두 손가락을 사용해도 괜찮아요.',practice:'tap'},
+    num25:{title:'1에서 25까지',group:'기록 대결',icon:'🔢',rule:'1부터 25까지 숫자를 차례대로 눌러요.',steps:three('1부터 찾기','25까지 차례로 누르기','걸린 시간 비교'),tip:'같은 숫자판으로 친구와 겨뤄요.',practice:'numbers'},
+    mole:{title:'두더지 잡기',group:'기록 대결',icon:'🐹',rule:'20초 동안 나타나는 두더지를 빠르게 눌러요.',steps:three('시작 누르기','두더지 잡기','점수 보내기'),tip:'황금은 +3점, 폭탄은 −3점이에요.',practice:'mole'},
+    ufo:{title:'UFO 요격',group:'기록 대결',icon:'🛸',rule:'20초 동안 UFO를 찾아 미사일로 맞혀요.',steps:three('미사일 준비','UFO 누르기','명중 기록 비교'),tip:'아군 드론을 누르면 점수가 줄어요.',practice:'ufo'},
+    tap:{title:'10초 연타',group:'기록 대결',icon:'👆',rule:'10초 동안 버튼을 최대한 많이 눌러요.',steps:three('손가락 준비','10초 동안 누르기','횟수 비교'),tip:'두 손가락을 사용해도 괜찮아요.',practice:'rapid'},
     stroop:{title:'색깔 함정',group:'기록 대결',icon:'🎨',rule:'글자가 뜻하는 색이 아니라 실제 보이는 색을 골라요.',steps:three('색깔 보기','보이는 색 누르기','정답 수 비교'),tip:'글자를 읽지 말고 색만 보세요.',practice:'color'},
     arrow:{title:'화살표 함정',group:'기록 대결',icon:'↔️',rule:'화살표 방향으로 밀고, 빨간 테두리일 때만 반대로 밀어요.',steps:three('화살표 보기','맞는 쪽으로 밀기','점수 비교'),tip:'빨간 테두리가 보이면 반대 방향이에요.',practice:'arrow'},
     stop:{title:'딱 멈춰',group:'기록 대결',icon:'🎯',rule:'움직이는 표시가 한가운데 왔을 때 멈춰요.',steps:three('움직임 보기','가운데서 멈추기','오차 비교'),tip:'5번의 오차를 더해 더 작은 사람이 이겨요.',practice:'stop'},
