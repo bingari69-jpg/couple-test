@@ -19,14 +19,14 @@ async function main() {
   assert.equal(message.buttonTitle, input.btn);
   assert.equal(message.buttons, undefined);
   assert.equal(message.content.link.webUrl, url);
-  assert.equal(message.content.link.mobileWebUrl, url);
+  assert.equal(message.content.link.mobileWebUrl, undefined);
   const old = {objectType:'feed',content:message.content,buttons:[{title:input.btn,link:message.content.link}]};
   assert.ok(JSON.stringify(message).length < JSON.stringify(old).length * .6);
   assert.deepEqual(JSON.parse(Buffer.from(message.content.link.webUrl.split('#l=')[1], 'base64url')), payload);
   assert.equal(await sandbox.kakaoShare({...input,textOnly:true}), true);
   assert.equal(message.objectType, 'text');
   assert.equal(message.content, undefined); // No remote image scraping in the retry path.
-  assert.equal(message.link.mobileWebUrl, url);
+  assert.equal(message.link.mobileWebUrl, undefined);
   assert.equal(message.link.webUrl, url);
   assert.ok(message.text.length <= 200);
   assert.ok(!message.text.includes(payload.w));
@@ -36,7 +36,7 @@ async function main() {
       const target='https://bingari69-jpg.github.io/couple-test/t/'+slug+'/'+fragment;
       assert.equal(await sandbox.kakaoShare({url:target,title:'친구의 도전',desc:'함께 해봐',btn:'열어보기'}),true);
       assert.equal(message.objectType,'feed');assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);
-      assert.equal(message.content.link.webUrl,target);assert.equal(message.content.link.mobileWebUrl,target);assert.equal(message.buttons,undefined);
+      assert.equal(message.content.link.webUrl,target);assert.equal(message.content.link.mobileWebUrl,slug==='letter'?undefined:target);assert.equal(message.buttons,undefined);
       assert.ok(message.content.imageUrl.endsWith(slug.replace('/','-')+'.png?v=20260910-unified'));
       const bytes=fs.readFileSync(path.join(__dirname,'../assets/share-cards/'+slug.replace('/','-')+'.png'));
       assert.equal(bytes.readUInt32BE(16),800);assert.equal(bytes.readUInt32BE(20),480);

@@ -28,9 +28,11 @@
     return load().then(async ok=>{
       if(!ok){ if(fallback) await fallback(); return false; }
       try{
-        const link = { mobileWebUrl:o.url, webUrl:o.url };
         let slug='',isResult=false;
         try{const u=new URL(o.url);const m=u.pathname.match(/\/t\/(.+?)\/?$/);slug=m?m[1]:'';isResult=u.hash.startsWith('#r=');}catch(e){}
+        // Letter URLs carry the full message. One webUrl works on desktop and mobile,
+        // and avoids putting the same long URL into the Kakao packet twice.
+        const link = slug==='letter' ? { webUrl:o.url } : { mobileWebUrl:o.url, webUrl:o.url };
         const cardTitle=CARD_TITLES[slug];
         const message = o.textOnly ? {
           objectType:"text",
