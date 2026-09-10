@@ -34,6 +34,7 @@
 .home-switch{display:flex;gap:5px;background:#f1ece4;padding:4px;border-radius:30px;margin:0 0 24px}
 .home-switch a{flex:1;text-align:center;padding:9px 8px;border-radius:24px;color:#84766a;font-size:14px;font-weight:700}
 .home-switch a[aria-current=page]{background:#fffdfa;color:#c44939;box-shadow:0 2px 8px #6144220c}
+.home-switch.four a{padding-left:3px;padding-right:3px;font-size:12.5px;white-space:nowrap}.kakao-intro{margin:-11px 0 23px;text-align:center;color:#796d65;font-size:13px;word-break:keep-all}.kakao-intro:before{content:'KAKAO TALK';display:inline-block;margin-right:7px;padding:3px 7px;border-radius:999px;background:#fee500;color:#332d16;font:800 9px/1.2 ui-monospace,monospace;letter-spacing:.03em;vertical-align:2px}
 .challenge.game-hero{margin-top:0;padding:25px 22px 22px;min-height:490px;background:radial-gradient(ellipse at 70% 50%,#fffbe5,#fff0ba);border:1px solid #ffe7a3}
 .game-hero .heading{font-size:clamp(32px,8.8vw,46px);position:relative;z-index:1;margin:10px 0 12px;max-width:100%}
 .game-hero .play-eyebrow{font-size:14px;color:#9a6925;font-weight:800;margin:0;width:auto}

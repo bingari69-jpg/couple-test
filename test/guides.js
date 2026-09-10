@@ -19,6 +19,9 @@ const read=file=>fs.readFileSync(path.join(ROOT,file),'utf8');
   const guidePage=read('guide/index.html');
   ['threeTitle','guideSearch','guideFilters','guideList','receivedTitle','faqTitle'].forEach(id=>assert(guidePage.includes(`id="${id}"`),'전체 사용법 #'+id+' 누락'));
   assert(read('index.html').includes('href="guide/">사용법</a>'),'홈 사용법 링크 누락');
+  assert(read('index.html').includes('href="guide/">게임방법</a>'),'상단 메뉴의 게임방법 링크 누락');
+  assert(read('index.html').includes('카카오톡으로 보내고, 친구와 함께 결과를 여는 놀이터예요.'),'홈 카카오톡 놀이 설명 누락');
+  assert(!read('assets/help-guide.js').includes('처음이야? 10초면 알 수 있어!'),'홈의 큰 사용법 카드는 제거해야 함');
 
   const runtime=read('assets/help-guide.js').replace(/<\/script/gi,'<\\/script');
   const data=read('assets/guide-data.js').replace(/<\/script/gi,'<\\/script');

@@ -2,7 +2,7 @@
   'use strict';
   if(window.__GATCHI_HELP_GUIDE__)return;window.__GATCHI_HELP_GUIDE__=true;
   const script=document.currentScript;const root=new URL('../',script&&script.src||location.href);
-  const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('assets/help-guide.css?v=20260911-guide3',root).href;document.head.append(style);
+  const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('assets/help-guide.css?v=20260911-guide4',root).href;document.head.append(style);
   const $=(selector,parent=document)=>parent.querySelector(selector);
   const slug=()=>{const m=location.pathname.match(/\/t\/(.+?)\/?$/);return m?m[1].replace(/\/$/,''):'home';};
   const entry=()=>/^(#|\?)(c|i)=/.test(location.hash||location.search)?'invite':'direct';
@@ -28,12 +28,11 @@
     return box;
   }
   function openGuide(automatic){const guide=managedGuide();if(!guide)return;let dialog=document.getElementById('gameGuideDialog');if(dialog)dialog.remove();dialog=document.createElement('dialog');dialog.id='gameGuideDialog';dialog.className='guide-dialog';const sheet=document.createElement('div');sheet.className='guide-sheet';const head=document.createElement('div');head.className='guide-sheet-head';head.innerHTML='<span class="guide-sheet-icon" aria-hidden="true"></span><div><small>게임 방법</small><h2></h2></div><button class="guide-sheet-close" aria-label="닫기">×</button>';$('.guide-sheet-icon',head).textContent=guide.icon||'🐣';$('h2',head).textContent=guide.title||'같이놀자';const rule=document.createElement('p');rule.className='guide-rule';rule.textContent=guide.rule||'화면에 나온 순서대로 해보세요.';const list=document.createElement('ol');list.className='guide-three';(guide.steps||['먼저 하기','카톡 보내기','같이 보기']).slice(0,3).forEach((step,index)=>{const li=document.createElement('li');li.innerHTML='<b>'+(index+1)+'</b>';li.append(document.createTextNode(step));list.append(li);});const tip=document.createElement('p');tip.className='guide-tip';tip.textContent=guide.tip||'천천히 따라 하면 어렵지 않아요.';const actions=document.createElement('div');actions.className='guide-actions';actions.innerHTML='<button class="guide-close">설명 닫기</button><button class="guide-start">바로 시작하기</button>';sheet.append(head,rule,list,tip);const practice=practiceBox(guide.practice,slug());if(practice)sheet.append(practice);sheet.append(actions);dialog.append(sheet);document.body.append(dialog);$('.guide-sheet-close',dialog).onclick=$('.guide-close',dialog).onclick=()=>close(dialog);$('.guide-start',dialog).onclick=()=>{close(dialog);const action=firstAction();if(action){action.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>action.focus({preventScroll:true}),350);}};dialog.addEventListener('cancel',event=>{event.preventDefault();close(dialog);});dialog.showModal();document.documentElement.classList.add('guide-dialog-open');if(automatic)markSeen();}
-  function homeCard(){if(slug()!=='home'||document.querySelector('.quick-guide-card'))return;const anchor=document.createElement('a');anchor.className='quick-guide-card';anchor.href=new URL('guide/',root).href;anchor.innerHTML='<div><strong>처음이야? 10초면 알 수 있어!</strong><p>내가 먼저 하고 → 카톡으로 보내고 → 둘의 결과를 봐요.</p></div><span aria-hidden="true">🐣</span>';const target=document.querySelector('.home-switch,#letterHome,.challenge');if(target)target.after(anchor);}
   function gameHelp(){const key=slug();if(key==='home'||key==='psychology'||!managedGuide())return;const button=document.createElement('button');button.type='button';button.className='guide-help-button';button.textContent='게임 방법';button.onclick=()=>openGuide(false);const steps=document.querySelector('.game-steps,.rps-steps,.steps');if(steps)steps.after(button);else{const header=document.querySelector('.game-header,.rps-header,.topbar');if(header)header.after(button);else document.querySelector('main').prepend(button);}
     if(entry()==='invite'){const note=document.createElement('div');note.className='guide-invite-note';note.innerHTML='<strong>친구가 같이 하자고 보냈어요!</strong>같은 놀이를 끝내면 두 사람의 결과가 함께 보여요.';button.after(note);}
     if(!hasSeen())setTimeout(()=>openGuide(true),650);
   }
-  function init(){homeCard();gameHelp();}
+  function init(){gameHelp();}
   window.addEventListener('app-config-ready',()=>{if(document.readyState!=='loading')init();});
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
   window.GatchiHelp={open:openGuide};
