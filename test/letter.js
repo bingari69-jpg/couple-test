@@ -60,6 +60,9 @@ async function main(){
  const oldText=load('t/letter/index.html',hash({v:3,k:3,n:'친구',w:'예전 편지 그대로',f:'나'}));assert.equal(oldText.window.document.getElementById('readBody').textContent,'예전 편지 그대로');oldText.window.close();
  for(const bad of ['#l=%%%','#l='+Buffer.from('{bad').toString('base64url'),hash({v:4,w:{bad:true}}),hash({v:99,w:'future'})]){const e=load('t/letter/index.html',bad);assert.equal(e.window.document.getElementById('error').hidden,false);e.window.close();}
  const home=load('index.html'),hd=home.window.document;
+ const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');
+ assert.match(homeCss,/\.hero-art\{height:auto\}/);
+ assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/mobile-hero/);
  assert.equal(hd.getElementById('catalogList').children.length,22);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
  assert.deepEqual(catalogCards.slice(0,8).map(a=>a.getAttribute('href')),['t/ranking/','t/ten/','t/rps/','t/delivery/','t/mbti/','t/react/','t/crash/','t/letter/']);
