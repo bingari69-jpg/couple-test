@@ -164,7 +164,7 @@
    - 문제: `supabase/functions/clever-service/index.ts`가 OPTIONS(preflight)와 `Access-Control-*` 헤더를 처리하지 않았고, 프런트는 실패를 조용히 삼켰다. `@supabase/server`의 `withSupabase`가 preflight를 대신 처리하는지 확인하지 못했다.
    - 수정: `withSupabase` 앞단에서 OPTIONS를 204로 응답하고 모든 JSON 응답에 CORS 헤더를 붙인다. 허용 출처는 `https://bingari69-jpg.github.io`, `http://127.0.0.1:4173`, `http://localhost:4173`. 내부 오류 문구는 서버 로그에만 남기고 클라이언트에는 코드만 돌려준다.
    - 프런트: `client.functions.invoke` 실패 시 `console.warn`으로 남긴다(`[결과 알림] 푸시 ...`).
-   - **배포하지 않았다.** `supabase functions deploy clever-service` 실행 후 실기기에서 A 알림 허용 → B 완료 → A 수신을 확인해야 한다.
+   - 2026-09-12 Supabase Dashboard 코드 편집기에 붙여넣어 배포 완료. 외부에서 확인: `OPTIONS` → 204와 `Access-Control-Allow-Origin: https://bingari69-jpg.github.io`, 허용 헤더·메서드·Max-Age 정상. 사용자 토큰 없는 `POST` → 401(withSupabase가 거절, 정상). 남은 확인은 실기기에서 A 알림 허용 → B 완료 → A 수신이다.
 
 검사: `npm test` 17개 묶음 전부 통과(`test/marriage.js` 포함). `git diff --check` 이상 없음. 커밋·푸시는 하지 않았다.
 
