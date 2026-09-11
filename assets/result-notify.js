@@ -334,23 +334,14 @@
     } catch (_) {}
   }
 
-  function visibleText() {
-    const selectors = [
-      "#verdict", "#resultTitle", "#resHead", "#pairName", "#animals", "#score",
-      "[id*='result'] .score", "[id*='result'] .verdict", "[id*='compare'] .score",
-      "[id*='result'] .title-badge", "#result h1", "#result h2", "[id*='result'] h1",
-      "[id*='result'] h2", "[id*='compare'] h1", "[id*='compare'] h2",
-      ".result-title", ".result-name"
-    ];
-    for (const selector of selectors) {
-      const node = document.querySelector(selector);
-      if (!node) continue;
-      const text = String(node.textContent || "").replace(/\s+/g, " ").trim();
-      if (text) return Array.from(text).slice(0, 100).join("");
-    }
-    return "상대가 최종 결과까지 완료했어요.";
+  // 알림 본문에는 화면의 이름·점수를 긁어 넣지 않는다. 개인 내용이 서버와 푸시 메시지에 남지 않도록
+  // 게임 이름만 담은 고정 문구를 보낸다.
+  function summaryText() {
+    return "상대가 최종 결과까지 완료했어요. 결과 보기를 눌러 확인하세요.";
   }
 
+  // 결과 링크: 보낸 사람이 '결과 보기'로 열 주소. 해시(#r=)에 두 사람의 답이 들어 있으므로
+  // 서버에는 보낸 사람만 읽을 수 있게 저장되고 expires_at 뒤 purge_expired_game_challenges()로 지워진다.
   function resultPath() {
     return location.pathname + location.search + location.hash;
   }
@@ -367,11 +358,13 @@
       const result = await client.rpc("complete_game_challenge", {
         p_code: receiverCode,
         p_result_url: resultPath(),
-        p_result_summary: visibleText()
+        p_result_summary: summaryText()
       });
       if (result.error) throw result.error;
       try { sessionStorage.setItem(COMPLETED_KEY + receiverCode, "1"); } catch (_) {}
-      client.functions.invoke(NOTIFY_FUNCTION, { body: { code: receiverCode } }).catch(() => {});
+      client.functions.invoke(NOTIFY_FUNCTION, { body: { code: receiverCode } })
+        .then(response => { if (response && response.error) console.warn("[결과 알림] 푸시 전송 실패", response.error); })
+        .catch(error => console.warn("[결과 알림] 푸시 함수 호출 실패", error));
     } catch (_) {
       completionStarted = false;
     }

@@ -131,8 +131,8 @@ input::placeholder{color:#C6C1CC}
   text-decoration:none;margin-top:18px}
 .homelink:hover{color:var(--ink)}
 </style>
-<link rel="stylesheet" href="../../assets/game-ui.css?v=20260910-release">
-<script defer src="../../assets/game-ui.js?v=20260910-release"></script>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-privacy"></script>
 </head>
 <body class="game-page" data-game="marriage">
 <div class="wrap">
@@ -365,6 +365,8 @@ const NAME_KEY="gh_name";
 function loadName(){try{return localStorage.getItem(NAME_KEY)||"";}catch(e){return "";}}
 function saveName(v){try{localStorage.setItem(NAME_KEY,v);}catch(e){}}
 const who=(nm,isMe)=>nm||(isMe?"나":"상대");
+/* 링크에서 온 글자는 화면에 넣기 전에 반드시 esc()를 거친다 (XSS 방지) */
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 
 let myName = "";
 let myAns = [];
@@ -411,18 +413,25 @@ async function shareOrCopy(url, title){
   }
 }
 
+/* 링크 속 답변 묶음이 올바른 모양인지 확인 (이름은 문자열, 답은 문항 수만큼의 정수) */
+function validAnswers(p){
+  return !!p && typeof p==="object" && (p.n===undefined || typeof p.n==="string")
+    && Array.isArray(p.ans) && p.ans.length===QUESTIONS.length
+    && p.ans.every((v,i)=>Number.isInteger(v) && v>=0 && v<QUESTIONS[i].o.length);
+}
+
 /* ---------- 시작 분기: 링크에 뭐가 담겨 왔나 ---------- */
 (function init(){
   const h = location.hash;
   let stale = false;
   if (h.startsWith('#r=')){          // 완성된 결과 링크 (둘 다의 답)
     const d = dec(h.slice(3));
-    if (d && d.q===2 && d.a && d.b){ renderResult(d.a, d.b, false); show('#s-result'); return; }
+    if (d && d.q===2 && validAnswers(d.a) && validAnswers(d.b)){ renderResult(d.a, d.b, false); show('#s-result'); return; }
     if (d) stale = true;
   }
   if (h.startsWith('#i=')){          // 초대 링크 (첫 번째 사람의 답)
     const d = dec(h.slice(3));
-    if (d && d.q===2 && typeof d.n==="string" && Array.isArray(d.ans) && d.ans.length===QUESTIONS.length){
+    if (d && d.q===2 && validAnswers(d) && typeof d.n==="string"){
       partner = d; mode = "second";
       $('#invName').textContent = d.n || "상대";
       show('#s-invited'); return;
@@ -564,8 +573,8 @@ function renderResult(A, B, canSendBack){
       const Q = QUESTIONS[i];
       dhtml += `<div class="diff">
         <div class="q">${Q.q}</div>
-        <div class="ans a"><b>${aL}</b> · ${Q.o[A.ans[i]]}</div>
-        <div class="ans b"><b>${bL}</b> · ${Q.o[B.ans[i]]}</div>
+        <div class="ans a"><b>${esc(aL)}</b> · ${Q.o[A.ans[i]]}</div>
+        <div class="ans b"><b>${esc(bL)}</b> · ${Q.o[B.ans[i]]}</div>
         <div class="talk">${Q.t}</div>
       </div>`;
     });

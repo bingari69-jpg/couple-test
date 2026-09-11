@@ -2,15 +2,21 @@
   'use strict';
   const PROJECT_URL = 'https://iqwggvijxptehvmdbmub.supabase.co';
   const PUBLISHABLE_KEY = 'sb_publishable_D6Iqs7Xovd1ihHV5BYeQrg_xyvHG04Z';
-  const SESSION_KEY = 'gatchi_admin_session_v1';
+  const SESSION_KEY = 'gatchi_admin_session_v2';
+  const LEGACY_SESSION_KEY = 'gatchi_admin_session_v1';
+
+  // 관리자 세션은 탭이 살아 있는 동안만 sessionStorage에 둔다.
+  // 예전 버전은 localStorage에 refresh_token까지 영구 보관했는데, 같은 도메인의
+  // 공개 게임 페이지에서 XSS가 나면 관리자 세션이 통째로 새어 나갈 수 있어 폐기한다.
+  try { localStorage.removeItem(LEGACY_SESSION_KEY); } catch (_) {}
 
   function readSession() {
-    try { return JSON.parse(localStorage.getItem(SESSION_KEY) || 'null'); } catch (_) { return null; }
+    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null'); } catch (_) { return null; }
   }
   function saveSession(session) {
     try {
-      if (session) localStorage.setItem(SESSION_KEY, JSON.stringify(session));
-      else localStorage.removeItem(SESSION_KEY);
+      if (session) sessionStorage.setItem(SESSION_KEY, JSON.stringify(session));
+      else sessionStorage.removeItem(SESSION_KEY);
     } catch (_) {}
   }
   function messageFrom(error) {

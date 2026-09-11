@@ -118,6 +118,8 @@
     document.body.append(nav);
     const footer = document.createElement('p'); footer.className = 'game-footer';
     footer.textContent = '별거 아닌 한판이, 같이 웃는 시간이 되도록 ♥';
+    const privacy = document.createElement('a'); privacy.className = 'game-privacy'; privacy.href = new URL('privacy/', root).href; privacy.textContent = '개인정보 안내';
+    footer.append(document.createElement('br'), privacy);
     wrap.append(footer);
 
     function applyManagedGame(event) {

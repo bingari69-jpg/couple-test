@@ -1,6 +1,6 @@
 # 같이놀자 HANDOFF
 
-최종 정리: 2026-09-10 (Asia/Seoul)
+최종 정리: 2026-09-12 (Asia/Seoul)
 
 ## 서비스와 현재 배포
 
@@ -131,6 +131,48 @@
 - `/admin/guide/`: 초안 저장·미리보기·게시, 게임 상태, 메뉴·디자인, 광고, 복원을 그림처럼 짧게 설명하는 관리자 전용 사용법이다.
 - `test/guides.js`가 홈 게임 전체의 설명 누락, 3단계, 초대 안내, 연습, 관리자 편집 항목을 검사한다.
 - Playwright/Edge로 `/guide/` 데스크톱, 홈 390px, 두더지 초대 설명창 390px, 관리자 사용법 데스크톱 화면을 확인했다.
+
+
+### 2026-09-12 보안·개인정보 보완 (분석 1~5번 항목)
+
+배경: 2026-09-12 전체 코드 분석에서 보안·개인정보 상위 5개 항목을 골라 수정했다. 아래 순서는 분석 보고서의 번호와 같다.
+
+1. 결혼 테스트 링크 XSS 차단
+   - 문제: `t/marriage/index.html`이 `#r=`/`#i=` 링크에 담긴 이름을 `innerHTML`에 그대로 넣었고, 이 페이지만 `esc()` 도우미가 없었다. 조작된 링크를 열면 사이트 도메인에서 스크립트가 실행됐다.
+   - 수정: `esc()` 추가, `renderResult`의 두 이름에 적용. `validAnswers()`로 링크 속 답 묶음(이름 문자열, 문항 수와 같은 정수 배열, 보기 범위)을 검사해 모양이 틀리면 첫 화면으로 보낸다. 초대 링크(`#i=`)도 같은 검사기를 쓴다.
+   - 검사: `test/marriage.js` 신설(package.json `test`에 추가). 이름에 `<img onerror>`를 넣은 결과·초대 링크가 글자로만 보이는지, 잘못된 링크 4종이 첫 화면으로 가는지, 정상 링크는 그대로인지 확인한다. 수정 전 페이지로 돌리면 실패하는 것을 확인했다.
+
+2. 관리자 세션 저장 위치 변경
+   - 문제: `admin/admin-api.js`가 access_token과 refresh_token을 localStorage에 영구 보관했다. 같은 도메인의 공개 게임 페이지에서 XSS가 나면 관리자 세션이 통째로 새어 나갈 수 있었다.
+   - 수정: 세션 키를 `gatchi_admin_session_v2`로 바꾸고 sessionStorage에 저장한다. 탭을 닫으면 세션이 사라지므로 관리자는 다시 로그인해야 한다. 페이지가 열릴 때 예전 localStorage 키(`gatchi_admin_session_v1`)는 삭제한다.
+   - 한계: 탭이 열려 있는 동안은 여전히 같은 도메인 스크립트가 읽을 수 있다. 근본 해결은 1번처럼 XSS를 없애는 것이며, 앞으로 관리자를 별도 도메인/하위 도메인으로 분리하는 방안을 검토한다.
+   - `admin/index.html`의 `admin-api.js` 버전을 `20260912-session`으로 올렸다.
+
+3. 완료 알림에 개인 내용이 남는 문제
+   - 문제: `assets/result-notify.js`가 결과 화면의 이름·점수를 긁어(`visibleText`) `result_summary`와 푸시 본문에 넣었다. `result_url`에는 두 사람의 답이 담긴 `#r=` 해시가 그대로 들어간다. 만료 행을 지우는 절차가 없었다.
+   - 수정: `visibleText()`를 없애고 고정 문구(`summaryText`)만 보낸다. `result_url`은 보낸 사람이 '결과 보기'로 열어야 하므로 유지하되, 보낸 사람만 읽는 RLS와 7일 만료를 전제로 한다.
+   - 새 SQL: `supabase/migrations/20260912_result_cleanup.sql`. `purge_expired_game_challenges()` 함수와 pg_cron 매일 04:00 UTC 예약. pg_cron이 꺼져 있으면 함수만 만들고 NOTICE를 낸다. **운영 Supabase에 아직 적용하지 않았다.** SQL Editor에서 실행하고 Extensions에서 pg_cron을 켜야 한다.
+   - `assets/kakao-share.js`가 주입하는 `result-notify.js` 버전을 `20260912-privacy`로 올렸다.
+
+4. 개인정보 안내 페이지 신설
+   - `privacy/index.html`: 서버에 저장하지 않는 것(편지 본문, 게임 답, 연락처), 잠시 저장되는 것(완료 알림 결과 주소 7일, 단체방, 임시 익명 계정, 푸시 구독), 이용 통계, 카카오 공유, 광고(현재 없음), 브라우저 저장, 삭제 요청 경로를 쉬운 말로 적었다. `noindex`.
+   - 링크: 홈 푸터(`index.html`), 사용법 푸터(`guide/index.html`), 공통 게임 UI 푸터(`assets/game-ui.js`의 `.game-privacy`, 스타일은 `game-ui.css`).
+   - `game-ui.js/css` 버전을 20개 게임 페이지 전부 `20260912-privacy`로 통일했다. 이전에는 같은 파일이 세 가지 `?v=`로 불려 캐시가 갈라져 있었다.
+   - 남은 일: 편지·타로·마음동물·운세·단체방·취향·심리 메뉴는 game-ui.js를 쓰지 않아 푸터 링크가 없다. 광고를 실제로 붙이면 안내 문구를 먼저 고친다.
+
+5. 푸시 Edge Function CORS 보완
+   - 문제: `supabase/functions/clever-service/index.ts`가 OPTIONS(preflight)와 `Access-Control-*` 헤더를 처리하지 않았고, 프런트는 실패를 조용히 삼켰다. `@supabase/server`의 `withSupabase`가 preflight를 대신 처리하는지 확인하지 못했다.
+   - 수정: `withSupabase` 앞단에서 OPTIONS를 204로 응답하고 모든 JSON 응답에 CORS 헤더를 붙인다. 허용 출처는 `https://bingari69-jpg.github.io`, `http://127.0.0.1:4173`, `http://localhost:4173`. 내부 오류 문구는 서버 로그에만 남기고 클라이언트에는 코드만 돌려준다.
+   - 프런트: `client.functions.invoke` 실패 시 `console.warn`으로 남긴다(`[결과 알림] 푸시 ...`).
+   - **배포하지 않았다.** `supabase functions deploy clever-service` 실행 후 실기기에서 A 알림 허용 → B 완료 → A 수신을 확인해야 한다.
+
+검사: `npm test` 17개 묶음 전부 통과(`test/marriage.js` 포함). `git diff --check` 이상 없음. 커밋·푸시는 하지 않았다.
+
+배포 전 확인 목록
+- 운영 Supabase에 `20260912_result_cleanup.sql` 실행, pg_cron 켜기.
+- `supabase functions deploy clever-service`.
+- 배포 후 관리자는 한 번 다시 로그인한다(세션 저장소가 바뀜).
+- 홈·게임 페이지 푸터의 '개인정보 안내' 링크가 `/privacy/`로 열리는지 확인.
 
 ## 테스트·배포 확인
 
