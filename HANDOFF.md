@@ -200,7 +200,7 @@
 - 문제: 홈 목록 카드 23개에 `tarot`, `personality`, `fortune`, `group-room`이 없었다. 심리 메뉴(`/t/psychology/`)나 사다리 페이지의 링크로만 갈 수 있어 가장 공들인 콘텐츠가 가장 찾기 어려웠다.
 - 수정: `assets/home-catalog.js`의 `ITEMS`와 `CARDS`에 네 게임을 추가해 홈 카드 27개. 위치는 타로→편지 다음, 마음동물→MBTI 다음, 운세→추락 다음, 단체방→사다리 다음. 그림: 타로는 `art/tarot-chick.png`(`.catalog-mascot.tarot`, `social-ui.css`), 마음동물은 아틀라스 4번(커플), 운세는 17번(선물), 단체방은 7번(커피 사다리, 사다리와 공유).
 - 서버 목록과의 관계: 홈은 Supabase `game_catalog`(또는 관리자 게시본)가 응답하면 그 목록으로 덮어쓰는데, 이전에는 서버에 없는 로컬 게임을 버렸다. 운영 `game_catalog`에는 tarot·personality만 있고 fortune·group-room이 없어(2026-09-12 REST로 확인) 코드에만 추가하면 배포 후 사라질 상황이었다. `appendUnknownLocal()`을 두 병합 경로 모두에 넣어, 서버가 모르는 로컬 게임은 목록 끝에 그대로 붙인다. 서버가 명시적으로 숨긴 게임은 행이 있으므로 되살아나지 않는다.
-- 새 SQL: `supabase/migrations/20260912_catalog_add_fortune_group_room.sql`. `fortune`(260), `group-room`(270) 행을 `on conflict do nothing`으로 넣는다. **운영에 아직 적용하지 않았다.** 적용하지 않아도 홈에는 보이지만, 관리자에서 제목·순서를 다루려면 실행해야 한다.
+- 새 SQL: `supabase/migrations/20260912_catalog_add_fortune_group_room.sql`. `fortune`(260), `group-room`(270) 행을 `on conflict do nothing`으로 넣는다. 2026-09-12 운영 Supabase SQL Editor에서 실행 완료(결과: fortune 260, group-room 270).
 - 관리자 게시본은 현재 null(게시한 적 없음)이라 영향 없음. 관리자가 게시하면 `localGames()`가 `HOME_ITEMS` 27개를 그대로 읽어 간다.
 - 버전: `index.html`의 `social-ui.css`, `home-catalog.js`를 `20260912-catalog4`로 올렸다.
 - 검사: `test/letter.js`의 홈 카드 수 기대값 23→27(3곳). `test/guides.js`는 카탈로그 슬러그마다 사용법이 있는지 보는데 네 게임 모두 `guide-data.js`에 이미 있다. `npm test` 19개 묶음 통과.
