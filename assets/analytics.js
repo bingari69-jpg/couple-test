@@ -39,6 +39,14 @@
     document.head.appendChild(guideData);
   }
 
+  /* 잘린 링크 안내: 주소에 #c=/#i=/#r=가 있는데 풀리지 않으면 위쪽에 안내를 띄운다. */
+  if(!window.__GATCHI_LINK_GUARD_LOADER__ && analyticsScript && analyticsScript.src){
+    window.__GATCHI_LINK_GUARD_LOADER__=true;
+    const linkGuard=document.createElement("script");
+    linkGuard.src=new URL("link-guard.js?v=20260912-1",analyticsScript.src).href;
+    document.head.appendChild(linkGuard);
+  }
+
   /* gtag 로드 */
   const s=document.createElement("script"); s.async=true;
   s.src="https://www.googletagmanager.com/gtag/js?id="+ID; document.head.appendChild(s);

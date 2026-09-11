@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/crash/">
 <meta name="twitter:card" content="summary_large_image">
 
-<script src="../../assets/analytics.js?v=20260911-guide4"></script>
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260911-complete"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -479,8 +479,7 @@ document.getElementById("retry2").onclick=()=>{location.hash="";invite=null;ans=
   } else if(result){
     showCompare(result);
   } else {
-    show("v-intro");
-    if(location.hash)setTimeout(()=>toast("링크를 읽지 못했어요. 새 게임을 시작해 주세요"),0);
+    show("v-intro"); /* 잘린 링크 안내는 공통 link-guard.js가 띄운다 */
   }
 })();
 </script>
