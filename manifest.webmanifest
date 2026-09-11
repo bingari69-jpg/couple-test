@@ -1,0 +1,25 @@
+{
+  "name": "같이놀자",
+  "short_name": "같이놀자",
+  "description": "카카오톡으로 편지·게임·심리 콘텐츠를 주고받는 놀이터",
+  "lang": "ko",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#fffbf5",
+  "theme_color": "#fffbf5",
+  "icons": [
+    {
+      "src": "assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -67,7 +67,7 @@ async function main(){
  const home=load('index.html'),hd=home.window.document;
  const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');
  assert.match(homeCss,/\.hero-art\{height:auto\}/);
- assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/catalog4/);
+ assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/\?v=2026/); /* 버전 일치는 test/asset-versions.js 가 검사 */
  assert.equal(fs.readFileSync(path.join(root,'t/letter/index.html'),'utf8').includes('help-guide.js'),false);
  assert.equal(hd.getElementById('catalogList').children.length,27);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];

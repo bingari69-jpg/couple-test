@@ -205,6 +205,18 @@
 - 버전: `index.html`의 `social-ui.css`, `home-catalog.js`를 `20260912-catalog4`로 올렸다.
 - 검사: `test/letter.js`의 홈 카드 수 기대값 23→27(3곳). `test/guides.js`는 카탈로그 슬러그마다 사용법이 있는지 보는데 네 게임 모두 `guide-data.js`에 이미 있다. `npm test` 19개 묶음 통과.
 
+
+### 2026-09-12 나머지 개선 1묶음: 캐시 버전 통일·SW 출처 검사·OG/SEO·PWA·움직임 줄이기·홈 고정
+
+- 캐시 버전 통일: `kakao-share.js`, `home-catalog.js`, `supabase-data.js`, `social-ui.css`, `psychology.css`, `ui.js`, `ranking.css`, `letter-legacy.js`, `letter-templates.js`, `roster.js`를 모든 페이지에서 `?v=20260912-a`로 맞췄다(31개 파일). 버전이 아예 없던 4개도 붙였다. 새 검사 `test/asset-versions.js`: HTML/JS에서 부르는 `assets/*.js|css` 38개 모두 버전이 있고 파일당 버전이 하나인지 확인한다. 앞으로 공용 파일을 고치면 그 파일을 부르는 모든 페이지의 `?v=`를 같은 값으로 올려야 검사가 통과한다.
+- `sw.js`: 알림 클릭 시 여는 주소가 같은 출처일 때만 열고, 아니면 홈으로 보낸다.
+- OG/SEO: og:url·canonical을 fortune, personality, tarot, letter, group-room, psychology, guide에 추가(og:image 크기 800×480 포함). `index.html`에 canonical과 manifest 링크. `robots.txt`(admin·privacy 제외), `sitemap.xml`(홈·사용법·게임 28개).
+- PWA: `manifest.webmanifest`(이름·start_url·색·아이콘 192/512). 아이콘은 `assets/icons/`에 타로 병아리로 생성. 오프라인 캐시는 여전히 없다(서비스워커는 푸시 전용).
+- 움직임 줄이기: `psychology.css`에 `prefers-reduced-motion` 규칙을 추가해 운세·마음동물·심리 메뉴도 대응. 이제 27개 게임 페이지 전부 적용.
+- 홈 화면 고정: `assets/home.js`가 첫 방문에 고른 홈(편지/놀이)을 `gatchi-home-v1`에 기억해 다음 방문에도 같은 화면을 보여준다. `?home=`으로 지정하면 그 값을 기억한다.
+- `test/letter.js`의 social-ui.css 버전 고정 검사는 `?v=2026` 형식 검사로 완화(일치 여부는 asset-versions가 담당).
+- `npm test` 20개 묶음 통과.
+
 ## 테스트·배포 확인
 
 - 실행: `npm install` 후 `npm test` (현재 환경에는 의존성 설치됨).

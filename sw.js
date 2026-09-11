@@ -13,7 +13,12 @@ self.addEventListener("push", event => {
 
 self.addEventListener("notificationclick", event => {
   event.notification.close();
-  const target = new URL((event.notification.data && event.notification.data.url) || "./", self.location.origin).href;
+  // 알림에 담긴 주소는 같은 사이트 안일 때만 연다. 다른 도메인이면 홈으로 보낸다.
+  let target = new URL("./", self.location.href).href;
+  try {
+    const candidate = new URL((event.notification.data && event.notification.data.url) || "./", self.location.origin);
+    if (candidate.origin === self.location.origin) target = candidate.href;
+  } catch (_) {}
   event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then(windows => {
     for (const windowClient of windows) {
       if (windowClient.url === target && "focus" in windowClient) return windowClient.focus();

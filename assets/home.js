@@ -1,8 +1,12 @@
 (function(){
 const $=id=>document.getElementById(id);
-// A fresh visit chooses either home equally; explicit links allow direct previews.
+// 첫 방문은 두 홈 중 하나를 무작위로 고르고, 그 뒤로는 같은 홈을 기억해 보여준다.
+// ?home=letter / ?home=play 로 직접 지정할 수도 있다(지정한 값도 기억한다).
+const HOME_KEY='gatchi-home-v1';
 const requestedHome=new URLSearchParams(location.search).get('home');
-const home=['letter','play'].includes(requestedHome)?requestedHome:(Math.random()<0.5?'letter':'play');
+let rememberedHome='';try{rememberedHome=localStorage.getItem(HOME_KEY)||'';}catch(e){}
+const home=['letter','play'].includes(requestedHome)?requestedHome:(['letter','play'].includes(rememberedHome)?rememberedHome:(Math.random()<0.5?'letter':'play'));
+try{localStorage.setItem(HOME_KEY,home);}catch(e){}
 const playing=home==='play';
 document.body.dataset.home=home;
 $('letterHome').hidden=playing;$('letterChallenge').hidden=playing;
