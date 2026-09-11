@@ -11,7 +11,7 @@ const input=(w,id,value)=>{const e=el(w,id);e.value=value;e.dispatchEvent(new w.
 (async()=>{
   const maker=open();
   const shareCard=fs.readFileSync(path.join(ROOT,'assets/share-cards/nonsense.png'));
-  assert.equal(shareCard.readUInt32BE(16),1672);assert.equal(shareCard.readUInt32BE(20),941);
+  assert.equal(shareCard.readUInt32BE(16),800);assert.equal(shareCard.readUInt32BE(20),480); /* 2026-09-12 다른 카드와 같은 800×480 으로 축소 */
   const bank=maker.NONSENSE_QUESTIONS;
   assert.equal(bank.length,100);
   assert.equal(new Set(bank.map(q=>q.id)).size,100);
