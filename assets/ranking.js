@@ -16,6 +16,10 @@
       ['새로운 식당을 고를 때,\n가장 중요하게 보는 건?', [['😋','음식 맛'],['💰','합리적인 가격'],['🕯️','좋은 분위기']]]]},
   ];
   const $=id=>document.getElementById(id);
+/* 이름 기억: 기록 게임과 같은 gh_name 키를 써서 게임을 옮겨도 다시 적지 않게 한다 */
+function rememberName(){const K='gh_name';['makerName','guestName'].forEach(id=>{const el=document.getElementById(id);if(!el)return;try{if(!el.value){const v=localStorage.getItem(K)||'';if(v)el.value=v;}}catch(e){}el.addEventListener('input',()=>{try{localStorage.setItem(K,el.value.trim());}catch(e){}});});}
+rememberName();
+
   let pack=0,round=0,mode='make',orders=[[],[],[]],challenge=null,result=null,shareUrl='',toastTimer;
   const track=(event,data)=>{if(window.track)window.track(event,data);};
   const name=(value,fallback)=>Array.from(String(value||'').replace(/[\u0000-\u001f\u007f]/g,'').trim()).slice(0,12).join('')||fallback;

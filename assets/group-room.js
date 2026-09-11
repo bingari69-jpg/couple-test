@@ -61,7 +61,16 @@
       await navigator.clipboard.writeText(text);
       $("roomMessage").textContent = "초대 링크를 복사했어요.";
     } catch (_) {
-      window.prompt("아래 링크를 복사해주세요.", text);
+      // 모바일에서 window.prompt는 잘리거나 막히므로, 길게 눌러 복사할 수 있는 칸을 화면에 보여준다.
+      $("roomMessage").textContent = "복사가 막혔어요. 아래 링크를 길게 눌러 복사해주세요.";
+      let box = document.getElementById("roomLinkBox");
+      if (!box) {
+        box = document.createElement("input");
+        box.id = "roomLinkBox"; box.readOnly = true; box.setAttribute("aria-label", "초대 링크");
+        box.style.cssText = "display:block;width:100%;margin-top:8px;padding:10px 12px;border:1px solid #eee2d7;border-radius:12px;font-size:13px;background:#fffdf9;color:#5a4634";
+        $("roomMessage").insertAdjacentElement("afterend", box);
+      }
+      box.value = text; box.focus(); box.select();
     }
   }
 

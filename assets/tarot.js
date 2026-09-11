@@ -1,6 +1,9 @@
 (function(){
  'use strict';
  const $=id=>document.getElementById(id),D=window.TAROT_DECK,M=window.TAROT_DETAILS,T=window.TAROT_TOPICS,E=window.TarotDraw;
+/* 이름 기억: 기록 게임과 같은 gh_name 키를 써서 게임을 옮겨도 다시 적지 않게 한다 */
+function rememberName(){const K='gh_name';['makerName','guestName'].forEach(id=>{const el=document.getElementById(id);if(!el)return;try{if(!el.value){const v=localStorage.getItem(K)||'';if(v)el.value=v;}}catch(e){}el.addEventListener('input',()=>{try{localStorage.setItem(K,el.value.trim());}catch(e){}});});}
+rememberName();
  let topic=0,c=null,r=null,mode='make',selected=-1,view='a',shareHash='',opened=0,drawCount=22;
  const encode=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
  const pairTitle=(a,b)=>{const word=M[a][0],last=word.charCodeAt(word.length-1);return word+((last>=0xac00&&last<=0xd7a3&&(last-0xac00)%28)?'과 ':'와 ')+M[b][0];};

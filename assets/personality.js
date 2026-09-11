@@ -1,5 +1,9 @@
 (function(){
  'use strict';const $=id=>document.getElementById(id);
+/* 이름 기억: 기록 게임과 같은 gh_name 키를 써서 게임을 옮겨도 다시 적지 않게 한다 */
+function rememberName(){const K='gh_name';['makerName','guestName'].forEach(id=>{const el=document.getElementById(id);if(!el)return;try{if(!el.value){const v=localStorage.getItem(K)||'';if(v)el.value=v;}}catch(e){}el.addEventListener('input',()=>{try{localStorage.setItem(K,el.value.trim());}catch(e){}});});}
+rememberName();
+
  const questions=[
  ['친구가 갑자기 힘들다고 연락했어.', ['무슨 일인지 충분히 들어줄래.','기분 전환할 재미있는 일을 찾아볼래.','차분히 상황을 정리하고 방법을 생각할래.']],
  ['아무 계획 없는 주말이 생겼어.', ['보고 싶었던 사람과 시간을 보낼래.','처음 가보는 동네를 탐험할래.','익숙하고 편안한 곳에서 충전할래.']],

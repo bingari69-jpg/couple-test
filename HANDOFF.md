@@ -217,6 +217,16 @@
 - `test/letter.js`의 social-ui.css 버전 고정 검사는 `?v=2026` 형식 검사로 완화(일치 여부는 asset-versions가 담당).
 - `npm test` 20개 묶음 통과.
 
+
+### 2026-09-12 나머지 개선 2묶음: 이름 기억·단체방 복사·통계 보호·전 게임 연기 검사
+
+- 이름 기억 통일: 타로·마음동물·취향 맞히기(`assets/tarot.js`, `personality.js`, `ranking.js`)의 `makerName`/`guestName` 입력칸이 기록 게임과 같은 `gh_name`(localStorage)을 읽고 저장한다. 게임을 옮겨도 이름을 다시 적지 않는다. 세 파일 버전 `20260912-b`.
+- 단체방 링크 복사: 클립보드가 막히면 `window.prompt` 대신 화면에 읽기 전용 입력칸(`#roomLinkBox`)을 띄워 길게 눌러 복사하게 했다(`assets/group-room.js`, 버전 `20260912-b`). 분석에서 "같은 닉네임이 섞인다"고 했던 문제는 확인 결과 서버가 `unique (room_id, nickname)`과 `NICKNAME_ALREADY_USED`로 이미 막고 있어 수정할 것이 없었다. "한 판 더"는 서버에 같은 멤버로 새 방을 만드는 RPC가 필요해 미구현.
+- 통계 보호 SQL: `supabase/migrations/20260912_analytics_guard.sql`. `track_app_event`에 분당 전역 3,000건 상한과 `broken_link` 이벤트 허용을 넣고, 90일 지난 `analytics_events`를 지우는 `purge_old_analytics_events()`와 pg_cron 04:30 UTC 예약을 추가했다. **운영에 아직 적용하지 않았다.** 적용 전까지 `broken_link` 이벤트는 서버에서 조용히 버려진다(GA4에는 간다).
+- 전 게임 연기 검사 `test/smoke.js`: 게임 폴더 28개(심리 메뉴 포함)를 빈 주소·잘린 해시 3종·모양이 다른 정상 JSON 3종·`#l=`·`#room=` 9가지로 열어 스크립트 예외가 없는지 본다. 개별 흐름 검사가 없는 시험지·조편성·사다리·MBTI·좌석·배달·싸움의 최소 안전망이다.
+- 카톡 인앱 브라우저 대응(분석 8번)은 검토 후 보류: 카카오 공유 SDK는 카톡 안에서 정상 동작하고, 푸시 버튼은 `supportsPush()`가 PushManager 없는 웹뷰에서 자동으로 숨기며, 복사는 모든 게임에 대체 경로가 있다. 편지의 외부 브라우저 열기는 답장 작성 흐름 전용이라 일반화할 이유가 없었다.
+- `npm test` 21개 묶음 통과.
+
 ## 테스트·배포 확인
 
 - 실행: `npm install` 후 `npm test` (현재 환경에는 의존성 설치됨).
