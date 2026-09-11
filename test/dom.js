@@ -10,7 +10,10 @@ const ROOT = path.join(__dirname, "..");
 function prepHtml(game) {
   let html = fs.readFileSync(path.join(ROOT, "t", game, "index.html"), "utf8");
   html = html.replace(/<link rel="stylesheet"[^>]*>/g, "");
-  html = html.replace(/<script src="(\.\.\/\.\.\/assets\/[^"]+)"><\/script>/g, (m, rel) => {
+  /* 공용 assets 뿐 아니라 같은 폴더의 data.js 같은 로컬 스크립트도 전부 인라인한다.
+     외부 http(s) 주소만 남겨 두면 jsdom 이 네트워크를 타지 않고 그냥 건너뛴다.
+     기존에는 ../../assets/ 만 인라인해서 t/memory, t/mind/fight 의 data.js 가 빠져 있었다. */
+  html = html.replace(/<script src="(?!https?:)([^"]+)"><\/script>/g, (m, rel) => {
     /* 파일 머리말 주석에 </script> 가 들어 있어 그대로 넣으면 태그가 끊긴다 */
     const js = fs.readFileSync(path.join(ROOT, "t", game, rel.split('?')[0]), "utf8").replace(/<\/script/g, "<\\/script");
     return "<script>\n" + js + "\n</script>";

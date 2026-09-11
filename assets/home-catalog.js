@@ -67,7 +67,19 @@ const ITEMS = [
     desc:"5번 멈춰서 오차 합. 적은 쪽이 이겨." },
   { path:"t/exam/",      rel:"가족",  kind:"공부",
     title:"시험지 보내기 — 카톡으로 단어 시험",
-    desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." }
+    desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." },
+  { path:"t/tarot/",     rel:"연인",  kind:"심리",
+    title:"나와 너의 타로 — 세 장의 카드",
+    desc:"각자 카드 한 장을 고르면 나·너·우리 카드가 차례로 열려요." },
+  { path:"t/personality/", rel:"친구", kind:"심리",
+    title:"나와 너의 마음동물",
+    desc:"여섯 질문에 답하면 나와 친구의 마음동물이 나와요. 둘 다 답해야 열려요." },
+  { path:"t/fortune/",   rel:"친구",  kind:"심리",
+    title:"오늘의 운세 카드",
+    desc:"오늘 마음이 가는 카드 한 장을 골라 메시지를 받고 친구에게 공유해요." },
+  { path:"t/group-room/", rel:"친구", kind:"단체",
+    title:"단체방 커피 내기",
+    desc:"모두 같은 방에 들어와 준비하면 커피 살 사람을 공평하게 정해요." }
 ];
 
 // The catalogue order and artwork follow the browsing cards on the home screen.
@@ -86,13 +98,17 @@ const CARDS = [
  ['arrow','atlas',14,'#dceffa',['친구','연인','가족'],'빨간 테두리면 반대로! 순간 판단 대결.'],
  ['ranking','ranking',0,'#f9edcc',['친구','연인','가족'],'세 가지 중 내 최애는? 하나씩 골라 친구에게 보내봐.'],
  ['mbti','atlas',0,'#e9dffc',['친구','연인'],'너는 나를 얼마나 알까? 네 글자로 맞혀봐.'],
+ ['personality','atlas',4,'#e3f1e6',['친구','연인','가족'],'여섯 질문으로 보는 나와 너의 마음동물.'],
  ['crash','atlas',2,'#e5f2cb',['친구','연인'],'정답 없는 8개의 극한 선택. 우리는 어디서 갈릴까?'],
+ ['fortune','atlas',17,'#fff4d6',['친구','연인','가족'],'오늘 마음이 가는 카드 한 장. 하루에 한 번!'],
  ['letter','letter',0,'#ffedcf',['연인','부부','친구','가족'],'특별한 날에도, 그냥 네 생각이 난 날에도.'],
+ ['tarot','tarot',0,'#ece4f7',['연인','부부','친구'],'각자 카드 한 장. 나·너·우리 카드를 차례로 열어봐.'],
  ['seat','atlas',3,'#dff0e7',['친구','연인'],'어디에 앉을래? 한 번의 선택으로 보는 성향.'],
  ['marriage','atlas',4,'#fbe1df',['연인','부부'],'돈, 가족, 집안일. 우리의 생각을 나란히.'],
  ['mind/fight','atlas',5,'#ece2f9',['연인','부부'],'싸우고 나면 누가 먼저 연락할까?'],
  ['memory','atlas',6,'#ffe6ee',['연인','부부'],'첫 데이트, 첫 선물. 같은 기억을 떠올릴까?'],
  ['ladder','atlas',7,'#fff0d3',['친구','가족'],'오늘 커피는 누가 쏠까? 이름 넣고 사다리!'],
+ ['group-room','atlas',7,'#e6f2ea',['친구','가족'],'다 같이 한 방에 모여서 커피 살 사람 뽑기.'],
  ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
  ['exam','atlas',16,'#e9e5fa',['친구','가족'],'단어로 시험지 만들기. 채점까지 한 번에.']
 ];
@@ -100,6 +116,17 @@ const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=
  ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
 }));
 window.HOME_ITEMS=LOCAL_HOME_ITEMS;
+
+// 서버 목록(관리자 게시본·game_catalog)에 아직 등록되지 않은 로컬 게임은 목록 끝에 그대로 붙인다.
+// 새 게임을 코드에만 추가했을 때 서버 등록 전이라고 홈에서 사라지는 일을 막는다.
+// 서버가 명시적으로 '숨김'으로 둔 게임은 rows에 있으므로 여기서 다시 살아나지 않는다.
+function appendUnknownLocal(merged,rows){
+  const known=new Set((rows||[]).map(row=>row&&row.slug));
+  LOCAL_HOME_ITEMS.forEach(item=>{
+    const slug=item.path.replace(/^t\//,'').replace(/\/$/,'');
+    if(!known.has(slug))merged.push(item);
+  });
+}
 
 let publishedCatalogApplied=false;
 function applyPublishedCatalog(config){
@@ -123,6 +150,7 @@ function applyPublishedCatalog(config){
       };
     }).filter(Boolean);
   if(!merged.length)return false;
+  appendUnknownLocal(merged,config.games);
   publishedCatalogApplied=true;
   window.HOME_ITEMS=merged;
   window.dispatchEvent(new CustomEvent('home-catalog-updated'));
@@ -153,6 +181,7 @@ if(window.SupabaseData){
       };
     }).filter(Boolean);
     if(!merged.length)return;
+    appendUnknownLocal(merged,rows);
     window.HOME_ITEMS=merged;
     window.dispatchEvent(new CustomEvent('home-catalog-updated'));
   }).catch(()=>{});

@@ -68,6 +68,7 @@
 .catalog-mascot.ranking{width:110%;aspect-ratio:1;background-image:url('art/ranking-squirrel.png');background-size:contain;background-position:center}
 .catalog-mascot.atlas{width:100%;aspect-ratio:1;background-image:url('art/catalog-mascots.png');background-size:300% 600%;background-position:var(--sprite-x) var(--sprite-y)}
 .catalog-mascot.classic{width:90%;aspect-ratio:2/3;background-image:url('art/game-characters.png');background-size:300% 100%;background-position:var(--sprite-x) 50%}
+.catalog-mascot.tarot{width:96%;aspect-ratio:1;background-image:url('art/tarot-chick.png');background-size:contain;background-position:center bottom}
 .catalog-mascot.letter{width:140%;aspect-ratio:1.5;background-image:url('art/envelope-hero.png');background-size:contain;background-position:center}
 .catalog-content{min-width:0;display:flex;flex-direction:column;align-items:flex-start;padding:3px 0;gap:7px}
 .catalog-content h3{font-size:18px;letter-spacing:-.6px;line-height:1.4;margin:0;word-break:keep-all;overflow-wrap:anywhere;font-weight:850}

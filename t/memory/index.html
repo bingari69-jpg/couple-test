@@ -289,7 +289,10 @@
   /* ---- 진입 ---- */
   const h=readHash();
   if(h&&h.type==="i"&&h.p&&h.p.q){const q=Q.find(x=>x.id===h.p.q);if(q){startAnswer(q,h.p);}else{renderHome();show("s-home");}}
-  else if(h&&h.type==="r"&&h.p&&h.p.q){const q=Q.find(x=>x.id===h.p.q);if(q){renderResult({q,aName:h.p.an,a:h.p.a,bName:h.p.bn,b:h.p.b,judge:h.p.j,viewer:"a"});}else{renderHome();show("s-home");}}
+  else if(h&&h.type==="r"&&h.p&&h.p.q){const q=Q.find(x=>x.id===h.p.q);
+    /* 결과 링크는 두 사람의 답 배열이 문항의 칸 수와 같아야 한다. 아니면 홈으로 (잘린 링크 안내는 link-guard.js 담당) */
+    const okArr=a=>Array.isArray(a)&&q&&a.length===q.fields.length;
+    if(q&&okArr(h.p.a)&&okArr(h.p.b)){renderResult({q,aName:h.p.an,a:h.p.a,bName:h.p.bn,b:h.p.b,judge:Array.isArray(h.p.j)?h.p.j:null,viewer:"a"});}else{renderHome();show("s-home");}}
   else{renderHome();show("s-home");}
 })();
 </script>
