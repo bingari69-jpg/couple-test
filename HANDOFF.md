@@ -151,7 +151,7 @@
 3. 완료 알림에 개인 내용이 남는 문제
    - 문제: `assets/result-notify.js`가 결과 화면의 이름·점수를 긁어(`visibleText`) `result_summary`와 푸시 본문에 넣었다. `result_url`에는 두 사람의 답이 담긴 `#r=` 해시가 그대로 들어간다. 만료 행을 지우는 절차가 없었다.
    - 수정: `visibleText()`를 없애고 고정 문구(`summaryText`)만 보낸다. `result_url`은 보낸 사람이 '결과 보기'로 열어야 하므로 유지하되, 보낸 사람만 읽는 RLS와 7일 만료를 전제로 한다.
-   - 새 SQL: `supabase/migrations/20260912_result_cleanup.sql`. `purge_expired_game_challenges()` 함수와 pg_cron 매일 04:00 UTC 예약. pg_cron이 꺼져 있으면 함수만 만들고 NOTICE를 낸다. **운영 Supabase에 아직 적용하지 않았다.** SQL Editor에서 실행하고 Extensions에서 pg_cron을 켜야 한다.
+   - 새 SQL: `supabase/migrations/20260912_result_cleanup.sql`. `purge_expired_game_challenges()` 함수와 pg_cron 매일 04:00 UTC 예약. pg_cron이 꺼져 있으면 함수만 만들고 NOTICE를 낸다. 2026-09-12 사용자가 운영 SQL Editor에서 실행했다고 보고. `select jobname, schedule, active from cron.job;`으로 예약 행 확인은 아직 받지 못했다.
    - `assets/kakao-share.js`가 주입하는 `result-notify.js` 버전을 `20260912-privacy`로 올렸다.
 
 4. 개인정보 안내 페이지 신설
