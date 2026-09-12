@@ -1444,11 +1444,11 @@
       "지은"
     ],
     "link_challenge": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W119",
-      "linkbox": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W119"
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W119",
+      "linkbox": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W119"
     },
     "kakao_challenge": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W119",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
@@ -1457,10 +1457,10 @@
       "desc": "같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W1si7KeA7J2AIiwyOTg3MCwi66-87IiYIiwzNDEyMCwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W1si7KeA7J2AIiwyOTg3MCwi66-87IiYIiwzNDEyMCwiYWJjMTIzIiwienp6OTk5Il1dfQ"
     },
     "kakao_challenge_hist": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W1si7KeA7J2AIiwyOTg3MCwi66-87IiYIiwzNDEyMCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W1si7KeA7J2AIiwyOTg3MCwi66-87IiYIiwzNDEyMCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
@@ -1713,11 +1713,11 @@
       "subjMatch": true
     },
     "bet_link": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "stateBet": "점심"
     },
     "bet_kakao": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiYiI6IuygkOyLrCIsImgiOltdfQ",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
@@ -1726,7 +1726,7 @@
       "desc": "같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiaCI6W119",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiaCI6W119",
       "stateBet": ""
     },
     "bet_open": {
@@ -1760,7 +1760,7 @@
       ]
     },
     "bet_again_link": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMzQxMjAsIuuvvOyImCIsMjk4NzAsImFiYzEyMyIsInp6ejk5OSIsNDYsNDZdXX0"
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMzQxMjAsIuuvvOyImCIsMjk4NzAsImFiYzEyMyIsInp6ejk5OSIsNDYsNDZdXX0"
     },
     "bet_result_view": {
       "subVerdict": "34.12초 vs 29.87초 — 민수가 4.25초 빨랐어.",
@@ -1772,7 +1772,7 @@
       "betResult": "무승부 — 내기는 다음 판으로"
     },
     "bet_custom_link": {
-      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
+      "url": "https://noljago.co.kr/t/pairs/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjYzNDg5LCJmIjo0NiwibCI6MCwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
       "stateBet": "노래방"
     },
     "bet_custom": {

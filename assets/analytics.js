@@ -81,7 +81,7 @@
   }
   function supabaseEvent(ev,params){
     if(typeof fetch!=="function")return;
-    const allowed=["page_view","game_started","game_completed","link_made","invite_opened","responded","invite_shared","result_opened","result_shared","replay","letter_opened"];
+    const allowed=["page_view","game_started","game_completed","link_made","invite_opened","responded","invite_shared","result_opened","result_shared","replay","letter_opened","solo_started","solo_cleared","solo_failed","solo_to_duel"];
     let normalized=ev;
     if(/(?:^|_)start(?:ed)?$/.test(ev))normalized="game_started";
     else if(/(?:^|_)(?:finish|finished|graded)$/.test(ev))normalized="game_completed";

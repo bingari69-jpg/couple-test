@@ -45,7 +45,8 @@
      onInit()      진입할 때 (해시 읽기 전) 한 번
      newRound()    새 판을 만들 때 (첫 진입·재도전)
      resetPlay()   재도전할 때 플레이 화면 되돌리기
-     onOpenChallenge(p) 도전장을 열었을 때 (같은 판 복원)                 */
+     onOpenChallenge(p) 도전장을 열었을 때 (같은 판 복원)
+     onPreset({s,l}) 혼자놀기에서 넘어온 판(시드·레벨)으로 첫 판을 만들 때 (선택)   */
 (function () {
   "use strict";
 
@@ -345,6 +346,15 @@
       state.id = rid();
       state.name = loadName(); $("nameIn").value = state.name;
       if (cfg.onInit) cfg.onInit();
+      /* 혼자놀기(?solo=1): 레벨 표·고정 시드는 assets/solo.js 가 맡는다. 도전장·봉인 흐름은 쓰지 않는다. */
+      if (window.Solo && window.Solo.active && window.Solo.cfg) { window.Solo.mount(); show("s-play"); return; }
+      /* 혼자놀기 결과에서 "이 판으로 도전장 보내기": ?s=시드&l=레벨 로 같은 판을 첫 판으로 만든다 */
+      const preset = new URLSearchParams(location.search);
+      if (preset.has("s") && cfg.onPreset && !location.hash) {
+        cfg.onPreset({ s: Number(preset.get("s")) >>> 0, l: parseInt(preset.get("l") || "0", 10) || 0 });
+        history.replaceState(null, "", location.pathname);
+        show("s-play"); return;
+      }
       const h = readHash();
       if (h && h.type === "c" && h.p && typeof h.p.k === "number" && (!cfg.hasSeed || typeof h.p.s === "number")) { openChallenge(h.p); return; }
       if (h && h.type === "r" && h.p && Array.isArray(h.p.h) && h.p.h.length) {

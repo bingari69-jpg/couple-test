@@ -23,6 +23,16 @@
 - **카카오 도메인 설정은 세 곳이 별개다(실제 장애 원인).** (1) 플랫폼 키 → JavaScript 키 → JS SDK 도메인: 공유 버튼(SDK 초기화)이 동작하는 곳. (2) 앱 → 일반 → 앱 대표 도메인: 카드 하단 표기. (3) **앱 → 제품 링크 관리 → 웹 도메인: 메시지 버튼 링크에 허용되는 도메인.** (3)에 새 도메인이 없으면 메시지는 보내지지만 "도전 받기" 버튼이 기본 웹 도메인(`bingari69-jpg.github.io` 루트, 404)으로 떨어진다. 새 도메인 등록 후 휴대폰 실기기에서 도전장 전송·수신 정상 확인. 기본 웹 도메인도 `noljago.co.kr`로 바꾸는 것을 권장했다. 이미 받은 메시지는 링크가 고정되어 새 메시지로만 확인된다.
 - 남은 확인: GitHub Pages Enforce HTTPS 체크(인증서 발급 후 활성화됨). 알림을 켰던 기기는 새 도메인에서 "알림 받기"를 다시 눌러야 한다(푸시 구독은 출처에 묶임). 휴대폰에서 새 도메인으로 카톡 공유 실기기 확인.
 
+## 혼자놀기 1단계 (2026-09-12~13, 진행 중)
+
+- 결정(사용자): 메뉴 4축 **둘이놀기 | 혼자놀기 | 편지 | 심리**. 게임은 "판(코어) 하나 + 껍데기 둘". 둘이하기는 기존 `duel-engine.js`, 혼자하기는 새 `assets/solo.js`. 연결점은 혼자 결과의 "이 판으로 도전장 보내기"(`?s=시드&l=레벨`) 하나.
+- `assets/solo.js`: `?solo=1`이면 활성. `Solo.init({game,levels,lowerWins,fmt,describe,onLevel})`, `Solo.mount()`(엔진이 호출: 둘이하기 UI 숨김, 레벨 표), `Solo.select(n)`, `Solo.finish(값|null,{note})`(별 계산·저장·결과 카드·다음 레벨·도전장 링크), `Solo.seedFor(game,n)`(고정 시드), `Solo.summary(game,n)`(홈 배지용). 저장은 `localStorage gatchi_solo_v1`. 별: goal 넘기면 ★, best 닿으면 ★★★, 중간이 ★★. Lv N+1 은 Lv N 클리어 후 해제.
+- `assets/duel-engine.js`: `Duel.start`가 `Solo.active`면 `Solo.mount()`로 넘기고, `?s=&l=`이 있으면 `cfg.onPreset({s,l})`로 같은 판을 첫 판으로 만든다. 버전 `20260913-solo`(11개 페이지 일괄).
+- 짝 맞추기가 기준 구현: `SIZES`(레벨 0=둘이 기본 4×5, 1~5), `LEVELS`, 링크 `l` 필드(`linkExtra`), `onOpenChallenge/onPreset`이 `p.l` 적용, 제한 시간 초과 `failPlay()`. 골든은 pairs 링크에 `l:0`이 실려 10곳 갱신.
+- 통계 이벤트 `solo_started/solo_cleared/solo_failed/solo_to_duel` — `analytics.js` 허용 목록과 `supabase/migrations/20260913_solo_events.sql`(**운영 실행 필요**).
+- 테스트 `test/solo.js`. 에이전트 규격 문서는 세션 scratchpad `GAME_SPEC.md`(저장소 밖).
+- **남은 일**: 1에서 25까지·두더지 혼자 모드, 새 게임 10종(2048·블록 쌓기·초성 퀴즈·오늘의 단어·지뢰찾기·15퍼즐·순서 기억·스네이크·탭 비행·한글 타자), 홈 메뉴 4축·혼자놀기 탭·진행도 배지, 관리자 기본 메뉴, 각 게임 등록(홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든). 2026-09-12 밤 세션 한도로 병렬 에이전트가 중단되어 여기서 멈췄다.
+
 ## 자체 광고 배너 테스트 (2026-09-12)
 
 - 사용자가 준 인스타그램 게시물(제닉스 리브체어 라벤더 특가, https://www.instagram.com/p/DcS0B2hBcS6/ )을 광고 링크로 써서 관리자 자체 배너를 검사했다. 인스타그램 이미지는 외부에서 못 불러오므로 `scripts/build-ad-banner.cjs`로 800×200 배너 `assets/ads/xenics-livechair.png`를 만들었다(공유 카드와 같은 Playwright/Edge 경로).
