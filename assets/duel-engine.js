@@ -81,7 +81,10 @@
   let tt;
   function toast(m) { const e = $("toast"); e.textContent = m; e.style.opacity = "1"; e.style.transform = "translate(-50%,0)"; clearTimeout(tt); tt = setTimeout(() => { e.style.opacity = "0"; e.style.transform = "translate(-50%,20px)"; }, 2400); }
   async function copy(url, ok) { let d = false; try { await navigator.clipboard.writeText(url); d = true; } catch (e) { const ta = document.createElement("textarea"); ta.value = url; ta.style.position = "fixed"; ta.style.opacity = "0"; document.body.appendChild(ta); ta.select(); try { d = document.execCommand("copy"); } catch (e2) { } ta.remove(); } toast(d ? ok : "링크를 길게 눌러 복사해줘"); }
-  const track = (e, p) => { try { window.track && window.track(e, p); } catch (x) { } };
+  /* analytics.js가 먼저 정의한 window.track을 붙잡아 둔다. 아래 Object.assign이 window.track을 이 함수로
+     덮어쓰므로, 여기서 window.track을 부르면 자기 자신을 불러 무한 재귀가 났다(통계 누락·완료 훅 실패의 원인). */
+  const nativeTrack = typeof window.track === "function" ? window.track : null;
+  const track = (e, p) => { try { if (nativeTrack) nativeTrack(e, p); } catch (x) { } };
 
   /* ===== 이름(선택) · 플레이어 식별자 ===== */
   /* 이름은 안 적어도 된다. 링크에는 빈 문자열 그대로 싣고,
@@ -283,6 +286,7 @@
       if (isB) {
         $("respActions").classList.remove("hidden"); $("notYet").classList.remove("hidden");
         const rurl = baseUrl() + "#r=" + b64e(JSON.stringify(Bet.put({ v: 1, h: R.hist }, betNow)));
+        window.__gatchiResultUrl = rurl;          // 완료 알림의 "결과 보기"가 열 주소(도전장이 아니라 결과 링크)
         $("sendResult").onclick = () => { $("resLinkbox").textContent = rurl; copy(rurl, "결과 링크 복사됐어. 상대에게 보내"); };
         {
           const nm = n => n ? n + " " : "";

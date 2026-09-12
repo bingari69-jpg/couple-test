@@ -600,6 +600,7 @@ function renderResult(A, B, canSendBack){
   /* 결과 되돌려 보내기 (두 번째 사람 화면에서만) */
   if (canSendBack){
     const rlink = baseUrl() + '#r=' + enc({q:2, a:A, b:B});
+    window.__gatchiResultUrl=rlink;   // 완료 알림의 "결과 보기"가 열 결과 주소
     $('#sendBackName').textContent = aL;
     $('#sendBackBtn').onclick = ()=>shareOrCopy(rlink, "우리 커플 테스트 결과");
     document.getElementById("kakaoRes").onclick=()=>kakaoShare({

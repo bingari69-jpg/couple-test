@@ -385,6 +385,7 @@ function renderResult(R){
     $("guesserActions").classList.remove("hidden");$("notYet").classList.remove("hidden");
     const rp={v:1,of:R.owner,by:R.guesser,a:R.a,g:R.g,s:R.self,score:R.score};if(R.prev)rp.prev=R.prev;
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify(rp));
+    window.__gatchiResultUrl=rurl;   // 완료 알림의 "결과 보기"가 열 결과 주소
     $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
     $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-mbti-sq.png",
       title:(R.guesser||R.owner)?`${nm(R.guesser)}${R.owner?R.owner+"의 ":""}MBTI를 ${R.score}/4 맞힘`:`MBTI 4글자 중 ${R.score}글자 맞힘`, desc:`4문항이 본 결과는 ${tA}. ${scoreQuip(R.score)}`},

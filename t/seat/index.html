@@ -309,6 +309,7 @@ function renderResult(R){
   if(R.viewer==="b"){
     $("guesserActions").classList.remove("hidden"); $("notYet").classList.remove("hidden");
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
+    window.__gatchiResultUrl=rurl;   // 완료 알림의 "결과 보기"가 열 결과 주소
     $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
     $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
       title: same ? `둘 다 ${R.a+1}번 자리` : `${nm(R.aName)}${R.a+1}번 · ${nm(R.bName)}${R.b+1}번`,

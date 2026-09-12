@@ -440,6 +440,7 @@ function showCompare(p){
   if(sames.length){const list=document.createElement("details");list.className="same-list";const summary=document.createElement("summary");summary.textContent="같은 선택 "+sames.length+"개 보기";list.append(summary);sames.forEach(i=>{const line=document.createElement("div");line.className="same-choice";const label=document.createElement("b");label.textContent="SITUATION "+String(i+1).padStart(2,"0");line.append(label,document.createTextNode(Q[i].short[A[i]]));list.append(line);});box.append(list);}
   if(!p){
     const url=baseUrl()+"#r="+b64e(JSON.stringify({v:TEST.version,n:invite.n,a:invite.a,n2:nBraw,a2:ans}));
+    window.__gatchiResultUrl=url;   // 완료 알림의 "결과 보기"가 열 결과 주소
     window.__url2=url;
     document.getElementById("kakaoRes").textContent="💬 결과를 "+who(invite.n,false)+"에게 돌려보내기";
   }

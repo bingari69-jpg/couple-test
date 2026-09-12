@@ -354,6 +354,12 @@
   // 결과 링크: 보낸 사람이 '결과 보기'로 열 주소. 해시(#r=)에 두 사람의 답이 들어 있으므로
   // 서버에는 보낸 사람만 읽을 수 있게 저장되고 expires_at 뒤 purge_expired_game_challenges()로 지워진다.
   function resultPath() {
+    // 게임이 결과 링크(#r=)를 알려주면 그것을 쓴다. 현재 주소는 받는 쪽의 도전장 주소(#c=/#i=)라
+    // 보낸 사람이 "결과 보기"로 열면 결과가 아니라 도전장 화면이 떴다.
+    const given = window.__gatchiResultUrl;
+    if (typeof given === "string" && given) {
+      try { const u = new URL(given, location.href); if (u.origin === location.origin) return u.pathname + u.search + u.hash; } catch (_) {}
+    }
     return location.pathname + location.search + location.hash;
   }
 

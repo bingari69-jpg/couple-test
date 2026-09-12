@@ -15,7 +15,7 @@
     if(notifyLoading) return notifyLoading;
     notifyLoading = new Promise(resolve=>{
       const current=document.currentScript;
-      const src=current&&current.src ? new URL("result-notify.js?v=20260912-samepage",current.src).href : "../../assets/result-notify.js?v=20260912-samepage";
+      const src=current&&current.src ? new URL("result-notify.js?v=20260912-resulturl",current.src).href : "../../assets/result-notify.js?v=20260912-resulturl";
       const existing=document.querySelector('script[data-result-notify]');
       if(existing){
         existing.addEventListener("load",()=>resolve(window.ResultNotify||null),{once:true});

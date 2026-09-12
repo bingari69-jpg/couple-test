@@ -275,6 +275,7 @@
     if(R.viewer==="b"){
       $("notYet").classList.remove("hidden");$("respActions").classList.remove("hidden");
       const rurl=baseUrl()+"#r="+encP({v:1,q:q.id,an:R.aName,a:R.a,bn:R.bName,b:R.b,j:state.judge});
+    window.__gatchiResultUrl=rurl;   // 완료 알림의 "결과 보기"가 열 결과 주소
       $("sendResult").onclick=()=>copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");
       $("kakaoRes").onclick=()=>share({url:rurl,btn:"결과 보기",img:M.og.sq,title:`${q.emoji} ${q.title} — 기억 ${pct}% 일치`,desc:line},()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));
     }
