@@ -16,7 +16,12 @@ self.addEventListener("notificationclick", event => {
   // 알림에 담긴 주소는 같은 사이트 안일 때만 연다. 다른 도메인이면 홈으로 보낸다.
   let target = new URL("./", self.location.href).href;
   try {
-    const candidate = new URL((event.notification.data && event.notification.data.url) || "./", self.location.origin);
+    let given = String((event.notification.data && event.notification.data.url) || "./");
+    // 도메인 이전(noljago.co.kr) 전에 저장된 결과 주소는 /couple-test/ 로 시작한다.
+    // 이 워커가 그 경로 아래에 있지 않으면 접두어를 떼어 루트 기준으로 연다.
+    const base = new URL("./", self.location.href).pathname;
+    if (given.startsWith("/couple-test/") && !base.startsWith("/couple-test/")) given = given.slice("/couple-test".length);
+    const candidate = new URL(given, self.location.origin);
     if (candidate.origin === self.location.origin) target = candidate.href;
   } catch (_) {}
   event.waitUntil(clients.matchAll({ type: "window", includeUncontrolled: true }).then(windows => {
