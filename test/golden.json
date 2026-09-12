@@ -452,8 +452,8 @@
   "react": {
     "entry_fresh": {
       "playTag": "반응속도",
-      "playHead": "초록으로 바뀌면<br><b>바로 눌러.</b>",
-      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "playHead": "신호가 오는 순간<br><b>바로 눌러.</b>",
+      "playLead": "두더지·진동·빛·숫자·좌우, <b>다섯 가지 신호</b>가 한 번씩 와. 5번 평균이 내 기록. 신호 전에 누르면 그 판은 0.5초로 기록.",
       "lockName": "",
       "tallyText": "",
       "_hidden": {
@@ -552,7 +552,7 @@
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "지은의 반응속도 도전장 🔒",
-      "desc": "초록으로 바뀌는 순간 누르기. 5회 평균, 둘이 같은 타이밍. 내 기록은 네가 한 뒤 공개."
+      "desc": "두더지·진동·빛·숫자·좌우, 다섯 신호에 반응하기. 5회 평균, 둘이 같은 판. 내 기록은 네가 한 뒤 공개."
     },
     "link_challenge_hist": {
       "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W1si7KeA7J2AIiwyNjgsIuuvvOyImCIsMjMxLCJhYmMxMjMiLCJ6eno5OTkiXV19"
@@ -566,8 +566,8 @@
     },
     "open_challenge": {
       "playTag": "도전장 도착",
-      "playHead": "<b>지은</b>이 도전했다.<br>더 빨리 눌러봐.",
-      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 다섯 신호, 더 빨리 눌러봐.",
+      "playLead": "두더지·진동·빛·숫자·좌우, <b>다섯 가지 신호</b>가 한 번씩 와. 5번 평균이 내 기록. 신호 전에 누르면 그 판은 0.5초로 기록.",
       "lockName": "지은",
       "tallyText": "",
       "_hidden": {
@@ -583,10 +583,10 @@
       "resTag": "1판 결과",
       "nameA": "민수 (나)",
       "tA": "0.268<small>초</small>",
-      "dA": "평균",
+      "dA": "상위 50% · 평균 사람 0.27초",
       "nameB": "지은",
       "tB": "0.231<small>초</small>",
-      "dB": "평균",
+      "dB": "상위 35% · 평균 사람 0.27초",
       "verdict": "상대가 더 빨라",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",
@@ -619,8 +619,8 @@
     },
     "open_challenge_noname": {
       "playTag": "도전장 도착",
-      "playHead": "<b>상대</b>가 도전했다.<br>더 빨리 눌러봐.",
-      "playLead": "빨간 화면에서 기다리다가 초록이 되는 순간 눌러. <b>3번 평균</b>이 내 기록. 초록 전에 누르면 무효.",
+      "playHead": "<b>상대</b>가 도전했다.<br>같은 다섯 신호, 더 빨리 눌러봐.",
+      "playLead": "두더지·진동·빛·숫자·좌우, <b>다섯 가지 신호</b>가 한 번씩 와. 5번 평균이 내 기록. 신호 전에 누르면 그 판은 0.5초로 기록.",
       "lockName": "상대",
       "tallyText": "",
       "_hidden": {
@@ -636,10 +636,10 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "0.231<small>초</small>",
-      "dA": "평균",
+      "dA": "상위 35% · 평균 사람 0.27초",
       "nameB": "민수",
       "tB": "0.268<small>초</small>",
-      "dB": "평균",
+      "dB": "상위 50% · 평균 사람 0.27초",
       "verdict": "내가 더 빨라!",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",
@@ -815,7 +815,7 @@
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "🍱 점심 걸고 — 지은의 반응속도 도전장 🔒",
-      "desc": "초록으로 바뀌는 순간 누르기. 5회 평균, 둘이 같은 타이밍. 내 기록은 네가 한 뒤 공개."
+      "desc": "두더지·진동·빛·숫자·좌우, 다섯 신호에 반응하기. 5회 평균, 둘이 같은 판. 내 기록은 네가 한 뒤 공개."
     },
     "bet_off_link": {
       "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119",
@@ -825,7 +825,7 @@
       "betOpen": "이기면 점심!",
       "betOpenHidden": false,
       "betBoxHidden": true,
-      "playHead": "<b>지은</b>이 도전했다.<br>더 빨리 눌러봐.",
+      "playHead": "<b>지은</b>이 도전했다.<br>같은 다섯 신호, 더 빨리 눌러봐.",
       "stateBet": "점심"
     },
     "bet_result": {
@@ -873,10 +873,10 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "0.231<small>초</small>",
-      "dA": "평균",
+      "dA": "상위 35% · 평균 사람 0.27초",
       "nameB": "민수",
       "tB": "0.268<small>초</small>",
-      "dB": "평균",
+      "dB": "상위 50% · 평균 사람 0.27초",
       "verdict": "내가 더 빨라!",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",

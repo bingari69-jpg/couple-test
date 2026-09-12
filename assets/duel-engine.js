@@ -304,6 +304,7 @@
         $("again2").onclick = () => startNext(R.hist, aN, aId || "");
       }
       $("nextList").innerHTML = cfg.next.map(n => `<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");
+      if (cfg.onResult) { try { cfg.onResult({ me, them, o, em, et, isB }); } catch (_) {} }
       show("s-result");
     }
 
