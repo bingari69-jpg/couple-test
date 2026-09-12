@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>한글 타자 20초</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="한글 타자 20초 — 같은 문장, 누가 더 많이 치나">
+<meta property="og:description" content="20초, 같은 순서의 문장을 따라 쳐. 맞게 친 글자 수로 승부. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/typing.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/typing/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<script src="data.js?v=20260913-new"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
+  .hud .score{text-align:right}
+
+  /* 문장판 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:16px 14px 14px}
+  .target{font-size:clamp(20px,6vw,24px);font-weight:800;line-height:1.6;letter-spacing:.02em;min-height:3.2em;word-break:keep-all;-webkit-user-select:none;user-select:none}
+  .target span{border-radius:4px;color:var(--dim);padding:1px 0}
+  .target span.ok{color:var(--ink);background:rgba(95,224,184,.35)}
+  .target span.bad{color:var(--red);background:rgba(255,90,95,.22);text-decoration:underline;text-decoration-thickness:2px}
+  .target span.cur{color:var(--blue);box-shadow:inset 0 -3px 0 var(--blue)}
+  .typebox{margin-top:12px}
+  .typebox input[type=text]{font-size:20px;font-weight:700;-webkit-user-select:text;user-select:text;padding:14px 16px}
+  .typebox input:disabled{background:#FFFDF6;color:var(--dim)}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="typing">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">한글 타자 20초</span>
+  <h1 id="playHead">20초.<br><b>몇 글자 칠 수 있어?</b></h1>
+  <p class="lead" id="playLead">나오는 문장을 <b>그대로 따라 쳐</b>. 다 치면 바로 다음 문장. 둘이 <b>똑같은 순서의 문장</b>을 받아. 띄어쓰기도 한 글자. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clock">20.0</div></div>
+    <div class="c score"><div class="lab">맞게 친 글자</div><div class="v" id="score">0</div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="target" id="target" aria-live="off"></div>
+    <div class="typebox"><input type="text" id="typeIn" placeholder="여기에 따라 치세요" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="go" disabled aria-label="따라 치는 칸"></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 문장이 나와</div></div>
+  </div>
+  <div class="info"><span>문장 <b id="sentInfo">0</b></span><span>오타 <b id="errInfo">0</b></span><span><b id="cpmInfo">0</b> 타/분</span></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 문장을 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 문장으로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 문장으로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 한글 타자 20초 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 문장판 화면과 문장 순서 만들기만 남는다. 문장 은행은 data.js(window.TYPING_SENTENCES).
+
+   규칙: 시드로 섞은 순서대로 문장이 나온다. 20초 동안 따라 친다.
+     · 문장을 끝까지 똑같이 치면 그 글자 수만큼 점수, 바로 다음 문장.
+     · 문장 길이만큼 쳤는데 틀린 데가 있으면 자리마다 비교해 맞은 글자는 점수, 틀린 글자는 오타. 다음 문장으로.
+     · 20초가 끝났을 때 치던 문장도 자리마다 비교해 맞은 만큼 점수(부분 점수).
+   기록 = 맞게 친 글자 수(많을수록 이김). 같으면 오타가 적은 쪽이 이긴다.
+   한글 IME 는 조합 중인 글자를 input 이벤트로 계속 보내므로 keydown 은 쓰지 않고 value.normalize('NFC') 만 본다.
+   검사용으로 applyInput(v)·startPlay()·finishPlay() 를 최상위에 둔다. */
+const GAME_MS=20000;
+const SENT=Array.isArray(window.TYPING_SENTENCES)?window.TYPING_SENTENCES:["오늘 저녁은 뭐 먹을까"];
+const LEVELS=[
+  {n:1,label:'12자',limitMs:GAME_MS,goal:12,best:20},
+  {n:2,label:'18자',limitMs:GAME_MS,goal:18,best:26},
+  {n:3,label:'24자',limitMs:GAME_MS,goal:24,best:32},
+  {n:4,label:'30자',limitMs:GAME_MS,goal:30,best:38},
+  {n:5,label:'40자',limitMs:GAME_MS,goal:40,best:48}
+];
+const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
+function titleFor(n){
+  if(n>=60) return "타자기 손가락";
+  if(n>=45) return "타자 장인";
+  if(n>=30) return "평균 이상";
+  if(n>=18) return "보통 사람";
+  return "독수리 타법";
+}
+const NEXT=[
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../tap/",    title:"10초 연타",     desc:"몇 번 누를 수 있어?"},
+  {path:"../stroop/", title:"색깔 말고 글자", desc:"글자 색을 골라. 헷갈리면 끝."}
+];
+
+/* ===== 문장 순서 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   문장 은행 전체를 시드로 섞어 그 순서대로 내므로, 도전자와 응전자가 같은 문장을 같은 순서로 받는다. 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function orderOf(seed){
+  const rnd=mulberry32(seed>>>0), arr=SENT.map((_,i)=>i);
+  for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=arr[i];arr[i]=arr[j];arr[j]=t; }
+  return arr;
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+/* ===== 한글 도우미 =====
+   partialOf: 조합 중일 수 있는 글자인가 — 낱자(ㄱ·ㅏ…)이거나, 목표 글자와 초성이 같고 중성이 같거나 아직 없는 글자.
+   strokesOf: 타수 추정 — 초성 1 + 중성 1(겹모음 2) + 종성 0/1(겹받침 2). 한글 아닌 글자는 1. */
+const JUNG2=new Set([9,10,11,14,15,16,19]);           // ㅘ ㅙ ㅚ ㅝ ㅞ ㅟ ㅢ
+const JONG2=new Set([3,5,6,9,10,11,12,13,14,15,18]);  // ㄳ ㄵ ㄶ ㄺ ㄻ ㄼ ㄽ ㄾ ㄿ ㅀ ㅄ
+function decompose(ch){
+  const c=ch.charCodeAt(0); if(c<0xAC00||c>0xD7A3) return null;
+  const k=c-0xAC00; return {cho:Math.floor(k/588),jung:Math.floor((k%588)/28),jong:k%28};
+}
+function partialOf(typed,target){
+  const c=typed.charCodeAt(0);
+  if(c>=0x3131&&c<=0x318E) return true;                // 낱자만 찍힌 상태
+  const a=decompose(typed), b=decompose(target); if(!a||!b) return false;
+  return a.cho===b.cho && (a.jung===b.jung ? (a.jong===0 && b.jong!==0) || (a.jong!==b.jong && b.jong!==0 && JONG2.has(b.jong))
+                                            : (a.jong===0 && JUNG2.has(b.jung)));
+}
+function strokesOf(ch){
+  const d=decompose(ch); if(!d) return 1;
+  return 1+(JUNG2.has(d.jung)?2:1)+(d.jong===0?0:JONG2.has(d.jong)?2:1);
+}
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/typing/",
+  og:"https://noljago.co.kr/assets/share-cards/typing.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"한글 타자 20초",
+  challengeDesc:"20초, 같은 순서의 문장. 맞게 친 글자 수로 승부. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 많이 칠수록 이긴다
+  hasSeed:true,                     // 같은 문장 순서를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  state:{seed:0,level:0,order:[],idx:0,target:"",typed:"",correct:0,errors:0,strokes:0,sentences:0,
+         running:false,done:false,t0:0,cdTimer:0,clockTimer:0},
+  linkExtra:st=>({e:st.errors,l:st.level}),
+  roundExtra:(p,st)=>[p.e||0, st.errors],
+  extraKey:"e", extraDefault:0,
+  tieBreak:(me,them)=>me.e===them.e?null:{o:me.e<them.e?"win":"lose",why:`글자 수는 같지만 오타가 적은 쪽이 이겨. (${me.e}개 vs ${them.e}개)`},
+  recordCell:x=>x.v+"<small>자</small>",
+  detailCell:x=>x.e?`오타 ${x.e}개`:"오타 없음",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}자 vs ${esc(who(r[2],!isA))} ${r[3]}자`,
+  verdictText:o=> o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"글자 수도 오타도 같은 건 거의 기적."
+      :`${me.v}자 vs ${them.v}자 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}자 더 쳤어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 문장이야. 더 빨리.`,
+  againHead:()=>`재도전. <b>새 문장</b>으로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}자 vs ${nm(them.n)}${them.v}자${tail}`,
+  resultDesc:"20초, 같은 문장. 누가 더 많이 쳤을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildBoard(); },
+  resetPlay(){ resetView(); }
+});
+
+/* ===== 문장판 ===== */
+const inp=$("typeIn");
+function buildBoard(){
+  state.order=orderOf(state.seed); state.idx=0; state.typed=""; state.correct=0; state.errors=0; state.strokes=0; state.sentences=0;
+  state.target=SENT[state.order[0]];
+  inp.value="";
+  $("score").textContent="0"; $("sentInfo").textContent="0"; $("errInfo").textContent="0"; $("cpmInfo").textContent="0";
+  renderTarget();
+}
+function clearTimers(){ clearInterval(state.clockTimer); }
+function resetView(){
+  clearTimers();
+  state.done=false;state.running=false;
+  buildBoard();
+  inp.disabled=true; inp.value="";
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 문장이 나와";
+  $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+/* 글자마다 색: 맞음(ok) · 틀림(bad) · 아직(회색). 마지막에 친 글자가 조합 중일 수 있으면 파란 밑줄(cur)로만 */
+function renderTarget(){
+  const t=state.target, v=state.typed, box=$("target");
+  let html="", composing=false;
+  for(let i=0;i<t.length;i++){
+    const ch=t[i], k=v[i];
+    let cls="";
+    if(k!==undefined){
+      if(k===ch) cls="ok";
+      else if(i===v.length-1 && partialOf(k,ch)){ cls="cur"; composing=true; }
+      else cls="bad";
+    }else if(i===v.length && !composing) cls="cur";
+    html+='<span class="'+cls+'">'+(ch===" "?"&nbsp;":esc(ch))+'</span>';
+  }
+  box.innerHTML=html;
+}
+function nextSentence(){
+  state.idx++; state.target=SENT[state.order[state.idx%state.order.length]]; state.typed=""; inp.value="";
+  state.sentences=state.idx; $("sentInfo").textContent=state.sentences;
+  renderTarget();
+}
+/* 자리마다 비교: 맞은 글자 수·틀린 글자 수 (typed 가 짧으면 친 데까지만) */
+function scoreOf(typed,target){
+  let ok=0, bad=0, st=0;
+  const n=Math.min(typed.length,target.length);
+  for(let i=0;i<n;i++){ if(typed[i]===target[i]){ ok++; st+=strokesOf(target[i]); } else bad++; }
+  return {ok,bad,strokes:st};
+}
+function updateHud(){
+  $("score").textContent=state.correct; $("errInfo").textContent=state.errors;
+  const min=Math.max(3000,performance.now()-state.t0)/60000;   // 처음 3초는 3초로 나눠 숫자가 튀지 않게
+  $("cpmInfo").textContent=Math.round(state.strokes/min);
+}
+/* input 이벤트마다 — IME 조합 중 글자도 그대로 들어온다 */
+function applyInput(v){
+  if(!state.running || state.done){ inp.value=""; return; }
+  state.typed=String(v==null?inp.value:v).normalize("NFC");
+  const t=state.target;
+  if(state.typed===t){
+    const s=scoreOf(state.typed,t); state.correct+=s.ok; state.strokes+=s.strokes;
+    nextSentence();
+  }else if(state.typed.length>=t.length){
+    const s=scoreOf(state.typed,t); state.correct+=s.ok; state.errors+=s.bad; state.strokes+=s.strokes;
+    nextSentence();
+  }else renderTarget();
+  updateHud();
+}
+inp.addEventListener("input",()=>applyInput());
+inp.addEventListener("paste",e=>e.preventDefault());
+inp.addEventListener("drop",e=>e.preventDefault());
+inp.addEventListener("keydown",e=>{ if(e.key==="Enter") e.preventDefault(); });   // 엔터는 아무것도 안 한다 (한글 판정은 keydown 을 안 본다)
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 문장이 나와";
+  /* 키보드는 손가락으로 누른 지금 열어 둔다 — 3초 뒤 focus() 는 폰에서 키보드를 못 연다. 시작 전 입력은 버린다 */
+  inp.disabled=false; inp.value=""; try{ inp.focus({preventScroll:true}); }catch(_){ inp.focus(); }
+  let n=3;
+  $("cd").textContent=n;
+  const tickCd=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(tickCd,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중 — 따라 쳐";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(tickCd,1000);
+}
+function startPlay(){
+  clearTimers(); buildBoard();
+  state.running=true; state.done=false; state.t0=performance.now();
+  inp.disabled=false; inp.value=""; try{ inp.focus({preventScroll:true}); }catch(_){ }
+  $("cover").classList.add("hidden");
+  $("clock").textContent=fmtT(GAME_MS); $("clock").classList.remove("warn");
+  state.clockTimer=setInterval(clockTick,100);
+}
+function clockTick(){
+  if(!state.running) return;
+  const el=performance.now()-state.t0;
+  if(el>=GAME_MS){ finishPlay(); return; }
+  $("clock").textContent=fmtT(GAME_MS-el);
+  $("clock").classList.toggle("warn", GAME_MS-el<=5000);
+}
+/* 20초 끝: 치던 문장은 자리마다 비교해 부분 점수 */
+function finishPlay(){
+  if(!state.running) return;
+  state.running=false; state.done=true;
+  clearTimers();
+  if(state.typed.length){ const s=scoreOf(state.typed,state.target); state.correct+=s.ok; state.errors+=s.bad; state.strokes+=s.strokes; }
+  const cpm=Math.round(state.strokes/(GAME_MS/60000));
+  inp.disabled=true; inp.blur();
+  const correct=state.correct;
+  const b=$("bigBtn"); b.disabled=true;
+  $("clock").textContent="0.0"; $("errInfo").textContent=state.errors; $("cpmInfo").textContent=cpm;
+  if(Solo.active){   // 혼자놀기: 기록을 바로 보여주고 별을 매긴다
+    $("score").textContent=correct;
+    $("cover").classList.remove("hidden"); $("cd").textContent="⏰"; $("cdSub").textContent="20초 끝";
+    b.textContent="끝";
+    Solo.finish(correct,{errors:state.errors,note:"오타 "+state.errors+"개 · "+cpm+"타/분"}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("score").textContent="🔒";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(correct,{errors:state.errors});   // 기록 = 맞게 친 글자 수, 덧붙임 = 오타 수
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'typing', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'자',
+  describe:l=>'20초 안에 · 맞게 친 글자 수',
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    clearTimeout(state.cdTimer);
+    resetView();
+  }
+});
+
+Duel.start();
+</script>
+</body>
+</html>
