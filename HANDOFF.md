@@ -322,6 +322,11 @@
 - 소리는 WebAudio(첫 터치에서 AudioContext 생성), 진동은 `navigator.vibrate`(iOS 미지원이라 깜빡임 병행).
 - 사용법(`guide-data.js`) 문구 갱신(`20260912-react5`). 골든 스냅샷 갱신(react 문구·링크). 새 검사 `test/react.js`. `npm test` 27개 묶음 통과.
 
+
+### 2026-09-12 내기 패널 "판 키우기" 접힘 시작
+
+- 사용자 요청: 기록 게임 10개의 내기 패널에서 "판 키우기 😈"가 처음부터 펼쳐져 있던 것을 접힌 채 시작하고 누르면 펼쳐지게. `assets/bet.js`의 `<details class="bet-bluff">`에서 `open` 제거. 이전에 허세 내기를 골라 둔 상태면 기존처럼 자동으로 펼친다(147행). bet.js 버전 `20260912-g`(11개 페이지).
+
 ## 테스트·배포 확인
 
 - 실행: `npm install` 후 `npm test` (현재 환경에는 의존성 설치됨).
