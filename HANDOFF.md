@@ -31,7 +31,8 @@
 - 짝 맞추기가 기준 구현: `SIZES`(레벨 0=둘이 기본 4×5, 1~5), `LEVELS`, 링크 `l` 필드(`linkExtra`), `onOpenChallenge/onPreset`이 `p.l` 적용, 제한 시간 초과 `failPlay()`. 골든은 pairs 링크에 `l:0`이 실려 10곳 갱신.
 - 통계 이벤트 `solo_started/solo_cleared/solo_failed/solo_to_duel` — `analytics.js` 허용 목록과 `supabase/migrations/20260913_solo_events.sql`(**운영 실행 필요**).
 - 테스트 `test/solo.js`. 에이전트 규격 문서는 세션 scratchpad `GAME_SPEC.md`(저장소 밖).
-- **남은 일**: 1에서 25까지·두더지 혼자 모드, 새 게임 10종(2048·블록 쌓기·초성 퀴즈·오늘의 단어·지뢰찾기·15퍼즐·순서 기억·스네이크·탭 비행·한글 타자), 홈 메뉴 4축·혼자놀기 탭·진행도 배지, 관리자 기본 메뉴, 각 게임 등록(홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든). 2026-09-12 밤 세션 한도로 병렬 에이전트가 중단되어 여기서 멈췄다.
+- 완성됐지만 **아직 등록 안 된 새 게임**(`f87ca6a`): `t/simon/`(순서 기억, 기록=라운드, 링크 extra `t`=따라 누른 ms), `t/snake/`(스네이크 20초, 기록=먹은 수, extra `a`=산 ms). 둘 다 둘이+혼자, `test/simon.js`·`test/snake.js` 통과. 홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든(scenarios REC) 등록은 아직이며, 에이전트 보고서의 문구(HOME_TITLE 등)는 이 세션 대화에 있다.
+- **남은 일**: 1에서 25까지·두더지 혼자 모드, 새 게임 8종(2048·블록 쌓기·초성 퀴즈·오늘의 단어·지뢰찾기·15퍼즐·탭 비행·한글 타자), 위 2종 등록, 홈 메뉴 4축·혼자놀기 탭·진행도 배지, 관리자 기본 메뉴, 각 게임 등록(홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든). 2026-09-12 밤 세션 한도로 병렬 에이전트가 중단되어 여기서 멈췄다.
 
 ## 자체 광고 배너 테스트 (2026-09-12)
 
