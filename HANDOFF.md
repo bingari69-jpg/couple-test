@@ -18,8 +18,9 @@
 - 코드: 하드코딩 주소 177곳(OG 메타·`deployBase`·`CARD_ROOT`·sitemap·robots·편지 intent URL·테스트 기준 URL)을 `https://noljago.co.kr/`로 치환. `robots.txt` Disallow 경로를 루트 기준으로 변경. 바뀐 공용 스크립트(`kakao-share`·`bet`·`group-room`·`letter-app`) 캐시 버전을 `20260912-domain`으로 갱신. 골든은 URL만 바뀜.
 - `assets/result-notify.js` `resultHref`: 이전에 Supabase에 저장된 결과 주소는 `/couple-test/t/...`로 시작하므로, 현재 경로가 `/couple-test/`가 아니면 접두어를 떼고 연다. 도메인 이전 전 미확인 완료 카드도 새 도메인에서 열린다.
 - `assets/result-notify.js`의 서비스 워커 경로는 `/couple-test/` 여부를 보고 고르므로 그대로 둔다(새 도메인에서는 `/sw.js`).
-- Edge Function `clever-service`: 허용 출처에 `https://noljago.co.kr`, `https://www.noljago.co.kr` 추가(옛 github.io 출처 유지), 기본 출처와 푸시 아이콘 경로를 새 도메인 기준으로 변경. **Dashboard에서 다시 배포해야 반영된다.**
-- 사용자가 직접 할 일: (1) 카카오 개발자 콘솔 → 앱 설정 → 플랫폼 → Web 사이트 도메인에 `https://noljago.co.kr` 추가 (2) `clever-service` 재배포 (3) GitHub Pages에서 Enforce HTTPS 활성화(인증서 발급 후) (4) 알림을 켰던 기기는 새 도메인에서 "알림 받기"를 다시 눌러야 한다(푸시 구독은 출처에 묶임).
+- Edge Function `clever-service`: 허용 출처에 `https://noljago.co.kr`, `https://www.noljago.co.kr` 추가(옛 github.io 출처 유지), 기본 출처와 푸시 아이콘 경로를 새 도메인 기준으로 변경. 2026-09-12 사용자가 Dashboard에서 재배포 완료. 외부 확인: 새 도메인 Origin의 OPTIONS → 204와 `Access-Control-Allow-Origin: https://noljago.co.kr`.
+- 완료된 운영 작업(2026-09-12): 카카오 개발자 콘솔 JavaScript 키의 "JS SDK 도메인"에 `https://noljago.co.kr` 등록(새 콘솔에는 예전 "플랫폼 → Web" 메뉴가 없고 키 카드 안에 있다. `www`는 GitHub가 루트로 리다이렉트하므로 등록하지 않음). 앱 대표 도메인도 새 도메인으로 변경. 짝 맞추기 SQL(`20260912_pairs_game.sql`) 운영 실행 완료.
+- 남은 확인: GitHub Pages Enforce HTTPS 체크(인증서 발급 후 활성화됨). 알림을 켰던 기기는 새 도메인에서 "알림 받기"를 다시 눌러야 한다(푸시 구독은 출처에 묶임). 휴대폰에서 새 도메인으로 카톡 공유 실기기 확인.
 
 ## 작업 디렉터리 주의사항
 
