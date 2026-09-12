@@ -33,7 +33,7 @@
     guideData.src=new URL("guide-data.js?v=20260912-pairs",analyticsScript.src).href;
     guideData.onload=function(){
       const helpGuide=document.createElement("script");
-      helpGuide.src=new URL("help-guide.js?v=20260911-guide4",analyticsScript.src).href;
+      helpGuide.src=new URL("help-guide.js?v=20260912-noauto",analyticsScript.src).href;
       document.head.appendChild(helpGuide);
     };
     document.head.appendChild(guideData);
