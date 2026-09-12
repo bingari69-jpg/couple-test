@@ -42,3 +42,12 @@ body.game-page{display:block;padding:0;background:var(--bg);color:var(--ink);fon
 @media(min-width:700px){body.game-page{background:#f6f1e9}.game-page .wrap{padding-left:30px;padding-right:30px;box-shadow:0 0 60px #78542d05}.game-hero{min-height:262px}}
 @media(max-width:360px){.game-page .wrap{padding-left:16px;padding-right:16px}.game-header>span{font-size:13px}.game-brand{font-size:18px}.game-hero{padding:20px 9px 20px 16px;grid-template-columns:minmax(0,1fr) 34%;min-height:236px}.game-hero h1{font-size:28px}.game-steps{gap:3px}.game-steps li{font-size:11px;gap:4px}.game-steps li:not(:last-child):after{margin-left:2px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.game-page *,.game-page *:before,.game-page *:after{animation:none!important;transition:none!important}}
+/* 모바일 조작 안정 — 조작 영역 위에서는 화면이 밀리지 않고, 두 번 톡 쳐도 확대되지 않는다.
+   (assets/game-ui.js 의 PLAY_SURFACE 와 같은 목록. 손가락이 조작 영역 밖에서 시작하면 스크롤은 그대로 된다.) */
+.game-page{touch-action:manipulation;overscroll-behavior:none}
+.game-page canvas,.game-page #board,.game-page #grid,.game-page #arena,.game-page #pads,.game-page #pad,
+.game-page #sky,.game-page #dpad,.game-page #clock,.game-page .board,.game-page .grid,.game-page .arena,
+.game-page .pad,.game-page .sky,.game-page .dpad,.game-page .clock,.game-page .cardbtn,.game-page .cell,
+.game-page .bigbtn,.game-page [data-play-surface]{touch-action:none}
+.game-page input,.game-page textarea,.game-page select{touch-action:auto}
+

@@ -148,6 +148,23 @@
     window.addEventListener('app-config-ready', applyManagedGame);
     if (window.APP_PUBLISHED_CONFIG) applyManagedGame({ detail: window.APP_PUBLISHED_CONFIG });
   }
+  /* 모바일: 조작 영역(판·캔버스·버튼) 위에서 시작한 손가락 움직임이 페이지 스크롤이나
+     '당겨서 새로고침'으로 넘어가지 않게 한다. CSS 의 touch-action:none 이 먼저 막고,
+     그것만으로는 안 멈추는 iOS 고무줄 스크롤을 여기서 한 번 더 막는다.
+     조작 영역 밖(설명·버튼 여백)에서 시작한 스크롤은 그대로 되므로 페이지는 계속 읽을 수 있다. */
+  const PLAY_SURFACE = 'canvas,#board,#grid,#arena,#pads,#pad,#sky,#dpad,#clock,.board,.grid,.arena,.pad,.sky,.dpad,.clock,.cardbtn,.cell,.bigbtn,[data-play-surface]';
+  function lockTouch() {
+    document.documentElement.style.overscrollBehavior = 'none';
+    document.addEventListener('touchmove', event => {
+      const node = event.target;
+      if (!node || !node.closest) return;
+      /* 글자를 쓰거나 고르는 칸(초성 퀴즈 답·타자 문장)은 그대로 둔다 */
+      if (node.closest('input,textarea,select,[contenteditable]')) return;
+      if (node.closest(PLAY_SURFACE)) event.preventDefault();
+    }, { passive: false });
+  }
+  lockTouch();
+
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
 })();
