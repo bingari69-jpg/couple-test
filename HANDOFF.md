@@ -295,6 +295,7 @@
 - 원인 1: `result-notify.js`의 `resultPath()`가 받는 쪽 화면의 **현재 주소**를 서버에 저장했는데, 기록 게임 10개·가위바위보·마음 맞히기 7종은 결과를 보여줄 때 주소를 `#r=`로 바꾸지 않아 저장된 주소가 도전장 링크(`?ch=…#c=`/`#i=`)였다. 보낸 사람이 열면 결과가 아니라 도전장 화면이 뜬다(같은 브라우저 본인 테스트에서는 재플레이 잠금이 저장된 결과를 보여줘 토스트만 이상하게 보였다). 타로·마음동물은 주소를 `#r=`로 바꿔서 정상.
 - 원인 2: `duel-engine.js`의 `track`이 `window.track`을 부르는데, 엔진이 `Object.assign(window,{track})`으로 `window.track`을 자기 자신으로 덮어써 무한 재귀(try/catch로 삼켜짐) → 기록 게임 10개의 GA/Supabase 통계가 전부 누락됐고, `result-notify`가 `window.track`을 감싸는 완료 훅도 재귀로 실패했다(MutationObserver 경로만 동작). 두더지에서 알림이 늦거나 안 보인 원인일 수 있다.
 - 수정: (1) 각 게임이 받는 쪽 결과를 그릴 때 `window.__gatchiResultUrl = <#r= 결과 링크>`를 알려주고, `resultPath()`는 그 값을 우선 쓴다(같은 출처만). 적용: duel-engine, rps, delivery, mbti, crash, seat, marriage, memory, mind/engine. (2) 엔진 `track`은 로드 시점의 `window.track`(analytics)을 `nativeTrack`으로 붙잡아 그것만 부른다. 새 검사 `test/result-url.js`. result-notify 버전 `20260912-resulturl`.
+- 실기기 확인(2026-09-12): 배포 후 사용자가 같은 폰 본인 테스트(크롬 ↔ 카톡)로 두더지 완료 알림과 "결과 보기"가 정상 동작함을 확인했다.
 - 주소를 `#r=`로 바꾸는 방식(replaceState)은 쓰지 않았다. 받는 쪽이 새로고침하면 보낸 사람 시점(viewer a)으로 바뀌어 "결과 돌려보내기"가 사라지기 때문이다.
 - 카카오 "친구에게 자동 전송"은 카카오 로그인·메시지 권한·비즈니스 앱 심사가 필요해 회원가입 없는 현재 구조에서는 불가. 완료 알림이 그 대안이다(사용자에게 설명함).
 
