@@ -207,7 +207,18 @@
           const button = document.createElement(action.href ? "a" : "button");
           button.className = index === 0 ? "result-notify-primary" : "result-notify-secondary";
           button.textContent = action.label;
-          if (action.href) button.href = action.href;
+          if (action.href) {
+            button.href = action.href;
+            // 같은 페이지 안에서 #해시만 바뀌면 브라우저가 다시 읽지 않아 아무 일도 안 생긴다.
+            // 게임 페이지 대부분은 진입 때 한 번만 주소를 읽으므로 같은 경로면 강제로 다시 읽는다.
+            button.addEventListener("click", event => {
+              let target = null;
+              try { target = new URL(action.href, location.href); } catch (_) { return; }
+              if (target.origin !== location.origin || target.pathname !== location.pathname) return;
+              event.preventDefault();
+              window.ResultNotify && window.ResultNotify._openSamePage ? window.ResultNotify._openSamePage(target.href) : (location.href = target.href, location.reload());
+            });
+          }
           else { button.type = "button"; button.onclick = action.onClick; }
           actions.appendChild(button);
         });
@@ -431,7 +442,8 @@
     afterShare,
     complete: completeChallenge,
     enablePush,
-    _test: { gameSlug, validCode, codeFromUrl, isInviteUrl, addCode, eligible: slug => ELIGIBLE.has(slug) }
+    _openSamePage: href => { location.href = href; location.reload(); },
+    _test: { gameSlug, validCode, codeFromUrl, isInviteUrl, addCode, eligible: slug => ELIGIBLE.has(slug), announceCompleted }
   };
 
   hookTrack();
