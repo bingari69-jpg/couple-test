@@ -44,6 +44,8 @@
 - 등록 지점: 홈 목록(`home-catalog.js` ITEMS·CARDS, num25 다음), `game-ui.js` 마스코트(아틀라스 6, "우리의 기억"과 공유)·3단계 라벨, `guide-data.js`(연습 없음), `kakao-share.js` 카드 제목, `result-notify.js` 완료 알림 대상, `sitemap.xml`.
 - 캐시 버전: `kakao-share.js`·`game-ui.js`·`home-catalog.js`·`guide-data.js`를 `20260912-pairs`로 일괄 갱신. `result-notify.js`는 `kakao-share.js` 안의 로더 버전만 갱신.
 - 테스트: `test/pairs.js` 신설(시드 배치·짝 판정·불일치 되돌리기·판 확대·봉인·같은 판 복원·동점 2차 판정). `test/scenarios.js` GAMES/REC, `test/bet-ui.js`, `test/tie-break.js`, `test/letter.js`(홈 27→28개)에 추가. 골든은 pairs 항목만 새로 찍혔고 기존 게임 값은 변하지 않았다.
+- 관리센터 통계에 `pairs`가 제목 대신 슬러그로 보인 원인: 관리센터 게임 목록·통계 제목은 `game_catalog`가 아니라 관리자가 저장한 설정 JSON(초안/게시본)의 `games`에서 나오는데, 그 JSON이 새 게임 이전에 저장돼 `pairs`가 없었다. `admin/admin.js` `normalize()`가 홈의 `appendUnknownLocal`처럼 코드에만 있는 게임을 목록 끝(공개 상태)에 붙이도록 수정. 저장된 항목(숨김 포함)은 그대로 둔다. `test/admin-center.js`에 normalize 단독 실행 검사 추가. 관리센터에서 초안 저장 → 게시를 한 번 하면 게시본에도 `pairs`가 들어간다.
+- 방문자 수는 브라우저별 `localStorage` 세션 ID의 distinct 개수다(같은 사람이 여러 번 와도 1). 폰 브라우저와 카톡 인앱 브라우저는 따로 센다. 게임별 표의 방문·시작·완료는 건수라 완료율이 100%를 넘을 수 있다(도전장을 받은 쪽은 시작 없이 완료만 찍힘). 도메인 이전으로 세션 ID가 전부 새로 발급됐다.
 - 운영 남은 일: `supabase/migrations/20260912_pairs_game.sql`을 운영 Supabase에 실행해야 완료 알림(`create_game_challenge`)이 `pairs`를 받는다. 실행 전에는 홈 목록에는 보이지만 완료 알림 코드 생성이 `GAME_NOT_SUPPORTED`로 거부된다(공유 자체는 된다).
 - 알려진 기존 문제: 로컬 정적 서버(127.0.0.1:4173)에서 게임 페이지를 열면 `help-guide.js:39`에서 `main`이 없어 `prepend` 오류가 콘솔에 찍힌다. `num25` 등 기존 페이지도 동일하며 이번 작업과 무관하다.
 

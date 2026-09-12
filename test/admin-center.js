@@ -28,6 +28,18 @@ function runtimeDom(url, value) {
   assert(migration.includes('enable row level security'), '관리 테이블 RLS 누락');
   assert(!migration.match(/service_role|sb_secret_/i), '비밀키가 파일에 들어가면 안 됨');
   assert(read('index.html').includes('class="admin-link" href="admin/"'), '홈의 관리자 진입 링크 누락');
+  /* 저장된 설정에 없는 새 로컬 게임을 관리 목록 끝에 붙이는지 — normalize 만 떼어 내 실행한다 */
+  {
+    const src = read('admin/admin.js');
+    const body = src.slice(src.indexOf('{', src.indexOf('(function')) + 1, src.indexOf('  function setDirty'));
+    const fakeWindow = { HOME_ITEMS: [{ path:'t/ten/', title:'10초', kind:'대결', relationships:['친구'] }, { path:'t/pairs/', title:'짝 맞추기', kind:'대결', relationships:['친구'] }], GATCHI_GUIDES: {} };
+    const fakeDocument = { getElementById: () => null, querySelectorAll: () => [], addEventListener: () => {} };
+    const { normalize } = new Function('window', 'document', body + ';return {normalize};')(fakeWindow, fakeDocument);
+    const merged = normalize({ schemaVersion:1, games:[{ slug:'ten', path:'t/ten/', title:'열 초 도전', visibility:'hidden', sortOrder:3 }] }).games;
+    assert.deepStrictEqual(merged.map(g => [g.slug, g.title, g.visibility, g.sortOrder]), [['ten','열 초 도전','hidden',3], ['pairs','짝 맞추기','listed',4]], '코드에만 있는 게임이 목록 끝에 붙어야 함');
+    const kept = normalize({ games:[{ slug:'ten', sortOrder:1 }, { slug:'pairs', title:'내가 바꾼 제목', visibility:'hidden', sortOrder:2 }] }).games;
+    assert.deepStrictEqual(kept.map(g => [g.slug, g.title, g.visibility]), [['ten','새 게임','hidden'], ['pairs','내가 바꾼 제목','hidden']], '저장된 항목은 그대로 두어야 함');
+  }
 
   const home = runtimeDom('https://example.test/couple-test/?admin_preview=1', config());
   await new Promise(resolve => setTimeout(resolve, 20));

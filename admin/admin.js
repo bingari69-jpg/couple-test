@@ -76,6 +76,16 @@
       while(normalized.guide.steps.length<3)normalized.guide.steps.push('');
       return normalized;
     });
+    // 코드에만 추가되고 저장된 설정에는 아직 없는 게임(예: 새로 만든 짝 맞추기)을 목록 끝에 붙인다.
+    // 홈(home-catalog.js의 appendUnknownLocal)과 같은 규칙이라, 관리센터 게임 목록과 통계 제목에서 슬러그만 보이는 일을 막는다.
+    // 서버가 '숨김'으로 둔 게임은 next.games에 이미 있으므로 여기서 되살아나지 않는다.
+    const known = new Set(next.games.map(game => game.slug));
+    let order = next.games.reduce((max, game) => Math.max(max, Number(game.sortOrder) || 0), 0);
+    base.games.forEach(game => {
+      if (known.has(game.slug)) return;
+      order += 1;
+      next.games.push(Object.assign(game, { featured: false, sortOrder: order }));
+    });
     next.ads = Object.assign(base.ads, next.ads || {});
     next.ads.slots = Array.isArray(next.ads.slots) ? next.ads.slots : base.ads.slots;
     return next;
