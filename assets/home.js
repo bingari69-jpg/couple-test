@@ -39,13 +39,18 @@ function renderModes(){
 }
 function render(){
  renderModes();
+ // 혼자놀기는 상대가 없는 놀이라 관계(연인·부부…) 고르기를 숨기고 전체로 본다. 둘이놀기로 돌아오면 고르던 관계가 그대로 살아난다.
+ const soloMode=mode==='solo', rel=soloMode?'전체':relationship;
+ $('catalogFilters').hidden=soloMode;
  $('catalogFilters').replaceChildren();
- ['전체','연인','부부','친구','가족'].forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',String(r===relationship));b.onclick=()=>{relationship=r;render();[...$('catalogFilters').children].find(el=>el.textContent===r).focus({preventScroll:true});};$('catalogFilters').append(b);});
+ if(!soloMode) ['전체','연인','부부','친구','가족'].forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',String(r===relationship));b.onclick=()=>{relationship=r;render();[...$('catalogFilters').children].find(el=>el.textContent===r).focus({preventScroll:true});};$('catalogFilters').append(b);});
  $('catalogList').replaceChildren();
- const visible=HOME_ITEMS.filter(it=>(relationship==='전체'||it.relationships.includes(relationship))&&(mode!=='solo'||SOLO[slugOf(it)]));
- $('catalogCount').textContent=(mode==='solo'?'혼자놀기 · ':'')+(relationship==='전체'?'전체':relationship+'와 함께')+' · '+visible.length+'가지';
+ const visible=HOME_ITEMS.filter(it=>(rel==='전체'||it.relationships.includes(rel))&&(!soloMode||SOLO[slugOf(it)]));
+ // 받침이 있으면 '과', 없으면 '와' (연인과 · 부부와)
+ const withJosa=n=>{const c=n.charCodeAt(n.length-1);return n+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0)?'과':'와')+' 함께';};
+ $('catalogCount').textContent=(soloMode?'혼자놀기':(rel==='전체'?'전체':withJosa(rel)))+' · '+visible.length+'가지';
  visible.forEach(it=>{
-   const slug=slugOf(it),solo=mode==='solo';
+   const slug=slugOf(it),solo=soloMode;
    const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path;a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
    const art=document.createElement('div');art.className='catalog-art';art.setAttribute('aria-hidden','true');
    const mascot=document.createElement('div');mascot.className='catalog-mascot '+it.art;
