@@ -164,8 +164,10 @@
     if(getSlug()==='home')document.title=(config.site.name||'같이놀자')+' — 너에게 보내고 싶은 게 있어';
     setTimeout(()=>applyMenu(config),0);
     window.dispatchEvent(new CustomEvent('app-config-ready', { detail: config }));
-    window.addEventListener('home-catalog-updated',()=>mountHomeAds(config),{once:false});
   }
+  // 홈 목록은 home.js 가 다시 그릴 때마다(서버 목록 반영 포함) 비워지므로, 그릴 때마다 광고를 다시 붙인다.
+  // 예전에는 apply() 안에서 app-config-ready 를 쏜 뒤에 리스너를 달아, 그 이벤트가 동기로 목록을 다시 그리면 광고가 지워진 채 남았다.
+  ['home-catalog-updated','home-catalog-rendered'].forEach(name=>window.addEventListener(name,()=>{ if(current) mountHomeAds(current); }));
   async function start() {
     let preview=null;
     if(new URLSearchParams(location.search).get('admin_preview')==='1')preview=readLocal(PREVIEW_KEY);

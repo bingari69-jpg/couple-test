@@ -37,6 +37,8 @@ function render(){
    const start=document.createElement('span');start.className='catalog-start';start.textContent='시작하기 →';
    content.append(title,description,tags,start);a.append(art,content);$('catalogList').append(a);
  });
+ // 목록을 다 그렸다고 알린다. app-config.js 가 이 신호로 홈 목록 광고를 다시 붙인다.
+ window.dispatchEvent(new CustomEvent('home-catalog-rendered'));
 }
 render();
 window.addEventListener('home-catalog-updated',render);
