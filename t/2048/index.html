@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2048 한판</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="2048 한판 — 30초, 누가 더 높은 점수?">
+<meta property="og:description" content="30초, 같은 타일 순서. 밀어서 합쳐 점수를 쌓아. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/2048.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/2048/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 — 왼쪽에 큰 남은 시간, 오른쪽에 점수, 아래에 진행 막대 */
+  .hud{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:14px 2px 8px}
+  .hud .c{min-width:0}
+  .hud .c .lab{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.02em}
+  .hud .time .v{font-size:clamp(44px,15vw,56px);font-weight:800;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .hud .time .v small{font-size:18px;font-weight:600;letter-spacing:0;margin-left:2px}
+  .hud .time .v.warn{color:var(--red)}
+  .hud .score{text-align:right}
+  .hud .score .v{font-size:34px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .bar{height:8px;background:#F0E3A3;border-radius:99px;overflow:hidden;margin-bottom:10px}
+  .bar i{display:block;height:100%;width:100%;background:#FF6B4A;border-radius:99px;transition:width .1s linear}
+
+  /* 판 — 어두운 판(#2B2A44) 위에 노란 계열 타일 */
+  .board{position:relative;border-radius:14px;touch-action:none}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#2B2A44;border-radius:14px;padding:8px;aspect-ratio:1}
+  .tile{position:relative;aspect-ratio:1;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:900;
+    font-size:clamp(22px,7.5vw,32px);line-height:1;letter-spacing:-.03em;background:#3A3958;color:#23213A;font-variant-numeric:tabular-nums}
+  .tile.big{font-size:clamp(16px,5.4vw,24px)}
+  .tile[data-v]:not([data-v="0"])::before{content:"";position:absolute;left:6px;right:6px;top:5px;height:32%;border-radius:8px;background:rgba(255,255,255,.28);pointer-events:none}
+  .tile[data-v="2"]{background:#FFD54A}
+  .tile[data-v="4"]{background:#FFC21C}
+  .tile[data-v="8"]{background:#FFAE42}
+  .tile[data-v="16"]{background:#FF7B6B}
+  .tile[data-v="32"]{background:#FF9DD1}
+  .tile[data-v="64"]{background:#B58CFF;color:#fff}
+  .tile[data-v="128"]{background:#5CC8FF}
+  .tile[data-v="256"]{background:#5FE0B8}
+  .tile[data-v="512"]{background:#B6E36B}
+  .tile[data-v="1024"]{background:#FF6B4A;color:#fff}
+  .tile[data-v="2048"]{background:#FFFFFF;color:#FF6B4A}
+  .tile[data-v="4096"],.tile[data-v="8192"]{background:#23213A;color:#FFD54A}
+  .tile.new{animation:pop2 .16s ease}
+  @keyframes pop2{from{transform:scale(.4)}to{transform:none}}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:14px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn.stop{background:var(--yellow);color:var(--ink)}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="2048">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">2048 한판</span>
+  <h1 id="playHead">30초.<br><b>누가 더 높은 점수?</b></h1>
+  <p class="lead" id="playLead">판을 쓸어 넘기거나 화살표로 타일을 밀어. <b>같은 숫자가 만나면 합쳐지고</b> 그 값이 점수야. 둘이 똑같은 순서로 타일이 나와. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clockWrap"><span id="clock">30</span><small>초</small></div></div>
+    <div class="c score"><div class="v" id="score">0</div><div class="lab">점수</div></div>
+  </div>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+
+  <div class="board" id="board">
+    <div class="grid" id="grid" aria-label="4×4 판"></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 열려</div></div>
+  </div>
+  <div class="info"><span>최고 타일 <b id="maxTile">0</b></span><span>움직임 <b id="moves">0</b></span></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 판을 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 판으로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 판으로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 2048 한판 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 판 화면과 타일 규칙만 남는다.
+
+   규칙: 4×4 판. 30초 동안 타일을 밀어 같은 숫자를 합친다. 합쳐진 값의 합이 점수(높을수록 이김).
+   점수가 같으면 더 큰 타일을 만든 쪽이 이긴다. 더 밀 곳이 없으면 거기서 끝.
+   새 타일이 나오는 자리와 값(2·4)은 오직 시드 난수로만 정해지므로, 같은 순서로 밀면 두 사람의 판이 똑같다.
+   한 번 밀기는 move(dir) 하나에 모아 둔다. */
+const N=4, GAME_MS=30000;
+const DIRS={U:1,D:1,L:1,R:1};
+const LEVELS=[
+  {n:1,label:'128', limitMs:40000, goal:128, best:256},
+  {n:2,label:'256', limitMs:60000, goal:256, best:512},
+  {n:3,label:'512', limitMs:90000, goal:512, best:1024},
+  {n:4,label:'1024',limitMs:120000,goal:1024,best:2048},
+  {n:5,label:'2048',limitMs:150000,goal:2048,best:4096}
+];
+const fmtT=ms=>String(Math.ceil(Math.max(0,ms)/1000));
+function setClock(left,limit){ $("clock").textContent=fmtT(left); $("clockWrap").classList.toggle("warn", left<=5000); $("bar").style.width=(Math.max(0,left)/limit*100)+"%"; }
+function titleFor(v){
+  if(v>=1500) return "합치기의 신";
+  if(v>=900)  return "타일 장인";
+  if(v>=500)  return "평균 이상";
+  if(v>=200)  return "보통 사람";
+  return "느긋한 편";
+}
+const NEXT=[
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../pairs/",  title:"짝 맞추기",     desc:"같은 판, 같은 카드. 누가 더 빨리 다 맞추나."},
+  {path:"../snake/",  title:"스네이크 20초", desc:"같은 먹이, 누가 더 많이 먹나."}
+];
+
+/* ===== 타일 순서 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   새 타일의 자리(빈 칸 중 하나)와 값(2 또는 4)은 이 시드 난수에서만 뽑히고 링크에 실리므로,
+   도전자와 응전자가 같은 순서로 밀면 정확히 같은 판이 된다. 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/2048/",
+  og:"https://noljago.co.kr/assets/share-cards/2048.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"2048 한판",
+  challengeDesc:"30초, 같은 타일 순서. 밀어서 합친 점수로 승부. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 점수가 높을수록 이긴다
+  hasSeed:true,                     // 같은 타일 순서를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  state:{seed:0,level:0,rnd:null,board:[],score:0,mx:0,moves:0,limit:GAME_MS,
+         running:false,t0:0,done:false,cdTimer:0,clockTimer:0,swipe:null,newIdx:-1},
+  linkExtra:st=>({m:st.mx,l:st.level}),
+  roundExtra:(p,st)=>[p.m||0, st.mx],
+  extraKey:"m", extraDefault:0,
+  tieBreak:(me,them)=>me.m===them.m?null:{o:me.m>them.m?"win":"lose",why:`점수는 같지만 더 큰 타일을 만든 쪽이 이겨. (${me.m} vs ${them.m})`},
+  recordCell:x=>x.v+"<small>점</small>",
+  detailCell:x=>`최고 타일 ${x.m}`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}점 vs ${esc(who(r[2],!isA))} ${r[3]}점`,
+  verdictText:o=> o==="win"?"내가 더 높아!":o==="lose"?"상대가 더 높아":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"점수도 최고 타일도 같은 건 거의 기적."
+      :`${me.v}점 vs ${them.v}점 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}점 앞섰어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 타일 순서야. 더 높이.`,
+  againHead:()=>`재도전. <b>새 판</b>으로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}점 vs ${nm(them.n)}${them.v}점${tail}`,
+  resultDesc:"30초, 같은 타일 순서. 누가 더 높은 점수를 만들었을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildBoard(); },
+  resetPlay(){ resetView(); }
+});
+
+/* ===== 판 ===== */
+function makeGrid(){
+  const g=$("grid"); if(g.children.length===N*N) return;
+  g.innerHTML="";
+  for(let i=0;i<N*N;i++){ const c=document.createElement("div"); c.className="tile"; g.appendChild(c); }
+}
+/* 시드로 난수를 새로 만들고 타일 두 장을 놓는다 */
+function buildBoard(){
+  makeGrid();
+  state.rnd=mulberry32(state.seed>>>0);
+  state.board=new Array(N*N).fill(0);
+  state.score=0; state.moves=0; state.newIdx=-1;
+  spawn(); spawn();
+  state.mx=Math.max.apply(null,state.board);
+  $("score").textContent="0"; $("maxTile").textContent=state.mx; $("moves").textContent="0";
+  render();
+}
+/* 빈 칸 중 하나에 2(90%) 또는 4(10%). 자리·값 모두 시드 난수 */
+function spawn(){
+  const e=[]; state.board.forEach((v,i)=>{ if(!v) e.push(i); });
+  if(!e.length) return;
+  const i=e[Math.floor(state.rnd()*e.length)];
+  state.board[i]=state.rnd()<0.9?2:4;
+  state.newIdx=i;
+}
+function render(){
+  const g=$("grid");
+  for(let i=0;i<N*N;i++){
+    const c=g.children[i], v=state.board[i];
+    c.textContent=v||""; c.dataset.v=v||0;
+    c.className="tile"+(v>=1024?" big":"")+(i===state.newIdx&&v?" new":"");
+  }
+}
+/* 미는 방향에 따라 줄마다 칸 번호를 "도착 쪽부터" 늘어놓는다 */
+function lines(dir){
+  const out=[];
+  for(let i=0;i<N;i++){
+    const ln=[];
+    for(let j=0;j<N;j++){
+      let x,y;
+      if(dir==="L"){ y=i; x=j; } else if(dir==="R"){ y=i; x=N-1-j; }
+      else if(dir==="U"){ x=i; y=j; } else { x=i; y=N-1-j; }
+      ln.push(y*N+x);
+    }
+    out.push(ln);
+  }
+  return out;
+}
+/* 한 번 밀기. 판이 바뀌면 점수를 더하고 새 타일을 놓는다. 바뀐 게 없으면 false */
+function move(dir){
+  if(!state.running || state.done || !DIRS[dir]) return false;
+  let changed=false, gain=0;
+  lines(dir).forEach(ln=>{
+    const vals=ln.map(i=>state.board[i]).filter(v=>v);
+    const res=[];
+    for(let k=0;k<vals.length;k++){
+      if(k+1<vals.length && vals[k]===vals[k+1]){ res.push(vals[k]*2); gain+=vals[k]*2; k++; }   // 한 번 밀 때 한 번만 합쳐진다
+      else res.push(vals[k]);
+    }
+    while(res.length<N) res.push(0);
+    ln.forEach((i,k)=>{ if(state.board[i]!==res[k]){ state.board[i]=res[k]; changed=true; } });
+  });
+  if(!changed) return false;
+  state.score+=gain; state.moves++;
+  spawn();
+  state.mx=Math.max.apply(null,state.board);
+  $("score").textContent=state.score; $("maxTile").textContent=state.mx; $("moves").textContent=state.moves;
+  render();
+  if(Solo.active && Solo.level && state.mx>=Solo.level.goal){   // 목표에 닿으면 여기서 끝낼 수 있다 (계속하면 별 더)
+    const b=$("bigBtn"); b.disabled=false; b.className="bigbtn stop"; b.textContent=state.mx>=Solo.level.best?"여기서 끝내기 ★★★":"여기서 끝내기 (계속하면 별 더)";
+  }
+  if(!canMove()) finishPlay("stuck");
+  return true;
+}
+function canMove(){
+  const b=state.board;
+  for(let i=0;i<N*N;i++){
+    if(!b[i]) return true;
+    const x=i%N, y=(i-x)/N;
+    if(x<N-1 && b[i]===b[i+1]) return true;
+    if(y<N-1 && b[i]===b[i+N]) return true;
+  }
+  return false;
+}
+function clearTimers(){ clearInterval(state.clockTimer); }
+function resetView(){
+  clearTimers();
+  state.done=false;state.running=false;
+  state.limit=Solo.active&&Solo.level?Solo.level.limitMs:GAME_MS;
+  buildBoard();
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 열려";
+  setClock(state.limit,state.limit);
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+
+/* ===== 조작: 쓸어 넘기기(24px 이상) · 키보드 ===== */
+$("board").addEventListener("pointerdown",e=>{ state.swipe=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); });
+$("board").addEventListener("pointermove",e=>{
+  if(!state.swipe) return;
+  const dx=e.clientX-state.swipe[0], dy=e.clientY-state.swipe[1];
+  if(Math.abs(dx)<24 && Math.abs(dy)<24) return;
+  move(Math.abs(dx)>Math.abs(dy) ? (dx>0?"R":"L") : (dy>0?"D":"U"));
+  state.swipe=null;                               // 한 번 쓸면 손을 뗄 때까지 한 번만
+});
+["pointerup","pointercancel"].forEach(ev=>$("board").addEventListener(ev,e=>{
+  if(!state.swipe) return;
+  const dx=e.clientX-state.swipe[0], dy=e.clientY-state.swipe[1]; state.swipe=null;
+  if(Math.abs(dx)<24 && Math.abs(dy)<24) return;
+  move(Math.abs(dx)>Math.abs(dy) ? (dx>0?"R":"L") : (dy>0?"D":"U"));
+}));
+$("board").addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+  const m={ArrowUp:"U",ArrowDown:"D",ArrowLeft:"L",ArrowRight:"R"}[e.key];
+  if(!m) return;
+  if(state.running) e.preventDefault();
+  move(m);
+});
+
+/* ===== 시계 ===== */
+function clockTick(){
+  if(!state.running) return;
+  const el=performance.now()-state.t0;
+  if(el>=state.limit){ finishPlay("time"); return; }
+  setClock(state.limit-el,state.limit);
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{
+  if(!state.running && !state.done){ countdown(); return; }
+  if(state.running && Solo.active && Solo.level && state.mx>=Solo.level.goal) finishPlay("stop");
+};
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 열려요";
+  let n=3;
+  $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  clearTimers(); buildBoard();
+  state.limit=Solo.active&&Solo.level?Solo.level.limitMs:GAME_MS;
+  state.running=true; state.done=false; state.t0=performance.now();
+  $("cover").classList.add("hidden");
+  setClock(state.limit,state.limit);
+  $("bigBtn").disabled=true; $("bigBtn").className="bigbtn start"; $("bigBtn").textContent="진행 중";
+  state.clockTimer=setInterval(clockTick,100);
+}
+/* why: "time" 시간 끝 · "stuck" 더 밀 곳 없음 · "stop" 혼자놀기에서 목표 뒤 스스로 끝냄 */
+function finishPlay(why){
+  if(!state.running) return;
+  state.running=false; state.done=true;
+  clearTimers();
+  const score=state.score, mx=state.mx;
+  const b=$("bigBtn"); b.disabled=true; b.className="bigbtn start";
+  setClock(why==="time"?0:state.limit-(performance.now()-state.t0),state.limit);
+  if(Solo.active){   // 혼자놀기: 기록(최고 타일)을 바로 보여주고 별을 매긴다. 시간이 끝나도 최고 타일이 기록
+    const ok=Solo.level&&mx>=Solo.level.goal;
+    $("cover").classList.remove("hidden"); $("cd").textContent=ok?"🎉":(why==="stuck"?"💥":"⏰");
+    $("cdSub").textContent=ok?"목표 타일 "+Solo.level.goal+" 달성":(why==="stuck"?"더 밀 곳이 없어":"시간 끝");
+    b.textContent="끝";
+    Solo.finish(mx,{score,note:"점수 "+score+" · "+state.moves+"번 밀기"}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("score").textContent="🔒"; $("maxTile").textContent="🔒";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent=why==="stuck"?"더 밀 곳 없음 · 기록 봉인":"기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(score,{mx});   // 기록 = 점수, 덧붙임 = 최고 타일
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'2048', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+' 타일',
+  describe:l=>(l.limitMs/1000)+'초 안에 · 목표 타일 '+l.goal,
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    clearTimeout(state.cdTimer);
+    resetView();
+  }
+});
+
+Duel.start();
+</script>
+</body>
+</html>

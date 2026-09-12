@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>블록 쌓기</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="블록 쌓기 — 20초, 누가 더 높이 쌓나">
+<meta property="og:description" content="20초, 같은 순서로 오는 블록. 톡 쳐서 멈춰 쌓아. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/stack.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/stack/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 — 왼쪽에 큰 남은 시간, 오른쪽에 층수, 아래에 진행 막대 */
+  .hud{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin:14px 2px 8px}
+  .hud .c{min-width:0}
+  .hud .c .lab{font-size:13px;font-weight:700;color:var(--sub);letter-spacing:.02em}
+  .hud .time .v{font-size:clamp(44px,15vw,56px);font-weight:800;line-height:1;letter-spacing:-2px;font-variant-numeric:tabular-nums;color:var(--ink)}
+  .hud .time .v small{font-size:18px;font-weight:600;letter-spacing:0;margin-left:2px}
+  .hud .time .v.warn{color:var(--red)}
+  .hud .score{text-align:right}
+  .hud .score .v{font-size:34px;font-weight:800;line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+  .bar{height:8px;background:#F0E3A3;border-radius:99px;overflow:hidden;margin-bottom:10px}
+  .bar i{display:block;height:100%;width:100%;background:#FF6B4A;border-radius:99px;transition:width .1s linear}
+
+  /* 판 — 어두운 판(#2B2A44) 위에 캔버스로 탑을 그린다. 톡 치면 블록이 멈춘다 */
+  .board{position:relative;border-radius:14px;background:#2B2A44;touch-action:none;overflow:hidden;cursor:pointer}
+  .board canvas{display:block;width:100%;height:auto;border-radius:14px}
+  .board.flash::after{content:"";position:absolute;inset:0;background:rgba(255,107,74,.35);animation:flash .25s ease forwards;pointer-events:none}
+  @keyframes flash{from{opacity:1}to{opacity:0}}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:14px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="stack">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">블록 쌓기</span>
+  <h1 id="playHead">20초.<br><b>누가 더 높이 쌓나.</b></h1>
+  <p class="lead" id="playLead">옆에서 미끄러져 오는 블록을 <b>톡 쳐서 멈춰</b> 쌓아. 어긋난 만큼 잘려서 점점 좁아지고, 완전히 빗나가면 탑이 무너져 처음부터(시간은 계속 가). 둘이 똑같은 순서의 블록을 받아. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clockWrap"><span id="clock">20</span><small>초</small></div></div>
+    <div class="c score"><div class="v" id="score">0</div><div class="lab">층</div></div>
+  </div>
+  <div class="bar" aria-hidden="true"><i id="bar"></i></div>
+
+  <div class="board" id="board" aria-label="탑 — 톡 쳐서 블록 멈추기">
+    <canvas id="cv" width="360" height="400"></canvas>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 출발</div></div>
+  </div>
+  <div class="info"><span>최고 <b id="best">0</b>층 · 무너짐 <b id="miss">0</b>번</span><span>지금 폭 <b id="width">50</b>%</span></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 블록을 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 블록으로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 블록으로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 블록 쌓기 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 탑 화면과 블록 규칙만 남는다.
+
+   규칙: 바닥 블록(폭 50%) 위로 블록이 왼쪽·오른쪽에서 번갈아 미끄러져 온다(화면 밖으로 나가면 반대쪽에서 다시).
+   톡 치면 그 자리에 멈추고, 아래 블록과 겹치지 않는 부분은 잘려 나간다(다음 블록은 그 폭).
+   거의 안 겹치면(4px 이하) 탑이 무너져 바닥부터 다시 — 시간은 계속 간다.
+   20초 동안 가장 높이 쌓은 층수가 기록(높을수록 이김). 같으면 덜 무너진 쪽이 이긴다.
+   블록마다 색과 등장 위치(화면 밖 어디서 출발하는지)는 시드 난수로만 정해져 두 사람이 같은 순서를 받는다.
+   판 진행은 setTimeout 사슬로 돌리고, 한 틱 움직임은 step(ms) 하나에, 멈추기는 drop() 하나에 모아 둔다.
+   좌표는 판 폭을 1 로 본 비율. 그리기 때만 픽셀로 바꾼다. */
+const GAME_MS=20000, TICK=16, SLAB_H=22, BASE_X=0.25, BASE_W=0.5, MISS_W=4/360, SNAP=3/360, SEQ_N=200;
+const COLORS=['#FF7B6B','#5CC8FF','#B6E36B','#FFAE42','#B58CFF','#FF9DD1','#5FE0B8','#FFD54A'];
+/* 기본 속도(판 폭/초). 레벨 0 = 둘이하기 기본. 층마다 0.03 씩 빨라진다 */
+const SPEEDS={0:0.55,1:0.5,2:0.55,3:0.6,4:0.65,5:0.7};
+const LEVELS=[
+  {n:1,label:'8층', limitMs:20000,goal:8, best:13},
+  {n:2,label:'12층',limitMs:25000,goal:12,best:17},
+  {n:3,label:'16층',limitMs:30000,goal:16,best:21},
+  {n:4,label:'20층',limitMs:35000,goal:20,best:25},
+  {n:5,label:'25층',limitMs:40000,goal:25,best:30}
+];
+const fmtT=ms=>String(Math.ceil(Math.max(0,ms)/1000));
+function setClock(left,limit){ $("clock").textContent=fmtT(left); $("clockWrap").classList.toggle("warn", left<=5000); $("bar").style.width=(Math.max(0,left)/limit*100)+"%"; }
+function speedOf(level,floors){ return (SPEEDS[level]||SPEEDS[0])+floors*0.03; }
+function titleFor(n){
+  if(n>=16) return "탑의 장인";
+  if(n>=12) return "손끝이 정확해";
+  if(n>=8)  return "평균 이상";
+  if(n>=5)  return "보통 사람";
+  return "탑이 자꾸 무너져";
+}
+const NEXT=[
+  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."},
+  {path:"../ten/",    title:"10초 맞추기",    desc:"눈 감고 10초. 누가 더 가깝나."},
+  {path:"../mole/",   title:"두더지 잡기",    desc:"20초, 같은 두더지, 누가 더 잡나."}
+];
+
+/* ===== 블록 순서 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   블록 200개의 색과 등장 위치(화면 밖 0~0.6 판 폭 만큼 더 떨어져 출발)가 이 시드로만 정해져 링크에 실리므로,
+   도전자와 응전자가 같은 순서의 블록을 받는다. 방향은 왼쪽·오른쪽 번갈아. 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function seqOf(seed){
+  const rnd=mulberry32(seed>>>0); const out=[];
+  for(let i=0;i<SEQ_N;i++) out.push([Math.floor(rnd()*COLORS.length), Math.round(rnd()*600)/1000]);   // [색 번호, 추가 거리 0~0.6]
+  return out;
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/stack/",
+  og:"https://noljago.co.kr/assets/share-cards/stack.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"블록 쌓기",
+  challengeDesc:"20초, 같은 순서로 오는 블록. 톡 쳐서 멈춰 쌓은 층수로 승부. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 높이 쌓을수록 이긴다
+  hasSeed:true,                     // 같은 블록 순서를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  state:{seed:0,level:0,seq:[],k:0,stack:[],cur:null,speed:0,floors:0,best:0,misses:0,cut:0,cam:0,limit:GAME_MS,
+         running:false,t0:0,done:false,cdTimer:0,tickTimer:0,flashTimer:0},
+  linkExtra:st=>({f:st.misses,l:st.level}),
+  roundExtra:(p,st)=>[p.f||0, st.misses],
+  extraKey:"f", extraDefault:0,
+  tieBreak:(me,them)=>me.f===them.f?null:{o:me.f<them.f?"win":"lose",why:`층수는 같지만 덜 무너진 쪽이 이겨. (${me.f}번 vs ${them.f}번)`},
+  recordCell:x=>x.v+"<small>층</small>",
+  detailCell:x=>x.f?`무너짐 ${x.f}번`:"한 번도 안 무너짐",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}층 vs ${esc(who(r[2],!isA))} ${r[3]}층`,
+  verdictText:o=> o==="win"?"내가 더 쌓았어!":o==="lose"?"상대가 더 쌓았어":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"층수도 무너진 횟수도 같은 건 거의 기적."
+      :`${me.v}층 vs ${them.v}층 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}층 더 쌓았어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 블록이야. 더 높이.`,
+  againHead:()=>`재도전. <b>새 블록</b>으로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}층 vs ${nm(them.n)}${them.v}층${tail}`,
+  resultDesc:"20초, 같은 블록. 누가 더 높이 쌓았을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildBoard(); },
+  resetPlay(){ resetView(); }
+});
+
+/* ===== 캔버스 ===== */
+const cv=$("cv");
+const ctx=(typeof window.CanvasRenderingContext2D==="function")?cv.getContext("2d"):null;
+let W=360, H=400, DPR=1;
+function fit(){
+  const w=Math.max(200,Math.min(480,$("board").clientWidth||360));
+  W=w; H=Math.round(w*1.1); DPR=window.devicePixelRatio||1;
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR); cv.style.height=H+"px";
+  if(ctx) ctx.setTransform(DPR,0,0,DPR,0,0);
+  draw();
+}
+window.addEventListener("resize",fit);
+function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function slab(x,y,w,c){ ctx.fillStyle=c; rr(x,y,w,SLAB_H-3,6); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.28)"; rr(x+3,y+3,Math.max(0,w-6),7,3); ctx.fill(); }
+/* 병아리 — 탑 꼭대기에 앉아 블록이 오는 쪽을 본다 */
+function chick(x,y,r,dir){
+  ctx.fillStyle="#FFD54A"; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#FF9A3C"; ctx.beginPath(); ctx.moveTo(x+dir*r*0.75,y-r*0.2); ctx.lineTo(x+dir*r*1.4,y+r*0.05); ctx.lineTo(x+dir*r*0.75,y+r*0.3); ctx.fill();
+  ctx.fillStyle="#23213A"; ctx.beginPath(); ctx.arc(x+dir*r*0.35,y-r*0.3,r*0.15,0,7); ctx.fill();
+}
+function draw(){
+  if(!ctx || !state.stack.length) return;
+  ctx.clearRect(0,0,W,H);
+  const base=H-30, cam=state.cam;
+  state.stack.forEach((s,i)=>{ const y=base-(i+1)*SLAB_H+cam; if(y>-SLAB_H && y<H) slab(s.x*W,y,s.w*W,s.c); });
+  const top=state.stack[state.stack.length-1];
+  const ty=base-state.stack.length*SLAB_H+cam;
+  if(state.cur){
+    const y=base-(state.stack.length+1)*SLAB_H+cam;
+    slab(state.cur.x*W,y,state.cur.w*W,state.cur.c);
+    chick((top.x+top.w/2)*W, ty-9, 9, state.cur.dir);
+  }
+  ctx.fillStyle="#5D8B4E"; const gy=base+cam; ctx.fillRect(0, gy>H?H-6:gy, W, H);
+}
+
+/* ===== 판 ===== */
+function buildBoard(){
+  state.seq=seqOf(state.seed); state.k=0;
+  state.floors=0; state.best=0; state.misses=0; state.cut=0; state.cam=0;
+  startTower();
+  $("score").textContent="0"; $("best").textContent="0"; $("miss").textContent="0";
+  draw();
+}
+/* 바닥부터 다시. 무너졌을 때도 여기로 (블록 순서 k 는 이어서 간다) */
+function startTower(){
+  state.stack=[{x:BASE_X,w:BASE_W,c:"#5FE0B8"}]; state.floors=0;
+  newSlab();
+}
+/* 다음 블록: 왼쪽·오른쪽 번갈아, 화면 밖에서 출발(시드가 정한 만큼 더 멀리서), 색은 시드 순서 */
+function newSlab(){
+  const top=state.stack[state.stack.length-1];
+  const s=state.seq[state.k%SEQ_N]; state.k++;
+  const fromLeft=state.stack.length%2===1;
+  state.cur={x:fromLeft?-top.w-s[1]:1+s[1], w:top.w, dir:fromLeft?1:-1, c:COLORS[s[0]]};
+  state.speed=speedOf(state.level,state.floors);
+  $("width").textContent=Math.round(top.w*100);
+}
+function clearTimers(){ clearTimeout(state.tickTimer); clearTimeout(state.flashTimer); $("board").classList.remove("flash"); }
+function resetView(){
+  clearTimers();
+  state.done=false;state.running=false;
+  state.limit=Solo.active&&Solo.level?Solo.level.limitMs:GAME_MS;
+  buildBoard();
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 출발";
+  setClock(state.limit,state.limit);
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+
+/* ===== 멈추기 ===== */
+function drop(){
+  if(!state.running || state.done || !state.cur) return false;
+  const cur=state.cur, top=state.stack[state.stack.length-1];
+  let l=Math.max(cur.x,top.x), r=Math.min(cur.x+cur.w,top.x+top.w), ow=r-l;
+  if(Math.abs(cur.x-top.x)<=SNAP){ l=top.x; ow=cur.w; }          // 거의 딱 맞으면 그대로 (안 잘림)
+  if(ow<=MISS_W){                                                 // 완전히 빗나감 → 탑이 무너지고 처음부터. 시간은 계속
+    state.misses++; state.cut+=cur.w;
+    $("miss").textContent=state.misses;
+    const b=$("board"); b.classList.remove("flash"); void b.offsetWidth; b.classList.add("flash");
+    clearTimeout(state.flashTimer); state.flashTimer=setTimeout(()=>b.classList.remove("flash"),260);
+    startTower(); $("score").textContent="0"; draw();
+    return true;
+  }
+  state.cut+=cur.w-ow;
+  state.stack.push({x:l,w:ow,c:cur.c}); state.floors++;
+  if(state.floors>state.best){ state.best=state.floors; $("best").textContent=state.best; }
+  $("score").textContent=state.floors;
+  newSlab(); draw();
+  return true;
+}
+$("board").addEventListener("pointerdown",e=>{ if(e.cancelable) e.preventDefault(); drop(); });
+$("board").addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+  if(e.key!==" " && e.key!=="Enter" && e.key!=="ArrowDown") return;
+  if(state.running){ e.preventDefault(); drop(); }
+});
+
+/* ===== 한 틱 ===== ms 만큼 블록을 옮긴다. 화면 밖으로 나가면 반대쪽에서 다시 */
+function step(ms){
+  if(!state.running || state.done) return;
+  const el=performance.now()-state.t0;
+  if(el>=state.limit){ finishPlay("time"); return; }
+  const cur=state.cur, dt=ms/1000;
+  cur.x+=cur.dir*state.speed*dt;
+  if(cur.dir>0 && cur.x>1) cur.x=-cur.w;
+  if(cur.dir<0 && cur.x+cur.w<0) cur.x=1;
+  const target=Math.max(0,(state.stack.length-6)*SLAB_H);
+  state.cam+=(target-state.cam)*Math.min(1,dt*8);
+  setClock(state.limit-el,state.limit);
+  draw();
+}
+function loop(){
+  if(!state.running) return;
+  step(TICK);
+  if(state.running) state.tickTimer=setTimeout(loop,TICK);
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 출발";
+  let n=3;
+  $("cd").textContent=n;
+  const tickCd=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(tickCd,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(tickCd,1000);
+}
+function startPlay(){
+  clearTimers(); buildBoard();
+  state.limit=Solo.active&&Solo.level?Solo.level.limitMs:GAME_MS;
+  state.running=true; state.done=false; state.t0=performance.now();
+  $("cover").classList.add("hidden");
+  setClock(state.limit,state.limit);
+  $("bigBtn").disabled=true; $("bigBtn").textContent="진행 중";
+  state.tickTimer=setTimeout(loop,TICK);
+}
+/* why: "time" 시간 끝 (탑이 무너져도 판은 안 끝난다) */
+function finishPlay(why){
+  if(!state.running) return;
+  state.running=false; state.done=true;
+  clearTimers();
+  const best=state.best;
+  const b=$("bigBtn"); b.disabled=true;
+  setClock(0,state.limit); draw();
+  if(Solo.active){   // 혼자놀기: 기록(가장 높이 쌓은 층)을 바로 보여주고 별을 매긴다
+    const ok=Solo.level&&best>=Solo.level.goal;
+    $("cover").classList.remove("hidden"); $("cd").textContent=ok?"🎉":"⏰"; $("cdSub").textContent=ok?"목표 "+Solo.level.goal+"층 달성":"시간 끝";
+    b.textContent="끝";
+    Solo.finish(best,{misses:state.misses,note:state.misses?"무너짐 "+state.misses+"번":"한 번도 안 무너짐"}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("score").textContent="🔒"; $("best").textContent="🔒";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(best,{misses:state.misses});   // 기록 = 가장 높이 쌓은 층수, 덧붙임 = 무너진 횟수
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'stack', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'층',
+  describe:l=>(l.limitMs/1000)+'초 안에 · 속도 '+(SPEEDS[l.n]||SPEEDS[0]).toFixed(2),
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    clearTimeout(state.cdTimer);
+    resetView();
+  }
+});
+
+Duel.start();
+fit();
+</script>
+</body>
+</html>
