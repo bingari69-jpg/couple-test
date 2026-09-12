@@ -9,6 +9,8 @@
     { id:'psychology', label:'심리테스트', href:'t/psychology/', enabled:true }
   ];
   let config = null;
+  const PLACEMENT_LABEL = { result_bottom:'게임 결과 아래', recommendation_top:'다른 게임 추천 위', home_catalog:'홈 게임 목록 중간', challenge_open:'도전장 받은 화면 (시작 버튼 아래)', letter_compose:'편지 쓰기 화면 맨 아래', letter_bottom:'편지 읽기 화면 맨 아래' };
+  const placementsOf = ad => Array.isArray(ad.placements) && ad.placements.length ? ad.placements : [ad.placement || 'result_bottom'];
   let serverState = null;
   let dirty = false;
   let editingIndex = -1;
@@ -54,7 +56,7 @@
       games: localGames(),
       ads: {
         enabled: false,
-        slots: [{ id:'result-bottom', name:'게임 결과 아래', placement:'result_bottom', enabled:false, type:'own', imageUrl:'', linkUrl:'', alt:'같이놀자 추천', excludedGames:['letter','tarot'], networkClient:'', networkSlot:'' }]
+        slots: [{ id:'result-bottom', name:'기본 배너', placement:'result_bottom', placements:['result_bottom'], enabled:false, type:'own', imageUrl:'', linkUrl:'', alt:'같이놀자 추천', excludedGames:['letter','tarot'], networkClient:'', networkSlot:'' }]
       }
     };
   }
@@ -88,6 +90,8 @@
     });
     next.ads = Object.assign(base.ads, next.ads || {});
     next.ads.slots = Array.isArray(next.ads.slots) ? next.ads.slots : base.ads.slots;
+    // 옛 설정의 노출 위치 하나(placement)를 여러 위치(placements)로 옮긴다. placement 는 첫 값으로 남겨 옛 스크립트도 읽게 한다.
+    next.ads.slots = next.ads.slots.map(ad => { const placements = placementsOf(ad).filter(p => PLACEMENT_LABEL[p]); return Object.assign({}, ad, { placements: placements.length ? placements : ['result_bottom'], placement: (placements[0] || 'result_bottom') }); });
     return next;
   }
   function setDirty(value) {
@@ -233,18 +237,18 @@
   function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
   function renderAds(){const list=$('adList');list.replaceChildren();$('adsEnabled').checked=!!config.ads.enabled;config.ads.slots.forEach((ad,index)=>{
-    const card=document.createElement('article');card.className='ad-card';card.innerHTML='<div class="ad-card-head"><h3></h3><button class="remove-ad" type="button">삭제</button></div><div class="field-grid"><label>자리 이름<input data-field="name"></label><label>노출 위치<select data-field="placement"><option value="result_bottom">게임 결과 아래</option><option value="home_catalog">홈 게임 목록 중간</option><option value="recommendation_top">다른 게임 추천 위</option></select></label></div><div class="field-grid"><label>광고 종류<select data-field="type"><option value="own">자체 배너</option><option value="adsense">AdSense</option></select></label><label class="check"><input data-field="enabled" type="checkbox"> 이 자리 사용</label></div><div class="own-fields"><label>배너 이미지 주소<div class="upload-row"><input data-field="imageUrl" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input class="ad-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label><label>클릭할 주소<input data-field="linkUrl" type="url" placeholder="https://..."></label><label>배너 설명<input data-field="alt" maxlength="80"></label></div><div class="adsense-fields"><div class="field-grid"><label>광고 클라이언트<input data-field="networkClient" placeholder="ca-pub-..."></label><label>광고 슬롯<input data-field="networkSlot" placeholder="숫자"></label></div></div><label>광고 제외 게임<textarea data-field="excludedGames" rows="2" placeholder="letter, tarot"></textarea></label>';
-    const PLACEMENT_LABEL={result_bottom:'게임 결과 아래',home_catalog:'홈 게임 목록 중간',recommendation_top:'다른 게임 추천 위'};
+    const card=document.createElement('article');card.className='ad-card';card.innerHTML='<div class="ad-card-head"><h3></h3><button class="remove-ad" type="button">삭제</button></div><div class="field-grid"><label>자리 이름<input data-field="name"></label></div><div><span class="field-title">노출 위치 <small>(여러 개 선택 가능)</small></span><div class="placement-picks">'+Object.keys(PLACEMENT_LABEL).map(key=>'<label class="check"><input type="checkbox" value="'+key+'"> '+PLACEMENT_LABEL[key]+'</label>').join('')+'</div></div><div class="field-grid"><label>광고 종류<select data-field="type"><option value="own">자체 배너</option><option value="adsense">AdSense</option></select></label><label class="check"><input data-field="enabled" type="checkbox"> 이 자리 사용</label></div><div class="own-fields"><label>배너 이미지 주소<div class="upload-row"><input data-field="imageUrl" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input class="ad-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label><label>클릭할 주소<input data-field="linkUrl" type="url" placeholder="https://..."></label><label>배너 설명<input data-field="alt" maxlength="80"></label></div><div class="adsense-fields"><div class="field-grid"><label>광고 클라이언트<input data-field="networkClient" placeholder="ca-pub-..."></label><label>광고 슬롯<input data-field="networkSlot" placeholder="숫자"></label></div></div><label>광고 제외 게임<textarea data-field="excludedGames" rows="2" placeholder="letter, tarot"></textarea></label>';
     // 제목에는 자리 이름과 실제 노출 위치를 같이 보여준다. 이름은 메모용이라 위치를 바꿔도 안 바뀌어 헷갈렸다.
-    const head=()=>{card.querySelector('h3').textContent=(ad.name||'광고 자리')+' · '+(PLACEMENT_LABEL[ad.placement]||'위치 미정');};head();card.querySelector('.remove-ad').onclick=()=>{config.ads.slots.splice(index,1);changed();renderAds();};
-    ['name','placement','type','imageUrl','linkUrl','alt','networkClient','networkSlot'].forEach(field=>{const el=card.querySelector('[data-field="'+field+'"]');el.value=ad[field]||'';el.oninput=()=>{ad[field]=el.value;if(field==='name'||field==='placement')head();changed();if(field==='type')toggleAdFields(card,el.value);};});
+    const head=()=>{card.querySelector('h3').textContent=(ad.name||'광고 자리')+' · '+(placementsOf(ad).map(p=>PLACEMENT_LABEL[p]||p).join(', ')||'위치 미정');};head();
+    card.querySelectorAll('.placement-picks input').forEach(box=>{box.checked=placementsOf(ad).includes(box.value);box.onchange=()=>{ad.placements=[...card.querySelectorAll('.placement-picks input:checked')].map(i=>i.value);ad.placement=ad.placements[0]||'';head();changed();};});card.querySelector('.remove-ad').onclick=()=>{config.ads.slots.splice(index,1);changed();renderAds();};
+    ['name','type','imageUrl','linkUrl','alt','networkClient','networkSlot'].forEach(field=>{const el=card.querySelector('[data-field="'+field+'"]');el.value=ad[field]||'';el.oninput=()=>{ad[field]=el.value;if(field==='name')head();changed();if(field==='type')toggleAdFields(card,el.value);};});
     const enabled=card.querySelector('[data-field="enabled"]');enabled.checked=!!ad.enabled;enabled.onchange=()=>{ad.enabled=enabled.checked;changed();};
     const excluded=card.querySelector('[data-field="excludedGames"]');excluded.value=(ad.excludedGames||[]).join(', ');excluded.oninput=()=>{ad.excludedGames=excluded.value.split(',').map(v=>v.trim()).filter(Boolean);changed();};
     card.querySelector('.ad-file').onchange=async event=>{const label=event.target.closest('.upload');buttonBusy(label,true,'올리는 중…');try{ad.imageUrl=await AdminAPI.uploadImage(event.target.files[0],'ads');card.querySelector('[data-field="imageUrl"]').value=ad.imageUrl;changed();notice('배너 이미지가 등록됐습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}finally{buttonBusy(label,false);}};
     toggleAdFields(card,ad.type);list.append(card);
   });}
   function toggleAdFields(card,type){card.querySelector('.own-fields').hidden=type==='adsense';card.querySelector('.adsense-fields').hidden=type!=='adsense';}
-  function addAd(){config.ads.slots.push({id:'ad-'+Date.now(),name:'새 광고 자리',placement:'result_bottom',enabled:false,type:'own',imageUrl:'',linkUrl:'',alt:'광고',excludedGames:[],networkClient:'',networkSlot:''});changed();renderAds();}
+  function addAd(){config.ads.slots.push({id:'ad-'+Date.now(),name:'새 광고 자리',placement:'result_bottom',placements:['result_bottom'],enabled:false,type:'own',imageUrl:'',linkUrl:'',alt:'광고',excludedGames:[],networkClient:'',networkSlot:''});changed();renderAds();}
 
   function renderVersions(){const list=$('versionList');list.replaceChildren();const versions=serverState&&serverState.versions||[];if(!versions.length){list.innerHTML='<p class="empty">아직 게시한 버전이 없습니다.</p>';return;}versions.forEach(version=>{const row=document.createElement('div');row.className='version-row';const no=document.createElement('div');no.className='version-number';no.textContent='v'+version.version;const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=version.note||'게시 메모 없음';const small=document.createElement('small');small.textContent=new Date(version.published_at).toLocaleString('ko-KR');info.append(strong,small);const restore=document.createElement('button');restore.className='restore-btn';restore.type='button';restore.textContent='복원';restore.onclick=()=>restoreVersion(version.version);row.append(no,info,restore);list.append(row);});}
   async function restoreVersion(version){if(!confirm(version+'번 설정을 다시 게시할까요?'))return;try{await AdminAPI.restore(version);await loadState();notice(version+'번 설정을 새 버전으로 복원했습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}}

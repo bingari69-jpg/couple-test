@@ -9,15 +9,17 @@ const root = path.join(__dirname, '..');
 const errors = [];
 const LINK = 'https://www.instagram.com/p/DcS0B2hBcS6/';
 
-function config(games) {
-  const ad = (id, placement) => ({ id, name: '제닉스 리브체어', placement, enabled: true, type: 'own', imageUrl: '/assets/ads/xenics-livechair.png', linkUrl: LINK, alt: '제닉스 리브체어 라벤더 특가', excludedGames: ['letter', 'tarot'], networkClient: '', networkSlot: '' });
+/* 광고 자리 하나가 여러 노출 위치(placements)를 갖는다. 옛 형식(placement 하나)도 같이 검사한다. */
+function config(games, slots) {
+  const ad = (id, placements) => ({ id, name: '제닉스 리브체어', placement: placements[0], placements, enabled: true, type: 'own', imageUrl: '/assets/ads/xenics-livechair.png', linkUrl: LINK, alt: '제닉스 리브체어 라벤더 특가', excludedGames: ['letter', 'tarot'], networkClient: '', networkSlot: '' });
   return {
     schemaVersion: 1,
     site: { name: '같이놀자', headingFont: 'jua', bodyFont: 'pretendard', fontScale: '1', primaryColor: '#f66b59', secondaryColor: '#8972bb', backgroundColor: '#fffbf5', menu: [{ id: 'home', label: '홈', href: './', enabled: true }] },
     games,
-    ads: { enabled: true, slots: [ad('ad-home', 'home_catalog'), ad('ad-result', 'result_bottom'), ad('ad-reco', 'recommendation_top')] }
+    ads: { enabled: true, slots: slots || [ad('ad-all', ['home_catalog', 'result_bottom', 'recommendation_top', 'challenge_open', 'letter_bottom', 'letter_compose'])] }
   };
 }
+const legacySlot = (id, placement) => ({ id, name: '옛 자리', placement, enabled: true, type: 'own', imageUrl: '', linkUrl: LINK, alt: '옛 형식', excludedGames: [], networkClient: '', networkSlot: '' });
 function load(relative, suffix, cfg) {
   const file = path.join(root, relative), base = path.dirname(file);
   const inline = p => '<script>' + fs.readFileSync(p, 'utf8').replace(/<\/script/g, '<\\/script') + '</script>';
@@ -31,7 +33,7 @@ function load(relative, suffix, cfg) {
   const payload = JSON.stringify(cfg).replace(/</g, '\\u003c');
   return new JSDOM(html.replace('<head>', `<head><script>localStorage.setItem('gatchi_admin_preview',${JSON.stringify(payload)});window.fetch=()=>Promise.reject(new Error('offline'));</script>`), {
     url: 'https://noljago.co.kr/' + relative.replace(/index\.html$/, '') + suffix, runScripts: 'dangerously', virtualConsole: vc, pretendToBeVisual: true,
-    beforeParse(w) { w.scrollTo = () => {}; w.Element.prototype.scrollIntoView = () => {}; w.matchMedia = () => ({ matches: false, addEventListener() {} }); }
+    beforeParse(w) { w.scrollTo = () => {}; w.Element.prototype.scrollIntoView = () => {}; w.matchMedia = () => ({ matches: false, addEventListener() {} }); w.TextEncoder = TextEncoder; w.TextDecoder = TextDecoder; }
   });
 }
 const tick = ms => new Promise(r => setTimeout(r, ms));
@@ -79,6 +81,52 @@ const tick = ms => new Promise(r => setTimeout(r, ms));
   await tick(100);
   assert.equal(tarot.window.document.querySelectorAll('.managed-ad').length, 0, '타로에는 광고 없음');
   tarot.window.close();
+
+  /* 도전장 받은 화면: #c= 링크로 열면 시작 버튼 아래(다른 놀이 보기 링크 위)에 붙고, 새 판 화면에는 없다 */
+  const chash = new URL(golden.pairs.link_challenge.url).hash;
+  const open = load('t/pairs/index.html', '?admin_preview=1' + chash, config(games));
+  await tick(100);
+  const od = open.window.document;
+  assert.equal(od.getElementById('lockedCard').classList.contains('hidden'), false, '도전장 화면');
+  const cad = od.querySelectorAll('.managed-ad[data-placement="challenge_open"]');
+  assert.equal(cad.length, 1, '도전장 화면 광고 하나');
+  assert.equal(cad[0].parentElement.id, 's-play');
+  assert.ok(cad[0].nextElementSibling && cad[0].nextElementSibling.classList.contains('homelink'), '다른 놀이 보기 바로 위');
+  assert.equal(od.querySelectorAll('.managed-ad[data-placement="result_bottom"]').length, 1, '결과 자리는 결과 화면 안에 미리 준비됨');
+  open.window.close();
+  const fresh = load('t/pairs/index.html', '?admin_preview=1', config(games));
+  await tick(100);
+  assert.equal(fresh.window.document.querySelectorAll('.managed-ad[data-placement="challenge_open"]').length, 0, '새 판 화면에는 도전장 광고 없음');
+  fresh.window.close();
+
+  /* 편지 읽기 화면: 편지는 광고 제외 게임이지만 편지 전용 자리(letter_bottom)는 붙는다 */
+  const lhash = '#l=' + Buffer.from(JSON.stringify({ w: '보고 싶어', tpl: 'winter', font: 'serif', size: 20, n: '지민', f: '민수' })).toString('base64url');
+  const letter = load('t/letter/index.html', '?admin_preview=1' + lhash, config(games));
+  await tick(150);
+  const ld = letter.window.document;
+  const lad = ld.querySelectorAll('.managed-ad[data-placement="letter_bottom"]');
+  assert.equal(lad.length, 1, '편지 읽기 자리 광고 하나');
+  /* 쓰기 자리 광고는 숨겨진 #compose 안에 미리 붙어 있어 읽기 화면에서는 보이지 않는다 */
+  assert.equal(ld.querySelectorAll('.managed-ad').length, 2); assert.equal(ld.getElementById('compose').hidden, true);
+  assert.equal(lad[0].parentElement.id, 'reader'); assert.equal(ld.getElementById('reader').lastElementChild, lad[0], '읽기 화면 맨 아래');
+  letter.window.close();
+  /* 편지 쓰기 화면 맨 아래: 읽기 링크 없이 열면 #compose 안에 붙고(작성 중에만 보임), 읽기 자리는 붙지 않는다 */
+  const compose = load('t/letter/index.html', '?admin_preview=1', config(games, [Object.assign(legacySlot('w', 'letter_compose'), { placements: ['letter_compose'] })]));
+  await tick(150);
+  const cd = compose.window.document;
+  const wad = cd.querySelectorAll('.managed-ad');
+  assert.equal(wad.length, 1, '쓰기 화면 광고 하나'); assert.equal(wad[0].dataset.placement, 'letter_compose');
+  assert.equal(wad[0].parentElement.id, 'compose'); assert.equal(cd.getElementById('compose').lastElementChild, wad[0], '쓰기 화면 맨 아래');
+  cd.getElementById('viewTemplate').click(); cd.getElementById('useTemplate').click();
+  assert.equal(cd.getElementById('compose').hidden, false, '편지지 고르면 쓰기 화면'); assert.equal(cd.getElementById('reader').querySelectorAll('.managed-ad').length, 0);
+  compose.window.close();
+
+  /* 옛 형식(placement 하나)도 그대로 읽힌다 */
+  const legacy = load('t/pairs/index.html', '?admin_preview=1' + hash, config(games, [legacySlot('old-1', 'result_bottom')]));
+  await tick(100);
+  const lg = legacy.window.document.querySelectorAll('.managed-ad');
+  assert.equal(lg.length, 1); assert.equal(lg[0].dataset.placement, 'result_bottom'); assert.equal(lg[0].querySelector('strong').textContent, '옛 형식');
+  legacy.window.close();
 
   assert.deepEqual(errors, [], '페이지 스크립트 예외');
   console.log('광고 배너 검사 통과 — 홈 목록 중간(재렌더 유지)·결과 아래·추천 위, 새 탭 sponsored 링크, 제외 게임');

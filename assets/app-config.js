@@ -138,10 +138,15 @@
     const link=document.createElement('a');link.href=new URL('../../',location.href).href;link.textContent=(siteName||'같이놀자')+' 홈으로';
     box.append(icon,heading,copy,link);overlay.append(box);document.body.append(overlay);
   }
+  /* 한 광고 자리는 여러 노출 위치를 가질 수 있다(placements). 옛 설정의 placement 하나도 그대로 읽는다. */
+  function placementsOf(ad){return Array.isArray(ad.placements)&&ad.placements.length?ad.placements:[ad.placement||'result_bottom'];}
   function activeAds(config, placement) {
     const ads=config.ads||{};const slug=getSlug();const game=config.games.find(item=>item.slug===slug);
-    if(!ads.enabled || (game&&game.adsMode==='off'))return [];
-    return (ads.slots||[]).filter(ad=>ad.enabled&&ad.placement===placement&&!(ad.excludedGames||[]).includes(slug));
+    if(!ads.enabled)return [];
+    /* 편지 읽기 화면 아래는 편지 페이지 전용 자리라, 게임별 '광고 끔'·제외 목록(기본값에 letter 가 들어 있음)을 적용하지 않는다 */
+    const pageOwned=placement==='letter_bottom'||placement==='letter_compose';
+    if(!pageOwned && game&&game.adsMode==='off')return [];
+    return (ads.slots||[]).filter(ad=>ad.enabled&&placementsOf(ad).includes(placement)&&(pageOwned||!(ad.excludedGames||[]).includes(slug)));
   }
   function adElement(ad) {
     const wrap=document.createElement('aside');wrap.className='managed-ad';wrap.dataset.adId=ad.id||'';const label=document.createElement('small');label.textContent='광고';wrap.append(label);
@@ -156,11 +161,15 @@
   function mountHomeAds(config){const list=document.getElementById('catalogList');if(!list)return;list.querySelectorAll('.managed-ad').forEach(el=>el.remove());const ads=activeAds(config,'home_catalog');ads.forEach((ad,index)=>{const el=adElement(ad);el.style.gridColumn='1 / -1';const after=list.children[Math.min(3+index,list.children.length)-1];if(after)after.after(el);else list.append(el);});}
   function mountResultAds(config){document.querySelectorAll('.managed-ad[data-placement="result_bottom"]').forEach(el=>el.remove());const ads=activeAds(config,'result_bottom');if(!ads.length)return;const target=document.querySelector('#s-result,#s-report,#v-compare,#opened,#resultScreen,[data-result-screen]');if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='result_bottom';target.append(el);});}
   function mountRecommendationAds(config){document.querySelectorAll('.managed-ad[data-placement="recommendation_top"]').forEach(el=>el.remove());const ads=activeAds(config,'recommendation_top');if(!ads.length)return;const target=document.querySelector('.next,#nextList,.recommendations,[data-recommendations]');if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='recommendation_top';target.before(el);});}
+  /* 도전장·초대 링크(#c= / #i=)로 들어온 첫 화면: 보이는 첫 .screen 의 '다른 놀이 보기' 링크 바로 위 */
+  function mountChallengeAds(config){document.querySelectorAll('.managed-ad[data-placement="challenge_open"]').forEach(el=>el.remove());if(!/^#[ci]=/.test(location.hash))return;const ads=activeAds(config,'challenge_open');if(!ads.length)return;const screen=[...document.querySelectorAll('.screen')].find(s=>!s.classList.contains('hidden'));if(!screen)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='challenge_open';const home=screen.querySelector('.homelink');if(home)home.before(el);else screen.append(el);});}
+  /* 편지 페이지 전용 자리: 읽기 화면 맨 아래(#reader, 편지를 열었을 때만 보임) · 쓰기 화면 맨 아래(#compose, 작성 중에만 보임) */
+  function mountLetterAds(config){if(getSlug()!=='letter')return;[['letter_bottom','reader'],['letter_compose','compose']].forEach(([placement,id])=>{document.querySelectorAll('.managed-ad[data-placement="'+placement+'"]').forEach(el=>el.remove());const ads=activeAds(config,placement);if(!ads.length)return;const target=document.getElementById(id);if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement=placement;target.append(el);});});}
   function sendEvent(event,method){if(typeof fetch!=='function')return;try{fetch(PROJECT_URL+'/rest/v1/rpc/track_app_event',{method:'POST',keepalive:true,headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_event:event,p_game:getSlug(),p_entry:'direct',p_method:method||null,p_session_id:null})}).catch(()=>{});}catch(_){}}
   function apply(config) {
     if (!valid(config)) return;
     current = config; window.APP_PUBLISHED_CONFIG = config;
-    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config);
+    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config); mountChallengeAds(config); mountLetterAds(config);
     if(getSlug()==='home')document.title=(config.site.name||'같이놀자')+' — 너에게 보내고 싶은 게 있어';
     setTimeout(()=>applyMenu(config),0);
     window.dispatchEvent(new CustomEvent('app-config-ready', { detail: config }));

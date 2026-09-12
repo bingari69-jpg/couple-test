@@ -39,6 +39,9 @@ function runtimeDom(url, value) {
     assert.deepStrictEqual(merged.map(g => [g.slug, g.title, g.visibility, g.sortOrder]), [['ten','열 초 도전','hidden',3], ['pairs','짝 맞추기','listed',4]], '코드에만 있는 게임이 목록 끝에 붙어야 함');
     const kept = normalize({ games:[{ slug:'ten', sortOrder:1 }, { slug:'pairs', title:'내가 바꾼 제목', visibility:'hidden', sortOrder:2 }] }).games;
     assert.deepStrictEqual(kept.map(g => [g.slug, g.title, g.visibility]), [['ten','새 게임','hidden'], ['pairs','내가 바꾼 제목','hidden']], '저장된 항목은 그대로 두어야 함');
+    /* 광고 자리: 옛 placement 하나 → placements 배열, 모르는 위치는 버리고 비면 결과 아래 */
+    const slots = normalize({ games:[{ slug:'ten' }], ads:{ enabled:true, slots:[{ id:'a', placement:'home_catalog' }, { id:'b', placements:['challenge_open','letter_bottom'] }, { id:'c', placement:'nope' }, { id:'d', placements:['letter_compose'] }] } }).ads.slots;
+    assert.deepStrictEqual(slots.map(s => [s.id, s.placements, s.placement]), [['a',['home_catalog'],'home_catalog'], ['b',['challenge_open','letter_bottom'],'challenge_open'], ['c',['result_bottom'],'result_bottom'], ['d',['letter_compose'],'letter_compose']], '광고 자리 노출 위치 이전');
   }
 
   const home = runtimeDom('https://example.test/couple-test/?admin_preview=1', config());

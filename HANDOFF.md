@@ -29,6 +29,7 @@
 - **발견한 장애**: 홈 목록 중간 자리(`home_catalog`)에 광고가 붙지 않았다. `app-config.js`가 `app-config-ready`를 쏜 뒤에 `home-catalog-updated` 리스너를 달았는데, 그 이벤트가 동기로 홈 목록을 다시 그려 광고가 지워진 채 남았다. 수정: 리스너를 `apply()` 밖에서 등록하고, `home.js` `render()` 끝에 `home-catalog-rendered`를 쏴서 목록을 그릴 때마다 광고를 다시 붙인다. 결과 아래·추천 위 자리는 원래 정상.
 - 관리자에서 넣을 값: 광고 → 켜기 → 자리(홈 목록 중간 / 게임 결과 아래 / 추천 영역 위) → 유형 자체 배너, 이미지 URL `https://noljago.co.kr/assets/ads/xenics-livechair.png`, 링크 URL 위 인스타그램 주소, 대체 문구 자유. 미리보기(`?admin_preview=1`)로 확인 후 게시.
 - `test/ads.js`: 미리보기 설정으로 홈(세 번째 카드 다음, 재렌더 후 유지)·짝 맞추기 결과(결과 아래+추천 위)·타로(광고 제외) 검사. 캐시 버전 `app-config.js`·`home.js` → `20260912-ads`.
+- **노출 위치 복수 선택 + 새 자리 (사용자 요청)**: 광고 자리 하나가 여러 위치를 갖는다(`placements` 배열, 관리자 화면은 체크박스). 옛 `placement` 하나는 `normalize`가 배열로 옮기고 첫 값을 `placement`에 남겨 옛 스크립트도 읽는다. 새 자리 3곳: `challenge_open`(도전장·초대 `#c=`/`#i=` 링크로 열린 첫 화면의 '다른 놀이 보기' 링크 바로 위, 새 판 화면에는 없음), `letter_compose`(편지 쓰기 화면 `#compose` 맨 아래, 작성 중에만 보임), `letter_bottom`(편지 읽기 화면 `#reader` 맨 아래. 사용자가 "읽은 뒤 광고는 어색하다"고 해서 기본으로 켜지 않고 선택지로만 둠). 편지 두 자리는 편지 전용이라 게임별 끔·제외 규칙(기본값에 letter 포함)을 적용하지 않는다. 카드 제목은 `이름 · 위치1, 위치2`. 캐시 버전 `app-config.js`·`admin.js` → `20260912-ads3`, `admin.css` → `20260912-ads2`. `test/ads.js`·`test/admin-center.js`에 검사 추가.
 
 ## 작업 디렉터리 주의사항
 
