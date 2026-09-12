@@ -8,7 +8,7 @@ const path = require("path");
 const { load, el, txt, htm, cls, hid, grabKakao, b64e, PAGE_ERRORS } = require("./dom");
 
 /* 기록 대결 게임 목록 — 새 게임을 만들면 여기에 추가 */
-const GAMES = ["ten", "react", "num25", "pairs", "mole", "tap", "ufo", "stroop", "arrow", "stop"];
+const GAMES = ["ten", "react", "num25", "pairs", "simon", "snake", "choseong", "daily-word", "fit", "2048", "stack", "mines", "slide15", "flap", "typing", "mole", "tap", "ufo", "stroop", "arrow", "stop"];
 
 /* 게임별로 "기록"을 어디에 담는지. 앱 코드는 건드리지 않는다.
      fields   : 봉인 직전 state 에 넣을 값
@@ -19,6 +19,17 @@ const REC = {
   tap:   { fields: { ms: 88 },                                theirRaw: 74 },
   num25: { fields: { ms: 21340, pen: 2, seed: 12345 },        theirRaw: 19870 },
   pairs: { fields: { ms: 34120, flips: 46, seed: 12345 },     theirRaw: 29870 },
+  'typing': { fields: { correct: 41, errors: 2, seed: 12345 }, theirRaw: 36 },
+  'flap': { fields: { passed: 11, crashes: 2, seed: 12345 }, theirRaw: 9 },
+  'slide15': { fields: { ms: 3, moves: 3, seed: 12345 }, theirRaw: 2 },
+  'mines': { fields: { ms: 3, boom: 1, seed: 12345 }, theirRaw: 2 },
+  'stack': { fields: { ms: 3, best: 3, misses: 1, cut: 0.5, seed: 12345, level: 0 }, theirRaw: 4 },
+  '2048': { fields: { ms: 412, mx: 64, moves: 38, seed: 12345, level: 0 }, theirRaw: 380 },
+  'fit': { fields: { ms: 101, lines: 5, seed: 12345, level: 0 }, theirRaw: 64 },
+  'daily-word': { fields: { ms: 3, elapsed: 42300, level: 0, seed: 12345 }, theirRaw: 1 },
+  'choseong': { fields: { ms: 3, elapsed: 21400, level: 0, seed: 12345 }, theirRaw: 5 },
+  'snake': { fields: { ms: 7, stat: [2, 8], seed: 12345, level: 0 }, theirRaw: 5 },
+  'simon': { fields: { ms: 6, inputMs: 4210, seed: 12345, level: 0 }, theirRaw: 4 },
   mole:  { fields: { ms: 24, stat: [18, 3, 1], seed: 12345 }, theirRaw: 19 },
   ufo:   { fields: { ms: 23, stat: [20, 2, 1, 30], seed: 12345 }, theirRaw: 19 },
   stroop:{ fields: { ms: 27, stat: [27, 4], seed: 12345 },     theirRaw: 21 },

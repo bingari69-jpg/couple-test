@@ -31,8 +31,11 @@
 - 짝 맞추기가 기준 구현: `SIZES`(레벨 0=둘이 기본 4×5, 1~5), `LEVELS`, 링크 `l` 필드(`linkExtra`), `onOpenChallenge/onPreset`이 `p.l` 적용, 제한 시간 초과 `failPlay()`. 골든은 pairs 링크에 `l:0`이 실려 10곳 갱신.
 - 통계 이벤트 `solo_started/solo_cleared/solo_failed/solo_to_duel` — `analytics.js` 허용 목록과 `supabase/migrations/20260913_solo_events.sql`(**운영 실행 필요**).
 - 테스트 `test/solo.js`. 에이전트 규격 문서는 세션 scratchpad `GAME_SPEC.md`(저장소 밖).
-- 완성됐지만 **아직 등록 안 된 새 게임**(`f87ca6a`): `t/simon/`(순서 기억, 기록=라운드, 링크 extra `t`=따라 누른 ms), `t/snake/`(스네이크 20초, 기록=먹은 수, extra `a`=산 ms). 둘 다 둘이+혼자, `test/simon.js`·`test/snake.js` 통과. 홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든(scenarios REC) 등록은 아직이며, 에이전트 보고서의 문구(HOME_TITLE 등)는 이 세션 대화에 있다.
-- **남은 일**: 1에서 25까지·두더지 혼자 모드, 새 게임 8종(2048·블록 쌓기·초성 퀴즈·오늘의 단어·지뢰찾기·15퍼즐·탭 비행·한글 타자), 위 2종 등록, 홈 메뉴 4축·혼자놀기 탭·진행도 배지, 관리자 기본 메뉴, 각 게임 등록(홈·game-ui·guide·kakao·result-notify·sitemap·SQL·공유 카드·골든). 2026-09-12 밤 세션 한도로 병렬 에이전트가 중단되어 여기서 멈췄다.
+- 2026-09-13 완료: 1에서 25까지(4×4~6×6 레벨)·두더지(간격·동시·폭탄 레벨) 혼자 모드. 홈 4축 메뉴(둘이놀기·혼자놀기·편지·심리)와 홈 목록의 둘이놀기/혼자놀기 탭·진행도 배지(`home.js`, `SOLO_GAMES` 맵은 `home-catalog.js`). 게시본에 옛 기본 메뉴(홈·편지·놀이·심리테스트)가 저장돼 있으면 `app-config.js`와 `admin.js`가 새 4축으로 옮긴다(직접 바꾼 메뉴는 유지).
+- **새 게임 11종 등록 완료** (모두 둘이+혼자, 시드 공유, 링크에 레벨 `l`): 순서 기억 `simon`, 스네이크 20초 `snake`, 초성 퀴즈 `choseong`(+data.js), 오늘의 단어 `daily-word`(+data.js, 날짜 시드·하루 한 번), 끼워넣기 `fit`, 2048 한판 `2048`, 블록 쌓기 `stack`, 지뢰찾기 미니 `mines`, 15퍼즐 `slide15`, 탭 비행 `flap`, 한글 타자 20초 `typing`(+data.js). 사용자가 준 참고 시안(`hanpan` 시리즈)에서 "실수해도 판이 끝나지 않고 시간만 흐름"(스네이크·탭 비행·블록 쌓기), "1분에 몇 판 푸나"(지뢰찾기·15퍼즐), 캔버스 그림체를 가져왔다. 각 게임의 규칙·동점 처리·레벨은 페이지 머리말 주석과 `test/<slug>.js`에 있다.
+- 등록 지점은 scratchpad의 `register_games.py`가 한 번에 처리: 홈 목록(ITEMS·CARDS 끝), `game-ui.js` 마스코트·3단계 라벨, `guide-data.js`(연습 없음), `kakao-share.js` 카드 제목, `result-notify.js` 완료 알림 대상, `sitemap.xml`, `test/scenarios.js`(GAMES·REC), `test/bet-ui.js`, `package.json`, `test/letter.js` 홈 개수(39). 공유 카드 11장(`ONLY=` 빌드), `catalog.json`은 `nonsense` 제외 규칙 유지. 캐시 버전 `home-catalog`·`game-ui`·`guide-data`·`kakao-share`·`result-notify` → `20260913-games`.
+- **운영 실행 필요 SQL**: `supabase/migrations/20260913_solo_events.sql`(혼자놀기 통계 이벤트), `supabase/migrations/20260913_new_games.sql`(game_catalog 행 11개 + 완료 알림 허용 목록에 pairs·새 게임 추가). 실행 전에도 홈·플레이·공유는 되고 완료 알림 코드만 거부된다.
+- 남은 확인: 휴대폰 실기기(스와이프·드래그·한글 IME 입력·카톡 인앱 브라우저), 홈 순서 조정(관리센터에서 초안 저장→게시하면 새 게임이 목록에 들어감), 공유 카드 그림 다듬기.
 
 ## 자체 광고 배너 테스트 (2026-09-12)
 

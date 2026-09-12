@@ -25,7 +25,18 @@
     arrow: ['화살표 함정', 'atlas', 14, '#e0f0fa', '이쪽? 아니, 저쪽!', '빨간 테두리라면 반대로!'],
     stop: ['딱 멈춰', 'atlas', 15, '#fff0cf', '지금이야, 딱!', '가운데를 향해 감각을 집중해봐.'],
     exam: ['시험지 보내기', 'atlas', 16, '#ece6f8', '같이 공부할래?', '단어를 담아 작은 시험지를 보내봐.'],
-    nonsense: ['넌센스 대결', 'atlas', 16, '#fff0d3', '이걸 맞힌다고?', '100문제 중 같은 5문제로 붙어봐.']
+    nonsense: ['넌센스 대결', 'atlas', 16, '#fff0d3', '이걸 맞힌다고?', '100문제 중 같은 5문제로 붙어봐.'],
+    'typing': ['한글 타자 20초', 'atlas', 16, '#ece6f8', '20초에 몇 글자?', '나오는 문장을 그대로 따라 쳐.'],
+    'flap': ['탭 비행', 'atlas', 11, '#e9e3f9', '문 몇 개 통과했어?', '톡 치면 올라가고 가만두면 떨어져.'],
+    'slide15': ['15퍼즐', 'atlas', 9, '#e0eafa', '60초에 몇 판 맞출까', '빈칸 옆 숫자를 톡 치면 밀려.'],
+    'mines': ['지뢰찾기 미니', 'atlas', 15, '#fff0cf', '60초에 몇 판 풀까', '밟아도 끝이 아니야, 다음 판!'],
+    'stack': ['블록 쌓기', 'atlas', 12, '#ffe3dc', '20초 블록 쌓기', '딱 맞춰 멈추면 안 잘려.'],
+    '2048': ['2048 한판', 'atlas', 9, '#fff0d3', '30초 2048 승부', '쓸어 넘겨 같은 숫자를 합쳐봐.'],
+    'fit': ['끼워넣기', 'atlas', 17, '#e6f0fb', '같은 조각, 더 채워봐', '조각을 끌어 놓고, 톡 치면 돌아가.'],
+    'daily-word': ['오늘의 단어', 'atlas', 0, '#e9e3f9', '오늘 단어, 몇 번 만에?', '초록은 자리까지 맞음, 노랑은 다른 자리에 있음.'],
+    'snake': ['스네이크 20초', 'atlas', 1, '#e2f2e6', '병아리 출동!', '판을 쓸어서 방향을 바꿔. 벽에 닿아도 끝은 아니야.'],
+    'choseong': ['초성 퀴즈', 'atlas', 16, '#fff0d3', 'ㄸㅂㅇ 뭔지 알아?', '초성만 보고 답을 입력해. 같은 판이면 문제도 같아.'],
+    'simon': ['순서 기억', 'atlas', 13, '#efe6fb', '기억력 자신 있어?', '불빛 순서를 보고 그대로 따라 눌러봐.']
   };
   function init() {
     const config = games[slug];
@@ -76,7 +87,7 @@
       steps.className = 'game-steps'; steps.setAttribute('aria-label', '놀이 방법');
       const labels = ['ladder', 'groups', 'exam'].includes(slug)
         ? ['내용 넣기', '링크 보내기', '함께 열기']
-        : ['ten', 'react', 'num25', 'pairs', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
+        : ['ten', 'react', 'num25', 'pairs', 'typing', 'flap', 'slide15', 'mines', 'stack', '2048', 'fit', 'daily-word', 'snake', 'choseong', 'simon', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
           ? ['한판 하기', '도전장 보내기', '기록 비교'] : ['내 답 고르기', '링크 보내기', '함께 보기'];
       labels.forEach((label, i) => {
         const li = document.createElement('li');
