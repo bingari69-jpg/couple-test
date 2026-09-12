@@ -20,6 +20,7 @@
 - `assets/result-notify.js`의 서비스 워커 경로는 `/couple-test/` 여부를 보고 고르므로 그대로 둔다(새 도메인에서는 `/sw.js`).
 - Edge Function `clever-service`: 허용 출처에 `https://noljago.co.kr`, `https://www.noljago.co.kr` 추가(옛 github.io 출처 유지), 기본 출처와 푸시 아이콘 경로를 새 도메인 기준으로 변경. 2026-09-12 사용자가 Dashboard에서 재배포 완료. 외부 확인: 새 도메인 Origin의 OPTIONS → 204와 `Access-Control-Allow-Origin: https://noljago.co.kr`.
 - 완료된 운영 작업(2026-09-12): 카카오 개발자 콘솔 JavaScript 키의 "JS SDK 도메인"에 `https://noljago.co.kr` 등록(새 콘솔에는 예전 "플랫폼 → Web" 메뉴가 없고 키 카드 안에 있다. `www`는 GitHub가 루트로 리다이렉트하므로 등록하지 않음). 앱 대표 도메인도 새 도메인으로 변경. 짝 맞추기 SQL(`20260912_pairs_game.sql`) 운영 실행 완료.
+- **카카오 도메인 설정은 세 곳이 별개다(실제 장애 원인).** (1) 플랫폼 키 → JavaScript 키 → JS SDK 도메인: 공유 버튼(SDK 초기화)이 동작하는 곳. (2) 앱 → 일반 → 앱 대표 도메인: 카드 하단 표기. (3) **앱 → 제품 링크 관리 → 웹 도메인: 메시지 버튼 링크에 허용되는 도메인.** (3)에 새 도메인이 없으면 메시지는 보내지지만 "도전 받기" 버튼이 기본 웹 도메인(`bingari69-jpg.github.io` 루트, 404)으로 떨어진다. 새 도메인 등록 후 휴대폰 실기기에서 도전장 전송·수신 정상 확인. 기본 웹 도메인도 `noljago.co.kr`로 바꾸는 것을 권장했다. 이미 받은 메시지는 링크가 고정되어 새 메시지로만 확인된다.
 - 남은 확인: GitHub Pages Enforce HTTPS 체크(인증서 발급 후 활성화됨). 알림을 켰던 기기는 새 도메인에서 "알림 받기"를 다시 눌러야 한다(푸시 구독은 출처에 묶임). 휴대폰에서 새 도메인으로 카톡 공유 실기기 확인.
 
 ## 작업 디렉터리 주의사항
