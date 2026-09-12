@@ -5,27 +5,36 @@
     {name:'소소한 일상',icon:'🌿',questions:[
       ['아무 약속 없는 휴일,\n가장 하고 싶은 건?', [['🛌','늦잠 자기'],['🍜','맛집 가기'],['🌳','산책하기']]],
       ['지친 하루 끝,\n가장 기분 좋아지는 건?', [['🛁','따뜻한 샤워'],['🍰','맛있는 간식'],['📞','좋아하는 사람과 수다']]],
-      ['갑자기 하루가 생겼어!\n가장 하고 싶은 건?', [['🚆','즉흥 여행'],['🧹','집 정리'],['🛍️','쇼핑']]]]},
+      ['갑자기 하루가 생겼어!\n가장 하고 싶은 건?', [['🚆','즉흥 여행'],['🧹','집 정리'],['🛍️','쇼핑']]],
+      ['카페에 갔어.\n가장 먼저 시키는 건?', [['☕','아메리카노'],['🍵','달달한 라떼'],['🧃','시원한 에이드']]],
+      ['비 오는 날,\n가장 하고 싶은 건?', [['🎬','영화 정주행'],['🍲','따끈한 국물'],['☔','우산 쓰고 산책']]]]},
     {name:'우리 데이트',icon:'💌',questions:[
       ['함께 보내는 주말,\n가장 하고 싶은 데이트는?', [['🍽️','맛집 탐방'],['🎡','놀이공원'],['🏠','집에서 뒹굴뒹굴']]],
       ['작은 선물을 받는다면,\n가장 설레는 선물은?', [['✉️','손편지'],['💐','꽃 한 다발'],['🎁','눈여겨본 물건']]],
-      ['같이 여행을 간다면,\n가장 중요한 건?', [['🍱','맛있는 음식'],['🛏️','편안한 숙소'],['📸','멋진 사진']]]]},
+      ['같이 여행을 간다면,\n가장 중요한 건?', [['🍱','맛있는 음식'],['🛏️','편안한 숙소'],['📸','멋진 사진']]],
+      ['기념일 저녁,\n가장 끌리는 건?', [['🍷','분위기 좋은 레스토랑'],['🏡','집에서 직접 요리'],['🌃','야경 보러 드라이브']]],
+      ['같이 보는 영화,\n가장 좋아하는 장르는?', [['😂','코미디'],['💘','로맨스'],['🔪','스릴러']]]]},
     {name:'먹는 즐거움',icon:'🍡',questions:[
       ['오늘의 야식 후보!\n가장 먹고 싶은 건?', [['🍗','치킨'],['🍕','피자'],['🌶️','떡볶이']]],
       ['배불러도 디저트는 별개!\n가장 좋아하는 디저트는?', [['🍦','아이스크림'],['🍰','케이크'],['🍩','도넛']]],
-      ['새로운 식당을 고를 때,\n가장 중요하게 보는 건?', [['😋','음식 맛'],['💰','합리적인 가격'],['🕯️','좋은 분위기']]]]},
+      ['새로운 식당을 고를 때,\n가장 중요하게 보는 건?', [['😋','음식 맛'],['💰','합리적인 가격'],['🕯️','좋은 분위기']]],
+      ['편의점에서 하나만 산다면,\n가장 손이 가는 건?', [['🍙','삼각김밥'],['🍫','초콜릿'],['🥤','탄산음료']]],
+      ['라면 먹을 때,\n가장 중요한 건?', [['🥚','계란 추가'],['🧀','치즈 추가'],['🌶️','매운맛']]]]},
   ];
   const $=id=>document.getElementById(id);
 /* 이름 기억: 기록 게임과 같은 gh_name 키를 써서 게임을 옮겨도 다시 적지 않게 한다 */
 function rememberName(){const K='gh_name';['makerName','guestName'].forEach(id=>{const el=document.getElementById(id);if(!el)return;try{if(!el.value){const v=localStorage.getItem(K)||'';if(v)el.value=v;}}catch(e){}el.addEventListener('input',()=>{try{localStorage.setItem(K,el.value.trim());}catch(e){}});});}
 rememberName();
 
-  let pack=0,round=0,mode='make',orders=[[],[],[]],challenge=null,result=null,shareUrl='',toastTimer;
+  const QCOUNT=5;                       // 새 도전장은 5문제. 예전 3문제 링크는 앞 3문제만 쓴다.
+  const blank=n=>Array.from({length:n},()=>[]);
+  let pack=0,round=0,mode='make',orders=blank(QCOUNT),challenge=null,result=null,shareUrl='',toastTimer;
+  const count=()=>mode==='make'?QCOUNT:(challenge&&challenge.a?challenge.a.length:QCOUNT);
   const track=(event,data)=>{if(window.track)window.track(event,data);};
   const name=(value,fallback)=>Array.from(String(value||'').replace(/[\u0000-\u001f\u007f]/g,'').trim()).slice(0,12).join('')||fallback;
   const encode=value=>btoa(unescape(encodeURIComponent(JSON.stringify(value)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
   const singleChoice=a=>Array.isArray(a)&&a.length===1&&Number.isInteger(a[0])&&a[0]>=0&&a[0]<3;
-  const validOrders=a=>Array.isArray(a)&&a.length===3&&a.every(singleChoice);
+  const validOrders=a=>Array.isArray(a)&&(a.length===3||a.length===QCOUNT)&&a.every(singleChoice);
   const validChallenge=c=>c&&c.v===2&&Number.isInteger(c.p)&&c.p>=0&&c.p<PACKS.length&&typeof c.n==='string'&&Array.from(c.n).length<=12&&validOrders(c.a);
   const validResult=r=>r&&validChallenge(r.c)&&typeof r.n==='string'&&Array.from(r.n).length<=12&&validOrders(r.g);
   function decode(value){
@@ -58,27 +67,27 @@ rememberName();
   }
   function renderRound(){
     $('modeLabel').textContent=mode==='make'?'내 취향 정하는 중':challenge.n+'님의 취향 맞히는 중';
-    $('progressText').textContent=(round+1)+' / 3';$('progressBar').style.width=((round+1)/3*100)+'%';
+    const n=count();$('progressText').textContent=(round+1)+' / '+n;$('progressBar').style.width=((round+1)/n*100)+'%';
     $('questionTag').textContent=PACKS[pack].icon+' '+PACKS[pack].name;
     $('question').textContent=PACKS[pack].questions[round][0];
     $('instruction').textContent=mode==='make'?'네가 가장 좋아하는 것 하나만 골라줘.':challenge.n+'님이 가장 좋아할 것 하나만 골라줘.';
-    $('next').textContent=round===2?(mode==='make'?'이 선택으로 도전장 만들기 →':'정답 열어보기 →'):'다음 취향 →';
+    $('next').textContent=round===n-1?(mode==='make'?'이 선택으로 도전장 만들기 →':'정답 열어보기 →'):'다음 취향 →';
     $('previous').textContent=round===0?'← 처음으로':'← 이전 취향';show('play');renderChoices();$('question').focus({preventScroll:true});
   }
-  function startGuess(){mode='guess';pack=challenge.p;round=0;orders=[[],[],[]];renderRound();}
+  function startGuess(){mode='guess';pack=challenge.p;round=0;orders=blank(challenge.a.length);renderRound();}
   function makeChallenge(){
     challenge={v:2,p:pack,n:name($('makerName').value,'친구'),a:orders.map(a=>a.slice())};
-    shareUrl=url('c',challenge);$('shareSummary').textContent=challenge.n+'님의 '+PACKS[pack].name+' · 3문제';
+    shareUrl=url('c',challenge);$('shareSummary').textContent=challenge.n+'님의 '+PACKS[pack].name+' · '+QCOUNT+'문제';
     show('share');track('link_made');
   }
   function renderResult(){
-    const c=result.c;pack=c.p;
+    const c=result.c;pack=c.p;const n=c.a.length;
     const hits=c.a.reduce((sum,a,q)=>sum+a.filter((v,i)=>v===result.g[q][i]).length,0);
-    $('resultTitle').textContent=hits===3?'내 취향, 다 알고 있었네!':hits>=2?'우리, 제법 통했는데?':'아직 알아갈 취향이 많아!';
+    $('resultTitle').textContent=hits===n?'내 취향, 다 알고 있었네!':hits>=Math.ceil(n*0.6)?'우리, 제법 통했는데?':'아직 알아갈 취향이 많아!';
     $('resultNames').textContent=result.n+'님이 예상한 '+c.n+'님의 취향';
-    $('score').replaceChildren(document.createTextNode(String(hits)));const total=document.createElement('small');total.textContent=' / 3';$('score').append(total);
-    $('scoreNote').textContent=hits===3?'세 문제 모두 맞혔어!':'세 문제 중 '+hits+'문제 정답!';$('comparisons').replaceChildren();
-    PACKS[c.p].questions.forEach(([question,options],q)=>{
+    $('score').replaceChildren(document.createTextNode(String(hits)));const total=document.createElement('small');total.textContent=' / '+n;$('score').append(total);
+    $('scoreNote').textContent=hits===n?n+'문제 모두 맞혔어!':n+'문제 중 '+hits+'문제 정답!';$('comparisons').replaceChildren();
+    PACKS[c.p].questions.slice(0,n).forEach(([question,options],q)=>{
       const article=document.createElement('article');article.className='comparison';const title=document.createElement('h2');title.textContent=question;article.append(title);
       const head=document.createElement('div');head.className='compare-head';[c.n+'님의 선택',result.n+'님의 예상'].forEach(s=>{const el=document.createElement('span');el.textContent=s;head.append(el);});article.append(head);
       const actual=c.a[q][0],guess=result.g[q][0],row=document.createElement('div');row.className='compare-row'+(actual===guess?' match':'');[actual,guess].forEach(v=>{const span=document.createElement('span');span.textContent=options[v].join(' ');row.append(span);});article.append(row);
@@ -98,11 +107,11 @@ rememberName();
   }
   async function share(kind){
     const button=kind==='invite'?$('sendInvite'):$('sendResult');button.disabled=true;
-    const options={title:kind==='invite'?challenge.n+'님의 취향 맞혀봐':result.n+'님이 내 취향을 맞혀봤어!',desc:kind==='invite'?PACKS[challenge.p].name+' 세 문제. 보기 세 개 중 내가 가장 좋아하는 것 하나를 맞혀봐!':'내 선택과 친구의 예상을 나란히 확인해봐.',url:shareUrl,btn:kind==='invite'?'취향 맞히기':'결과 보기',textOnly:false};
+    const options={title:kind==='invite'?challenge.n+'님의 취향 맞혀봐':result.n+'님이 내 취향을 맞혀봤어!',desc:kind==='invite'?PACKS[challenge.p].name+' '+QCOUNT+'문제. 보기 세 개 중 내가 가장 좋아하는 것 하나를 맞혀봐!':'내 선택과 친구의 예상을 나란히 확인해봐.',url:shareUrl,btn:kind==='invite'?'취향 맞히기':'결과 보기',textOnly:false};
     try{if(window.kakaoShare){const ok=await window.kakaoShare(options,()=>copy(kind));if(ok)track(kind+'_shared',{method:'kakao'});}else await copy(kind);}
     catch(e){await copy(kind);}finally{button.disabled=false;}
   }
-  function fresh(){history.replaceState(null,'',location.pathname);challenge=result=null;orders=[[],[],[]];round=0;mode='make';shareUrl='';renderPacks();show('intro');}
+  function fresh(){history.replaceState(null,'',location.pathname);challenge=result=null;orders=blank(QCOUNT);round=0;mode='make';shareUrl='';renderPacks();show('intro');}
   function route(){
     if(!location.hash){renderPacks();show('intro');return;}
     try{
@@ -110,11 +119,11 @@ rememberName();
       if(match[1]==='r'){if(!validResult(payload))throw Error('result');result=payload;renderResult();return;}
       if(!validChallenge(payload))throw Error('challenge');challenge=payload;pack=challenge.p;
       try{const saved=JSON.parse(sessionStorage.getItem('ranking:'+location.hash)||'null');if(validResult(saved)&&JSON.stringify(saved.c)===JSON.stringify(challenge)){result=saved;renderResult();return;}}catch(e){}
-      $('hostName').textContent=challenge.n;$('invitePack').textContent=PACKS[pack].icon+' '+PACKS[pack].name+' · 3문제 · 정답은 마지막에 공개';show('invite');
+      $('hostName').textContent=challenge.n;$('invitePack').textContent=PACKS[pack].icon+' '+PACKS[pack].name+' · '+challenge.a.length+'문제 · 정답은 마지막에 공개';show('invite');
     }catch(e){show('invalid');}
   }
-  $('start').onclick=()=>{mode='make';round=0;orders=[[],[],[]];renderRound();};$('guessStart').onclick=startGuess;
-  $('next').onclick=()=>{if(orders[round].length!==1)return;if(round<2){round++;renderRound();}else if(mode==='make')makeChallenge();else finish();};
+  $('start').onclick=()=>{mode='make';round=0;orders=blank(QCOUNT);renderRound();};$('guessStart').onclick=startGuess;
+  $('next').onclick=()=>{if(orders[round].length!==1)return;if(round<count()-1){round++;renderRound();}else if(mode==='make')makeChallenge();else finish();};
   $('previous').onclick=()=>{if(round>0){round--;renderRound();}else show(mode==='make'?'intro':'invite');};
   $('edit').onclick=()=>{mode='make';round=0;orders=challenge.a.map(a=>a.slice());shareUrl='';renderRound();};
   $('sendInvite').onclick=()=>share('invite');$('sendResult').onclick=()=>share('result');$('copyInvite').onclick=()=>copy('invite');$('copyResult').onclick=()=>copy('result');

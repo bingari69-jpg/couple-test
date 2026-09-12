@@ -75,6 +75,12 @@
   .btn-main{background:var(--green);color:#fff}
   .btn-blue{background:var(--blue);color:#fff}
   .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .tee-row{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--sub)}
+  .tee-row input{font:inherit;padding:8px 10px;border:2px solid var(--line);border-radius:12px;background:#fff}
+  .tee-row input[type=number]{width:72px}
+  .find{width:100%;font:inherit;font-size:16px;padding:12px 14px;border:2px solid var(--line);border-radius:14px;background:#fff;margin:6px 0 10px}
+  .gcard.found{outline:3px solid var(--yellow);outline-offset:3px}
+  .gcard .tee{font-size:13px;font-weight:800;color:#a57541;margin-bottom:4px}
   .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
   .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
   .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
@@ -136,6 +142,7 @@
   <div class="cntbar hidden" id="cntBar"></div>
   <div id="nameRows"></div>
   <button class="addrow" id="addName" type="button">+ 참가자 추가</button>
+  <button class="addrow hidden" id="loadLast" type="button">지난 명단 불러오기</button>
 
   <label class="q">조 크기</label>
   <div class="seg" id="sizeSeg">
@@ -143,6 +150,13 @@
     <button type="button" id="size3" aria-pressed="false">3인조 기준</button>
   </div>
   <div class="plan" id="plan"></div>
+
+  <label class="q">티오프 시각 (선택)</label>
+  <div class="tee-row">
+    <input type="time" id="teeStart" aria-label="첫 조 티오프 시각">
+    <input type="number" id="teeGap" min="1" max="60" value="7" aria-label="조 간격(분)"> 분 간격
+  </div>
+  <p class="hint">적으면 카드마다 "1조 07:12"처럼 티오프 시각이 붙어요.</p>
 
   <button class="btn btn-main" id="makeLink">조편성 뽑기</button>
   <p class="hint">뽑는 사람도 결과를 미리 볼 수 없어. 링크를 열어야 알 수 있어.</p>
@@ -169,6 +183,9 @@
   <span class="tag">조편성</span>
   <h1>카드를 눌러<br><b>조를 확인해.</b></h1>
   <p class="lead" id="playLead"></p>
+
+  <input type="search" id="findName" class="find" placeholder="내 이름 찾기" aria-label="내 이름으로 조 찾기" autocomplete="off">
+  <p class="hint hidden" id="findNote"></p>
 
   <div class="decks" id="decks"></div>
   <div id="result" class="hidden"></div>
@@ -204,8 +221,11 @@ function b64e(s){const b=new TextEncoder().encode(s);let x="";b.forEach(c=>x+=St
 function b64d(s){s=s.replace(/-/g,"+").replace(/_/g,"/");s+="=".repeat((4-s.length%4)%4);const b=atob(s),u=new Uint8Array(b.length);for(let i=0;i<b.length;i++)u[i]=b.charCodeAt(i);return new TextDecoder().decode(u);}
 function readHash(){const m=location.hash.match(/^#(c)=(.+)$/);if(!m)return null;
   try{const p=JSON.parse(b64d(m[2]));
-    return (p && Array.isArray(p.ns) && typeof p.s==="number" && (p.g===3||p.g===4)
-            && p.ns.length>=MIN_N && p.ns.length<=MAX_N) ? p : null;
+    if(!(p && Array.isArray(p.ns) && typeof p.s==="number" && (p.g===3||p.g===4)
+         && p.ns.length>=MIN_N && p.ns.length<=MAX_N)) return null;
+    if(p.tt!==undefined && !/^([01]\d|2[0-3]):[0-5]\d$/.test(String(p.tt))) delete p.tt;
+    if(p.tt!==undefined && !(Number.isInteger(p.tg) && p.tg>=1 && p.tg<=60)) p.tg=7;
+    return p;
   }catch(e){return null;}}
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 const $=id=>document.getElementById(id);
@@ -343,8 +363,11 @@ $("makeLink").onclick=()=>{
   if(ns.length<MIN_N){ toast("참가자는 5명부터야"); return; }
   const seed=Math.floor(Math.random()*0xFFFFFFFF);      // 무작위는 여기서 딱 한 번
   const p={v:1, ns, g:state.g, s:seed};
+  const tt=$("teeStart").value, tg=parseInt($("teeGap").value,10);
+  if(/^([01]\d|2[0-3]):[0-5]\d$/.test(tt)){ p.tt=tt; p.tg=(Number.isInteger(tg)&&tg>=1&&tg<=60)?tg:7; }
   madeUrl=baseUrl()+"#c="+b64e(JSON.stringify(p));
   state.made=p;
+  try{ localStorage.setItem("gh_groups_last", JSON.stringify({ns, g:state.g, at:Date.now()})); }catch(e){}
   $("linkbox").textContent=madeUrl;
   $("sandboxNote").classList.toggle("hidden",!isSandbox());
   const sizes=planOf(ns.length, state.g);
@@ -376,9 +399,15 @@ function openGroups(p){
 }
 /* 뒷면 내용은 공개된 조에만 넣는다.
    카드를 뒤집기 전에는 명단이 DOM 에 아예 없어서 개발자도구로도 미리 볼 수 없다. */
+function teeOf(gi){
+  const p=view&&view.p; if(!p||!p.tt) return "";
+  const [h,m]=p.tt.split(":").map(Number); const t=h*60+m+gi*(p.tg||7);
+  return String(Math.floor(t/60)%24).padStart(2,"0")+":"+String(t%60).padStart(2,"0");
+}
 function backHtml(gi){
   const mem=view.groups[gi];
-  return `<div class="gno">${gi+1}조 · ${mem.length}명</div>`+
+  const tee=teeOf(gi);
+  return (tee?`<div class="tee">⛳ ${tee} 티오프</div>`:"")+`<div class="gno">${gi+1}조 · ${mem.length}명</div>`+
          `<ol>${mem.map(nm=>`<li>${esc(nm)}</li>`).join("")}</ol>`;
 }
 function renderDecks(){
@@ -451,10 +480,33 @@ $("kakaoShareBtn").onclick=()=>{
 $("again").onclick=()=>{ location.hash=""; location.reload(); };
 
 /* ===== 진입 ===== */
+/* 내 이름 찾기: 이름이 있는 조 카드를 열고 표시한다 */
+$("findName").addEventListener("input", e=>{
+  const q=e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".gcard.found").forEach(c=>c.classList.remove("found"));
+  if(!q||!view){ $("findNote").classList.add("hidden"); return; }
+  const gi=view.groups.findIndex(mem=>mem.some(nm=>nm.toLowerCase()===q||nm.toLowerCase().startsWith(q)));
+  if(gi<0){ $("findNote").textContent="그 이름은 명단에 없어요."; $("findNote").classList.remove("hidden"); return; }
+  flip(gi);
+  const card=$("decks").querySelector(`.gcard[data-g="${gi}"]`);
+  if(card){ card.classList.add("found"); card.scrollIntoView({block:"center", behavior:"smooth"}); }
+  const tee=teeOf(gi);
+  $("findNote").textContent=`${gi+1}조예요${tee?" · ⛳ "+tee+" 티오프":""}.`; $("findNote").classList.remove("hidden");
+});
+
 (function(){
   const p=readHash();
   if(p){ openGroups(p); return; }
   renderMake(); show("s-make");
+  /* 지난 명단 불러오기: 골프 모임은 멤버가 거의 고정이라 다시 적지 않게 한다 */
+  try{
+    const last=JSON.parse(localStorage.getItem("gh_groups_last")||"null");
+    if(last && Array.isArray(last.ns) && last.ns.length>=MIN_N){
+      $("loadLast").textContent=`지난 명단 불러오기 (${last.ns.length}명)`;
+      $("loadLast").classList.remove("hidden");
+      $("loadLast").onclick=()=>{ state.names=last.ns.slice(0,MAX_N); state.g=(last.g===3||last.g===4)?last.g:4; renderMake(); $("loadLast").classList.add("hidden"); toast("지난 명단을 불러왔어"); };
+    }
+  }catch(e){}
 })();
 </script>
 </body>

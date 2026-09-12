@@ -65,3 +65,4 @@ button:disabled{opacity:.45;cursor:default;box-shadow:none}
 @media(max-width:360px){.wrap{padding-inline:14px}h1{font-size:39px}.sheet{padding:17px}.chips button{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
 #resultSpin{display:none;font-size:28px;font-weight:800;min-height:1.4em}.result-card.spinning #resultName{display:none}.result-card.spinning #resultSpin{display:block}
+.ten-clock{font-size:44px;font-weight:800;text-align:center;letter-spacing:.02em;margin:6px 0}#tenBox{margin:8px 0 12px}.result-scores{list-style:none;padding:0;margin:8px 0 14px;font-size:14px;color:#84776d}.result-scores li{padding:3px 0}

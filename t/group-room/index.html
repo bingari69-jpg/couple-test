@@ -39,6 +39,14 @@
         <input id="customStake" maxlength="40" placeholder="우리만의 내기" hidden>
       </fieldset>
 
+      <fieldset>
+        <legend>정하는 방법</legend>
+        <div id="modeChips" class="chips">
+          <button type="button" data-mode="random" aria-pressed="true">🎲 랜덤 뽑기</button>
+          <button type="button" data-mode="lowest_wins" aria-pressed="false">⏱️ 10초 맞추기 (오차 큰 사람 당첨)</button>
+        </div>
+      </fieldset>
+
       <label for="maxPlayers">방 정원</label>
       <select id="maxPlayers">
         <option value="2">2명</option>
@@ -97,8 +105,12 @@
 
     <div id="playingActions" class="ritual" hidden>
       <div class="wax" aria-hidden="true">콕</div>
-      <h2>내 자리의 봉인을 찍어줘</h2>
-      <p>모두 찍을 때까지 결과는 아무도 볼 수 없어요.</p>
+      <h2 id="playingTitle">내 자리의 봉인을 찍어줘</h2>
+      <p id="playingLead">모두 찍을 때까지 결과는 아무도 볼 수 없어요.</p>
+      <div id="tenBox" hidden>
+        <div id="tenClock" class="ten-clock">0.00</div>
+        <button id="tenBtn" class="secondary" type="button">시작</button>
+      </div>
       <button id="submitSeal" class="primary" type="button">내 봉인 찍기</button>
       <button id="finishRoom" class="primary" type="button" hidden>모두 완료 · 결과 열기 →</button>
       <p id="playingHint" class="hint"></p>
@@ -109,7 +121,9 @@
       <div class="result-cup" aria-hidden="true">☕</div>
       <div id="resultSpin" aria-hidden="true"></div><h2 id="resultName"></h2>
       <p id="resultStake"></p>
+      <ul id="resultScores" class="result-scores" hidden></ul>
       <button id="shareResult" class="kakao" type="button">💬 결과를 단체톡에 알리기</button>
+      <button id="playAgain" class="secondary" type="button" hidden>같은 조건으로 한 판 더 →</button>
       <a class="secondary link-button" href="./">새 단체방 만들기</a>
     </section>
 

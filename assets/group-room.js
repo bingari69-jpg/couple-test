@@ -179,6 +179,11 @@
       $("roomStatusBadge").textContent = "봉인 진행 중";
       $("roomTitle").innerHTML = "아직 아무도<br><em>결과를 몰라.</em>";
       $("submitSeal").hidden = Boolean(me && me.has_submitted);
+      const tenMode = room.score_mode === "lowest_wins";
+      $("tenBox").hidden = !tenMode || Boolean(me && me.has_submitted);
+      $("playingTitle").textContent = tenMode ? "10초라고 생각될 때 멈춰!" : "내 자리의 봉인을 찍어줘";
+      $("playingLead").textContent = tenMode ? "3초까지만 보여줘. 오차가 가장 큰 사람이 당첨이에요." : "모두 찍을 때까지 결과는 아무도 볼 수 없어요.";
+      if (tenMode && !(me && me.has_submitted)) $("submitSeal").disabled = ten.err === null;
       $("finishRoom").hidden = !(room.is_host && allSubmitted);
       $("playingHint").textContent = allSubmitted
         ? room.is_host ? "모든 봉인이 모였어요. 이제 결과를 열어주세요." : "모든 봉인이 모였어요. 방장이 결과를 여는 중이에요."
@@ -189,6 +194,14 @@
       $("resultName").textContent = room.result.loser_nickname + " 당첨 😂";
       roulette(data.members.map(member => member.nickname), room.result.loser_nickname);
       $("resultStake").textContent = room.result.stake_text + " 담당";
+      const scores = (data.answers || []).filter(a => a && typeof a.score === "number");
+      $("resultScores").hidden = !(room.score_mode === "lowest_wins" && scores.length);
+      if (!$("resultScores").hidden) {
+        $("resultScores").replaceChildren(...scores.sort((a, b) => b.score - a.score).map(a => {
+          const li = document.createElement("li"); li.textContent = a.nickname + " · 오차 " + (a.score / 1000).toFixed(2) + "초"; return li;
+        }));
+      }
+      $("playAgain").hidden = !room.is_host;
     } else {
       $("roomStatusBadge").textContent = "종료된 방";
       $("roomTitle").innerHTML = "이 단체방은<br><em>종료됐어요.</em>";
@@ -222,6 +235,30 @@
     await watchRoom();
   }
 
+  let selectedMode = "random";
+  $("modeChips").addEventListener("click", event => {
+    const button = event.target.closest("button[data-mode]");
+    if (!button) return;
+    selectedMode = button.dataset.mode;
+    $("modeChips").querySelectorAll("button").forEach(item => item.setAttribute("aria-pressed", String(item === button)));
+  });
+
+  /* 10초 맞추기 모드: 봉인 대신 타이머를 멈춘 오차(ms)를 점수로 낸다. 오차가 큰 사람이 당첨(lowest_wins → 최고 점수가 당첨). */
+  const ten = { running: false, t0: 0, raf: 0, err: null };
+  function tenReset() { ten.running = false; ten.err = null; cancelAnimationFrame(ten.raf); $("tenClock").textContent = "0.00"; $("tenBtn").textContent = "시작"; $("tenBtn").disabled = false; }
+  $("tenBtn").onclick = () => {
+    if (!ten.running) {
+      ten.running = true; ten.t0 = performance.now(); $("tenBtn").textContent = "멈춤!";
+      const tick = () => { const el = performance.now() - ten.t0; $("tenClock").textContent = el < 3000 ? (el / 1000).toFixed(2) : "· · ·"; if (ten.running) ten.raf = requestAnimationFrame(tick); };
+      ten.raf = requestAnimationFrame(tick);
+      return;
+    }
+    ten.running = false; cancelAnimationFrame(ten.raf);
+    const ms = Math.round(performance.now() - ten.t0); ten.err = Math.abs(ms - 10000);
+    $("tenClock").textContent = (ms / 1000).toFixed(2); $("tenBtn").textContent = "오차 " + (ten.err / 1000).toFixed(2) + "초 · 봉인 준비됨"; $("tenBtn").disabled = true;
+    $("submitSeal").disabled = false;
+  };
+
   $("stakeChips").addEventListener("click", event => {
     const button = event.target.closest("button[data-stake]");
     if (!button) return;
@@ -247,7 +284,7 @@
         stakeText: stake,
         nickname,
         maxPlayers: Number($("maxPlayers").value),
-        scoreMode: "random"
+        scoreMode: selectedMode
       });
       window.track && window.track("group_room_created", { game: "ladder", max_players: Number($("maxPlayers").value) });
       await enter(data, nickname);
@@ -292,10 +329,26 @@
     if (!snapshot || busy) return;
     setBusy(true, $("submitSeal"));
     try {
-      render(await service.submitAnswer(snapshot.room.id, null, { sealed: true }));
+      const tenMode = snapshot.room.score_mode === "lowest_wins";
+      if (tenMode && ten.err === null) { $("roomMessage").textContent = "먼저 10초 타이머를 멈춰주세요."; setBusy(false, $("submitSeal")); return; }
+      render(await service.submitAnswer(snapshot.room.id, tenMode ? ten.err : null, tenMode ? { ten_ms_error: ten.err } : { sealed: true }));
       window.track && window.track("group_answer_submitted", { game: "ladder" });
     } catch (error) { $("roomMessage").textContent = message(error); }
     finally { setBusy(false, $("submitSeal")); }
+  };
+
+  /* 같은 조건(내기·정원·방식)으로 새 방을 만들고 링크만 다시 보낸다. 참가자 명단은 서버가 방 단위로 관리해 자동으로 옮기지 못한다. */
+  $("playAgain").onclick = async () => {
+    if (!snapshot || busy) return;
+    setBusy(true, $("playAgain"));
+    try {
+      const room = snapshot.room;
+      const data = await service.createRoom({ gameSlug: room.game_slug || "ladder", stakeText: room.stake_text, nickname: savedNickname() || "방장", maxPlayers: room.max_players, scoreMode: room.score_mode });
+      tenReset();
+      await enter(data, savedNickname() || "방장");
+      $("roomMessage").textContent = "새 방을 만들었어요. 초대 링크를 친구들에게 다시 보내주세요.";
+    } catch (error) { $("roomMessage").textContent = message(error); }
+    finally { setBusy(false, $("playAgain")); }
   };
 
   $("finishRoom").onclick = async () => {
