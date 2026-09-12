@@ -350,11 +350,11 @@ function finishG(){
 /* ===== 결과 ===== */
 function letters(t,ref,cls){return t.split("").map((c,i)=>`<span class="${ref?(c===ref[i]?'hit':'miss'):cls}">${c}</span>`).join("");}
 function scoreQuip(s){
-  if(s===4)return "네 글자 전부. 같이 산 사람 아니면 스토커.";
+  if(s===4)return "네 글자 전부. 눈빛만 봐도 아는 사이.";
   if(s===3)return "세 글자. 거의 다 아는데 한 군데서 삐끗. 거기가 이 사람의 반전 포인트.";
   if(s===2)return "반반. 아는 것 같은데 모르는 사이.";
   if(s===1)return "한 글자. 이름은 아는 사이.";
-  return "0글자. 정반대로 알고 있었네요. 오늘 얘기 좀 하세요.";
+  return "0글자. 전부 반대로 알고 있었네요. 오히려 오늘 대화가 제일 재밌겠는데요.";
 }
 function renderResult(R){
   const tA=typeOf(R.a), tG=typeOf(R.g), tS=R.self>=0?TYPES16[R.self]:null;
@@ -372,7 +372,7 @@ function renderResult(R){
   if(tS){
     const m4=tS.split("").filter((c,i)=>c===tA[i]).length, mg=tS.split("").filter((c,i)=>c===tG[i]).length;
     $("selfNote").classList.remove("hidden");
-    $("selfNote").innerHTML=`본인은 <b>${tS}</b>라고 알고 있어요. 4문항은 ${m4}글자, ${esc(guesserL)}의 예측은 ${mg}글자가 그것과 같습니다. `+(mg>m4?`<b>${esc(subj(guesserL))} 4문항보다 이 사람을 더 잘 압니다.</b>`:(mg<m4?`4문항이 ${esc(guesserL)}보다 낫습니다. 분발하세요.`:`4문항과 ${esc(subj(guesserL))} 동점입니다.`));
+    $("selfNote").innerHTML=`본인은 <b>${tS}</b>라고 알고 있어요. 4문항은 ${m4}글자, ${esc(guesserL)}의 예측은 ${mg}글자가 그것과 같습니다. `+(mg>m4?`<b>${esc(subj(guesserL))} 4문항보다 이 사람을 더 잘 압니다.</b>`:(mg<m4?`4문항이 ${esc(guesserL)}보다 한 글자 더 맞혔어요. 다음엔 뒤집어봐요.`:`4문항과 ${esc(subj(guesserL))} 동점입니다.`));
   } else $("selfNote").classList.add("hidden");
   if(R.prev){
     const a=R.prev,tie=a.score===R.score,aWin=a.score>R.score;

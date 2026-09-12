@@ -228,7 +228,7 @@ const Q = [
 const N = Q.length;
 const NEXT = [
   {path:"../rps/",      title:"가위바위보 도전장", desc:"이번엔 승부로. 거짓말도 가능."},
-  {path:"../crash/",    title:"20분 후 추락합니다", desc:"정답 없는 10개 상황, 당신이라면?"},
+  {path:"../crash/",    title:"20분 후 추락합니다", desc:"정답 없는 8개 상황, 당신이라면?"},
   {path:"../marriage/", title:"결혼 전에 맞춰봐야 할 것들", desc:"20문항, 다르게 생각하는 지점 찾기"}
 ];
 
@@ -351,7 +351,7 @@ function titleFor(s){
   if(s>=9) return ["텔레파시 확정","배달앱 아이디 공유해도 됩니다."];
   if(s>=6) return ["그럭저럭 안다","다만 틀린 것들은 다시 물어보세요."];
   if(s>=3) return ["아는 척","같이 먹은 지 얼마나 됐죠?"];
-  return ["남남","서로 몰라도 너무 모릅니다. 오늘 배달은 각자 시키세요."];
+  return ["아직 탐색 중","모르는 게 많다는 건 물어볼 게 많다는 뜻. 오늘 배달은 같이 고르면서 시켜요."];
 }
 function renderResult(R){
   const ownerL=who(R.owner,R.viewer==="owner"), guesserL=who(R.guesser,R.viewer==="guesser");

@@ -29,7 +29,7 @@ const input=(w,id,value)=>{const e=el(w,id);e.value=value;e.dispatchEvent(new w.
   assert.equal(el(maker,'myScore').textContent,'5 / 5');
   assert.equal(el(maker,'afterPlay').classList.contains('hidden'),false);
   const inviteUrl=maker.Duel.url();assert.ok(inviteUrl.includes('#c='));assert.ok(inviteUrl.length<650);
-  let inviteShare;maker.kakaoShare=o=>{inviteShare=o;return Promise.resolve(true);};el(maker,'kakaoBtn').click();assert.equal(inviteShare.btn,'도전 받기');assert.match(inviteShare.desc,/100문제/);assert.match(inviteShare.img,/share-cards\/nonsense\.png/);assert.equal(inviteShare.imageWidth,1672);assert.equal(inviteShare.imageHeight,941);
+  let inviteShare;maker.kakaoShare=o=>{inviteShare=o;return Promise.resolve(true);};el(maker,'kakaoBtn').click();assert.equal(inviteShare.btn,'도전 받기');assert.match(inviteShare.desc,/100문제/);assert.match(inviteShare.img,/share-cards\/nonsense\.png/);assert.equal(inviteShare.imageWidth,800);assert.equal(inviteShare.imageHeight,480);
 
   const inviteHash=new URL(inviteUrl).hash;
   const guest=open(inviteHash);

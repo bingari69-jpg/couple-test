@@ -180,11 +180,25 @@
       }, () => copy(madeUrl, "카톡 공유를 못 열어 링크를 복사했어"));
     }
 
+    /* ── 이미 푼 도전장 기억 ──
+       받는 쪽이 같은 링크를 새로고침해 정답·판을 본 뒤 다시 푸는 것을 막는다.
+       링크의 봉인값(k·x·시드·보낸 id)을 키로 저장하고, 다시 열면 저장된 결과만 보여준다. */
+    const playedKey = p => "gh_played:" + location.pathname + ":" + [p.k, p.x, p.s, p.i].join(":");
+    function playedRound(p) { try { return JSON.parse(localStorage.getItem(playedKey(p)) || "null"); } catch (_) { return null; } }
+    function rememberPlayed(p, round) { try { localStorage.setItem(playedKey(p), JSON.stringify(round)); } catch (_) {} }
+
     /* ── 도전장 받기 ── */
     function openChallenge(p) {
       state.incoming = p; state.hist = p.h || [];
       state.bet = Bet.read(p);                    // 내기는 도전한 쪽이 정한다
       state.theirId = p.i || ""; state.id = myIdFrom(state.hist, state.theirId) || state.id || rid();
+      const done = playedRound(p);
+      if (Array.isArray(done) && done.length >= 6) {
+        state.name = done[2] || state.name; state.id = done[5] || state.id;
+        renderResult({ hist: [...state.hist, done], round: done, viewer: "b" });
+        setTimeout(() => toast("이미 푼 도전장이야. 그때 결과를 다시 보여줄게."), 300);
+        return;
+      }
       if (cfg.onOpenChallenge) cfg.onOpenChallenge(p);
       $("playTag").textContent = "도전장 도착";
       $("playHead").innerHTML = cfg.challengeHead(p);
@@ -205,6 +219,7 @@
       const theirV = unlockNum(p.k, p.x) - (cfg.lockOffset || 0);
       const round = [p.n, theirV, state.name, state.ms, p.i || "", state.id];
       if (cfg.roundExtra) round.push.apply(round, cfg.roundExtra(p, state));
+      rememberPlayed(p, round);
       renderResult({ hist: [...state.hist, round], round, viewer: "b" });
     }
 

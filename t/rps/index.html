@@ -304,6 +304,7 @@ function openChallenge(p){
   $("betBox").classList.add("hidden");
   state.theirId=p.i||"";
   state.id=myIdFrom(p.h,state.theirId)||myIdFrom([prevRow(p.prev)],state.theirId)||state.id||rid();
+  if(playedBefore(p)){ respond(null); return; }
   $("openName").textContent=p.n||"상대"; $("openName2").textContent=p.n||"상대";
   if(p.m && MSGS[p.m]){ $("openMsg").textContent=MSGS[p.m]; $("openMsg").classList.remove("hidden"); }
   else { $("openMsg").textContent="(아무 말도 남기지 않았습니다)"; }
@@ -327,12 +328,19 @@ function openChallenge(p){
   $("myNameIn").oninput=e=>saveName(e.target.value.trim());
   show("s-open");
 }
-function respond(myHand){
+/* 이미 낸 도전장 기억: 같은 링크를 새로고침해 상대 패를 본 뒤 다시 내는 것을 막는다 */
+const playedKey=p=>"gh_played:"+location.pathname+":"+[p.k,p.x,p.i].join(":");
+function playedBefore(p){try{return JSON.parse(localStorage.getItem(playedKey(p))||"null");}catch(e){return null;}}
+function respond(myHand,replay){
   const p=state.incoming;
   const theirHand=unlockHand(p.k,p.x);
   if(theirHand==null){ toast("도전장이 손상됐어요. 다시 받아주세요"); return; }
-  const myName=$("myNameIn").value.trim();
-  countdown(()=>{
+  const done=playedBefore(p);
+  if(done&&!replay){ respond(done.h,done); return; }
+  const myName=replay?(replay.n||""):$("myNameIn").value.trim();
+  if(!replay){ try{localStorage.setItem(playedKey(p),JSON.stringify({h:myHand,n:myName}));}catch(e){} }
+  const run=replay?fn=>{fn();setTimeout(()=>toast("이미 낸 도전장이야. 그때 결과를 다시 보여줄게."),300);}:countdown;
+  run(()=>{
     const round=[p.n, theirHand, myHand, p.m, p.i||"", state.id];
     const hist=[...(p.h||[]), round];
     renderResult({
