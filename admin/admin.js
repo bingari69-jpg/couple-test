@@ -2,12 +2,22 @@
   'use strict';
   const $ = id => document.getElementById(id);
   const VIEW_TITLES = { dashboard:'운영 현황', games:'게임 관리', menus:'메뉴 관리', design:'디자인', ads:'광고 관리', versions:'게시 이력' };
+  // 2026-09-13 사용자 결정: 메뉴 4축 둘이놀기 | 혼자놀기 | 편지 | 심리
   const DEFAULT_MENU = [
-    { id:'home', label:'홈', href:'./', enabled:true },
+    { id:'play', label:'둘이놀기', href:'#all', enabled:true },
+    { id:'solo', label:'혼자놀기', href:'?tab=solo#all', enabled:true },
     { id:'letter', label:'편지', href:'t/letter/', enabled:true },
-    { id:'play', label:'놀이', href:'#all', enabled:true },
-    { id:'psychology', label:'심리테스트', href:'t/psychology/', enabled:true }
+    { id:'psychology', label:'심리', href:'t/psychology/', enabled:true }
   ];
+  // 예전 기본 메뉴(홈·편지·놀이·심리테스트)를 그대로 저장해 둔 설정은 새 4축으로 옮긴다. 직접 바꾼 메뉴는 건드리지 않는다.
+  const LEGACY_MENU_IDS = ['home','letter','play','psychology'];
+  function migrateMenu(menu) {
+    if (!Array.isArray(menu)) return clone(DEFAULT_MENU);
+    const ids = menu.map(item => item && item.id).join(',');
+    const legacyLabels = { home:'홈', letter:'편지', play:'놀이', psychology:'심리테스트' };
+    const untouched = ids === LEGACY_MENU_IDS.join(',') && menu.every(item => item.label === legacyLabels[item.id]);
+    return untouched ? clone(DEFAULT_MENU) : menu;
+  }
   let config = null;
   const PLACEMENT_LABEL = { result_bottom:'게임 결과 아래', recommendation_top:'다른 게임 추천 위', home_catalog:'홈 게임 목록 중간', challenge_open:'도전장 받은 화면 (시작 버튼 아래)', letter_compose:'편지 쓰기 화면 맨 아래', letter_bottom:'편지 읽기 화면 맨 아래' };
   const placementsOf = ad => Array.isArray(ad.placements) && ad.placements.length ? ad.placements : [ad.placement || 'result_bottom'];
@@ -65,7 +75,7 @@
     const next = input && typeof input === 'object' ? clone(input) : {};
     next.schemaVersion = 1;
     next.site = Object.assign(base.site, next.site || {});
-    next.site.menu = Array.isArray(next.site.menu) ? next.site.menu : base.site.menu;
+    next.site.menu = migrateMenu(next.site.menu);
     next.games = Array.isArray(next.games) && next.games.length ? next.games : base.games;
     next.games = next.games.map((game, index) => {
       const normalized=Object.assign({

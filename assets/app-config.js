@@ -75,16 +75,17 @@
       if (node) node.nodeValue = name;
     });
   }
-  const navIcons={home:'M3 10 12 3l9 7v11h-6v-7H9v7H3z',letter:'M3 5h18v14H3z M3 5l9 7 9-7',play:'M7 7h10c3 0 5 10 3 12-2 2-5-3-5-3H9s-3 5-5 3C2 17 4 7 7 7z M8 10v5 M5.5 12.5h5 M16 11h.1 M18 14h.1',psychology:'M12 21C6 17 2 13 2 8a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 5-4 9-10 13z'};
+  const navIcons={home:'M3 10 12 3l9 7v11h-6v-7H9v7H3z',letter:'M3 5h18v14H3z M3 5l9 7 9-7',play:'M7 7h10c3 0 5 10 3 12-2 2-5-3-5-3H9s-3 5-5 3C2 17 4 7 7 7z M8 10v5 M5.5 12.5h5 M16 11h.1 M18 14h.1',psychology:'M12 21C6 17 2 13 2 8a5 5 0 0 1 10-1 5 5 0 0 1 10 1c0 5-4 9-10 13z',solo:'m12 3 2.7 5.6 6.2.9-4.5 4.3 1.1 6.1L12 17l-5.5 2.9 1.1-6.1L3.1 9.5l6.2-.9z'};
   function menuUrl(item,root){
     if(item.href==='#all')return root.href+'#all';
     try{const target=new URL(item.href||'./',root);return /^https?:$/.test(target.protocol)?target.href:root.href;}catch(_){return root.href;}
   }
   function currentMenu(id,slug){
     if(id==='home')return slug==='home';
+    if(id==='solo')return /[?&]solo=1/.test(location.search)||(slug==='home'&&/[?&]tab=solo/.test(location.search));
     if(id==='letter')return slug==='letter';
     if(id==='psychology')return ['psychology','personality','fortune','tarot','seat','mbti','mind/fight','marriage','memory','ranking'].includes(slug);
-    return id==='play'&&slug!=='home'&&slug!=='letter';
+    return id==='play'&&slug!=='letter'&&!/[?&]solo=1/.test(location.search)&&!(slug==='home'&&/[?&]tab=solo/.test(location.search));
   }
   function rebuildBottomNav(nav,menu,root){
     nav.replaceChildren();
@@ -94,8 +95,17 @@
       a.append(document.createTextNode(item.label));if(currentMenu(item.id,getSlug()))a.setAttribute('aria-current','page');nav.append(a);
     });
   }
+  /* 2026-09-13 메뉴 4축(둘이놀기·혼자놀기·편지·심리). 게시본에 예전 기본 메뉴(홈·편지·놀이·심리테스트)가 그대로 저장돼 있으면
+     관리자가 다시 게시하기 전에도 새 4축으로 보여준다. 관리자가 직접 바꾼 메뉴는 그대로 둔다. (admin.js migrateMenu 와 같은 규칙) */
+  const NEW_MENU=[{id:'play',label:'둘이놀기',href:'#all',enabled:true},{id:'solo',label:'혼자놀기',href:'?tab=solo#all',enabled:true},{id:'letter',label:'편지',href:'t/letter/',enabled:true},{id:'psychology',label:'심리',href:'t/psychology/',enabled:true}];
+  function migrateMenu(menu){
+    if(!Array.isArray(menu))return menu;
+    const legacy={home:'홈',letter:'편지',play:'놀이',psychology:'심리테스트'};
+    const ids=menu.map(m=>m&&m.id).join(',');
+    return ids==='home,letter,play,psychology'&&menu.every(m=>m.label===legacy[m.id])?NEW_MENU.map(m=>Object.assign({},m)):menu;
+  }
   function applyMenu(config) {
-    const menu = config.site && config.site.menu;
+    const menu = migrateMenu(config.site && config.site.menu);
     const container = document.getElementById('menu');
     if (!Array.isArray(menu)) return;
     const root = ROOT_URL;

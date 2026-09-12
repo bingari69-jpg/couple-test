@@ -116,6 +116,8 @@ const CARDS = [
  ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
  ['exam','atlas',16,'#e9e5fa',['친구','가족'],'단어로 시험지 만들기. 채점까지 한 번에.']
 ];
+// 혼자놀기(?solo=1)가 있는 게임과 레벨 수. 홈의 '혼자놀기' 탭과 진행도 배지가 쓴다.
+window.SOLO_GAMES={pairs:5,num25:5,mole:5,simon:5,snake:5,choseong:5,'daily-word':1,'2048':5,stack:5,mines:5,slide15:5,flap:5,typing:5};
 const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
  ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
 }));
