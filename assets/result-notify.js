@@ -333,16 +333,40 @@
           }, payload => announceCompleted(payload.new))
           .subscribe();
       }
-      const items = pendingItems();
-      if (!items.length) return;
+      await checkPending(client);
+      startPendingWatch();
+    } catch (_) {}
+  }
+
+  /* 아직 결과를 못 본 도전장이 있으면 서버에 직접 물어본다.
+     Realtime은 화면이 뒤로 가거나 폰이 잠기면 끊겨 이벤트를 놓칠 수 있어서,
+     다시 화면에 돌아올 때와 20초마다 한 번씩 보조로 확인한다. */
+  async function checkPending(givenClient) {
+    try {
+      const items = pendingItems().filter(item => !seenCodes().includes(item.code));
+      if (!items.length) return false;
+      const client = givenClient || await ensureSession();
       const result = await client.from("game_challenges")
         .select("code,game_slug,status,result_url,result_summary,completed_at")
         .in("code", items.map(item => item.code))
         .eq("status", "completed")
         .order("completed_at", { ascending: false })
         .limit(1);
-      if (!result.error && result.data && result.data[0]) announceCompleted(result.data[0]);
+      if (!result.error && result.data && result.data[0]) { announceCompleted(result.data[0]); return true; }
     } catch (_) {}
+    return false;
+  }
+  let pendingWatch = 0, pendingWatchStarted = 0;
+  function startPendingWatch() {
+    if (pendingWatch || receiverCode) return;
+    if (!pendingItems().some(item => !seenCodes().includes(item.code))) return;
+    pendingWatchStarted = Date.now();
+    pendingWatch = setInterval(() => {
+      if (Date.now() - pendingWatchStarted > 30 * 60 * 1000 || !pendingItems().some(item => !seenCodes().includes(item.code))) { clearInterval(pendingWatch); pendingWatch = 0; return; }
+      if (typeof document !== "undefined" && document.hidden) return;
+      checkPending();
+    }, 20000);
+    if (typeof document !== "undefined") document.addEventListener("visibilitychange", () => { if (!document.hidden) checkPending(); });
   }
 
   // 알림 본문에는 화면의 이름·점수를 긁어 넣지 않는다. 개인 내용이 서버와 푸시 메시지에 남지 않도록
