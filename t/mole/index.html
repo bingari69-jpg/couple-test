@@ -18,6 +18,7 @@
 <script src="../../assets/kakao-share.js?v=20260912-domain"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
 <script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -220,6 +221,22 @@
    여기에는 두더지 밭과 순서 만들기만 남는다. */
 const GAME_MS=20000, HOLES=9, SCORE_OFF=1000;
 const PT=[1,3,-3];                 // 0 일반 / 1 황금 / 2 폭탄
+/* 혼자놀기 레벨별 두더지 순서 규칙. 둘이하기 기본(레벨 0)은 아래 scheduleOf 의 원래 규칙 그대로.
+   a→b 등장 간격(ms, 시작→끝), sim 동시에 올라오는 최대 마리수, bomb 폭탄 비율(황금은 늘 10%) */
+const LV_PARAMS={
+  1:{a:900,b:700,sim:1,bomb:0},
+  2:{a:750,b:600,sim:1,bomb:0.10},
+  3:{a:620,b:500,sim:2,bomb:0.15},
+  4:{a:520,b:420,sim:2,bomb:0.20},
+  5:{a:450,b:380,sim:3,bomb:0.25}
+};
+const LEVELS=[
+  {n:1,label:'느긋',  limitMs:GAME_MS,goal:12,best:20},
+  {n:2,label:'폭탄',  limitMs:GAME_MS,goal:16,best:26},
+  {n:3,label:'2마리', limitMs:GAME_MS,goal:22,best:34},
+  {n:4,label:'빠름',  limitMs:GAME_MS,goal:28,best:42},
+  {n:5,label:'3마리', limitMs:GAME_MS,goal:34,best:50}
+];
 const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
 function titleFor(sc){
   if(sc>=30) return "두더지 천적";
@@ -246,25 +263,32 @@ function mulberry32(a){
     return ((t^(t>>>14))>>>0)/4294967296;
   };
 }
-/* 반환: [{t 등장(ms), h 구멍, d 노출(ms), k 종류}] — t 오름차순 */
-function scheduleOf(seed){
+/* 반환: [{t 등장(ms), h 구멍, d 노출(ms), k 종류}] — t 오름차순
+   level 0(둘이하기)은 원래 규칙 그대로, 1~5 는 LV_PARAMS 로 간격·동시 마리수·폭탄 비율이 바뀐다. */
+function scheduleOf(seed,level){
+  const P=LV_PARAMS[level|0]||null;
   const rnd=mulberry32(seed>>>0);
   const out=[];
   let t=400;
   while(t < GAME_MS-500){
     const prog=t/GAME_MS;                                  // 0 → 1
-    const d=Math.round(900-450*prog);                      // 노출 0.9초 → 0.45초
-    /* 이 순간 올라와 있는 두더지 — 동시 2마리까지만 */
+    const gap=P?Math.round(P.a+(P.b-P.a)*prog):0;          // 레벨별 등장 간격
+    const d=P?Math.round(gap*0.85)                          // 노출: 간격보다 약간 짧게 — 다음 차례엔 구멍이 비어 있다
+             :Math.round(900-450*prog);                    // 둘이하기: 0.9초 → 0.45초
+    /* 이 순간 올라와 있는 두더지 — 동시 마리수까지만(둘이하기는 2마리).
+       레벨은 한 번에 1~sim 마리가 같이 올라올 수 있다(동시 마리수가 클수록 두더지도 많다). */
     const live=out.filter(m=>m.t<=t && m.t+m.d>t);
-    if(live.length<2){
-      const used=new Set(live.map(m=>m.h));
+    const sim=P?P.sim:2, want=P?1+Math.floor(rnd()*P.sim):1;
+    const used=new Set(live.map(m=>m.h));
+    for(let n=0;n<want && live.length+n<sim;n++){
       const free=[]; for(let h=0;h<HOLES;h++) if(!used.has(h)) free.push(h);
-      const h=free[Math.floor(rnd()*free.length)];
+      const h=free[Math.floor(rnd()*free.length)]; used.add(h);
       const r=rnd();
-      const k = r<0.10 ? 1 : (r<0.25 ? 2 : 0);             // 황금 10% · 폭탄 15%
+      const k = r<0.10 ? 1 : (r<0.10+(P?P.bomb:0.15) ? 2 : 0);   // 황금 10% · 폭탄 15%(레벨별)
       out.push({t,h,d,k});
     }
-    t += Math.round((445-165*prog) + rnd()*(370-185*prog)); // 등장 간격 (후반이 촘촘, 총 35~45마리)
+    t += P ? Math.round(gap*(0.9+rnd()*0.2))              // 레벨: 간격 ±10%
+           : Math.round((445-165*prog) + rnd()*(370-185*prog)); // 둘이하기: 후반이 촘촘, 총 35~45마리
   }
   return out;
 }
@@ -281,9 +305,9 @@ const state = Duel.setup({
   hasSeed:true,                     // 같은 두더지를 나눠 쓰므로 시드를 링크에 싣는다
   lockOffset:SCORE_OFF,             // 점수는 음수도 되므로 offset 을 더해 잠근다
   scrollToShare:true,
-  state:{seed:0,sched:[],hit:null,score:0,cnt:[0,0,0],el:0,stat:null,
+  state:{seed:0,level:0,sched:[],hit:null,score:0,cnt:[0,0,0],el:0,stat:null,
          running:false,t0:0,raf:0,done:false,cdTimer:0},
-  linkExtra:st=>({c:st.stat}),
+  linkExtra:st=>({c:st.stat,l:st.level}),
   roundExtra:(p,st)=>[p.c||[0,0,0], st.stat],
   extraKey:"c", extraDefault:[0,0,0],
   tieBreak:(me,them)=>me.c[2]===them.c[2]?null:{o:me.c[2]<them.c[2]?"win":"lose",why:`점수는 같지만 폭탄을 덜 밟은 쪽이 이겨. (${me.c[2]} vs ${them.c[2]})`},
@@ -300,8 +324,9 @@ const state = Duel.setup({
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}점 vs ${nm(them.n)}${them.v}점${tail}`,
   resultDesc:"20초, 같은 두더지. 누가 더 잡았을까. 재도전은 여기서.",
   onInit(){ state.hit=new Set(); },
-  onOpenChallenge(p){ state.seed=p.s>>>0; state.sched=scheduleOf(state.seed); state.hit=new Set(); renderField(); },
-  newRound(){ state.seed=newSeed(); state.sched=scheduleOf(state.seed); renderField(); },
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; state.sched=scheduleOf(state.seed,state.level); state.hit=new Set(); renderField(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; state.sched=scheduleOf(state.seed,state.level); state.hit=new Set(); renderField(); toast('혼자놀기 Lv'+state.level+' 두더지야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); state.sched=scheduleOf(state.seed,state.level); renderField(); },
   resetPlay(){
     state.stat=null;state.done=false;state.score=0;state.cnt=[0,0,0];state.hit=new Set();
     $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
@@ -405,12 +430,34 @@ function startPlay(){
 function finishPlay(){
   state.running=false; state.done=true;
   if(state.raf) cancelAnimationFrame(state.raf);
-  /* 최종 점수는 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  const b=$("bigBtn"); b.disabled=true;
+  if(Solo.active){   // 혼자놀기: 점수를 바로 보여주고 별을 매긴다 (20초가 다 되면 늘 여기로 온다)
+    $("score").textContent=state.score; $("clock").textContent="0.0";
+    $("cover").classList.remove("hidden"); $("cd").textContent="🎉"; $("cdSub").textContent="20초 끝!"; b.textContent="끝";
+    Solo.finish(state.score,{stat:state.cnt.slice(),note:"두더지 "+state.cnt[0]+" · 황금 "+state.cnt[1]+" · 폭탄 "+state.cnt[2]}); return;
+  }
+  /* 둘이하기: 최종 점수는 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
   $("score").textContent="🔒"; $("clock").textContent="0.0";
   $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="점수 봉인";
-  const b=$("bigBtn"); b.textContent="봉인됨"; b.disabled=true;
+  b.textContent="봉인됨";
   Duel.finish(state.score, {stat:state.cnt.slice()});   // 이 게임의 "기록" = 점수
 }
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'mole', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'점',
+  describe:l=>{ const P=LV_PARAMS[l.n]; return '20초 · 동시 '+P.sim+'마리 · '+(P.bomb?'폭탄 '+Math.round(P.bomb*100)+'%':'폭탄 없음'); },
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    state.running=false; clearTimeout(state.cdTimer); if(state.raf) cancelAnimationFrame(state.raf);
+    state.sched=scheduleOf(state.seed,state.level); state.hit=new Set(); renderField();
+    state.stat=null;state.done=false;state.score=0;state.cnt=[0,0,0];state.el=0;
+    $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
+    $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");$("score").textContent="0";
+    $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+  }
+});
 
 Duel.start();
 </script>
