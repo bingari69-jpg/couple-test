@@ -33,10 +33,11 @@ const playRound = w => { w.__ev('beginInput()'); const s = seq(w), n = w.__ev('s
   w.__ev(`tap(${a[0]})`); assert.equal(st.pos, 0, '보여주는 중에는 입력 안 됨');
   assert.equal(el(w, 'round').textContent, '1');
 
-  /* 1라운드 보여주기: 불빛이 켜졌다 꺼진 뒤 입력 단계로 (450ms + 200ms 간격) */
-  await tick(300);
+  /* 1라운드 보여주기: 400ms 뒤 첫 불빛(한 박자 615ms 의 60% = 369ms), 쉬고 입력 단계로 */
+  assert.equal(w.__ev('onMs(0,1)'), 369); assert.equal(w.__ev('gapMs(0,1)'), 246);
+  await tick(500);
   assert.equal(w.document.querySelector('#pads .pad.lit').dataset.p, String(a[0]), '첫 패드가 켜짐');
-  await tick(620);
+  await tick(640);
   assert.equal(st.phase, 'input'); assert.equal(w.document.querySelectorAll('#pads .pad.lit').length, 0);
   assert.equal(el(w, 'board').classList.contains('input'), true);
 
@@ -111,8 +112,8 @@ const playRound = w => { w.__ev('beginInput()'); const s = seq(w), n = w.__ev('s
   assert.match(el(s, 'soloDesc').textContent, /클리어 4라운드/); assert.match(el(s, 'soloDesc').textContent, /★★★ 7라운드/);
   const L = s.Solo.levels[0];
   assert.equal(s.Solo.starsFor(L, 7), 3); assert.equal(s.Solo.starsFor(L, 6), 2); assert.equal(s.Solo.starsFor(L, 4), 1); assert.equal(s.Solo.starsFor(L, 3), 0);
-  /* 레벨이 높을수록 불빛이 빠르다, 라운드가 오를수록 빠르되 250ms 밑으로는 안 내려감 */
-  assert.ok(s.__ev('onMs(5,1)') < s.__ev('onMs(1,1)')); assert.equal(s.__ev('onMs(5,40)'), 250);
+  /* 레벨이 높을수록 불빛이 빠르다, 라운드마다 빨라지되 250ms 밑으로는 안 내려감 */
+  assert.ok(s.__ev('onMs(5,1)') < s.__ev('onMs(1,1)')); assert.ok(s.__ev('onMs(1,5)') < s.__ev('onMs(1,1)')); assert.equal(s.__ev('onMs(5,40)'), 250);
   const seedLv1 = ss.seed;
 
   /* 클리어: 7라운드(★★★) 뒤 틀림 → 결과 카드·저장·Lv2 해제·도전장 링크. 봉인 카드는 없음 */

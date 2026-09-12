@@ -54,19 +54,19 @@
   .hud .phase .v{font-size:clamp(20px,6.5vw,26px);line-height:1.6}
   .hud .phase .v.watch{color:var(--sub)} .hud .phase .v.go{color:var(--green)}
 
-  /* 패드 */
-  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:10px;touch-action:manipulation}
+  /* 패드 — 어두운 판 위에 반투명 색판, 켜지면 또렷해진다 */
+  .board{position:relative;background:#2B2A44;border:3px solid var(--line);border-radius:22px;padding:10px;touch-action:manipulation}
   .pads{display:grid;gap:10px;grid-template-columns:1fr 1fr}
   .pad{aspect-ratio:1;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;
-    border:none;border-radius:20px;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
-    color:#fff;font-size:clamp(40px,14vw,60px);line-height:1;opacity:.45;transition:opacity .08s,transform .08s;
-    box-shadow:inset 0 -6px 0 rgba(0,0,0,.18)}
-  .pad small{font-size:13px;font-weight:800;letter-spacing:.04em;opacity:.9}
-  .pad.p0{background:var(--red)} .pad.p1{background:var(--blue)} .pad.p2{background:#F2B21B} .pad.p3{background:var(--green)}
-  .pad.lit{opacity:1;transform:scale(1.03);box-shadow:0 0 0 5px rgba(255,255,255,.9),0 0 24px rgba(0,0,0,.18)}
-  .pad.wrong{animation:bad .4s ease;opacity:1}
+    border:none;border-radius:16px;font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;
+    color:#23213A;font-size:clamp(40px,14vw,60px);line-height:1;opacity:.45;transition:opacity .08s,transform .08s;
+    box-shadow:inset 0 -6px 0 rgba(0,0,0,.15)}
+  .pad small{font-size:13px;font-weight:800;letter-spacing:.04em}
+  .pad.p0{background:#FF7B6B} .pad.p1{background:#5CC8FF} .pad.p2{background:#B6E36B} .pad.p3{background:#FFD54A}
+  .pad.lit{opacity:1;transform:scale(1.02)}
+  .pad.wrong{animation:bad .4s ease;opacity:1;box-shadow:inset 0 0 0 4px var(--red)}
   @keyframes bad{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
-  .board.input .pad{opacity:.85}
+  .board.input .pad{opacity:.6}
   .board.input .pad:active{opacity:1;transform:scale(.96)}
   .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
     align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
@@ -210,9 +210,9 @@
    규칙: 패드 4개가 켜지는 순서를 보고 그대로 따라 누른다. 라운드마다 하나씩 길어진다.
    한 번 틀리면 끝. 기록 = 끝낸 라운드 수(많을수록 이김). 같으면 따라 누른 시간이 짧은 쪽이 이긴다.
    둘이하기는 제한 시간이 없지만 60초가 지나면 그때까지의 라운드로 봉인한다. */
-const PADS=4, SEQ_LEN=60, GAP_MS=200, MIN_ON=250, DUEL_CAP_MS=60000, PAUSE_MS=550, DUEL_MAX_ROUNDS=30;
-/* 불빛 시간(ms). 레벨 0 = 둘이하기 기본. 라운드가 오를수록 빨라지고 MIN_ON 밑으로는 안 내려간다 */
-const BASE_ON={0:450,1:450,2:410,3:370,4:330,5:290};
+const PADS=4, SEQ_LEN=60, DUEL_CAP_MS=60000, PAUSE_MS=600, FIRST_MS=400, DUEL_MAX_ROUNDS=30;
+/* 한 박자(ms) = 불빛 60% + 쉼 40%. 레벨 0 = 둘이하기 기본. 라운드마다 35ms 씩 빨라지고 MIN_STEP(불빛 250ms) 밑으로는 안 내려간다 */
+const BASE_STEP={0:650,1:650,2:600,3:560,4:520,5:480}, MIN_STEP=417;
 const LEVELS=[
   {n:1,label:'4라운드', limitMs:0,goal:4, best:7},
   {n:2,label:'6라운드', limitMs:0,goal:6, best:9},
@@ -221,8 +221,9 @@ const LEVELS=[
   {n:5,label:'13라운드',limitMs:0,goal:13,best:16}
 ];
 const fmtS=ms=>(ms/1000).toFixed(1);
-function onMs(level,round){ return Math.max(MIN_ON,(BASE_ON[level]||BASE_ON[0])-(round-1)*15); }
-function gapMs(on){ return Math.max(110,Math.round(on*GAP_MS/450)); }
+function stepMs(level,round){ return Math.max(MIN_STEP,(BASE_STEP[level]||BASE_STEP[0])-round*35); }
+function onMs(level,round){ return Math.round(stepMs(level,round)*0.6); }
+function gapMs(level,round){ return stepMs(level,round)-onMs(level,round); }
 /* 혼자놀기는 ★★★ 기준보다 2라운드 더 가면 그만 (끝없이 길어지지 않게) */
 function maxRounds(){ return Solo.active&&Solo.level ? Solo.level.best+2 : DUEL_MAX_ROUNDS; }
 function titleFor(r){
@@ -323,7 +324,7 @@ function showRound(){
   state.phase="show"; state.pos=0;
   $("board").classList.remove("input"); unlitAll();
   $("round").textContent=state.round+1; setPhase("잘 봐 👀","watch"); renderDots();
-  const n=state.round+1, on=onMs(state.level,n), gap=gapMs(on);
+  const n=state.round+1, on=onMs(state.level,n), gap=gapMs(state.level,n);
   $("speed").textContent="불빛 "+(on/1000).toFixed(2)+"초";
   let i=0;
   const step=()=>{
@@ -333,7 +334,7 @@ function showRound(){
     padEl(p).classList.add("lit");
     state.showTimer=setTimeout(()=>{ padEl(p).classList.remove("lit"); state.showTimer=setTimeout(step,gap); },on);
   };
-  state.showTimer=setTimeout(step,gap);
+  state.showTimer=setTimeout(step,FIRST_MS);
 }
 function beginInput(){
   if(!state.running || state.done) return;
@@ -353,10 +354,10 @@ function tap(p){
   const want=state.seq[state.pos];
   if(p!==want){                                   // 틀리면 끝
     padEl(p).classList.add("wrong"); setTimeout(()=>padEl(p).classList.remove("wrong"),420);
-    padEl(want).classList.add("lit");             // 정답을 잠깐 보여준다
+    lit(want,500);                                // 정답 패드를 잠깐 보여준다
     finishPlay("miss"); return;
   }
-  lit(p,160);
+  lit(p,180);
   state.pos++; renderDots();
   if(state.pos<state.round+1) return;
   /* 라운드 완료 */
@@ -421,7 +422,7 @@ function finishPlay(why){
 Solo.init({
   game:'simon', levels:LEVELS, lowerWins:false,
   fmt:v=>v+'라운드',
-  describe:l=>'불빛 '+(BASE_ON[l.n]/1000).toFixed(2)+'초 · 제한 시간 없음',
+  describe:l=>'불빛 '+(onMs(l.n,1)/1000).toFixed(2)+'초부터 · 제한 시간 없음',
   onLevel(l){
     state.seed=l.seed; state.level=l.n;
     clearTimeout(state.cdTimer);
