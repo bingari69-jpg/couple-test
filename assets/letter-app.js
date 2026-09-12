@@ -120,7 +120,7 @@
  }
  $('copyLetter').onclick=copyLink;
  // Third-party sharing code is loaded only after an explicit share action. No analytics on letters.
- function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260912-e';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
+ function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260912-pairs';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}

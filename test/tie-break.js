@@ -22,6 +22,11 @@ async function duel(game, mine, theirs, mineExtra, theirExtra) {
   /* 두더지: 점수도 폭탄도 같음 → 무승부 */
   r = await duel('mole', 20, 20, { stat: [17, 1, 1] }, { stat: [17, 1, 1] });
   assert.match(r.verdict, /똑같아/);
+  /* 짝 맞추기: 같은 시간, 덜 뒤집은 받는 쪽 승 / 뒤집기까지 같으면 무승부 */
+  r = await duel('pairs', 31200, 31200, { flips: 40 }, { flips: 34 });
+  assert.match(r.verdict, /내가/); assert.match(r.sub, /덜 뒤집은/); assert.match(r.sub, /34번 vs 40번/);
+  r = await duel('pairs', 31200, 31200, { flips: 40 }, { flips: 40 });
+  assert.match(r.verdict, /똑같아/);
   /* UFO: 같은 점수, 명중률 낮은 받는 쪽 패 */
   r = await duel('ufo', 15, 15, { stat: [12, 1, 0, 20] }, { stat: [12, 1, 0, 30] });
   assert.match(r.verdict, /상대가/); assert.match(r.sub, /명중률/);

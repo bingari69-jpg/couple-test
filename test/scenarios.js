@@ -8,7 +8,7 @@ const path = require("path");
 const { load, el, txt, htm, cls, hid, grabKakao, b64e, PAGE_ERRORS } = require("./dom");
 
 /* 기록 대결 게임 목록 — 새 게임을 만들면 여기에 추가 */
-const GAMES = ["ten", "react", "num25", "mole", "tap", "ufo", "stroop", "arrow", "stop"];
+const GAMES = ["ten", "react", "num25", "pairs", "mole", "tap", "ufo", "stroop", "arrow", "stop"];
 
 /* 게임별로 "기록"을 어디에 담는지. 앱 코드는 건드리지 않는다.
      fields   : 봉인 직전 state 에 넣을 값
@@ -18,6 +18,7 @@ const REC = {
   react: { fields: { ms: 231, seed: 12345 },                  theirRaw: 268 },
   tap:   { fields: { ms: 88 },                                theirRaw: 74 },
   num25: { fields: { ms: 21340, pen: 2, seed: 12345 },        theirRaw: 19870 },
+  pairs: { fields: { ms: 34120, flips: 46, seed: 12345 },     theirRaw: 29870 },
   mole:  { fields: { ms: 24, stat: [18, 3, 1], seed: 12345 }, theirRaw: 19 },
   ufo:   { fields: { ms: 23, stat: [20, 2, 1, 30], seed: 12345 }, theirRaw: 19 },
   stroop:{ fields: { ms: 27, stat: [27, 4], seed: 12345 },     theirRaw: 21 },

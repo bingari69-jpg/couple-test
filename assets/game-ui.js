@@ -17,6 +17,7 @@
     ladder: ['사다리타기', 'atlas', 7, '#fff0d3', '오늘의 운명을 뽑아봐!', '커피 한 잔, 누가 쏘게 될까?'],
     groups: ['골프 조편성', 'atlas', 8, '#e5f0d6', '오늘은 누구랑 한 조?', '두근두근, 이번 조를 만나봐.'],
     num25: ['1에서 25까지', 'atlas', 9, '#e2eafb', '눈도 손도 빠르게!', '1부터 25까지, 놓치지 말고 찾아봐.'],
+    pairs: ['짝 맞추기', 'atlas', 6, '#e2f5ea', '기억력 자신 있어?', '같은 그림 10짝, 누가 더 빨리 찾을까?'],
     mole: ['두더지 잡기', 'atlas', 10, '#ffead4', '꼭꼭 숨어라!', '빼꼼 나온 두더지를 잡아봐.'],
     ufo: ['UFO 요격', 'atlas', 11, '#e9e3f9', '지구를 부탁해!', '우주에서 온 도전장, 받아줄래?'],
     tap: ['10초 연타', 'atlas', 12, '#ffe3dc', '손가락 준비됐어?', '10초 동안 신나게 두드려봐!'],
@@ -75,7 +76,7 @@
       steps.className = 'game-steps'; steps.setAttribute('aria-label', '놀이 방법');
       const labels = ['ladder', 'groups', 'exam'].includes(slug)
         ? ['내용 넣기', '링크 보내기', '함께 열기']
-        : ['ten', 'react', 'num25', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
+        : ['ten', 'react', 'num25', 'pairs', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
           ? ['한판 하기', '도전장 보내기', '기록 비교'] : ['내 답 고르기', '링크 보내기', '함께 보기'];
       labels.forEach((label, i) => {
         const li = document.createElement('li');

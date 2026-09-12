@@ -22,6 +22,19 @@
 
 ## 완료된 작업
 
+### 짝 맞추기 (2026-09-12 추가, 기록 대결 10번째)
+
+- 출처: 사용자가 준 단일 파일 `pair-hanpan.html`(같이놀자 "한판" 시안). 규칙만 옮기고 화면·링크·공유는 기존 기록 대결 공통 엔진(`assets/duel-engine.js`)에 맞췄다.
+- 규칙(사용자 요청으로 시간 대결로 확정): 4×5 판(10짝) 하나를 두 장씩 뒤집어 다 맞춘 시간(ms)이 기록이며 짧을수록 이긴다. 시간까지 같으면 덜 뒤집은 쪽이 이긴다(`tieBreak`). 제한 시간은 없다(1에서 25까지와 같은 방식). 처음 시안의 "60초에 몇 짝, 판 확대" 규칙은 폐기했다.
+- 시드: 링크의 `s`로 카드 배치를 만들어 도전자와 응전자가 같은 판을 푼다. 시작 전 미리보기는 뒤집힌 채라 그림을 미리 볼 수 없다.
+- 링크 필드: `{v,n,i,s,k,x,f,(b),h}` — `f`는 뒤집기 횟수. 이력 한 줄은 `[aName,a시간,bName,b시간,aId,bId,a뒤집기,b뒤집기]`.
+- 파일: `t/pairs/index.html`, `assets/share-cards/pairs.png`(800×480, `scripts/build-share-cards.cjs`에 `ONLY=pairs` 필터 추가로 단일 생성), `supabase/migrations/20260912_pairs_game.sql`(game_catalog 행 + 완료 알림 허용 목록에 `pairs`).
+- 등록 지점: 홈 목록(`home-catalog.js` ITEMS·CARDS, num25 다음), `game-ui.js` 마스코트(아틀라스 6, "우리의 기억"과 공유)·3단계 라벨, `guide-data.js`(연습 없음), `kakao-share.js` 카드 제목, `result-notify.js` 완료 알림 대상, `sitemap.xml`.
+- 캐시 버전: `kakao-share.js`·`game-ui.js`·`home-catalog.js`·`guide-data.js`를 `20260912-pairs`로 일괄 갱신. `result-notify.js`는 `kakao-share.js` 안의 로더 버전만 갱신.
+- 테스트: `test/pairs.js` 신설(시드 배치·짝 판정·불일치 되돌리기·판 확대·봉인·같은 판 복원·동점 2차 판정). `test/scenarios.js` GAMES/REC, `test/bet-ui.js`, `test/tie-break.js`, `test/letter.js`(홈 27→28개)에 추가. 골든은 pairs 항목만 새로 찍혔고 기존 게임 값은 변하지 않았다.
+- 운영 남은 일: `supabase/migrations/20260912_pairs_game.sql`을 운영 Supabase에 실행해야 완료 알림(`create_game_challenge`)이 `pairs`를 받는다. 실행 전에는 홈 목록에는 보이지만 완료 알림 코드 생성이 `GAME_NOT_SUPPORTED`로 거부된다(공유 자체는 된다).
+- 알려진 기존 문제: 로컬 정적 서버(127.0.0.1:4173)에서 게임 페이지를 열면 `help-guide.js:39`에서 `main`이 없어 `prepend` 오류가 콘솔에 찍힌다. `num25` 등 기존 페이지도 동일하며 이번 작업과 무관하다.
+
 ### 편지
 
 - 새 편지 한도 450자, 표시 `0/450`. 초과 글을 임의로 자르지 않고 전송을 막는다.

@@ -12,12 +12,12 @@
   const SEEN_KEY = "gatchi-result-alerts-seen-v1";
   const COMPLETED_KEY = "gatchi-result-alert-completed:";
   const ELIGIBLE = new Set([
-    "ten", "react", "num25", "mole", "ufo", "tap", "stroop", "arrow", "stop",
+    "ten", "react", "num25", "pairs", "mole", "ufo", "tap", "stroop", "arrow", "stop",
     "rps", "nonsense", "delivery", "mbti", "crash", "seat", "marriage",
     "mind/fight", "memory", "ranking", "personality", "tarot"
   ]);
   const TITLES = {
-    ten: "10초 맞추기", react: "반응속도 대결", num25: "1에서 25까지", mole: "두더지 잡기",
+    ten: "10초 맞추기", react: "반응속도 대결", num25: "1에서 25까지", pairs: "짝 맞추기", mole: "두더지 잡기",
     ufo: "UFO 요격", tap: "10초 연타", stroop: "색깔 함정", arrow: "화살표 함정",
     stop: "딱 멈춰", rps: "가위바위보", nonsense: "넌센스 퀴즈", delivery: "배달 텔레파시",
     mbti: "MBTI 맞히기", crash: "20분 후 추락합니다", seat: "어디에 앉나요",

@@ -1,5 +1,5 @@
 const assert=require('node:assert/strict');const {load,el,PAGE_ERRORS}=require('./dom');
-const games=['rps','ten','react','num25','mole','ufo','tap','stroop','arrow','stop'];
+const games=['rps','ten','react','num25','pairs','mole','ufo','tap','stroop','arrow','stop'];
 const choose=(w,b)=>w.document.querySelector('[data-bet="'+b+'"]').click();
 for(const game of games){const w=load(game).window;try{
  assert.ok(el(w,'betBox'));assert.equal(el(w,'betBox').closest('details'),null);

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>1에서 25까지</title>
+<title>짝 맞추기</title>
 
 <meta property="og:type" content="website">
-<meta property="og:title" content="1에서 25까지 — 누가 더 빨라?">
-<meta property="og:description" content="같은 판, 같은 숫자. 순서대로 최대한 빨리. 네 기록은 봉인됐어.">
-<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/num25.png?v=20260910-unified">
+<meta property="og:title" content="짝 맞추기 — 누가 더 빨리 다 맞출까?">
+<meta property="og:description" content="같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/pairs.png?v=20260912-pairs">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
-<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/num25/">
+<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/pairs/">
 <meta name="twitter:card" content="summary_large_image">
 
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
@@ -22,7 +22,7 @@
 <style>
   :root{
     --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
-    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
     --sp:clamp(16px,4vw,24px);
   }
   *{box-sizing:border-box;margin:0;padding:0}
@@ -37,6 +37,7 @@
   h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
   h1 b{color:var(--blue)}
   .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
   .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
   input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
   input::placeholder{color:var(--dim);font-weight:500}
@@ -44,33 +45,33 @@
 
   /* 상단 표시줄 */
   .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
-  .hud .nx{flex:1;min-width:0}
-  .hud .nx .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
-  .hud .nx .v{font-size:clamp(34px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;color:var(--blue);font-variant-numeric:tabular-nums}
-  .hud .rt{text-align:right;flex:none}
-  .hud .rt .t{font-size:clamp(22px,7vw,28px);font-weight:900;font-variant-numeric:tabular-nums;line-height:1.1}
-  .hud .rt .p{font-size:12.5px;font-weight:800;color:var(--dim);margin-top:2px}
-  .hud .rt .p.on{color:var(--red)}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)}
+  .hud .cnt{text-align:right}
 
-  /* 격자 */
+  /* 카드판 */
   .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:10px;touch-action:manipulation}
-  .grid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
-  .cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
-    background:#FFFDF6;border:2px solid var(--line);border-radius:14px;
-    font:inherit;font-size:clamp(19px,6.2vw,26px);font-weight:900;color:var(--ink);
-    font-variant-numeric:tabular-nums;cursor:pointer;-webkit-tap-highlight-color:transparent;
-    touch-action:manipulation;transition:transform .06s}
-  /* 배경은 전환 없이 즉시 바뀐다. 글자색만 먼저 흰색이 되면 그 사이 숫자가 안 보인다. */
-  .cell:active{transform:scale(.94)}
-  .cell.done{background:var(--blue);border-color:var(--blue);color:#fff;opacity:.45}
-  .cell.bad{animation:bad .32s ease}
-  @keyframes bad{0%,100%{background:#FFFDF6;border-color:var(--line)}
-                 35%{background:#FFE3E4;border-color:var(--red);transform:scale(1.04)}}
+  .grid{display:grid;gap:7px;grid-template-columns:repeat(4,1fr)}
+  .cardbtn{aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+    background:var(--yellow);border:2px solid #E9B93A;border-radius:14px;
+    font:inherit;font-size:clamp(22px,7vw,32px);line-height:1;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;transition:transform .08s,background .12s;
+    box-shadow:inset 0 -4px 0 rgba(0,0,0,.12)}
+  .cardbtn:active{transform:scale(.94)}
+  .cardbtn.up{background:#fff;border-color:var(--line);box-shadow:none}
+  .cardbtn.done{background:var(--mint);border-color:#3FC9A0;box-shadow:none;opacity:.75;cursor:default}
+  .cardbtn.bad{animation:bad .4s ease}
+  @keyframes bad{0%,100%{transform:none}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+  .cardbtn .ic{display:none} .cardbtn.up .ic,.cardbtn.done .ic{display:block}
   .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
     align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
   .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
   @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
   .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
 
   .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
   .bigbtn:active{transform:scale(.97)}
@@ -94,10 +95,9 @@
   .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
   .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
   .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .side .t{font-size:clamp(26px,8vw,36px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
-  .side .t small{font-size:.45em;font-weight:700;color:var(--sub)}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
   .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
-  .side .d b{color:var(--red)}
   .side.win{border-color:var(--yellow);background:#FFFBEE}
   .side.win .t{color:var(--blue)}
   .side.lose{opacity:.6}
@@ -122,14 +122,14 @@
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
 <script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
 </head>
-<body class="game-page" data-game="num25">
+<body class="game-page" data-game="pairs">
 <div class="wrap">
 
 <!-- ============ 플레이 (도전자·응답자 공용) ============ -->
 <section class="screen" id="s-play">
-  <span class="tag" id="playTag">1에서 25까지</span>
-  <h1 id="playHead">1부터 25까지<br><b>순서대로 빨리.</b></h1>
-  <p class="lead" id="playLead">숫자가 흩어져 있어. 1을 찾아 누르고, 2, 3… 25까지. 틀리면 <b>0.5초 벌점</b>. 기회는 한 번.</p>
+  <span class="tag" id="playTag">짝 맞추기</span>
+  <h1 id="playHead">10짝 다 맞추기.<br><b>누가 더 빨라?</b></h1>
+  <p class="lead" id="playLead">카드를 두 장씩 뒤집어 <b>같은 그림</b>을 찾아. 10짝을 다 맞춘 시간으로 승부. 같은 판이면 배치도 같아. 기회는 한 번.</p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -138,14 +138,15 @@
   <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
 
   <div class="hud" id="hud">
-    <div class="nx"><div class="lab">다음</div><div class="v" id="nextNum">1</div></div>
-    <div class="rt"><div class="t" id="clock">0.00</div><div class="p" id="pen">벌점 0</div></div>
+    <div class="c time"><div class="lab">걸린 시간</div><div class="v" id="clock">0.00</div></div>
+    <div class="c cnt"><div class="lab">남은 짝</div><div class="v" id="count">10</div></div>
   </div>
 
   <div class="board" id="board">
     <div class="grid" id="grid"></div>
     <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 열려</div></div>
   </div>
+  <div class="info"><span>뒤집기 <b id="flips">0</b></span><span>4×5 · 10짝</span></div>
 
   <button class="bigbtn start" id="bigBtn">시작</button>
 
@@ -190,27 +191,31 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-/* ===== 1에서 25까지 =====
-   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260910-bets2 에 있다.
-   여기에는 격자 화면과 판 만들기만 남는다. */
-const N_CELL=25, PENALTY=500;      // 오답 한 번에 0.5초
+/* ===== 짝 맞추기 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 카드판 화면과 판 만들기만 남는다.
+
+   규칙: 4×5 판(10짝)을 두 장씩 뒤집어 같은 그림을 찾는다. 다 맞춘 시간이 기록(짧을수록 이김).
+   시간이 같으면 덜 뒤집은 쪽이 이긴다. */
+const COLS=4, ROWS=5, N_PAIR=COLS*ROWS/2, MISS_MS=550;
+const ICONS=["🐥","🐸","🐙","🦊","🐼","🦄","🐝","🐢","🦋","🐬","🍓","🌈","🍀","🎈","🍩"];
 const fmt=ms=>(ms/1000).toFixed(2);
 function titleFor(ms){
-  if(ms<=15000) return "눈이 빠르다";
-  if(ms<=22000) return "평균 이상";
-  if(ms<=32000) return "보통 사람";
-  if(ms<=45000) return "천천히 확실하게";
-  return "숫자랑 안 친함";
+  if(ms<=25000) return "기억력 괴물";
+  if(ms<=35000) return "짝 찾기 장인";
+  if(ms<=50000) return "평균 이상";
+  if(ms<=70000) return "보통 사람";
+  return "느긋한 편";
 }
 const NEXT=[
-  {path:"../ten/",      title:"10초 맞추기",      desc:"안 보고 10초 세다가 멈추기."},
-  {path:"../react/",    title:"반응속도 대결",     desc:"초록으로 바뀌는 순간 눌러."},
-  {path:"../ladder/",   title:"사다리타기",       desc:"오늘 커피는 누가 쏠까."}
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../mole/",   title:"두더지 잡기",   desc:"20초, 같은 두더지, 누가 더 잡나."},
+  {path:"../react/",  title:"반응속도 대결",  desc:"초록으로 바뀌는 순간 눌러."}
 ];
 
 /* ===== 판 만들기 (시드 난수) =====
    Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
-   숫자 배치는 오직 그 시드로만 만들어지고 링크에 실리므로,
+   카드 배치는 오직 그 시드로만 만들어지고 링크에 실리므로,
    도전자와 응전자가 정확히 같은 판을 푼다. 재도전은 새 시드. */
 function mulberry32(a){
   return function(){
@@ -220,79 +225,91 @@ function mulberry32(a){
     return ((t^(t>>>14))>>>0)/4294967296;
   };
 }
-/* 시드로 1~25를 섞는다. cells[i] = i번 칸에 놓인 숫자 */
+function shuffle(arr,rnd){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=arr[i];arr[i]=arr[j];arr[j]=t; } return arr; }
+/* 시드로 카드 그림 20장의 배치를 만든다 */
 function boardOf(seed){
-  const a=Array.from({length:N_CELL},(_,i)=>i+1);
   const rnd=mulberry32(seed>>>0);
-  for(let i=a.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=a[i];a[i]=a[j];a[j]=t; }
-  return a;
+  const pool=shuffle(ICONS.slice(),rnd).slice(0,N_PAIR);
+  return shuffle(pool.concat(pool),rnd);
 }
 const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
 
 const state = Duel.setup({
-  deployBase:"https://bingari69-jpg.github.io/couple-test/t/num25/",
-  og:"https://bingari69-jpg.github.io/couple-test/og/og-num25-sq.png",
-  gameName:"1에서 25까지",
-  challengeDesc:"같은 판, 같은 숫자. 1부터 25까지 순서대로 최대한 빨리. 내 기록은 네가 끝낸 뒤 공개.",
+  deployBase:"https://bingari69-jpg.github.io/couple-test/t/pairs/",
+  og:"https://bingari69-jpg.github.io/couple-test/assets/share-cards/pairs.png?v=20260912-pairs",imageWidth:800,imageHeight:480,
+  gameName:"짝 맞추기",
+  challengeDesc:"같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 내 기록은 네가 끝낸 뒤 공개.",
   next:NEXT,
   titleFor,
   hasSeed:true,                     // 같은 판을 나눠 쓰므로 시드를 링크에 싣는다
   scrollToShare:true,
-  state:{seed:0,cells:[],next:1,pen:0,running:false,t0:0,raf:0,done:false,cdTimer:0},
-  linkExtra:st=>({p:st.pen}),
-  roundExtra:(p,st)=>[p.p||0, st.pen],
-  extraKey:"pen", extraDefault:0,
+  state:{seed:0,cards:[],open:[],lock:false,pairs:0,flips:0,
+         running:false,t0:0,raf:0,done:false,cdTimer:0,missTimer:0},
+  linkExtra:st=>({f:st.flips}),
+  roundExtra:(p,st)=>[p.f||0, st.flips],
+  extraKey:"f", extraDefault:0,
+  tieBreak:(me,them)=>me.f===them.f?null:{o:me.f<them.f?"win":"lose",why:`시간은 같지만 덜 뒤집은 쪽이 이겨. (${me.f}번 vs ${them.f}번)`},
   recordCell:x=>fmt(x.v)+"<small>초</small>",
-  detailCell:x=>`시간 ${fmt(x.v-x.pen*PENALTY)}` + (x.pen?` · 벌점 <b>+${fmt(x.pen*PENALTY)}</b>`:" · 벌점 없음"),
+  detailCell:x=>`뒤집기 ${x.f}번`,
   histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${fmt(r[1])} vs ${esc(who(r[2],!isA))} ${fmt(r[3])}`,
   verdictText:o=> o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL)=>
-    o==="tie"?"천분의 일 초까지 같은 건 거의 기적."
+    o==="tie"?"백분의 일 초까지 같은 건 거의 기적."
       :`${fmt(me.v)}초 vs ${fmt(them.v)}초 — ${subj(o==="win"?meL:themL)} ${fmt(Math.abs(me.v-them.v))}초 빨랐어.`,
   challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 판이야. 더 빨리.`,
   againHead:()=>`재도전. <b>새 판</b>으로 다시.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)}초 vs ${nm(them.n)}${fmt(them.v)}초${tail}`,
-  resultDesc:"같은 판, 같은 숫자. 누가 더 빨랐을까. 재도전은 여기서.",
-  onOpenChallenge(p){ state.seed=p.s>>>0; state.cells=boardOf(state.seed); renderGrid(); },
-  newRound(){ state.seed=newSeed(); state.cells=boardOf(state.seed); renderGrid(); },
+  resultDesc:"같은 판, 같은 카드. 10짝을 누가 더 빨리 다 맞췄을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; buildBoard(); },
+  newRound(){ state.seed=newSeed(); buildBoard(); },
   resetPlay(){
-    state.done=false;state.pen=0;state.next=1;
+    state.done=false;state.running=false;state.flips=0;state.pairs=0;state.open=[];state.lock=false;
+    clearTimeout(state.missTimer);
     $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 열려";
-    $("clock").textContent="0.00";$("nextNum").textContent="1";$("pen").textContent="벌점 0";$("pen").classList.remove("on");
+    $("clock").textContent="0.00";$("count").textContent=N_PAIR;$("flips").textContent="0";
     $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
   }
 });
 
-/* ===== 격자 ===== */
-function renderGrid(){
-  const g=$("grid"); g.innerHTML="";
-  state.cells.forEach((v,i)=>{
-    const b=document.createElement("button");
-    b.type="button"; b.className="cell"; b.dataset.v=v; b.dataset.i=i;
-    b.textContent=v; b.setAttribute("aria-label",v+"번");
-    g.appendChild(b);
+/* ===== 카드판 ===== */
+/* 시작 전에도 판을 뒤집힌 채로 보여준다(그림은 안 보이므로 미리 볼 수 없다). */
+function buildBoard(){
+  state.cards=boardOf(state.seed).map(ic=>({ic,up:false,done:false}));
+  state.open=[]; state.lock=false; state.pairs=0;
+  const g=$("grid"); g.innerHTML=""; g.style.gridTemplateColumns=`repeat(${COLS},1fr)`;
+  state.cards.forEach((c,i)=>{
+    const d=document.createElement("button");
+    d.type="button"; d.className="cardbtn"; d.dataset.i=i; d.setAttribute("aria-label","카드 "+(i+1));
+    const s=document.createElement("span"); s.className="ic"; s.textContent=c.ic; d.appendChild(s);
+    c.el=d; g.appendChild(d);
   });
 }
+function render(){ state.cards.forEach(c=>{ c.el.classList.toggle("up",c.up&&!c.done); c.el.classList.toggle("done",c.done); }); }
+
 /* 지연 없이 반응하도록 click 이 아니라 pointerdown 으로 받는다 */
 $("grid").addEventListener("pointerdown",e=>{
-  const c=e.target.closest && e.target.closest(".cell"); if(!c) return;
-  e.preventDefault(); tapCell(c);
+  const c=e.target.closest && e.target.closest(".cardbtn"); if(!c) return;
+  e.preventDefault(); flip(+c.dataset.i);
 });
 $("grid").addEventListener("contextmenu",e=>e.preventDefault());
 
-function tapCell(c){
-  if(!state.running || state.done) return;
-  const v=+c.dataset.v;
-  if(v===state.next){
-    c.classList.add("done");
-    state.next++;
-    if(state.next>N_CELL){ finishPlay(); return; }
-    $("nextNum").textContent=state.next;
+function flip(i){
+  if(!state.running || state.done || state.lock) return;
+  const c=state.cards[i]; if(!c || c.up || c.done) return;
+  c.up=true; state.open.push(i); state.flips++; $("flips").textContent=state.flips; render();
+  if(state.open.length<2) return;
+  const [a,b]=state.open.map(k=>state.cards[k]);
+  if(a.ic===b.ic){
+    a.done=b.done=true; state.open=[]; state.pairs++;
+    $("count").textContent=N_PAIR-state.pairs; render();
+    if(state.pairs===N_PAIR) finishPlay();
   }else{
-    if(c.classList.contains("done")) return;
-    state.pen++;
-    c.classList.remove("bad"); void c.offsetWidth; c.classList.add("bad");
-    const p=$("pen"); p.textContent="벌점 "+state.pen; p.classList.add("on");
+    state.lock=true;
+    a.el.classList.add("bad"); b.el.classList.add("bad");
+    state.missTimer=setTimeout(()=>{
+      a.up=b.up=false; a.el.classList.remove("bad"); b.el.classList.remove("bad");
+      state.open=[]; state.lock=false; render();
+    },MISS_MS);
   }
 }
 
@@ -307,8 +324,7 @@ function countdown(){
   $("cd").textContent=n;
   const step=()=>{
     n--;
-    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation="";
-             state.cdTimer=setTimeout(step,1000); return; }
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
     cover.classList.add("hidden");
     b.textContent="진행 중";
     startPlay();
@@ -316,8 +332,9 @@ function countdown(){
   state.cdTimer=setTimeout(step,1000);
 }
 function startPlay(){
-  state.running=true; state.next=1; state.pen=0; state.t0=performance.now();
-  $("nextNum").textContent="1"; $("pen").textContent="벌점 0"; $("pen").classList.remove("on");
+  buildBoard(); render();
+  state.flips=0; $("count").textContent=N_PAIR; $("flips").textContent="0";
+  state.running=true; state.done=false; state.t0=performance.now();
   const tick=()=>{
     if(!state.running) return;
     $("clock").textContent=fmt(performance.now()-state.t0);
@@ -326,14 +343,15 @@ function startPlay(){
   state.raf=requestAnimationFrame(tick);
 }
 function finishPlay(){
-  state.running=false; state.done=true;
+  state.running=false; state.done=true; state.lock=true;
   if(state.raf) cancelAnimationFrame(state.raf);
+  clearTimeout(state.missTimer);
   const elapsed=Math.round(performance.now()-state.t0);
   /* 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
-  $("clock").textContent="🔒"; $("nextNum").textContent="끝";
+  $("clock").textContent="🔒"; $("count").textContent="끝";
   $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인";
   const b=$("bigBtn"); b.textContent="봉인됨"; b.disabled=true;
-  Duel.finish(elapsed+state.pen*PENALTY);      // 기록 = 소요시간 + 벌점
+  Duel.finish(elapsed, {flips:state.flips});   // 기록 = 다 맞춘 시간(ms), 덧붙임 = 뒤집기 횟수
 }
 
 Duel.start();

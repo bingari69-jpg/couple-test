@@ -6,6 +6,7 @@
     ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요. 기회는 한 번이에요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'timing'},
     react:{title:'반응속도 대결',group:'기록 대결',icon:'⚡',rule:'두더지·진동·빛·숫자·좌우, 다섯 가지 신호가 오는 순간 빠르게 눌러요.',steps:three('신호 종류 확인하기','신호가 오면 누르기','5회 평균 보내기'),tip:'신호 전에 누르면 그 판은 0.5초로 기록돼요.',practice:'reaction'},
     num25:{title:'1에서 25까지',group:'기록 대결',icon:'🔢',rule:'1부터 25까지 숫자를 차례대로 눌러요.',steps:three('1부터 찾기','25까지 차례로 누르기','걸린 시간 비교'),tip:'같은 숫자판으로 친구와 겨뤄요.',practice:'numbers'},
+    pairs:{title:'짝 맞추기',group:'기록 대결',icon:'🃏',rule:'카드를 두 장씩 뒤집어 같은 그림 10짝을 다 찾아요. 빨리 끝낸 사람이 이겨요.',steps:three('시작 누르기','두 장씩 뒤집어 짝 찾기','다 맞춘 시간 비교'),tip:'같은 판이면 카드 배치도 같아요. 뒤집은 자리를 기억하세요.',practice:''},
     mole:{title:'두더지 잡기',group:'기록 대결',icon:'🐹',rule:'20초 동안 나타나는 두더지를 빠르게 눌러요.',steps:three('시작 누르기','두더지 잡기','점수 보내기'),tip:'황금은 +3점, 폭탄은 −3점이에요.',practice:'mole'},
     ufo:{title:'UFO 요격',group:'기록 대결',icon:'🛸',rule:'20초 동안 UFO를 찾아 미사일로 맞혀요.',steps:three('미사일 준비','UFO 누르기','명중 기록 비교'),tip:'아군 드론을 누르면 점수가 줄어요.',practice:'ufo'},
     tap:{title:'10초 연타',group:'기록 대결',icon:'👆',rule:'10초 동안 버튼을 최대한 많이 눌러요.',steps:three('손가락 준비','10초 동안 누르기','횟수 비교'),tip:'두 손가락을 사용해도 괜찮아요.',practice:'rapid'},
