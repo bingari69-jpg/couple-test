@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>지뢰찾기 미니</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="지뢰찾기 미니 — 60초, 같은 지뢰판, 누가 더 많이 푸나">
+<meta property="og:description" content="60초 동안 작은 지뢰판을 연달아. 같은 판 순서, 밟으면 다음 판. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/mines.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/mines/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --board:#2B2A44;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
+  .hud .cnt{text-align:right}
+
+  /* 지뢰판(캔버스) */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:10px;touch-action:manipulation}
+  .stage{display:flex;justify-content:center}
+  canvas#cv{background:var(--board);border-radius:14px;display:block;touch-action:manipulation;-webkit-tap-highlight-color:transparent;max-width:100%}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  /* 깃발 모드 */
+  .modebtn{width:100%;border:2px solid var(--line);background:#fff;color:var(--sub);border-radius:16px;padding:12px;font:inherit;font-size:16px;font-weight:800;cursor:pointer;margin-top:10px;-webkit-tap-highlight-color:transparent;touch-action:manipulation;transition:transform .08s}
+  .modebtn:active{transform:scale(.985)}
+  .modebtn.on{background:#FFE3E4;border-color:var(--red);color:var(--red)}
+  .tip{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px;line-height:1.5}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="mines">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">지뢰찾기 미니</span>
+  <h1 id="playHead">60초, 작은 지뢰판 연달아.<br><b>누가 더 많이 푸나.</b></h1>
+  <p class="lead" id="playLead">첫 칸은 미리 열려 있어. 숫자는 <b>둘레 8칸의 지뢰 수</b>. 지뢰 같은 칸은 <b>길게 눌러 깃발</b>. 밟으면 펑 — 판이 끝나는 게 아니라 <b>다음 판</b>으로. 둘이 같은 판 순서를 받아. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clock">60.0</div></div>
+    <div class="c cnt"><div class="lab">푼 판</div><div class="v" id="score">0</div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="stage" id="stage"><canvas id="cv" aria-label="지뢰판"></canvas></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 열려</div></div>
+  </div>
+  <div class="info"><span>판 <b id="bno">1</b> · 지뢰 <b id="mcount">5</b> · 깃발 <b id="fcount">0</b></span><span>펑 <b id="booms">0</b>번</span></div>
+
+  <button type="button" class="modebtn" id="flagBtn" aria-pressed="false">🚩 깃발 모드</button>
+  <p class="tip">톡 = 열기 · 꾹(0.35초) 또는 깃발 모드 = 깃발 · 숫자 둘레에 깃발을 다 꽂고 숫자를 톡 치면 나머지가 한 번에 열려</p>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 판을 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 판으로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 판으로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 지뢰찾기 미니 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 지뢰판 화면과 판 만들기만 남는다.
+
+   규칙: 60초 동안 작은 지뢰판을 연달아 푼다. 판은 BOARDS 순서대로 커진다(6×6·5 → … → 9×9·15, 그 뒤는 마지막 크기 반복).
+   판마다 시드 난수 흐름 하나에서 이어서 만들어지므로 두 사람이 정확히 같은 판 순서를 받는다.
+   시작 칸(둘레 지뢰 0인 칸 중 시드로 고른 곳)은 미리 열려 있다.
+   톡 = 열기, 꾹(350ms) 또는 깃발 모드 = 깃발. 열린 숫자를 톡 치면 둘레 깃발 수가 맞을 때 나머지를 연다(코드).
+   지뢰를 밟으면 지뢰를 다 보여주고("펑!") 0.7초 뒤 다음 판으로 — 판은 절대 일찍 끝나지 않는다.
+   기록 = 60초 동안 푼 판 수(많을수록 이김). 같으면 덜 밟은 쪽이 이긴다. */
+const LIMIT=60000, LONG_MS=350, BOOM_MS=700, CLEAR_MS=350;
+const BOARDS=[{n:6,m:5},{n:6,m:6},{n:7,m:8},{n:7,m:9},{n:8,m:11},{n:8,m:12},{n:9,m:15}];
+const NUM_COLORS=['','#5CC8FF','#B6E36B','#FF7B6B','#B58CFF','#FFAE42','#5FE0B8','#FF9DD1','#FFFFFF'];
+const LEVELS=[
+  {n:1,label:'1판',limitMs:LIMIT,goal:1,best:3},
+  {n:2,label:'2판',limitMs:LIMIT,goal:2,best:4},
+  {n:3,label:'3판',limitMs:LIMIT,goal:3,best:5},
+  {n:4,label:'4판',limitMs:LIMIT,goal:4,best:6},
+  {n:5,label:'5판',limitMs:LIMIT,goal:5,best:7}
+];
+const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
+function titleFor(n){
+  if(n>=6) return "지뢰 탐지견";
+  if(n>=4) return "침착한 공병";
+  if(n>=3) return "평균 이상";
+  if(n>=2) return "보통 사람";
+  return "지뢰 밟는 발";
+}
+const NEXT=[
+  {path:"../slide15/", title:"15퍼즐",        desc:"60초, 같은 섞임. 숫자판 몇 개나 맞출까?"},
+  {path:"../num25/",   title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."},
+  {path:"../pairs/",   title:"짝 맞추기",     desc:"같은 카드 배치. 10짝 누가 더 빨리?"}
+];
+
+/* ===== 판 만들기 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   시드 하나로 난수 흐름(state.rnd)을 만들고, 판을 넘길 때마다 그 흐름에서 이어서 뽑는다.
+   시드가 링크에 실리므로 도전자와 응전자가 같은 순서의 판을 받는다. 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+let N=6, M=5;
+function spec(bi){ return BOARDS[Math.min(bi,BOARDS.length-1)]; }
+function neighbors(i){
+  const x=i%N, y=Math.floor(i/N), out=[];
+  for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+    if(!dx&&!dy) continue;
+    const nx=x+dx, ny=y+dy;
+    if(nx>=0&&ny>=0&&nx<N&&ny<N) out.push(ny*N+nx);
+  }
+  return out;
+}
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/mines/",
+  og:"https://noljago.co.kr/assets/share-cards/mines.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"지뢰찾기 미니",
+  challengeDesc:"60초, 같은 순서의 지뢰판. 밟으면 다음 판. 몇 판 풀었는지로 승부. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 많이 풀수록 이긴다
+  hasSeed:true,                     // 같은 판 순서를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  state:{seed:0,level:0,rnd:null,bi:0,mine:[],num:[],open:[],flag:[],start:-1,opened:0,flags:0,
+         cleared:0,boom:0,totalOpened:0,showMines:false,boomAt:-1,lock:false,flash:"",flashT:0,flagMode:false,
+         running:false,t0:0,raf:0,done:false,cdTimer:0,nextTimer:0},
+  linkExtra:st=>({b:st.boom,l:st.level}),
+  roundExtra:(p,st)=>[p.b||0, st.boom],
+  extraKey:"b", extraDefault:0,
+  tieBreak:(me,them)=>me.b===them.b?null:{o:me.b<them.b?"win":"lose",why:`푼 판은 같지만 덜 밟은 쪽이 이겨. (펑 ${me.b}번 vs ${them.b}번)`},
+  recordCell:x=>x.v+"<small>판</small>",
+  detailCell:x=>x.b?`펑 ${x.b}번`:"한 번도 안 밟았어",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}판 vs ${esc(who(r[2],!isA))} ${r[3]}판`,
+  verdictText:o=> o==="win"?"내가 더 풀었어!":o==="lose"?"상대가 더 풀었어":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"푼 판도 밟은 횟수도 같아. 다시 붙자."
+      :`${me.v}판 vs ${them.v}판 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}판 더 풀었어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 지뢰판이야. 더 많이 풀어.`,
+  againHead:()=>`재도전. <b>새 판</b>으로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}판 vs ${nm(them.n)}${them.v}판${tail}`,
+  resultDesc:"60초, 같은 지뢰판 순서. 누가 더 많이 풀었을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRun(); resetView(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRun(); resetView(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildRun(); resetView(); },
+  resetPlay(){ buildRun(); resetView(); }
+});
+
+/* ===== 판 ===== */
+/* 시드로 난수 흐름을 새로 열고 첫 판을 만든다(시작 전 미리보기도 같은 판) */
+function buildRun(){
+  state.rnd=mulberry32(state.seed>>>0);
+  state.bi=0; state.cleared=0; state.boom=0; state.totalOpened=0; state.lock=false;
+  clearTimeout(state.nextTimer);
+  makeBoard();
+  $("score").textContent="0"; $("booms").textContent="0";
+}
+/* 난수 흐름에서 지뢰 M개를 뽑고, 둘레 지뢰가 0인 칸 중 하나를 시작 칸으로 골라 미리 연다.
+   0인 칸이 하나도 없으면(아주 드묾) 다시 뽑는다 — 흐름을 더 소비할 뿐 여전히 시드로 정해진다. */
+function makeBoard(){
+  const sp=spec(state.bi); N=sp.n; M=sp.m;
+  const total=N*N, rnd=state.rnd;
+  for(let attempt=0;attempt<50;attempt++){
+    const mine=new Array(total).fill(false); let placed=0;
+    while(placed<M){ const i=Math.floor(rnd()*total); if(!mine[i]){ mine[i]=true; placed++; } }
+    state.mine=mine;
+    state.num=mine.map((m,i)=>m?-1:neighbors(i).filter(j=>mine[j]).length);
+    const zeros=[]; for(let i=0;i<total;i++) if(!mine[i]&&state.num[i]===0) zeros.push(i);
+    if(!zeros.length) continue;
+    state.open=new Array(total).fill(false); state.flag=new Array(total).fill(false);
+    state.opened=0; state.flags=0; state.showMines=false; state.boomAt=-1;
+    state.start=zeros[Math.floor(rnd()*zeros.length)];
+    flood(state.start);
+    break;
+  }
+  $("bno").textContent=state.bi+1; $("mcount").textContent=M; $("fcount").textContent=state.flags;
+  fit();
+}
+/* 0 칸은 둘레를 연달아 연다 */
+function flood(i){
+  const q=[i];
+  while(q.length){
+    const c=q.pop();
+    if(state.open[c]||state.flag[c]||state.mine[c]) continue;
+    state.open[c]=true; state.opened++; state.totalOpened++;
+    if(state.num[c]===0) neighbors(c).forEach(j=>{ if(!state.open[j]&&!state.flag[j]) q.push(j); });
+  }
+}
+const isWon=()=>state.opened===N*N-M;
+
+/* ===== 캔버스 ===== */
+const cv=$("cv");
+const cx=(typeof window.CanvasRenderingContext2D==="function")?cv.getContext("2d"):null;   // jsdom 에는 캔버스가 없다
+let cell=40, pad=8;
+function fit(){
+  const boardW=$("board").clientWidth||360;
+  const W=Math.min(boardW-20,360);
+  cell=Math.max(18,Math.floor(Math.min((W-pad*2)/N,48)));
+  const size=cell*N+pad*2, dpr=window.devicePixelRatio||1;
+  cv.width=size*dpr; cv.height=size*dpr; cv.style.width=size+"px"; cv.style.height=size+"px";
+  if(cx) cx.setTransform(dpr,0,0,dpr,0,0);
+  draw();
+}
+window.addEventListener("resize",fit);
+function rr(x,y,w,h,r){ cx.beginPath(); cx.moveTo(x+r,y); cx.arcTo(x+w,y,x+w,y+h,r); cx.arcTo(x+w,y+h,x,y+h,r); cx.arcTo(x,y+h,x,y,r); cx.arcTo(x,y,x+w,y,r); cx.closePath(); }
+function draw(){
+  if(!cx||!N) return;
+  const size=cell*N+pad*2; cx.clearRect(0,0,size,size);
+  const numFont='800 '+Math.round(cell*0.5)+'px sans-serif', emoFont=Math.round(cell*0.55)+'px sans-serif';
+  cx.font=numFont; cx.textAlign="center"; cx.textBaseline="middle";
+  for(let i=0;i<N*N;i++){
+    const r=Math.floor(i/N), c=i%N, x=pad+c*cell, y=pad+r*cell;
+    const showMine=state.showMines&&state.mine[i];
+    if(!state.open[i]&&!showMine){
+      cx.fillStyle="#FFD54A"; rr(x+2,y+2,cell-4,cell-4,Math.max(4,cell*0.18)); cx.fill();
+      cx.fillStyle="rgba(255,255,255,.3)"; rr(x+4,y+4,cell-8,(cell-8)*0.4,Math.max(3,cell*0.12)); cx.fill();
+      if(state.flag[i]){ cx.font=emoFont; cx.fillText("🚩",x+cell/2,y+cell/2+1); cx.font=numFont; }
+    }else{
+      cx.fillStyle=i===state.boomAt?"#FF6B4A":"#3A3958"; rr(x+2,y+2,cell-4,cell-4,Math.max(4,cell*0.18)); cx.fill();
+      if(showMine){ cx.font=emoFont; cx.fillText("💣",x+cell/2,y+cell/2+1); cx.font=numFont; }
+      else if(state.num[i]>0){ cx.fillStyle=NUM_COLORS[state.num[i]]; cx.fillText(state.num[i],x+cell/2,y+cell/2+1); }
+    }
+  }
+  const now=performance.now();
+  if(state.flash && now-state.flashT<500){
+    cx.fillStyle="rgba(255,255,255,"+(0.55*(1-(now-state.flashT)/500))+")"; cx.fillRect(0,0,size,size);
+    cx.fillStyle="#23213A"; cx.font="800 30px sans-serif"; cx.fillText(state.flash,size/2,size/2);
+  }
+}
+function flash(t){ state.flash=t; state.flashT=performance.now(); }
+
+/* ===== 조작: 톡 = 열기 · 꾹(350ms) = 깃발 · 깃발 모드면 톡 = 깃발 ===== */
+const press={i:-1,x:0,y:0,t:0,long:false};
+function cellAt(e){
+  const r=cv.getBoundingClientRect(), scale=r.width?(cell*N+pad*2)/r.width:1;
+  const c=Math.floor(((e.clientX-r.left)*scale-pad)/cell), rw=Math.floor(((e.clientY-r.top)*scale-pad)/cell);
+  return (rw>=0&&rw<N&&c>=0&&c<N)?rw*N+c:-1;
+}
+function endPress(){ clearTimeout(press.t); press.i=-1; }
+cv.addEventListener("pointerdown",e=>{
+  e.preventDefault();
+  if(!state.running||state.lock) return;
+  const i=cellAt(e); if(i<0) return;
+  clearTimeout(press.t); press.i=i; press.x=e.clientX; press.y=e.clientY; press.long=false;
+  press.t=setTimeout(()=>{ if(press.i===i){ press.long=true; flag(i); } },LONG_MS);
+});
+cv.addEventListener("pointermove",e=>{ if(press.i>=0 && Math.hypot(e.clientX-press.x,e.clientY-press.y)>10) endPress(); });
+cv.addEventListener("pointerup",e=>{
+  const i=press.i, long=press.long; endPress();
+  if(i<0||long) return;
+  if(state.flagMode) flag(i); else reveal(i);
+});
+cv.addEventListener("pointercancel",endPress);
+cv.addEventListener("contextmenu",e=>e.preventDefault());
+$("flagBtn").addEventListener("click",()=>{
+  state.flagMode=!state.flagMode;
+  $("flagBtn").classList.toggle("on",state.flagMode); $("flagBtn").setAttribute("aria-pressed",String(state.flagMode));
+});
+
+/* 60초가 지났으면 끝내고 true */
+function checkTime(){
+  if(!state.running) return false;
+  if(performance.now()-state.t0>=LIMIT){ endPlay(); return true; }
+  return false;
+}
+/* 칸 열기. 열린 숫자를 다시 누르면 둘레 깃발 수가 맞을 때 나머지를 한꺼번에 연다. */
+function reveal(i){
+  if(!state.running||state.done||state.lock||checkTime()) return false;
+  if(i<0||i>=N*N||state.flag[i]) return false;
+  if(state.open[i]){
+    const n=state.num[i]; if(n<=0) return false;
+    const nb=neighbors(i);
+    if(nb.filter(j=>state.flag[j]).length!==n) return false;
+    const closed=nb.filter(j=>!state.open[j]&&!state.flag[j]); if(!closed.length) return false;
+    const hit=closed.find(j=>state.mine[j]);
+    if(hit!==undefined){ explode(hit); return true; }
+    closed.forEach(flood);
+  }else{
+    if(state.mine[i]){ explode(i); return true; }
+    flood(i);
+  }
+  draw();
+  if(isWon()) clearBoard();
+  return true;
+}
+/* 깃발 켜고 끄기 */
+function flag(i){
+  if(!state.running||state.done||state.lock||checkTime()) return false;
+  if(i<0||i>=N*N||state.open[i]) return false;
+  state.flag[i]=!state.flag[i]; state.flags+=state.flag[i]?1:-1;
+  $("fcount").textContent=state.flags; draw(); return true;
+}
+/* 다 열었다: 푼 판 +1, 잠깐 멈췄다가 다음 판 */
+function clearBoard(){
+  state.cleared++; $("score").textContent=state.cleared;
+  flash("클리어!"); state.lock=true; draw();
+  clearTimeout(state.nextTimer); state.nextTimer=setTimeout(nextBoard,CLEAR_MS);
+}
+/* 지뢰를 밟았다: 지뢰를 다 보여주고("펑!") 0.7초 뒤 다음 판. 시간은 계속 간다 */
+function explode(i){
+  state.boom++; $("booms").textContent=state.boom;
+  state.boomAt=i; state.showMines=true; flash("펑!"); state.lock=true; draw();
+  clearTimeout(state.nextTimer); state.nextTimer=setTimeout(nextBoard,BOOM_MS);
+}
+function nextBoard(){
+  clearTimeout(state.nextTimer);
+  if(!state.running||state.done) return;
+  state.lock=false; state.bi++; makeBoard();
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function resetView(){
+  state.done=false; state.running=false; state.flagMode=false;
+  clearTimeout(state.cdTimer); if(state.raf) cancelAnimationFrame(state.raf);
+  $("flagBtn").classList.remove("on"); $("flagBtn").setAttribute("aria-pressed","false");
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 열려";
+  $("clock").textContent=fmtT(LIMIT);$("clock").classList.remove("warn");
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 열려요";
+  let n=3;
+  $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  buildRun();                       // 같은 시드에서 난수 흐름을 다시 열어 미리보기와 같은 첫 판
+  state.running=true; state.done=false; state.t0=performance.now();
+  $("cover").classList.add("hidden");
+  const tick=()=>{
+    if(!state.running) return;
+    const el=performance.now()-state.t0;
+    if(el>=LIMIT){ endPlay(); return; }
+    $("clock").textContent=fmtT(LIMIT-el);
+    $("clock").classList.toggle("warn", LIMIT-el<=10000);
+    if(state.flash && performance.now()-state.flashT<520) draw();
+    state.raf=requestAnimationFrame(tick);
+  };
+  state.raf=requestAnimationFrame(tick);
+}
+/* 60초 끝 */
+function endPlay(){
+  if(!state.running) return;
+  state.running=false; state.done=true; state.lock=true;
+  if(state.raf) cancelAnimationFrame(state.raf); clearTimeout(state.nextTimer);
+  state.flash=""; draw();
+  const cleared=state.cleared;
+  const b=$("bigBtn"); b.disabled=true;
+  $("clock").textContent="0.0";
+  if(Solo.active){   // 혼자놀기: 기록을 바로 보여주고 별을 매긴다
+    $("cover").classList.remove("hidden"); $("cd").textContent="⏰"; $("cdSub").textContent="60초 끝"; b.textContent="끝";
+    Solo.finish(cleared,{boom:state.boom,note:"펑 "+state.boom+"번 · 연 칸 "+state.totalOpened}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("score").textContent="🔒";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="60초 끝 · 기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(cleared,{boom:state.boom});   // 기록 = 푼 판 수, 덧붙임 = 밟은 횟수
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'mines', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'판',
+  describe:l=>'60초 안에 · 판마다 커져 (6×6부터)',
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    buildRun(); resetView();
+  }
+});
+
+Duel.start();
+</script>
+</body>
+</html>
