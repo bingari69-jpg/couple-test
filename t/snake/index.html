@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스네이크 20초</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="스네이크 20초 — 같은 먹이, 누가 더 많이 먹나">
+<meta property="og:description" content="20초, 같은 자리에 같은 먹이. 벽이나 몸에 부딪히면 끝. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/snake/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --grass:#EAF6DF; --grass2:#E1F0D3; --snake:#22A05B; --head:#157A42;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
+  .hud .score{text-align:right}
+
+  /* 판 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:8px;touch-action:none}
+  .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--grass);border-radius:14px;overflow:hidden;aspect-ratio:1}
+  .cell{background:var(--grass)} .cell:nth-child(odd){background:var(--grass2)}
+  .cell.s{background:var(--snake);border-radius:4px}
+  .cell.h{background:var(--head);border-radius:6px}
+  .cell.f{background:var(--grass);display:flex;align-items:center;justify-content:center;font-size:clamp(14px,4.6vw,22px);line-height:1}
+  .cell.f::after{content:"🍎"}
+  .cell.x{background:var(--red)!important}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  /* 방향 버튼 */
+  .dpad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:8px;max-width:240px;margin:12px auto 0}
+  .dpad button{border:2px solid var(--line);background:#fff;border-radius:16px;font:inherit;font-size:26px;font-weight:900;color:var(--ink);padding:12px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-shadow:inset 0 -4px 0 rgba(0,0,0,.06)}
+  .dpad button:active{transform:scale(.94);background:#EAF2FF;border-color:var(--blue)}
+  .dpad .u{grid-column:2;grid-row:1} .dpad .l{grid-column:1;grid-row:2} .dpad .d{grid-column:2;grid-row:2} .dpad .r{grid-column:3;grid-row:2}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="snake">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">스네이크 20초</span>
+  <h1 id="playHead">20초.<br><b>누가 더 많이 먹나.</b></h1>
+  <p class="lead" id="playLead">둘이 <b>똑같은 자리에 똑같은 먹이</b>를 받아. 판을 쓸어 넘기거나 화살표로 방향을 바꿔. 벽이나 몸에 부딪히면 거기서 끝. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clock">20.0</div></div>
+    <div class="c score"><div class="lab">먹은 먹이</div><div class="v" id="score">0</div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="grid" id="grid" aria-label="12×12 판"></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 출발</div></div>
+  </div>
+  <div class="info"><span>길이 <b id="len">3</b></span><span id="speed">한 칸 0.16초</span></div>
+
+  <div class="dpad" id="dpad" aria-label="방향">
+    <button type="button" class="u" data-d="U" aria-label="위">▲</button>
+    <button type="button" class="l" data-d="L" aria-label="왼쪽">◀</button>
+    <button type="button" class="d" data-d="D" aria-label="아래">▼</button>
+    <button type="button" class="r" data-d="R" aria-label="오른쪽">▶</button>
+  </div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 먹이를 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 먹이로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 먹이로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 스네이크 20초 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 판 화면과 먹이 순서 만들기만 남는다.
+
+   규칙: 12×12 판. 뱀은 가운데서 길이 3으로 오른쪽으로 출발. 20초 동안 먹이를 먹는다.
+   벽이나 몸에 부딪히면 거기서 끝. 기록 = 먹은 먹이 수(많을수록 이김). 같으면 더 오래 산 쪽이 이긴다.
+   판 진행은 setTimeout 사슬(state.tickTimer)로 돌리고, 한 칸 움직임은 step() 하나에 모아 둔다. */
+const N=12, GAME_MS=20000, FOOD_LIST=400, DUEL_TICK=160;
+const DIRS={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]};
+const OPP={U:"D",D:"U",L:"R",R:"L"};
+/* 한 칸 시간(ms). 레벨 0 = 둘이하기 기본 */
+const TICKS={0:DUEL_TICK,1:170,2:150,3:135,4:120,5:105};
+const LEVELS=[
+  {n:1,label:'5개', limitMs:GAME_MS,goal:5, best:9},
+  {n:2,label:'8개', limitMs:GAME_MS,goal:8, best:12},
+  {n:3,label:'11개',limitMs:GAME_MS,goal:11,best:15},
+  {n:4,label:'14개',limitMs:GAME_MS,goal:14,best:18},
+  {n:5,label:'18개',limitMs:GAME_MS,goal:18,best:22}
+];
+const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
+function tickMs(level){ return TICKS[level]||DUEL_TICK; }
+function titleFor(n){
+  if(n>=18) return "뱀의 왕";
+  if(n>=13) return "노련한 뱀";
+  if(n>=9)  return "평균 이상";
+  if(n>=5)  return "보통 사람";
+  return "벽이랑 친해";
+}
+const NEXT=[
+  {path:"../mole/",   title:"두더지 잡기",   desc:"20초, 같은 두더지, 누가 더 잡나."},
+  {path:"../arrow/",  title:"화살표 함정",   desc:"빨간 테두리면 반대로!"},
+  {path:"../num25/",  title:"1에서 25까지",  desc:"같은 판, 같은 숫자. 순서대로 최대한 빨리."}
+];
+
+/* ===== 먹이 순서 (시드 난수) =====
+   Math.random() 은 판을 시작할 때 시드를 뽑는 데만 쓴다.
+   먹이 후보 400칸이 이 시드로만 정해져 링크에 실리므로, 도전자와 응전자가 같은 순서의 먹이를 받는다.
+   다음 먹이 = 후보 중 지금 비어 있는 다음 칸 (뱀이 깔고 있는 칸은 건너뛴다). 재도전은 새 시드. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function foodsOf(seed){
+  const rnd=mulberry32(seed>>>0); const out=[];
+  for(let i=0;i<FOOD_LIST;i++) out.push(Math.floor(rnd()*N*N));   // 칸 번호 = y*N+x
+  return out;
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/snake/",
+  og:"https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"스네이크 20초",
+  challengeDesc:"20초, 같은 자리에 같은 먹이. 벽이나 몸에 부딪히면 끝. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  higherWins:true,                  // 먹이를 많이 먹을수록 이긴다
+  hasSeed:true,                     // 같은 먹이를 나눠 쓰므로 시드를 링크에 싣는다
+  scrollToShare:true,
+  state:{seed:0,level:0,foods:[],foodIdx:0,food:-1,snake:[],dir:"R",pending:"R",eaten:0,alive:0,
+         running:false,t0:0,done:false,cdTimer:0,tickTimer:0,clockTimer:0,swipe:null},
+  linkExtra:st=>({a:st.alive,l:st.level}),
+  roundExtra:(p,st)=>[p.a||0, st.alive],
+  extraKey:"a", extraDefault:0,
+  tieBreak:(me,them)=>me.a===them.a?null:{o:me.a>them.a?"win":"lose",why:`먹은 수는 같지만 더 오래 산 쪽이 이겨. (${fmtT(me.a)}초 vs ${fmtT(them.a)}초)`},
+  recordCell:x=>x.v+"<small>개</small>",
+  detailCell:x=>x.a>=GAME_MS?"20초 끝까지 살았어":`${fmtT(x.a)}초 만에 부딪힘`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}개 vs ${esc(who(r[2],!isA))} ${r[3]}개`,
+  verdictText:o=> o==="win"?"내가 더 먹었어!":o==="lose"?"상대가 더 먹었어":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"먹은 수도 산 시간도 같은 건 거의 기적."
+      :`${me.v}개 vs ${them.v}개 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}개 더 먹었어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 먹이야. 더 먹어.`,
+  againHead:()=>`재도전. <b>새 먹이</b>로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}개 vs ${nm(them.n)}${them.v}개${tail}`,
+  resultDesc:"20초, 같은 먹이. 누가 더 많이 먹었을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildBoard(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildBoard(); },
+  resetPlay(){ resetView(); }
+});
+
+/* ===== 판 ===== */
+function makeGrid(){
+  const g=$("grid"); if(g.children.length===N*N) return;
+  g.innerHTML="";
+  for(let i=0;i<N*N;i++){ const c=document.createElement("div"); c.className="cell"; g.appendChild(c); }
+}
+/* 시드로 먹이 순서를 만들고 뱀을 출발 자리에 놓는다 */
+function buildBoard(){
+  makeGrid();
+  state.foods=foodsOf(state.seed); state.foodIdx=0;
+  const mid=Math.floor(N/2);
+  state.snake=[[mid,mid],[mid-1,mid],[mid-2,mid]];   // 머리가 앞. 가운데서 오른쪽으로
+  state.dir="R"; state.pending="R"; state.eaten=0; state.alive=0;
+  state.food=nextFood();
+  $("speed").textContent="한 칸 "+(tickMs(state.level)/1000).toFixed(2)+"초";
+  $("len").textContent=state.snake.length; $("score").textContent="0";
+  render();
+}
+const idx=(x,y)=>y*N+x;
+function occupied(i){ return state.snake.some(s=>idx(s[0],s[1])===i); }
+/* 후보 목록에서 지금 비어 있는 다음 칸. 목록이 다 떨어지면 처음부터 다시 */
+function nextFood(){
+  for(let k=0;k<FOOD_LIST;k++){
+    const i=state.foods[state.foodIdx%FOOD_LIST]; state.foodIdx++;
+    if(!occupied(i)) return i;
+  }
+  return -1;
+}
+function render(dead){
+  const g=$("grid");
+  for(let i=0;i<N*N;i++) g.children[i].className="cell";
+  if(state.food>=0) g.children[state.food].classList.add("f");
+  state.snake.forEach((s,k)=>{ const c=g.children[idx(s[0],s[1])]; c.classList.add(k===0?"h":"s"); });
+  if(dead){ const c=g.children[idx(dead[0],dead[1])]; if(c) c.classList.add("x"); }
+}
+function clearTimers(){ clearTimeout(state.tickTimer); clearInterval(state.clockTimer); }
+function resetView(){
+  clearTimers();
+  state.done=false;state.running=false;
+  buildBoard();
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 출발";
+  $("clock").textContent=fmtT(GAME_MS);$("clock").classList.remove("warn");
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+
+/* ===== 조작: 화살표 버튼 · 쓸어 넘기기(20px 이상) · 키보드 ===== */
+function setDir(d){
+  if(!DIRS[d] || !state.running || state.done) return false;
+  if(d===OPP[state.dir]) return false;            // 180° 회전은 안 된다 (마지막으로 움직인 방향 기준)
+  state.pending=d; return true;
+}
+$("dpad").addEventListener("pointerdown",e=>{
+  const b=e.target.closest && e.target.closest("button"); if(!b) return;
+  e.preventDefault(); setDir(b.dataset.d);
+});
+$("board").addEventListener("pointerdown",e=>{ state.swipe=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); });
+$("board").addEventListener("pointermove",e=>{
+  if(!state.swipe) return;
+  const dx=e.clientX-state.swipe[0], dy=e.clientY-state.swipe[1];
+  if(Math.abs(dx)<20 && Math.abs(dy)<20) return;
+  setDir(Math.abs(dx)>Math.abs(dy) ? (dx>0?"R":"L") : (dy>0?"D":"U"));
+  state.swipe=null;                               // 한 번 쓸면 손을 뗄 때까지 한 번만
+});
+["pointerup","pointercancel"].forEach(ev=>$("board").addEventListener(ev,()=>{ state.swipe=null; }));
+$("board").addEventListener("contextmenu",e=>e.preventDefault());
+document.addEventListener("keydown",e=>{
+  const m={ArrowUp:"U",ArrowDown:"D",ArrowLeft:"L",ArrowRight:"R"}[e.key];
+  if(m && setDir(m)) e.preventDefault();
+});
+
+/* ===== 한 칸 움직임 ===== */
+function step(){
+  if(!state.running || state.done) return;
+  const el=performance.now()-state.t0;
+  if(el>=GAME_MS){ finishPlay("time"); return; }
+  state.dir=state.pending;
+  const [dx,dy]=DIRS[state.dir];
+  const head=state.snake[0], nx=head[0]+dx, ny=head[1]+dy;
+  if(nx<0||ny<0||nx>=N||ny>=N){ finishPlay("wall",[head[0],head[1]]); return; }
+  const ni=idx(nx,ny), eat=ni===state.food;
+  const body=eat?state.snake:state.snake.slice(0,-1);          // 안 먹으면 꼬리는 비켜난다
+  if(body.some(s=>s[0]===nx&&s[1]===ny)){ finishPlay("self",[nx,ny]); return; }
+  state.snake.unshift([nx,ny]);
+  if(eat){
+    state.eaten++; $("score").textContent=state.eaten; $("len").textContent=state.snake.length;
+    state.food=nextFood();
+  }else state.snake.pop();
+  render();
+}
+function loop(){
+  if(!state.running) return;
+  step();
+  if(state.running) state.tickTimer=setTimeout(loop,tickMs(state.level));
+}
+function clockTick(){
+  if(!state.running) return;
+  const el=performance.now()-state.t0;
+  if(el>=GAME_MS){ finishPlay("time"); return; }
+  $("clock").textContent=fmtT(GAME_MS-el);
+  $("clock").classList.toggle("warn", GAME_MS-el<=5000);
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 출발";
+  let n=3;
+  $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  clearTimers(); buildBoard();
+  state.running=true; state.done=false; state.t0=performance.now();
+  $("cover").classList.add("hidden");
+  $("clock").textContent=fmtT(GAME_MS); $("clock").classList.remove("warn");
+  state.tickTimer=setTimeout(loop,tickMs(state.level));
+  state.clockTimer=setInterval(clockTick,100);
+}
+/* why: "time" 20초 끝 · "wall" 벽 · "self" 몸.  at: 부딪힌 칸 */
+function finishPlay(why,at){
+  if(!state.running) return;
+  state.running=false; state.done=true;
+  clearTimers();
+  const crashed=why!=="time";
+  state.alive=crashed?Math.min(GAME_MS,Math.max(1,Math.round(performance.now()-state.t0))):GAME_MS;
+  render(crashed?at:null);
+  const eaten=state.eaten;
+  const b=$("bigBtn"); b.disabled=true;
+  $("clock").textContent=crashed?fmtT(GAME_MS-state.alive):"0.0";
+  if(Solo.active){   // 혼자놀기: 기록을 바로 보여주고 별을 매긴다 (부딪혀도 먹은 만큼은 기록)
+    $("cover").classList.remove("hidden"); $("cd").textContent=crashed?"💥":"⏰"; $("cdSub").textContent=crashed?"부딪혔어":"20초 끝";
+    b.textContent="끝";
+    Solo.finish(eaten,{alive:state.alive,note:crashed?fmtT(state.alive)+"초 만에 부딪힘":"끝까지 살았어"}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("score").textContent="🔒";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent=crashed?"부딪힘 · 기록 봉인":"기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(eaten,{alive:state.alive});   // 기록 = 먹은 먹이 수, 덧붙임 = 산 시간(ms)
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'snake', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'개',
+  describe:l=>'20초 안에 · 한 칸 '+(tickMs(l.n)/1000).toFixed(2)+'초',
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    clearTimeout(state.cdTimer);
+    resetView();
+  }
+});
+
+Duel.start();
+</script>
+</body>
+</html>
