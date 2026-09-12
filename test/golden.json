@@ -3,7 +3,7 @@
     "entry_fresh": {
       "playTag": "10초 맞추기",
       "playHead": "안 보고 <b>10초</b>.<br>딱 맞춰 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
       "lockName": "",
       "tallyText": "",
       "_hidden": {
@@ -94,21 +94,21 @@
       "지은"
     ],
     "link_challenge": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
-      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0"
     },
     "kakao_challenge": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "지은의 10초 맞추기 도전장 🔒",
-      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
+      "desc": "안 보고 10초 세다가 멈추기. 세 번 멈춰서 오차 합으로 승부. 내 기록은 네가 멈춘 뒤 공개."
     },
     "link_challenge_hist": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltbIuyngOydgCIsMTAyNTAsIuuvvOyImCIsOTg0MCwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbWyLsp4DsnYAiLDEwMjUwLCLrr7zsiJgiLDk4NDAsImFiYzEyMyIsInp6ejk5OSJdXX0"
     },
     "kakao_challenge_hist": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltbIuyngOydgCIsMTAyNTAsIuuvvOyImCIsOTg0MCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbWyLsp4DsnYAiLDEwMjUwLCLrr7zsiJgiLDk4NDAsImFiYzEyMyIsInp6ejk5OSJdXX0",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "지은의 10초 맞추기 도전장 🔒",
@@ -116,8 +116,8 @@
     },
     "open_challenge": {
       "playTag": "도전장 도착",
-      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
       "lockName": "지은",
       "tallyText": "",
       "_hidden": {
@@ -133,13 +133,13 @@
       "resTag": "1판 결과",
       "nameA": "민수 (나)",
       "tA": "10.25<small>초</small>",
-      "dA": "차이 0.25",
+      "dA": "1회 · 차이 0.25",
       "nameB": "지은",
       "tB": "9.84<small>초</small>",
-      "dB": "차이 0.16",
+      "dB": "1회 · 차이 0.16",
       "verdict": "상대가 더 가까워",
-      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
-      "titleBadge": "🏅 보통 사람",
+      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
+      "titleBadge": "🏅 감각 좋은데?",
       "tallyBox": "",
       "_cls": {
         "sideA": "side lose",
@@ -159,18 +159,18 @@
       }
     },
     "respond_hist": "[]",
-    "result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXX0",
     "kakao_result": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXX0",
       "btn": "결과 보기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "민수 10.25 vs 지은 9.84 — 지은 승",
-      "desc": "10초에 누가 더 가까웠을까. 재도전은 여기서."
+      "desc": "10초에 세 번, 누가 더 가까웠을까. 재도전은 여기서."
     },
     "open_challenge_noname": {
       "playTag": "도전장 도착",
-      "playHead": "<b>상대</b>가 도전했다.<br>10초, 더 가까이 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
+      "playHead": "<b>상대</b>가 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
       "lockName": "상대",
       "tallyText": "",
       "_hidden": {
@@ -186,12 +186,12 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "9.84<small>초</small>",
-      "dA": "차이 0.16",
+      "dA": "1회 · 차이 0.16",
       "nameB": "민수",
       "tB": "10.25<small>초</small>",
-      "dB": "차이 0.25",
+      "dB": "1회 · 차이 0.25",
       "verdict": "내가 더 가까워!",
-      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
       "titleBadge": "🏅 감각 좋은데?",
       "tallyBox": "",
       "_cls": {
@@ -357,40 +357,40 @@
       "subjMatch": true
     },
     "bet_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi7KCQ7IusIiwiaCI6W119",
       "stateBet": "점심"
     },
     "bet_kakao": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi7KCQ7IusIiwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "🍱 점심 걸고 — 지은의 10초 맞추기 도전장 🔒",
-      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
+      "desc": "안 보고 10초 세다가 멈추기. 세 번 멈춰서 오차 합으로 승부. 내 기록은 네가 멈춘 뒤 공개."
     },
     "bet_off_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImgiOltdfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0",
       "stateBet": ""
     },
     "bet_open": {
       "betOpen": "이기면 점심!",
       "betOpenHidden": false,
       "betBoxHidden": true,
-      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
       "stateBet": "점심"
     },
     "bet_result": {
-      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
       "betResult": "내가 점심 산다 😂",
       "betResultHidden": false
     },
     "bet_kakao_result": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXSwiYiI6IuygkOyLrCJ9",
       "btn": "결과 보기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "민수 10.25 vs 지은 9.84 — 지은 승",
       "desc": "민수가 점심 산다 😂"
     },
-    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/ten/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXSwiYiI6IuygkOyLrCJ9",
     "bet_again": {
       "stateBet": "점심",
       "betBoxHidden": false,
@@ -400,10 +400,10 @@
       ]
     },
     "bet_again_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDk4NDAsIuuvvOyImCIsMTAyNTAsImFiYzEyMyIsInp6ejk5OSJdXX0"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi7KCQ7IusIiwiaCI6W1si7KeA7J2AIiw5ODQwLCLrr7zsiJgiLDEwMjUwLCJhYmMxMjMiLCJ6eno5OTkiLFtdLFtdXV19"
     },
     "bet_result_view": {
-      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
       "betResult": "민수가 점심 산다 😂"
     },
     "bet_tie_noname": {
@@ -412,7 +412,7 @@
       "betResult": "무승부 — 내기는 다음 판으로"
     },
     "bet_custom_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi64W4656Y67CpIiwiaCI6W119",
       "stateBet": "노래방"
     },
     "bet_custom": {
@@ -423,12 +423,12 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "9.84<small>초</small>",
-      "dA": "차이 0.16",
+      "dA": "1회 · 차이 0.16",
       "nameB": "민수",
       "tB": "10.25<small>초</small>",
-      "dB": "차이 0.25",
+      "dB": "1회 · 차이 0.25",
       "verdict": "내가 더 가까워!",
-      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
       "titleBadge": "🏅 감각 좋은데?",
       "tallyBox": "",
       "_cls": {
@@ -544,21 +544,21 @@
       "지은"
     ],
     "link_challenge": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
-      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119",
+      "linkbox": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119"
     },
     "kakao_challenge": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "지은의 반응속도 도전장 🔒",
-      "desc": "초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개."
+      "desc": "초록으로 바뀌는 순간 누르기. 5회 평균, 둘이 같은 타이밍. 내 기록은 네가 한 뒤 공개."
     },
     "link_challenge_hist": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltbIuyngOydgCIsMjY4LCLrr7zsiJgiLDIzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W1si7KeA7J2AIiwyNjgsIuuvvOyImCIsMjMxLCJhYmMxMjMiLCJ6eno5OTkiXV19"
     },
     "kakao_challenge_hist": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltbIuyngOydgCIsMjY4LCLrr7zsiJgiLDIzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W1si7KeA7J2AIiwyNjgsIuuvvOyImCIsMjMxLCJhYmMxMjMiLCJ6eno5OTkiXV19",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "지은의 반응속도 도전장 🔒",
@@ -583,10 +583,10 @@
       "resTag": "1판 결과",
       "nameA": "민수 (나)",
       "tA": "0.268<small>초</small>",
-      "dA": "3회 평균",
+      "dA": "평균",
       "nameB": "지은",
       "tB": "0.231<small>초</small>",
-      "dB": "3회 평균",
+      "dB": "평균",
       "verdict": "상대가 더 빨라",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",
@@ -609,13 +609,13 @@
       }
     },
     "respond_hist": "[]",
-    "result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0",
+    "result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXX0",
     "kakao_result": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXX0",
       "btn": "결과 보기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "민수 0.268 vs 지은 0.231 — 지은 승",
-      "desc": "반응속도 3회 평균. 재도전은 여기서."
+      "desc": "반응속도 5회 평균. 재도전은 여기서."
     },
     "open_challenge_noname": {
       "playTag": "도전장 도착",
@@ -636,10 +636,10 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "0.231<small>초</small>",
-      "dA": "3회 평균",
+      "dA": "평균",
       "nameB": "민수",
       "tB": "0.268<small>초</small>",
-      "dB": "3회 평균",
+      "dB": "평균",
       "verdict": "내가 더 빨라!",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",
@@ -807,18 +807,18 @@
       "subjMatch": true
     },
     "bet_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "stateBet": "점심"
     },
     "bet_kakao": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "🍱 점심 걸고 — 지은의 반응속도 도전장 🔒",
-      "desc": "초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개."
+      "desc": "초록으로 바뀌는 순간 누르기. 5회 평균, 둘이 같은 타이밍. 내 기록은 네가 한 뒤 공개."
     },
     "bet_off_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImgiOltdfQ",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119",
       "stateBet": ""
     },
     "bet_open": {
@@ -834,13 +834,13 @@
       "betResultHidden": false
     },
     "bet_kakao_result": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXSwiYiI6IuygkOyLrCJ9",
       "btn": "결과 보기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
       "title": "민수 0.268 vs 지은 0.231 — 지은 승",
       "desc": "민수가 점심 산다 😂"
     },
-    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXSwiYiI6IuygkOyLrCJ9",
+    "bet_result_url": "https://bingari69-jpg.github.io/couple-test/t/react/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSIsW10sW11dXSwiYiI6IuygkOyLrCJ9",
     "bet_again": {
       "stateBet": "점심",
       "betBoxHidden": false,
@@ -850,7 +850,7 @@
       ]
     },
     "bet_again_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLsoJDsi6wiLCJoIjpbWyLsp4DsnYAiLDIzMSwi66-87IiYIiwyNjgsImFiYzEyMyIsInp6ejk5OSJdXX0"
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiYiI6IuygkOyLrCIsImgiOltbIuyngOydgCIsMjMxLCLrr7zsiJgiLDI2OCwiYWJjMTIzIiwienp6OTk5IixbXSxbXV1dfQ"
     },
     "bet_result_view": {
       "subVerdict": "지은이 0.037초 더 빨랐어.",
@@ -862,7 +862,7 @@
       "betResult": "무승부 — 내기는 다음 판으로"
     },
     "bet_custom_link": {
-      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk2MDAsImIiOiLrhbjrnpjrsKkiLCJoIjpbXX0",
+      "url": "https://bingari69-jpg.github.io/couple-test/t/react/#c=eyJ2IjoxLCJuIjoiIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiYiI6IuuFuOuemOuwqSIsImgiOltdfQ",
       "stateBet": "노래방"
     },
     "bet_custom": {
@@ -873,10 +873,10 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "0.231<small>초</small>",
-      "dA": "3회 평균",
+      "dA": "평균",
       "nameB": "민수",
       "tB": "0.268<small>초</small>",
-      "dB": "3회 평균",
+      "dB": "평균",
       "verdict": "내가 더 빨라!",
       "subVerdict": "지은이 0.037초 더 빨랐어.",
       "titleBadge": "🏅 보통 사람",

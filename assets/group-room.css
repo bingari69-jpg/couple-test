@@ -64,3 +64,4 @@ button:disabled{opacity:.45;cursor:default;box-shadow:none}
 .result-card .link-button{margin-top:9px}
 @media(max-width:360px){.wrap{padding-inline:14px}h1{font-size:39px}.sheet{padding:17px}.chips button{font-size:12px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;scroll-behavior:auto!important}}
+#resultSpin{display:none;font-size:28px;font-weight:800;min-height:1.4em}.result-card.spinning #resultName{display:none}.result-card.spinning #resultSpin{display:block}

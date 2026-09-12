@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260912-a"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
-<script src="../../assets/duel-engine.js?v=20260912-c"></script>
+<script src="../../assets/duel-engine.js?v=20260912-d"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -170,7 +170,12 @@
 /* ===== 반응속도 대결 =====
    공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260910-bets2 에 있다.
    여기에는 3회 측정 화면만 남는다. */
-const TRIES=3;
+const TRIES=5;
+const FOUL_MS=500;      // 부정출발·100ms 미만은 이 값으로 기록한다
+function mulberry32(a){return function(){a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return ((t^(t>>>14))>>>0)/4294967296;};}
+const newSeed=()=>(Math.random()*4294967296)>>>0;
+/* 둘이 같은 대기 시간을 받도록 시드로 5개 딜레이를 만든다 */
+const delaysOf=seed=>{const r=mulberry32(seed>>>0);return Array.from({length:TRIES},()=>1500+r()*2500);};
 const fmt=ms=>(ms/1000).toFixed(3);
 function titleFor(ms){
   if(ms<=180) return "번개";
@@ -190,12 +195,16 @@ const state = Duel.setup({
   deployBase:"https://bingari69-jpg.github.io/couple-test/t/react/",
   og:"https://bingari69-jpg.github.io/couple-test/og/og-react-sq.png",
   gameName:"반응속도",
-  challengeDesc:"초록으로 바뀌는 순간 누르기. 3회 평균으로 겨룬다. 내 기록은 네가 한 뒤 공개.",
+  challengeDesc:"초록으로 바뀌는 순간 누르기. 5회 평균, 둘이 같은 타이밍. 내 기록은 네가 한 뒤 공개.",
   next:NEXT,
   titleFor,                         // 값이 작을수록 빠르다 = 기본 비교 그대로
-  state:{phase:"idle",tries:[],t0:0,timer:0},
+  hasSeed:true,
+  state:{phase:"idle",tries:[],t0:0,timer:0,seed:0},
+  linkExtra:st=>({t:st.tries}),
+  roundExtra:(p,st)=>[p.t||[],st.tries],
+  extraKey:"t", extraDefault:[],
   recordCell:x=>fmt(x.v)+"<small>초</small>",
-  detailCell:()=>"3회 평균",
+  detailCell:x=>x.t&&x.t.length?`${x.t.length}회 평균 · 최고 ${fmt(Math.min(...x.t))} · 최악 ${fmt(Math.max(...x.t))}`:"평균",
   histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${fmt(r[1])} vs ${esc(who(r[2],!isA))} ${fmt(r[3])}`,
   verdictText:o=> o==="win"?"내가 더 빨라!":o==="lose"?"상대가 더 빨라":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL,em,et)=>
@@ -203,7 +212,9 @@ const state = Duel.setup({
   challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>더 빨리 눌러봐.`,
   againHead:()=>`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)} vs ${nm(them.n)}${fmt(them.v)}${tail}`,
-  resultDesc:"반응속도 3회 평균. 재도전은 여기서.",
+  resultDesc:"반응속도 5회 평균. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; },
+  newRound(){ state.seed=newSeed(); },
   resetPlay(){
     state.phase="idle";state.tries=[];
     setPanel("","준비","화면 아무 데나 누르면 돼");$("bigBtn").classList.remove("hidden");
@@ -215,23 +226,24 @@ function setPanel(cls,big,msg){const c=$("clock");c.className="clock "+cls;$("nu
 function armRound(){
   state.phase="wait";
   setPanel("wait","기다려…",`초록으로 바뀌면 <b>화면을 눌러!</b> · ${state.tries.length+1}/${TRIES}`);
-  const delay=1500+Math.random()*2500;
+  const delay=delaysOf(state.seed)[state.tries.length]||2500;
   state.timer=setTimeout(()=>{ state.phase="go"; state.t0=performance.now(); setPanel("go","지금!",""); },delay);
 }
 function hit(){
   if(state.phase==="idle"){
     state.tries=[];$("bigBtn").classList.add("hidden");$("afterPlay").classList.add("hidden");armRound();return;
   }
-  if(state.phase==="wait"){                           // 부정출발
-    clearTimeout(state.timer);state.phase="foul";
-    setPanel("foul","너무 빨라!","초록 되기 전에 눌렀어. <b>이 판은 무효.</b> 눌러서 다시");
+  if(state.phase==="wait"){                           // 부정출발: 이 판은 0.500초로 기록
+    clearTimeout(state.timer);state.tries.push(FOUL_MS);state.phase="shown";
+    setPanel("foul","너무 빨라!",`초록 되기 전에 눌렀어. <b>이 판은 ${fmt(FOUL_MS)}초로 기록.</b> ${state.tries.length}/${TRIES} · 눌러서 ${state.tries.length<TRIES?"다음":"봉인"}`);
     return;
   }
   if(state.phase==="foul"){armRound();return;}
   if(state.phase==="go"){
-    const ms=Math.round(performance.now()-state.t0);
+    const raw=Math.round(performance.now()-state.t0);
+    const ms=raw<100?FOUL_MS:raw;                       // 100ms 미만은 찍기로 보고 벌점
     state.tries.push(ms);state.phase="shown";
-    setPanel("shown",fmt(ms)+"초",state.tries.length<TRIES?`${state.tries.length}/${TRIES} · 눌러서 다음`:"3번 끝! 눌러서 봉인");
+    setPanel("shown",fmt(ms)+"초",(raw<100?"<b>너무 빨라서 0.500초로 기록.</b> ":"")+(state.tries.length<TRIES?`${state.tries.length}/${TRIES} · 눌러서 다음`:`${TRIES}번 끝! 눌러서 봉인`));
     return;
   }
   if(state.phase==="shown"){
@@ -244,8 +256,8 @@ $("bigBtn").onclick=()=>hit();
 function finishPlay(){
   state.phase="done";
   const ms=Math.round(state.tries.reduce((a,b)=>a+b,0)/state.tries.length);
-  setPanel("shown","🔒", state.incoming ? "개봉 중…" : `3회 평균 <b>${fmt(ms)}초</b> 봉인. 상대가 한 뒤에 같이 열려`);
-  Duel.finish(ms);
+  setPanel("shown","🔒", state.incoming ? "개봉 중…" : `${TRIES}회 평균 <b>${fmt(ms)}초</b> 봉인. 상대가 한 뒤에 같이 열려`);
+  Duel.finish(ms,{tries:state.tries.slice()});
 }
 
 Duel.start();

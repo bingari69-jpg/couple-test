@@ -143,7 +143,16 @@
       hist.forEach(r => {
         const isA = meIsA(r, meId, meName);
         const mine = metric(isA ? r[1] : r[3]), theirs = metric(isA ? r[3] : r[1]);
-        if (better(mine, theirs)) w++; else if (better(theirs, mine)) l++; else t++;
+        if (better(mine, theirs)) w++; else if (better(theirs, mine)) l++;
+        else {
+          let res = "t";
+          if (cfg.tieBreak && cfg.extraKey) {
+            const meO = { v: isA ? r[1] : r[3] }, thO = { v: isA ? r[3] : r[1] };
+            meO[cfg.extraKey] = (isA ? r[6] : r[7]) || cfg.extraDefault; thO[cfg.extraKey] = (isA ? r[7] : r[6]) || cfg.extraDefault;
+            const tb = cfg.tieBreak(meO, thO); if (tb && tb.o === "win") res = "w"; else if (tb && tb.o === "lose") res = "l";
+          }
+          if (res === "w") w++; else if (res === "l") l++; else t++;
+        }
       });
       return { w, l, t };
     }
@@ -237,7 +246,10 @@
       }
       const meL = who(me.n, true), themL = who(them.n, false);
       const em = metric(me.v), et = metric(them.v);
-      const o = better(em, et) ? "win" : (better(et, em) ? "lose" : "tie");
+      let o = better(em, et) ? "win" : (better(et, em) ? "lose" : "tie");
+      /* 점수가 같으면 게임이 정한 2차 판정(폭탄 수·명중률·오답 수 등)으로 승부를 가른다 */
+      let tieWhy = "";
+      if (o === "tie" && cfg.tieBreak) { const tb = cfg.tieBreak(me, them); if (tb && (tb.o === "win" || tb.o === "lose")) { o = tb.o; tieWhy = tb.why || ""; } }
 
       $("nameA").textContent = me.n ? me.n + " (나)" : "나";
       $("tA").innerHTML = cfg.recordCell(me);
@@ -249,7 +261,7 @@
       $("sideB").className = "side " + (o === "lose" ? "win" : o === "win" ? "lose" : "");
       $("verdict").className = "verdict " + o;
       $("verdict").textContent = cfg.verdictText(o);
-      $("subVerdict").textContent = cfg.subVerdictText(o, me, them, meL, themL, em, et);
+      $("subVerdict").textContent = tieWhy || cfg.subVerdictText(o, me, them, meL, themL, em, et);
       /* 내기 결과는 진 쪽 기준. 보는 사람이 졌으면 이름이 있어도 "내가".
          카톡 카드는 상대가 읽으므로 "내가"의 기준을 받는 사람(도전한 쪽)으로 뒤집는다. */
       const betNow = R.bet !== undefined ? R.bet : state.bet;

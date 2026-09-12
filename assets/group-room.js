@@ -31,6 +31,25 @@
     return key ? errorMessages[key] : "연결이 잠시 불안정해요. 다시 시도해주세요.";
   }
 
+  /* 결과 공개 연출: 이름들이 룰렛처럼 돌다가 당첨자에서 멈춘다. 실제 텍스트는 이미 #resultName에 있다. */
+  let rouletteDone = false;
+  function roulette(names, finalName) {
+    if (rouletteDone || names.length < 2) return;
+    rouletteDone = true;
+    if (window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const view = $("resultView"), spin = document.getElementById("resultSpin");
+    if (!view || !spin) return;
+    view.classList.add("spinning");
+    let i = 0, step = 70;
+    const tick = () => {
+      spin.textContent = names[i++ % names.length] + " …";
+      step += 18;
+      if (step < 260) setTimeout(tick, step);
+      else { spin.textContent = finalName + " !"; setTimeout(() => view.classList.remove("spinning"), 350); }
+    };
+    tick();
+  }
+
   function show(id) {
     ["createView", "joinView", "roomView"].forEach(view => { $(view).hidden = view !== id; });
     window.scrollTo(0, 0);
@@ -168,6 +187,7 @@
       $("roomStatusBadge").textContent = "결과 공개";
       $("roomTitle").innerHTML = "단체방 결과가<br><em>열렸어!</em>";
       $("resultName").textContent = room.result.loser_nickname + " 당첨 😂";
+      roulette(data.members.map(member => member.nickname), room.result.loser_nickname);
       $("resultStake").textContent = room.result.stake_text + " 담당";
     } else {
       $("roomStatusBadge").textContent = "종료된 방";

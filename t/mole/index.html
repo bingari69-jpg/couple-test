@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260912-a"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
-<script src="../../assets/duel-engine.js?v=20260912-c"></script>
+<script src="../../assets/duel-engine.js?v=20260912-d"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -286,6 +286,7 @@ const state = Duel.setup({
   linkExtra:st=>({c:st.stat}),
   roundExtra:(p,st)=>[p.c||[0,0,0], st.stat],
   extraKey:"c", extraDefault:[0,0,0],
+  tieBreak:(me,them)=>me.c[2]===them.c[2]?null:{o:me.c[2]<them.c[2]?"win":"lose",why:`점수는 같지만 폭탄을 덜 밟은 쪽이 이겨. (${me.c[2]} vs ${them.c[2]})`},
   recordCell:x=>x.v+"<small>점</small>",
   detailCell:x=>`두더지 <i>${x.c[0]}</i> · <i class="g">황금 ${x.c[1]}</i> · <i class="b">폭탄 ${x.c[2]}</i>`,
   histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}점 vs ${esc(who(r[2],!isA))} ${r[3]}점`,

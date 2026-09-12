@@ -15,7 +15,7 @@ const GAMES = ["ten", "react", "num25", "mole", "tap", "ufo", "stroop", "arrow",
      theirRaw : 상대가 낸 기록 (응답 시나리오용) */
 const REC = {
   ten:   { fields: { ms: 9840 },                              theirRaw: 10250 },
-  react: { fields: { ms: 231 },                               theirRaw: 268 },
+  react: { fields: { ms: 231, seed: 12345 },                  theirRaw: 268 },
   tap:   { fields: { ms: 88 },                                theirRaw: 74 },
   num25: { fields: { ms: 21340, pen: 2, seed: 12345 },        theirRaw: 19870 },
   mole:  { fields: { ms: 24, stat: [18, 3, 1], seed: 12345 }, theirRaw: 19 },

@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260912-a"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
-<script src="../../assets/duel-engine.js?v=20260912-c"></script>
+<script src="../../assets/duel-engine.js?v=20260912-d"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -279,6 +279,7 @@ const state = Duel.setup({
   linkExtra:st=>({c:st.stat}),
   roundExtra:(p,st)=>[p.c||[0,0,0], st.stat],
   extraKey:"c", extraDefault:[0,0,0],
+  tieBreak:(me,them)=>{if(me.c[2]!==them.c[2])return{o:me.c[2]>them.c[2]?"win":"lose",why:`정답 수는 같지만 함정을 더 많이 통과한 쪽이 이겨. (${me.c[2]} vs ${them.c[2]})`};if(me.c[1]!==them.c[1])return{o:me.c[1]<them.c[1]?"win":"lose",why:`정답 수는 같지만 오답이 적은 쪽이 이겨. (${me.c[1]} vs ${them.c[1]})`};return null;},
   recordCell:x=>x.v+"<small>개</small>",
   detailCell:x=>`<i class="g">정답 ${x.c[0]}</i> · <i class="b">오답 ${x.c[1]}</i><br>`
                 +`<i class="t">함정 ${x.c[2]}개 통과</i> · 정답률 ${rate(x.c[0],x.c[1])}%`,

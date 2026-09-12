@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260912-a"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
-<script src="../../assets/duel-engine.js?v=20260912-c"></script>
+<script src="../../assets/duel-engine.js?v=20260912-d"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -107,7 +107,7 @@
 <section class="screen" id="s-play">
   <span class="tag" id="playTag">10초 맞추기</span>
   <h1 id="playHead">안 보고 <b>10초</b>.<br>딱 맞춰 멈춰봐.</h1>
-  <p class="lead" id="playLead">시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b></p>
+  <p class="lead" id="playLead">시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b></p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 멈춘 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -181,26 +181,37 @@ const NEXT=[
   {path:"../mbti/",     title:"내 MBTI 몇 글자나 맞힐래?", desc:"4문항으로 나온 네 글자."}
 ];
 
+const TRIES=3;
+/* 링크 값: 예전 링크는 1회 기록(ms, 약 10000), 새 링크는 세 번의 오차 합(ms, 보통 3000 미만) */
+const isLegacy=v=>v>=5000;
+const errOf=v=>isLegacy(v)?Math.abs(v-10000):v;
+const signed=ms=>{const d=(ms-10000)/1000;return (d>0?"+":"−")+Math.abs(d).toFixed(2);};
+const label=v=>isLegacy(v)?fmt(v):"오차 "+fmt(v);
+
 const state = Duel.setup({
   deployBase:"https://bingari69-jpg.github.io/couple-test/t/ten/",
   og:"https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
   gameName:"10초 맞추기",
-  challengeDesc:"안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개.",
+  challengeDesc:"안 보고 10초 세다가 멈추기. 세 번 멈춰서 오차 합으로 승부. 내 기록은 네가 멈춘 뒤 공개.",
   next:NEXT,
-  metric:err,                       // 10초에서 벗어난 정도가 적을수록 이긴다
-  titleFor,
-  state:{running:false,t0:0,raf:0},
-  recordCell:x=>fmt(x.v)+"<small>초</small>",
-  detailCell:(x,m)=>"차이 "+fmt(m),
-  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${fmt(r[1])} vs ${esc(who(r[2],!isA))} ${fmt(r[3])}`,
+  metric:errOf,                     // 10초에서 벗어난 정도(세 번 합)가 적을수록 이긴다
+  titleFor:e=>titleFor(e/TRIES),
+  state:{running:false,t0:0,raf:0,tries:[]},
+  linkExtra:st=>({t:st.tries}),
+  roundExtra:(p,st)=>[p.t||[],st.tries],
+  extraKey:"t", extraDefault:[],
+  recordCell:x=>label(x.v)+"<small>초</small>",
+  detailCell:(x,m)=>isLegacy(x.v)?"1회 · 차이 "+fmt(m):(x.t&&x.t.length?x.t.map(signed).join(" · "):"3회 오차 합"),
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${label(r[1])} vs ${esc(who(r[2],!isA))} ${label(r[3])}`,
   verdictText:o=> o==="win"?"내가 더 가까워!":o==="lose"?"상대가 더 가까워":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL,em,et)=>
-    o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${subj(o==="win"?meL:themL)} 10초에 ${fmt(Math.abs(em-et))}초 더 가까웠어.`,
-  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>10초, 더 가까이 멈춰봐.`,
+    o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${subj(o==="win"?meL:themL)} 오차 합이 ${fmt(Math.abs(em-et))}초 더 작았어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.`,
   againHead:()=>`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`,
-  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)} vs ${nm(them.n)}${fmt(them.v)}${tail}`,
-  resultDesc:"10초에 누가 더 가까웠을까. 재도전은 여기서.",
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${label(me.v)} vs ${nm(them.n)}${label(them.v)}${tail}`,
+  resultDesc:"10초에 세 번, 누가 더 가까웠을까. 재도전은 여기서.",
   resetPlay(){
+    state.tries=[];
     $("num").classList.remove("hide");$("num").textContent="0.00";$("msg").textContent="준비됐으면 시작!";
     $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
   }
@@ -224,10 +235,19 @@ function startTimer(){
 function stopTimer(){
   state.running=false;cancelAnimationFrame(state.raf);
   const ms=Math.round(performance.now()-state.t0);
+  state.tries.push(ms);
+  const n=state.tries.length;
+  if(n<TRIES){
+    $("num").classList.remove("hide");$("num").textContent=fmt(ms);
+    $("msg").innerHTML=`<b>${n}/${TRIES}</b> · ${signed(ms)}초 · 한 번 더!`;
+    const nb=$("bigBtn");nb.className="bigbtn start";nb.textContent=`다음 (${n+1}/${TRIES})`;
+    return;
+  }
+  const total=state.tries.reduce((s,v)=>s+Math.abs(v-10000),0);
   const b=$("bigBtn");b.className="bigbtn start";b.textContent="봉인됨";b.disabled=true;
   $("num").classList.add("hide");$("num").textContent="🔒";
-  $("msg").innerHTML = state.incoming ? "개봉 중…" : "<b>봉인 완료.</b> 내 기록은 상대가 멈춘 뒤에 같이 열려";
-  Duel.finish(ms);
+  $("msg").innerHTML = state.incoming ? "개봉 중…" : "<b>봉인 완료.</b> 세 번의 오차 합은 상대가 멈춘 뒤에 같이 열려";
+  Duel.finish(total,{tries:state.tries.slice()});
 }
 
 Duel.start();

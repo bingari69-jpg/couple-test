@@ -506,9 +506,15 @@ function pick(i){
   el.style.strokeDasharray=len; el.style.strokeDashoffset=len;
   el.style.transition="none";
   void el.getBoundingClientRect();
-  el.style.transition=`stroke-dashoffset ${dur}ms cubic-bezier(.45,.05,.3,1)`;
-  el.style.strokeDashoffset="0";
-  setTimeout(()=>finish(i,w), dur+60);
+  /* 도착 직전까지 내려가다 잠깐 멈칫, 마지막 한 칸은 천천히 */
+  const firstDur=Math.round(dur*0.75);
+  el.style.transition=`stroke-dashoffset ${firstDur}ms cubic-bezier(.45,.05,.3,1)`;
+  el.style.strokeDashoffset=String(len*0.12);
+  setTimeout(()=>{
+    el.style.transition="stroke-dashoffset 650ms cubic-bezier(.2,.7,.2,1)";
+    el.style.strokeDashoffset="0";
+    setTimeout(()=>finish(i,w), 650+60);
+  }, firstDur+320);
 }
 function finish(i,w){
   state.animating=false;

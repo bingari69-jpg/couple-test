@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
 <script src="../../assets/kakao-share.js?v=20260912-a"></script>
 <script src="../../assets/bet.js?v=20260910-bets2"></script>
-<script src="../../assets/duel-engine.js?v=20260912-c"></script>
+<script src="../../assets/duel-engine.js?v=20260912-d"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -378,6 +378,7 @@ const state = Duel.setup({
   linkExtra:st=>({c:st.stat}),
   roundExtra:(p,st)=>[p.c||[0,0,0,0], st.stat],
   extraKey:"c", extraDefault:[0,0,0,0],
+  tieBreak:(me,them)=>{const a=pct(me.c[0]+me.c[1]+me.c[2],me.c[3]),b=pct(them.c[0]+them.c[1]+them.c[2],them.c[3]);return a===b?null:{o:a>b?"win":"lose",why:`점수는 같지만 명중률이 높은 쪽이 이겨. (${a}% vs ${b}%)`};},
   recordCell:x=>x.v+"<small>점</small>",
   detailCell:x=>`UFO <i>${x.c[0]}</i> · <i class="g">황금 ${x.c[1]}</i> · <i class="b">아군 ${x.c[2]}</i>`
                 +`<br>명중률 ${pct(x.c[0]+x.c[1]+x.c[2], x.c[3])}% <i>(${x.c[0]+x.c[1]+x.c[2]}/${x.c[3]})</i>`,
