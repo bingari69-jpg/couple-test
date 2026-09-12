@@ -32,25 +32,25 @@ async function duel(game, mine, theirs, mineExtra, theirExtra) {
   r = await duel('arrow', 30, 30, { stat: [30, 3, 5] }, { stat: [30, 3, 8] });
   assert.match(r.verdict, /내가/); assert.match(r.sub, /함정을 더 많이/);
 
-  /* 10초 맞추기: 세 번 멈춰야 봉인되고, 링크에 세 기록이 실린다 */
+  /* 10초 맞추기: 한 번 멈추면 봉인되고, 링크에 기록(t:[ms])과 3초 뒤 맥박 정지가 적용된다 */
   const ten = load('ten', '').window;
   const st = ten.__ev('state');
-  for (const ms of [9800, 10150, 9950]) { st.running = true; st.t0 = ten.performance.now() - ms; ten.__ev('stopTimer()'); }
-  assert.equal(st.tries.length, 3);
+  ten.__ev('startTimer()'); assert.equal(el(ten, 'bigBtn').classList.contains('quiet'), false);
+  st.running = true; st.t0 = ten.performance.now() - 9800; ten.__ev('stopTimer()');
+  assert.equal(st.tries.length, 1, '한 번만 멈추면 끝');
   const link = ten.Duel.url(); assert.match(link, /#c=/);
   const pay = JSON.parse(Buffer.from(new URL(link).hash.slice(3), 'base64url').toString());
-  /* 테스트 시계는 호출마다 16ms씩 흐르므로 근사값으로 비교 */
-  assert.ok(pay.t.every((v, i) => Math.abs(v - [9800, 10150, 9950][i]) < 40), '세 기록이 링크에 실려야 함: ' + pay.t);
+  assert.equal(pay.t.length, 1); assert.ok(Math.abs(pay.t[0] - 9800) < 40);
   const guest = load('ten', new URL(link).hash).window;
-  guest.Duel.finish(120, { tries: [9960, 10040, 9980] });
+  guest.Duel.finish(40, { tries: [9960] });
   await tick(700);
   assert.match(el(guest, 'verdict').textContent, /내가 더 가까워/);
-  assert.match(el(guest, 'dA').textContent, /−0\.04 · \+0\.04 · −0\.02/);
-  assert.match(el(guest, 'dB').textContent, /−0\.1\d · \+0\.1\d · −0\.0\d/);
+  assert.match(el(guest, 'dA').textContent, /−0\.04초/);
+  assert.match(el(guest, 'dB').textContent, /−0\.(1|2)\d초/);
   /* 예전 1회 링크(값이 약 10000)는 여전히 읽힌다 */
   const legacyGuest = load('ten', '').window;
   legacyGuest.Duel.renderResult({ hist: [['옛친구', 9840, '나', 10250, 'a', 'b']], round: ['옛친구', 9840, '나', 10250, 'a', 'b'], viewer: 'b' });
-  assert.match(el(legacyGuest, 'dB').textContent, /1회 · 차이 0\.16/);
+  assert.match(el(legacyGuest, 'dB').textContent, /차이 0\.16/);
 
   /* 반응속도: 시드가 링크에 실리고, 부정출발은 0.5초로 기록되며 5회에 끝난다 */
   const react = load('react', '').window;
@@ -67,5 +67,5 @@ async function duel(game, mine, theirs, mineExtra, theirExtra) {
   assert.match(el(rg, 'msg').textContent, /0\.500초로 기록/);
 
   assert.deepEqual(PAGE_ERRORS, []);
-  console.log('동점 2차 판정 검사 통과 — 두더지·UFO·색깔·화살표 타이브레이크, 10초 3회 합산·옛 링크, 반응속도 시드·부정출발 벌점');
+  console.log('동점 2차 판정 검사 통과 — 두더지·UFO·색깔·화살표 타이브레이크, 10초 1회·옛 링크, 반응속도 시드·부정출발 벌점');
 })().catch(e => { console.error(e); process.exit(1); });

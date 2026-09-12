@@ -3,7 +3,7 @@
   const three=(a,b,c)=>[a,b,c];
   window.GATCHI_GUIDES={
     rps:{title:'가위바위보',group:'기록 대결',icon:'✊',rule:'가위, 바위, 보 중 하나를 골라 친구와 승부해요.',steps:three('내 패 고르기','카톡으로 보내기','둘의 패 보기'),tip:'내 패는 친구가 고른 뒤에 보여요.',practice:'rps'},
-    ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'timing'},
+    ten:{title:'10초 맞추기',group:'기록 대결',icon:'⏱️',rule:'화면을 보지 않고 10초라고 생각할 때 멈춰요. 기회는 한 번이에요.',steps:three('시작 누르기','10초에 멈추기','친구 기록과 비교'),tip:'소리 내서 세어도 괜찮아요.',practice:'timing'},
     react:{title:'반응속도 대결',group:'기록 대결',icon:'⚡',rule:'화면이 초록색으로 바뀌는 순간 빠르게 눌러요.',steps:three('화면을 보고 기다리기','초록색에 누르기','평균 기록 보내기'),tip:'초록색이 되기 전에 누르면 다시 해야 해요.',practice:'reaction'},
     num25:{title:'1에서 25까지',group:'기록 대결',icon:'🔢',rule:'1부터 25까지 숫자를 차례대로 눌러요.',steps:three('1부터 찾기','25까지 차례로 누르기','걸린 시간 비교'),tip:'같은 숫자판으로 친구와 겨뤄요.',practice:'numbers'},
     mole:{title:'두더지 잡기',group:'기록 대결',icon:'🐹',rule:'20초 동안 나타나는 두더지를 빠르게 눌러요.',steps:three('시작 누르기','두더지 잡기','점수 보내기'),tip:'황금은 +3점, 폭탄은 −3점이에요.',practice:'mole'},

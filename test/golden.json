@@ -3,7 +3,7 @@
     "entry_fresh": {
       "playTag": "10초 맞추기",
       "playHead": "안 보고 <b>10초</b>.<br>딱 맞춰 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
       "lockName": "",
       "tallyText": "",
       "_hidden": {
@@ -102,7 +102,7 @@
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "지은의 10초 맞추기 도전장 🔒",
-      "desc": "안 보고 10초 세다가 멈추기. 세 번 멈춰서 오차 합으로 승부. 내 기록은 네가 멈춘 뒤 공개."
+      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
     },
     "link_challenge_hist": {
       "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbWyLsp4DsnYAiLDEwMjUwLCLrr7zsiJgiLDk4NDAsImFiYzEyMyIsInp6ejk5OSJdXX0"
@@ -116,8 +116,8 @@
     },
     "open_challenge": {
       "playTag": "도전장 도착",
-      "playHead": "<b>지은</b>이 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
       "lockName": "지은",
       "tallyText": "",
       "_hidden": {
@@ -133,13 +133,13 @@
       "resTag": "1판 결과",
       "nameA": "민수 (나)",
       "tA": "10.25<small>초</small>",
-      "dA": "1회 · 차이 0.25",
+      "dA": "차이 0.25",
       "nameB": "지은",
       "tB": "9.84<small>초</small>",
-      "dB": "1회 · 차이 0.16",
+      "dB": "차이 0.16",
       "verdict": "상대가 더 가까워",
-      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
-      "titleBadge": "🏅 감각 좋은데?",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
+      "titleBadge": "🏅 보통 사람",
       "tallyBox": "",
       "_cls": {
         "sideA": "side lose",
@@ -165,12 +165,12 @@
       "btn": "결과 보기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "민수 10.25 vs 지은 9.84 — 지은 승",
-      "desc": "10초에 세 번, 누가 더 가까웠을까. 재도전은 여기서."
+      "desc": "10초에 누가 더 가까웠을까. 재도전은 여기서."
     },
     "open_challenge_noname": {
       "playTag": "도전장 도착",
-      "playHead": "<b>상대</b>가 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
-      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>세 번 멈춰서 오차를 더해, 작은 쪽이 이겨.</b>",
+      "playHead": "<b>상대</b>가 도전했다.<br>10초, 더 가까이 멈춰봐.",
+      "playLead": "시작 누르면 3초까지만 보여줘. 그다음은 속으로 세다가 10초라고 생각될 때 멈춰! <b>기회는 한 번.</b>",
       "lockName": "상대",
       "tallyText": "",
       "_hidden": {
@@ -186,12 +186,12 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "9.84<small>초</small>",
-      "dA": "1회 · 차이 0.16",
+      "dA": "차이 0.16",
       "nameB": "민수",
       "tB": "10.25<small>초</small>",
-      "dB": "1회 · 차이 0.25",
+      "dB": "차이 0.25",
       "verdict": "내가 더 가까워!",
-      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
       "titleBadge": "🏅 감각 좋은데?",
       "tallyBox": "",
       "_cls": {
@@ -365,7 +365,7 @@
       "btn": "도전 받기",
       "img": "https://bingari69-jpg.github.io/couple-test/og/og-ten-sq.png",
       "title": "🍱 점심 걸고 — 지은의 10초 맞추기 도전장 🔒",
-      "desc": "안 보고 10초 세다가 멈추기. 세 번 멈춰서 오차 합으로 승부. 내 기록은 네가 멈춘 뒤 공개."
+      "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
     },
     "bet_off_link": {
       "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0",
@@ -375,11 +375,11 @@
       "betOpen": "이기면 점심!",
       "betOpenHidden": false,
       "betBoxHidden": true,
-      "playHead": "<b>지은</b>이 도전했다.<br>10초, 세 번. 더 가까이 멈춰봐.",
+      "playHead": "<b>지은</b>이 도전했다.<br>10초, 더 가까이 멈춰봐.",
       "stateBet": "점심"
     },
     "bet_result": {
-      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
       "betResult": "내가 점심 산다 😂",
       "betResultHidden": false
     },
@@ -403,7 +403,7 @@
       "url": "https://bingari69-jpg.github.io/couple-test/t/ten/#c=eyJ2IjoxLCJuIjoi66-87IiYIiwiaSI6Inp6ejk5OSIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi7KCQ7IusIiwiaCI6W1si7KeA7J2AIiw5ODQwLCLrr7zsiJgiLDEwMjUwLCJhYmMxMjMiLCJ6eno5OTkiLFtdLFtdXV19"
     },
     "bet_result_view": {
-      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
       "betResult": "민수가 점심 산다 😂"
     },
     "bet_tie_noname": {
@@ -423,12 +423,12 @@
       "resTag": "1판 결과",
       "nameA": "지은 (나)",
       "tA": "9.84<small>초</small>",
-      "dA": "1회 · 차이 0.16",
+      "dA": "차이 0.16",
       "nameB": "민수",
       "tB": "10.25<small>초</small>",
-      "dB": "1회 · 차이 0.25",
+      "dB": "차이 0.25",
       "verdict": "내가 더 가까워!",
-      "subVerdict": "지은이 오차 합이 0.09초 더 작았어.",
+      "subVerdict": "지은이 10초에 0.09초 더 가까웠어.",
       "titleBadge": "🏅 감각 좋은데?",
       "tallyBox": "",
       "_cls": {
