@@ -37,7 +37,7 @@ values ('여기에-User-UID', '운영자', 'owner');
 ## 4. 관리센터 첫 게시
 
 1. 로컬에서는 `http://127.0.0.1:4173/admin/`을 엽니다.
-2. 배포 후에는 `https://bingari69-jpg.github.io/couple-test/admin/`을 엽니다.
+2. 배포 후에는 `https://noljago.co.kr/admin/`을 엽니다.
 3. 위에서 만든 계정으로 로그인합니다.
 4. 현재 게임 목록과 디자인을 확인합니다.
 5. **임시 저장**을 누릅니다.

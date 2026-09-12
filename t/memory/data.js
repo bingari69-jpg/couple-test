@@ -4,8 +4,8 @@ window.MEMORY = {
   series: "우리의 기억",
   path: "t/memory/",
   og: {
-    wide: "https://bingari69-jpg.github.io/couple-test/og/og-memory.png",
-    sq:   "https://bingari69-jpg.github.io/couple-test/og/og-memory-sq.png"
+    wide: "https://noljago.co.kr/og/og-memory.png",
+    sq:   "https://noljago.co.kr/og/og-memory-sq.png"
   },
   sets: {
     couple: { name:"커플 · 부부", emoji:"💕", desc:"우리가 같은 걸 기억하고 있을까" },

@@ -4,7 +4,7 @@
 (function(){
   const T = window.TEST;
   const N = T.questions.length;
-  const ROOT = "https://bingari69-jpg.github.io/couple-test/";
+  const ROOT = "https://noljago.co.kr/";
   const DEPLOY_BASE = ROOT + T.path;
   const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
   const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;

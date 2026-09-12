@@ -8,13 +8,13 @@
 <meta property="og:title" content="결혼 전에 맞춰봐야 할 것들">
 <meta property="og:description" content="둘 다 같은 질문에 답하면, 누가 먼저 꺼냈는지가 사라집니다. 20문항 · 2분">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/marriage/">
-<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/marriage.png?v=20260910-unified">
+<meta property="og:url" content="https://noljago.co.kr/t/marriage/">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/marriage.png?v=20260910-unified">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
 <meta name="twitter:card" content="summary_large_image">
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
-<script src="../../assets/kakao-share.js?v=20260912-pairs"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
 <style>
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
 @import url('https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&display=swap');
@@ -398,7 +398,7 @@ function baseUrl(){
   if(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null"){
     return location.origin + location.pathname;
   }
-  return "https://bingari69-jpg.github.io/couple-test/t/marriage/";
+  return "https://noljago.co.kr/t/marriage/";
 }
 
 async function shareOrCopy(url, title){
@@ -519,7 +519,7 @@ function finishQuiz(){
     $('#shareBtn').onclick = ()=>shareOrCopy(link, (myName?myName+"님이 보낸 ":"")+"커플 테스트");
     document.getElementById("kakaoBtn").onclick=()=>kakaoShare({
       url:link, btn:"나도 답하기",
-      img:"https://bingari69-jpg.github.io/couple-test/og/og-marriage-sq.png",
+      img:"https://noljago.co.kr/og/og-marriage-sq.png",
       title:`${myName?myName+"이(가) ":""}결혼 전 테스트를 보냈어요`,
       desc:"같은 20개 질문에 답하면 어디서 다르게 생각하는지 바로 보여요."
     }, ()=>document.getElementById("shareBtn").click());
@@ -605,7 +605,7 @@ function renderResult(A, B, canSendBack){
     $('#sendBackBtn').onclick = ()=>shareOrCopy(rlink, "우리 커플 테스트 결과");
     document.getElementById("kakaoRes").onclick=()=>kakaoShare({
       url:rlink, btn:"결과 보기",
-      img:"https://bingari69-jpg.github.io/couple-test/og/og-marriage-sq.png",
+      img:"https://noljago.co.kr/og/og-marriage-sq.png",
       title:"두 사람의 결과가 나왔어요",
       desc:"20개 중 몇 개가 달랐는지 확인해보세요"
     }, ()=>document.getElementById("sendBackBtn").click());

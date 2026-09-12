@@ -8,8 +8,8 @@ window.TEST = {
   intro: "싸울 때 부딪히나 피하나, 풀 때 빠르나 느리나. 10문항이면 우리 둘의 싸움 모양이 나와.",
   rel: "연인 · 친구 · 형제 · 부부",
   og: {
-    wide: "https://bingari69-jpg.github.io/couple-test/og/og-fight.png",
-    sq:   "https://bingari69-jpg.github.io/couple-test/og/og-fight-sq.png"
+    wide: "https://noljago.co.kr/og/og-fight.png",
+    sq:   "https://noljago.co.kr/og/og-fight-sq.png"
   },
 
   /* 축: 선택 0 = left, 1 = right */

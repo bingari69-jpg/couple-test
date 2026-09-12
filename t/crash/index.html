@@ -8,14 +8,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="20분 후 추락합니다">
 <meta property="og:description" content="정답 없는 8개의 극한 선택. 내가 먼저 답하고, 너와 어디서 갈리는지 열어봅니다.">
-<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/crash.png?v=20260910-unified">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/crash.png?v=20260910-unified">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
-<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/crash/">
+<meta property="og:url" content="https://noljago.co.kr/t/crash/">
 <meta name="twitter:card" content="summary_large_image">
 
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
-<script src="../../assets/kakao-share.js?v=20260912-pairs"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -223,7 +223,7 @@
 /* =========================================================
    공통 영역 — 나중에 /assets/core.js 로 분리할 부분
    ========================================================= */
-const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/crash/";
+const DEPLOY_BASE = "https://noljago.co.kr/t/crash/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin !== "null");
 const baseUrl  = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
 
@@ -391,7 +391,7 @@ document.getElementById("kakaoBtn").onclick=()=>{
   const made=inviteUrl();
   kakaoShare({
     url:made.url, btn:"나도 선택하기",
-    img:"https://bingari69-jpg.github.io/couple-test/assets/share-cards/crash.png?v=20260910-choice-v2",
+    img:"https://noljago.co.kr/assets/share-cards/crash.png?v=20260910-choice-v2",
     title:`${made.nm?made.nm+"의 ":""}선택은 봉인됐어. 너라면?`,
     desc:"정답 없는 8개 상황. 네가 모두 고르면 둘의 선택이 함께 열려."
   }, ()=>document.getElementById("copyLink").click());
@@ -451,7 +451,7 @@ function showCompare(p){
 function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 document.getElementById("kakaoRes").onclick=()=>kakaoShare({
   url:window.__url2, btn:"결과 보기",
-  img:"https://bingari69-jpg.github.io/couple-test/assets/share-cards/crash.png?v=20260910-choice-v2",
+  img:"https://noljago.co.kr/assets/share-cards/crash.png?v=20260910-choice-v2",
   title:"두 사람의 결과가 나왔어요",
   desc:"8개의 극한 선택. 우리 둘은 어디서 갈렸을까?"
 }, ()=>document.getElementById("shareResult").click());

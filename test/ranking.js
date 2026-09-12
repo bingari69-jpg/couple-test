@@ -19,7 +19,7 @@ choose(maker,answers[0]);el(maker,'next').click();el(maker,'previous').click();
 assert.equal(el(maker,'choices').children[0].getAttribute('aria-pressed'),'true');el(maker,'next').click();
 complete(maker,answers.slice(1));assert.ok(shown(maker,'share'));
 const invitation=grabKakao(maker,'sendInvite');assert.equal(invitation.textOnly,false);
-assert.ok(invitation.url.includes('/couple-test/t/ranking/#c='));assert.ok(invitation.url.length<1500);
+assert.ok(invitation.url.includes('noljago.co.kr/t/ranking/#c='));assert.ok(invitation.url.length<1500);
 const hash=invitation.url.slice(invitation.url.indexOf('#'));
 const guest=open(hash);assert.ok(shown(guest,'invite'));assert.equal(el(guest,'hostName').textContent,'다람🐿️');
 el(guest,'guestName').value='친한 친구';el(guest,'guessStart').click();

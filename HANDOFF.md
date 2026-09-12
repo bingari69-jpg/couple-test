@@ -5,11 +5,21 @@
 ## 서비스와 현재 배포
 
 - 서비스명: 같이놀자. 카카오톡 링크로 편지·게임·심리 콘텐츠를 주고받는 정적 웹사이트.
-- 공개 주소: https://bingari69-jpg.github.io/couple-test/
+- 공개 주소: https://noljago.co.kr/
 - 저장소: https://github.com/bingari69-jpg/couple-test (배포 브랜치 `main`, GitHub Pages).
 - 로컬 프로젝트: `C:/Users/USER/Desktop/couple-test`, 미리보기 `http://127.0.0.1:4173/`.
 - Supabase 공용 상태 저장소와 단체방·완료 알림이 연결되어 있다.
 - 관리자 모드 코드와 운영 Supabase SQL 적용, 첫 관리자 계정 등록이 완료됐다.
+
+## 사용자 도메인 noljago.co.kr (2026-09-12)
+
+- 가비아 DNS: `@` A 레코드 4개(185.199.108/109/110/111.153), `www` CNAME → `bingari69-jpg.github.io.`. GitHub Pages Custom domain에 `noljago.co.kr` 등록 → 저장소에 `CNAME` 파일 자동 커밋(`230ec39`). DNS check 통과, HTTPS 응답 확인.
+- 사이트가 `/couple-test/` 하위 경로에서 도메인 루트로 옮겨졌다. 옛 `bingari69-jpg.github.io/couple-test/...` 주소는 GitHub가 새 도메인으로 리다이렉트하므로 이미 보낸 카톡 링크도 열린다(해시 유지).
+- 코드: 하드코딩 주소 177곳(OG 메타·`deployBase`·`CARD_ROOT`·sitemap·robots·편지 intent URL·테스트 기준 URL)을 `https://noljago.co.kr/`로 치환. `robots.txt` Disallow 경로를 루트 기준으로 변경. 바뀐 공용 스크립트(`kakao-share`·`bet`·`group-room`·`letter-app`) 캐시 버전을 `20260912-domain`으로 갱신. 골든은 URL만 바뀜.
+- `assets/result-notify.js` `resultHref`: 이전에 Supabase에 저장된 결과 주소는 `/couple-test/t/...`로 시작하므로, 현재 경로가 `/couple-test/`가 아니면 접두어를 떼고 연다. 도메인 이전 전 미확인 완료 카드도 새 도메인에서 열린다.
+- `assets/result-notify.js`의 서비스 워커 경로는 `/couple-test/` 여부를 보고 고르므로 그대로 둔다(새 도메인에서는 `/sw.js`).
+- Edge Function `clever-service`: 허용 출처에 `https://noljago.co.kr`, `https://www.noljago.co.kr` 추가(옛 github.io 출처 유지), 기본 출처와 푸시 아이콘 경로를 새 도메인 기준으로 변경. **Dashboard에서 다시 배포해야 반영된다.**
+- 사용자가 직접 할 일: (1) 카카오 개발자 콘솔 → 앱 설정 → 플랫폼 → Web 사이트 도메인에 `https://noljago.co.kr` 추가 (2) `clever-service` 재배포 (3) GitHub Pages에서 Enforce HTTPS 활성화(인증서 발급 후) (4) 알림을 켰던 기기는 새 도메인에서 "알림 받기"를 다시 눌러야 한다(푸시 구독은 출처에 묶임).
 
 ## 작업 디렉터리 주의사항
 

@@ -8,14 +8,14 @@
 <meta property="og:type" content="website">
 <meta property="og:title" content="늦게 온 당신, 어디에 앉나요">
 <meta property="og:description" content="둘 중 하나. 고르면 성향이 나오고, 상대 것도 나란히.">
-<meta property="og:image" content="https://bingari69-jpg.github.io/couple-test/assets/share-cards/seat.png?v=20260910-unified">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/seat.png?v=20260910-unified">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
-<meta property="og:url" content="https://bingari69-jpg.github.io/couple-test/t/seat/">
+<meta property="og:url" content="https://noljago.co.kr/t/seat/">
 <meta name="twitter:card" content="summary_large_image">
 
 <script src="../../assets/analytics.js?v=20260912-linkguard"></script>
-<script src="../../assets/kakao-share.js?v=20260912-pairs"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -159,7 +159,7 @@
 
 <script>
 /* ===== 배포 주소 ===== */
-const DEPLOY_BASE = "https://bingari69-jpg.github.io/couple-test/t/seat/";
+const DEPLOY_BASE = "https://noljago.co.kr/t/seat/";
 const isSandbox = () => !(/^https?:$/.test(location.protocol) && location.origin && location.origin!=="null");
 const baseUrl   = () => isSandbox() ? DEPLOY_BASE : location.origin + location.pathname;
 
@@ -267,7 +267,7 @@ $("goBtn").onclick=()=>{
   }
 };
 $("copyBtn").onclick=()=>copy(madeUrl,"복사됐어요. 카톡에 붙여넣으세요");
-$("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"나도 고르기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
+$("kakaoBtn").onclick=()=>kakaoShare({url:madeUrl,btn:"나도 고르기",img:"https://noljago.co.kr/og/og-seat-sq.png",
   title:`${state.name?state.name+"은(는) ":""}자리를 정했어. 너는?`, desc:"모임에 30분 늦었다. 웃음소리 쪽? 창가 끝? 고르면 둘의 성향이 나란히."},
   ()=>copy(madeUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
 $("editBtn").onclick=()=>show("s-pick");
@@ -311,7 +311,7 @@ function renderResult(R){
     const rurl=baseUrl()+"#r="+b64e(JSON.stringify({v:1,an:R.aName,a:R.a,bn:R.bName,b:R.b}));
     window.__gatchiResultUrl=rurl;   // 완료 알림의 "결과 보기"가 열 결과 주소
     $("sendResult").onclick=()=>{$("resLinkbox").textContent=rurl;copy(rurl,"결과 링크를 복사했어요. 상대에게 보내세요");};
-    $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://bingari69-jpg.github.io/couple-test/og/og-seat-sq.png",
+    $("kakaoRes").onclick=()=>kakaoShare({url:rurl,btn:"결과 보기",img:"https://noljago.co.kr/og/og-seat-sq.png",
       title: same ? `둘 다 ${R.a+1}번 자리` : `${nm(R.aName)}${R.a+1}번 · ${nm(R.bName)}${R.b+1}번`,
       desc:`${nm(R.aName)}${SEATS[R.a].name}, ${nm(R.bName)}${SEATS[R.b].name}`},
       ()=>copy(rurl,"카톡 공유를 못 열어 링크를 복사했어요"));

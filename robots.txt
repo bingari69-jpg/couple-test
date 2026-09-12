@@ -1,6 +1,6 @@
 User-agent: *
 Allow: /
-Disallow: /couple-test/admin/
-Disallow: /couple-test/privacy/
+Disallow: /admin/
+Disallow: /privacy/
 
-Sitemap: https://bingari69-jpg.github.io/couple-test/sitemap.xml
+Sitemap: https://noljago.co.kr/sitemap.xml

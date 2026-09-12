@@ -16,6 +16,8 @@ const titles: Record<string, string> = {
 // 브라우저가 functions.invoke로 부르면 Authorization·Content-Type 헤더 때문에 먼저 OPTIONS(preflight)가 온다.
 // withSupabase는 auth:"user"라 토큰 없는 OPTIONS를 거절할 수 있으므로 그 앞에서 직접 응답한다.
 const ALLOWED_ORIGINS = new Set([
+  "https://noljago.co.kr",
+  "https://www.noljago.co.kr",
   "https://bingari69-jpg.github.io",
   "http://127.0.0.1:4173",
   "http://localhost:4173",
@@ -23,7 +25,7 @@ const ALLOWED_ORIGINS = new Set([
 
 function corsHeaders(req: Request): Record<string, string> {
   const origin = req.headers.get("Origin") || "";
-  const allow = ALLOWED_ORIGINS.has(origin) ? origin : "https://bingari69-jpg.github.io";
+  const allow = ALLOWED_ORIGINS.has(origin) ? origin : "https://noljago.co.kr";
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -39,7 +41,7 @@ const authed = withSupabase({ auth: "user" }, async (req, ctx) => {
     try {
       const publicKey = Deno.env.get("VAPID_PUBLIC_KEY")!;
       const privateKey = Deno.env.get("VAPID_PRIVATE_KEY")!;
-      const subject = Deno.env.get("VAPID_SUBJECT") || "https://bingari69-jpg.github.io/couple-test/";
+      const subject = Deno.env.get("VAPID_SUBJECT") || "https://noljago.co.kr/";
       if (!publicKey || !privateKey || !ctx.userClaims?.id) {
         return json({ error: "SERVER_NOT_CONFIGURED" }, 500, req);
       }
@@ -71,8 +73,8 @@ const authed = withSupabase({ auth: "user" }, async (req, ctx) => {
         body: challenge.result_summary || "상대가 최종 결과까지 끝냈어요.",
         url: challenge.result_url,
         tag: `gatchi-result-${challenge.code}`,
-        icon: "/couple-test/og-image.png",
-        badge: "/couple-test/og-image.png",
+        icon: "/og-image.png",
+        badge: "/og-image.png",
       });
 
       let sent = 0;

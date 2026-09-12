@@ -61,7 +61,7 @@
     page_path: location.pathname
   });
 
-  /* 게임 이름: /couple-test/t/rps/ → rps, 홈 → home */
+  /* 게임 이름: /t/rps/ (옛 주소는 /couple-test/t/rps/) → rps, 홈 → home */
   const m=location.pathname.match(/\/t\/(.+?)\/?$/);
   const game = m ? m[1] : "home";
   const entry = (function(){

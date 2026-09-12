@@ -12,7 +12,7 @@ async function main() {
   sandbox.window = sandbox;
   vm.runInNewContext(source, sandbox);
   const payload = { v:4, w:'가'.repeat(448)+'💌', n:'친구', f:'나' };
-  const url = 'https://bingari69-jpg.github.io/couple-test/t/letter/#l=' + Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const url = 'https://noljago.co.kr/t/letter/#l=' + Buffer.from(JSON.stringify(payload)).toString('base64url');
   const input = {url,title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.',img:'https://example.com/letter.png',btn:'편지 열어보기'};
   assert.equal(await sandbox.kakaoShare(input), true);
   assert.equal(message.objectType, 'feed');
@@ -33,7 +33,7 @@ async function main() {
   const catalog=JSON.parse(fs.readFileSync(path.join(__dirname,'../assets/share-cards/catalog.json'),'utf8'));
   for(const slug of Object.keys(catalog)){
     for(const fragment of ['#c=sealed','#r=result']){
-      const target='https://bingari69-jpg.github.io/couple-test/t/'+slug+'/'+fragment;
+      const target='https://noljago.co.kr/t/'+slug+'/'+fragment;
       assert.equal(await sandbox.kakaoShare({url:target,title:'친구의 도전',desc:'함께 해봐',btn:'열어보기'}),true);
       assert.equal(message.objectType,'feed');assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);
       assert.equal(message.content.link.webUrl,target);assert.equal(message.content.link.mobileWebUrl,target);assert.equal(message.buttons,undefined);
@@ -47,7 +47,7 @@ async function main() {
     decorateShareUrl(target){decorated=true;const u=new URL(target);u.searchParams.set('ch','ABCDEF123456');return u.href;},
     afterShare(){afterShare=true;}
   };
-  const challenge='https://bingari69-jpg.github.io/couple-test/t/rps/#c=sealed';
+  const challenge='https://noljago.co.kr/t/rps/#c=sealed';
   assert.equal(await sandbox.kakaoShare({url:challenge,title:'가위바위보',desc:'도전',btn:'도전 받기'}),true);
   assert.equal(decorated,true);
   assert.equal(afterShare,true);

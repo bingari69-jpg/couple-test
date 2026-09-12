@@ -300,7 +300,11 @@
 
   function resultHref(path) {
     try {
-      const url = new URL(path, location.origin);
+      /* 도메인 이전(noljago.co.kr) 전에 저장된 결과 주소는 /couple-test/ 로 시작한다.
+         지금 사이트가 그 경로에 있지 않으면 접두어를 떼어 새 도메인 루트 기준으로 연다. */
+      let given = String(path || "");
+      if (given.startsWith("/couple-test/") && !location.pathname.startsWith("/couple-test/")) given = given.slice("/couple-test".length);
+      const url = new URL(given, location.origin);
       if (url.origin !== location.origin) return "";
       return url.href;
     } catch (_) { return ""; }

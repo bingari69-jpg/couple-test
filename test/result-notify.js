@@ -19,7 +19,7 @@ const client = {
   })
 };
 
-const location = new URL('https://bingari69-jpg.github.io/couple-test/t/rps/');
+const location = new URL('https://noljago.co.kr/t/rps/');
 const document = {
   body: null,
   head: { appendChild(){} },

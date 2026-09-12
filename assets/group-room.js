@@ -3,7 +3,7 @@
 
   const $ = id => document.getElementById(id);
   const service = window.GroupRoomService;
-  const PROD_URL = "https://bingari69-jpg.github.io/couple-test/t/group-room/";
+  const PROD_URL = "https://noljago.co.kr/t/group-room/";
   let selectedStake = "커피 한 잔";
   let code = "";
   let snapshot = null;
@@ -108,7 +108,7 @@
         title,
         desc,
         url,
-        img: "https://bingari69-jpg.github.io/couple-test/assets/share-cards/ladder.png?v=20260910-unified",
+        img: "https://noljago.co.kr/assets/share-cards/ladder.png?v=20260910-unified",
         imageWidth: 800,
         imageHeight: 480,
         btn: result ? "결과 보기" : "단체방 들어가기"

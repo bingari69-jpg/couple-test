@@ -94,8 +94,8 @@
    if(p.v!=null&&(!Number.isInteger(p.v)||p.v<1||p.v>4))throw new Error('unsupported version');
    return p;
  }
- function urlFor(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';const base=local?'https://bingari69-jpg.github.io/couple-test/t/letter/':location.origin+location.pathname;return base+'#l='+encode(p);}
- function replyUrl(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:',base=local?'https://bingari69-jpg.github.io/couple-test/t/letter/':location.origin+location.pathname,u=new URL(base);u.searchParams.set('reply','1');u.searchParams.set('template',template(p&&p.tpl).id);if(p&&p.f)u.searchParams.set('to',p.f.slice(0,24));if(p&&p.n)u.searchParams.set('from',p.n.slice(0,24));return u.href;}
+ function urlFor(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';const base=local?'https://noljago.co.kr/t/letter/':location.origin+location.pathname;return base+'#l='+encode(p);}
+ function replyUrl(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:',base=local?'https://noljago.co.kr/t/letter/':location.origin+location.pathname,u=new URL(base);u.searchParams.set('reply','1');u.searchParams.set('template',template(p&&p.tpl).id);if(p&&p.f)u.searchParams.set('to',p.f.slice(0,24));if(p&&p.n)u.searchParams.set('from',p.n.slice(0,24));return u.href;}
  function externalUrl(target){const ua=navigator.userAgent||'';if(/Android/i.test(ua)){const u=new URL(target);return 'intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=com.android.chrome;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url='+encodeURIComponent(target)+';end';}return 'kakaotalk://web/openExternal?url='+encodeURIComponent(target);}
  function beginReplyHere(p){draft.to=p&&p.f||'';draft.from=p&&p.n||'';draft.body='';draft.template=template(p&&p.tpl).id;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('library',{historyMode:'replace'});}
  function beginReply(e){const letter=incoming;if(!letter){e.preventDefault();return;}if(/KAKAOTALK/i.test(navigator.userAgent||''))return;e.preventDefault();beginReplyHere(letter);}
@@ -120,13 +120,13 @@
  }
  $('copyLetter').onclick=copyLink;
  // Third-party sharing code is loaded only after an explicit share action. No analytics on letters.
- function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260912-pairs';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
+ function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260912-domain';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}
  async function sendLetter(textOnly=false){
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://bingari69-jpg.github.io/couple-test/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},()=>shareFallback(url));}
+   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/og/og-letter-sq.png',title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.'},()=>shareFallback(url));}
    catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();

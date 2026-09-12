@@ -34,7 +34,7 @@ function attach(w) {
   assert.equal(el(g, 's-result').classList.contains('hidden'), false);
   const done = calls.find(c => c.name === 'complete_game_challenge');
   assert.ok(done, '완료 RPC가 호출돼야 함');
-  assert.match(done.url, /^\/couple-test\/t\/ten\/#r=/, '결과 주소는 #r= 링크여야 함: ' + done.url);
+  assert.match(done.url, /^\/t\/ten\/#r=/, '결과 주소는 #r= 링크여야 함: ' + done.url);
   assert.equal(new URL('https://x' + done.url).searchParams.get('ch'), null, '결과 주소에 ch 코드가 남으면 안 됨');
 
   /* 2) 가위바위보도 결과 링크를 알려준다 */

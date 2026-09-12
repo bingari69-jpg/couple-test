@@ -62,7 +62,7 @@ function load(game, hash) {
   html = html.replace("<head>", "<head>\n<script>" + STUB + "</script>");
   html = html.replace("</body>", "<script>" + PROBE + "</script>\n</body>");
   return new JSDOM(html, {
-    url: "https://bingari69-jpg.github.io/couple-test/t/" + game + "/" + (hash || ""),
+    url: "https://noljago.co.kr/t/" + game + "/" + (hash || ""),
     runScripts: "dangerously",
     pretendToBeVisual: false,
     virtualConsole: vc,
