@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>오늘의 단어</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="오늘의 단어 — 두 글자, 몇 번 만에 맞힐까?">
+<meta property="og:description" content="자모 힌트로 두 글자 단어를 6번 안에. 같은 단어, 더 적은 시도로 이기기. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/daily-word.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/daily-word/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<script src="data.js?v=20260913-new"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)}
+  .hud .cnt{text-align:right}
+  .hud .cnt .v small{font-size:.45em;color:var(--sub);font-weight:700}
+
+  /* 단어판 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:12px 12px 14px}
+  .daybadge{text-align:center;font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--sub);margin-bottom:10px}
+  .rows{display:flex;flex-direction:column;gap:7px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .syl{display:flex;gap:4px;justify-content:center;align-items:stretch;min-height:58px;background:#FFFDF6;border:2px dashed var(--line);border-radius:14px;padding:5px}
+  .syl.filled{border-style:solid;border-color:var(--line)}
+  .row.cur .syl{border-color:var(--blue)}
+  .jm{flex:1;max-width:54px;display:flex;align-items:center;justify-content:center;border-radius:10px;font-size:24px;font-weight:900;background:#F3EEE2;color:var(--ink);line-height:1}
+  .jm.g{background:var(--green);color:#fff} .jm.y{background:var(--yellow);color:#4a3600} .jm.x{background:#D9D2C3;color:#8a8070}
+  .row.pop .jm{animation:pop .3s ease}
+  .legend{display:flex;justify-content:center;gap:12px;font-size:12px;color:var(--sub);font-weight:600;margin-top:10px}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:4px;vertical-align:-1px;margin-right:4px}
+  .used{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin-top:8px;min-height:22px}
+  .used span{font-size:14px;font-weight:800;padding:2px 7px;border-radius:8px;background:#F3EEE2;color:var(--sub)}
+  .used span.g{background:var(--green);color:#fff} .used span.y{background:var(--yellow);color:#4a3600} .used span.x{background:#D9D2C3;color:#8a8070;text-decoration:line-through}
+  .ansrow{display:flex;gap:8px;margin-top:12px}
+  .ansrow input[type=text]{flex:1;min-width:0;font-size:22px;text-align:center;letter-spacing:.2em}
+  .ansrow input.bad{animation:bad .35s ease;border-color:var(--red)}
+  @keyframes bad{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .okbtn{border:none;border-radius:14px;padding:0 20px;font:inherit;font-size:17px;font-weight:900;background:var(--blue);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .okbtn:disabled{opacity:.4;cursor:default}
+  .reveal{min-height:22px;margin-top:10px;text-align:center;font-size:15px;font-weight:800;color:var(--sub)}
+  .reveal.ok{color:#1a8f4a} .reveal.no{color:var(--red)}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+  .daylock{margin:14px 0;background:#fff;border:2px dashed var(--yellow);border-radius:16px;padding:14px 16px;font-size:14px;line-height:1.6}
+  .daylock b{color:var(--red)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="daily-word">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">오늘의 단어</span>
+  <h1 id="playHead">두 글자 단어.<br><b>몇 번 만에 맞힐까?</b></h1>
+  <p class="lead" id="playLead">자모(ㄱ·ㅏ·ㄴ) 하나하나 <b>초록</b>은 자리까지 맞음, <b>노랑</b>은 다른 자리에 있음. 6번 안에 맞혀. 오늘은 둘 다 같은 단어야 — 더 적은 시도로 이기기. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">걸린 시간</div><div class="v" id="clock">0.0</div></div>
+    <div class="c cnt"><div class="lab">남은 기회</div><div class="v" id="count">6<small>/6</small></div></div>
+  </div>
+
+  <div class="daylock hidden" id="dayLock"></div>
+
+  <div class="board" id="board">
+    <div class="daybadge" id="dayBadge">오늘의 단어</div>
+    <div class="rows" id="rows"></div>
+    <div class="legend"><span><i style="background:var(--green)"></i>자리까지 맞음</span><span><i style="background:var(--yellow)"></i>다른 자리에 있음</span><span><i style="background:#D9D2C3"></i>없음</span></div>
+    <div class="used" id="used"></div>
+    <div class="ansrow">
+      <input type="text" id="guessIn" placeholder="두 글자" maxlength="2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" disabled>
+      <button class="okbtn" id="okBtn" type="button" disabled>확인</button>
+    </div>
+    <div class="reveal" id="reveal" role="status" aria-live="polite"></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 열려</div></div>
+  </div>
+  <div class="info"><span>시도 <b id="tries">0</b>번</span><span id="size">두 글자 · 6번</span></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+  <button class="btn btn-sub hidden" id="randomBtn">다른 단어로 도전장 만들기</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 단어를 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 단어로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 단어로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 오늘의 단어 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 단어 고르기·자모 분해·판정·판 그리기만 남는다.
+
+   규칙: 두 글자 명사 하나를 6번 안에 맞힌다. 매 시도마다 자모(초성·중성·종성) 하나하나에
+   초록(자리까지 맞음)·노랑(정답 어딘가에 있음)·회색(없음)을 칠해 준다.
+   기록 = 맞히기까지 시도 횟수(1~6, 못 맞히면 7). 적을수록 이기고, 같으면 더 빨리 끝낸 쪽.
+   시드는 기본으로 오늘 날짜(서울)에서 나온다 → 링크 없이도 둘이 같은 단어. 재도전은 새 시드.
+   정답은 끝나기 전에는 화면에 나오지 않는다. */
+const MAX_TRIES=6, FAIL_V=7;
+const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+const JUNG=['ㅏ','ㅐ','ㅑ','ㅒ','ㅓ','ㅔ','ㅕ','ㅖ','ㅗ','ㅘ','ㅙ','ㅚ','ㅛ','ㅜ','ㅝ','ㅞ','ㅟ','ㅠ','ㅡ','ㅢ','ㅣ'];
+const JONG=['','ㄱ','ㄲ','ㄳ','ㄴ','ㄵ','ㄶ','ㄷ','ㄹ','ㄺ','ㄻ','ㄼ','ㄽ','ㄾ','ㄿ','ㅀ','ㅁ','ㅂ','ㅄ','ㅅ','ㅆ','ㅇ','ㅈ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+/* 음절 하나 → 자모 배열 [초성, 중성, (종성)] */
+function decompose(ch){
+  const c=ch.charCodeAt(0)-0xAC00; if(c<0||c>11171) return [ch];
+  const out=[CHO[Math.floor(c/588)], JUNG[Math.floor((c%588)/28)]];
+  const jong=JONG[c%28]; if(jong) out.push(jong);
+  return out;
+}
+const jamoOf=word=>Array.from(word).map(decompose);
+/* 판정: 자리까지 맞으면 g, 정답 자모 묶음에 남아 있으면 y, 아니면 x (같은 자모가 여럿이면 개수만큼만 노랑) */
+function feedback(guess,answer){
+  const G=jamoOf(guess), A=jamoOf(answer);
+  const res=G.map((s,i)=>s.map((j,k)=>({j,s:(A[i]&&A[i][k]===j)?'g':''})));
+  const left={};
+  A.forEach((s,i)=>s.forEach((j,k)=>{ if(!(G[i]&&G[i][k]===j)) left[j]=(left[j]||0)+1; }));
+  res.forEach(s=>s.forEach(c=>{ if(c.s) return; if(left[c.j]>0){ c.s='y'; left[c.j]--; } else c.s='x'; }));
+  return res;
+}
+const WORD_SET=new Set(DAILY_WORDS);
+const isWord=w=>/^[가-힣]{2}$/.test(w)&&WORD_SET.has(w);
+
+/* ===== 오늘 날짜 시드 =====
+   서울 기준 날짜 문자열을 해시해 시드로 쓴다. 같은 날이면 링크 없이도 같은 단어. */
+function dayKey(){ return new Date(Date.now()+9*3600*1000).toISOString().slice(0,10); }
+function hash(str){ let h=1779033703^str.length; for(let i=0;i<str.length;i++){ h=Math.imul(h^str.charCodeAt(i),3432918353); h=(h<<13)|(h>>>19); } return h>>>0; }
+const daySeed=key=>hash('daily:'+(key||dayKey()));
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function wordOf(seed){ const rnd=mulberry32(seed>>>0); return DAILY_WORDS[Math.floor(rnd()*DAILY_WORDS.length)]; }
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+/* 하루 한 번: 오늘 단어를 끝냈으면 기기에 적어 두고, 다시 열면 막는다 */
+const DONE_KEY=key=>'dw_done:'+(key||dayKey());
+function dayDone(){ try{ return JSON.parse(localStorage.getItem(DONE_KEY())||'null'); }catch(e){ return null; } }
+function markDayDone(rec){ try{ localStorage.setItem(DONE_KEY(),JSON.stringify(rec)); }catch(e){} }
+const isTodaySeed=()=>state.seed===daySeed();
+
+const LEVELS=[{n:1,label:'오늘',limitMs:0,goal:6,best:3}];
+const fmt=ms=>(ms/1000).toFixed(1);
+const triesText=v=>v>=FAIL_V?'실패':v+'번';
+function titleFor(v){
+  if(v<=1) return "단어 점쟁이";
+  if(v<=2) return "자모 천재";
+  if(v<=3) return "눈치 빠른 편";
+  if(v<=4) return "보통 사람";
+  if(v<=6) return "아슬아슬";
+  return "다음엔 꼭";
+}
+const NEXT=[
+  {path:"../choseong/", title:"초성 퀴즈",   desc:"ㄸㅂㅇ 뭔지 알아? 60초에 5문제."},
+  {path:"../nonsense/", title:"넌센스 대결", desc:"같은 5문제, 누가 더 많이 맞힐까."},
+  {path:"../pairs/",    title:"짝 맞추기",   desc:"같은 카드 배치, 누가 더 빨리."}
+];
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/daily-word/",
+  og:"https://noljago.co.kr/assets/share-cards/daily-word.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"오늘의 단어",
+  challengeDesc:"같은 두 글자 단어. 자모 힌트로 6번 안에. 더 적은 시도로 맞힌 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  hasSeed:true,
+  scrollToShare:true,
+  state:{seed:0,level:0,answer:'',tries:0,guesses:[],used:{},elapsed:0,
+         running:false,done:false,t0:0,raf:0,cdTimer:0},
+  linkExtra:st=>({e:st.elapsed,l:st.level}),
+  roundExtra:(p,st)=>[p.e||0, st.elapsed],
+  extraKey:"e", extraDefault:0,
+  tieBreak:(me,them)=>me.e===them.e?null:{o:me.e<them.e?"win":"lose",why:`시도 횟수는 같지만 더 빨리 맞힌 쪽이 이겨. (${fmt(me.e)}초 vs ${fmt(them.e)}초)`},
+  recordCell:x=>x.v>=FAIL_V?"실패":x.v+"<small>번</small>",
+  detailCell:x=>x.v>=FAIL_V?"6번 안에 못 맞힘":`${fmt(x.e)}초 만에`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${triesText(r[1])} vs ${esc(who(r[2],!isA))} ${triesText(r[3])}`,
+  verdictText:o=> o==="win"?"내가 더 빨리 맞혔다!":o==="lose"?"상대가 더 빨리 맞혔다":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>{
+    if(o==="tie") return "시도도 시간도 같은 건 거의 기적.";
+    const w=o==="win"?me:them, l=o==="win"?them:me;
+    if(l.v>=FAIL_V) return `${triesText(w.v)} vs 실패 — ${subj(o==="win"?meL:themL)} 맞혔고 ${o==="win"?themL:meL}는 못 맞혔어.`;
+    return `${w.v}번 vs ${l.v}번 — ${subj(o==="win"?meL:themL)} ${l.v-w.v}번 덜 써서 맞혔어.`;
+  },
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 단어야. 더 적게.`,
+  againHead:()=>`재도전. <b>새 단어</b>로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${triesText(me.v)} vs ${nm(them.n)}${triesText(them.v)}${tail}`,
+  resultDesc:"같은 두 글자 단어. 누가 더 적은 시도로 맞혔을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRound(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRound(); toast('오늘 단어 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  /* 첫 판은 오늘 날짜 시드(링크 없이도 같은 단어). 재도전(전적이 있을 때)은 새 시드 */
+  newRound(){ state.seed=state.hist.length?newSeed():daySeed(); buildRound(); },
+  resetPlay(){ resetScreen(); }
+});
+
+/* ===== 판 만들기 ===== */
+function buildRound(){
+  state.answer=wordOf(state.seed);
+  resetScreen();
+}
+function stopTimers(){ clearTimeout(state.cdTimer); if(state.raf) cancelAnimationFrame(state.raf); }
+function resetScreen(){
+  stopTimers();
+  state.done=false;state.running=false;state.tries=0;state.guesses=[];state.used={};state.elapsed=0;
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 열려";
+  $("clock").textContent="0.0";$("count").innerHTML=MAX_TRIES+"<small>/"+MAX_TRIES+"</small>";$("tries").textContent="0";
+  $("dayBadge").textContent=isTodaySeed()?"오늘의 단어 · "+dayKey():"도전 단어";
+  $("reveal").textContent="";$("reveal").className="reveal";
+  $("guessIn").value="";setInputs(false);
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+  renderRows(); renderUsed();
+  applyDayLock();
+}
+function setInputs(on){ $("guessIn").disabled=!on; $("okBtn").disabled=!on; }
+/* 오늘 단어를 이미 끝냈으면 시작을 막는다. 둘이하기 첫 판이면 다른 단어로 바꿀 수 있다 */
+function applyDayLock(){
+  const rec=isTodaySeed()?dayDone():null;
+  const box=$("dayLock");
+  if(!rec){ box.classList.add("hidden"); $("randomBtn").classList.add("hidden"); return; }
+  box.innerHTML=`🔒 <b>오늘 단어는 이미 풀었어.</b> (${rec.tries>=FAIL_V?"6번 안에 못 맞힘":rec.tries+"번 만에 맞힘"}) 내일 새 단어가 나와.`
+    +(state.incoming?"<br>이 도전장은 오늘 단어라 다시 풀 수 없어. 내일 다시 붙어 보자.":"");
+  box.classList.remove("hidden");
+  $("bigBtn").disabled=true; $("bigBtn").textContent="오늘은 끝";
+  $("randomBtn").classList.toggle("hidden", !!(Solo.active||state.incoming));
+}
+$("randomBtn").onclick=()=>{ state.seed=newSeed(); buildRound(); toast('새 단어야. 이 판은 도전장으로만 같이 풀 수 있어.'); };
+
+function renderRows(){
+  const box=$("rows"); box.innerHTML="";
+  for(let r=0;r<MAX_TRIES;r++){
+    const row=document.createElement("div"); row.className="row"+(r===state.tries&&state.running?" cur":"");
+    const g=state.guesses[r];
+    for(let i=0;i<2;i++){
+      const syl=document.createElement("div"); syl.className="syl"+(g?" filled":"");
+      if(g){ g[i].forEach(c=>{ const d=document.createElement("span"); d.className="jm "+c.s; d.textContent=c.j; syl.appendChild(d); }); }
+      else { const d=document.createElement("span"); d.className="jm"; d.style.background="transparent"; d.textContent=""; syl.appendChild(d); }
+      row.appendChild(syl);
+    }
+    if(g&&r===state.tries-1) row.classList.add("pop");
+    box.appendChild(row);
+  }
+}
+function renderUsed(){
+  const box=$("used"); box.innerHTML="";
+  Object.keys(state.used).forEach(j=>{ const s=document.createElement("span"); s.className=state.used[j]; s.textContent=j; box.appendChild(s); });
+}
+const RANK={g:3,y:2,x:1};
+function noteUsed(fb){ fb.forEach(s=>s.forEach(c=>{ if(!state.used[c.j]||RANK[c.s]>RANK[state.used[c.j]]) state.used[c.j]=c.s; })); }
+
+/* ===== 입력 ===== */
+function submitGuess(){
+  if(!state.running||state.done||$("guessIn").disabled) return;
+  const inp=$("guessIn"), v=inp.value.trim();
+  if(!isWord(v)){
+    $("reveal").textContent=/^[가-힣]{2}$/.test(v)?"목록에 없는 단어야":"두 글자 한글로 써 줘"; $("reveal").className="reveal no";
+    inp.classList.remove("bad"); void inp.offsetWidth; inp.classList.add("bad"); try{ inp.select(); }catch(e){}
+    return;
+  }
+  inp.classList.remove("bad");
+  const fb=feedback(v,state.answer);
+  state.guesses.push(fb); state.tries++; noteUsed(fb);
+  $("tries").textContent=state.tries; $("count").innerHTML=(MAX_TRIES-state.tries)+"<small>/"+MAX_TRIES+"</small>";
+  inp.value="";
+  renderRows(); renderUsed();
+  if(v===state.answer){ $("reveal").textContent="정답! "+state.answer+" 🎉"; $("reveal").className="reveal ok"; finishPlay(state.tries); return; }
+  if(state.tries>=MAX_TRIES){ $("reveal").textContent="정답은 "+state.answer+" 였어"; $("reveal").className="reveal no"; finishPlay(FAIL_V); return; }
+  $("reveal").textContent=(MAX_TRIES-state.tries)+"번 남았어"; $("reveal").className="reveal";
+  try{ inp.focus({preventScroll:true}); }catch(e){}
+}
+$("okBtn").onclick=submitGuess;
+$("guessIn").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); submitGuess(); } });
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done && !$("bigBtn").disabled) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 열려요";
+  let n=3;
+  $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  if(isTodaySeed()&&dayDone()) { applyDayLock(); return; }   // 오늘 단어는 하루 한 번
+  stopTimers();
+  state.answer=wordOf(state.seed);
+  state.tries=0; state.guesses=[]; state.used={}; state.elapsed=0;
+  $("tries").textContent="0"; $("count").innerHTML=MAX_TRIES+"<small>/"+MAX_TRIES+"</small>";
+  $("cover").classList.add("hidden"); $("bigBtn").textContent="진행 중"; $("bigBtn").disabled=true;
+  state.running=true; state.done=false; state.t0=performance.now();
+  renderRows(); renderUsed(); setInputs(true);
+  try{ $("guessIn").focus({preventScroll:true}); }catch(e){}
+  const tick=()=>{
+    if(!state.running) return;
+    $("clock").textContent=fmt(performance.now()-state.t0);
+    state.raf=requestAnimationFrame(tick);
+  };
+  state.raf=requestAnimationFrame(tick);
+}
+function finishPlay(value){
+  if(state.done) return;
+  state.running=false; state.done=true;
+  stopTimers(); setInputs(false);
+  state.elapsed=Math.max(1,Math.round(performance.now()-state.t0));
+  const won=value<FAIL_V;
+  if(isTodaySeed()) markDayDone({tries:value,ms:state.elapsed});
+  const b=$("bigBtn"); b.disabled=true;
+  $("clock").textContent=fmt(state.elapsed);
+  renderRows();
+  if(Solo.active){   // 혼자놀기: 기록을 바로 보여주고 별을 매긴다
+    $("cover").classList.remove("hidden"); $("cd").textContent=won?"🎉":"😢"; $("cdSub").textContent=won?value+"번 만에 맞혔어! 정답 "+state.answer:"정답은 "+state.answer; b.textContent="끝";
+    Solo.finish(value,{elapsed:state.elapsed,note:(won?"":"못 맞힘 · ")+fmt(state.elapsed)+"초 · 정답 "+state.answer}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("clock").textContent="🔒"; $("count").innerHTML="끝";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인 · 정답 "+state.answer;
+  b.textContent="봉인됨";
+  Duel.finish(value, {elapsed:state.elapsed});   // 기록 = 시도 횟수(1~6, 실패 7), 덧붙임 = 걸린 시간(ms, 동점 처리)
+}
+
+/* ===== 혼자놀기: 레벨 대신 "오늘 한 판" ===== */
+Solo.init({
+  game:'daily-word', levels:LEVELS, lowerWins:true,
+  fmt:v=>v>=FAIL_V?'실패':v+'번',
+  describe:l=>'오늘의 단어 한 판, 6번 안에',
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    buildRound();
+  }
+});
+/* 혼자놀기 시드는 고정값이 아니라 오늘 날짜 — "이 판으로 도전장" 링크도 오늘 단어를 싣는다 */
+Solo.levels[0].seed=daySeed();
+
+Duel.start();
+</script>
+</body>
+</html>

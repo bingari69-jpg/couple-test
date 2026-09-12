@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>초성 퀴즈</title>
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="초성 퀴즈 — ㄸㅂㅇ 뭔지 알아?">
+<meta property="og:description" content="같은 5문제, 60초. 초성만 보고 누가 더 많이 맞힐까. 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/choseong.png?v=20260913-new">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/choseong/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260912-linkguard"></script>
+<script src="../../assets/kakao-share.js?v=20260912-domain"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<script src="data.js?v=20260913-new"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --mint:#5FE0B8;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:14px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(32px,11vw,44px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)}
+  .hud .cnt{text-align:right}
+  .hud .cnt .v small{font-size:.45em;color:var(--sub);font-weight:700}
+
+  /* 문제판 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 16px 14px;min-height:250px}
+  .kind{display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:800;letter-spacing:.06em;color:var(--sub)}
+  .kind .cat{color:var(--red)}
+  .cho{font-size:clamp(44px,16vw,66px);font-weight:900;letter-spacing:.12em;line-height:1.2;text-align:center;margin:14px 0 8px;color:var(--ink);word-break:keep-all;min-height:1.2em}
+  .hintbox{min-height:24px;text-align:center;font-size:14px;font-weight:600;color:var(--sub);line-height:1.5}
+  .hintbox.on{color:#8a5a00;background:#FFF4D6;border-radius:12px;padding:8px 12px}
+  .ansrow{display:flex;gap:8px;margin-top:12px}
+  .ansrow input[type=text]{flex:1;min-width:0;font-size:20px;text-align:center}
+  .ansrow input.bad{animation:bad .35s ease;border-color:var(--red)}
+  @keyframes bad{0%,100%{transform:none}25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+  .okbtn{border:none;border-radius:14px;padding:0 18px;font:inherit;font-size:17px;font-weight:900;background:var(--blue);color:#fff;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .okbtn:disabled{opacity:.4;cursor:default}
+  .subrow{display:flex;gap:8px;margin-top:8px}
+  .subbtn{flex:1;border:2px solid var(--line);background:#fff;border-radius:14px;padding:11px;font:inherit;font-size:15px;font-weight:700;color:var(--sub);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .subbtn:active{transform:scale(.97)}
+  .subbtn:disabled{opacity:.4;cursor:default}
+  .reveal{min-height:22px;margin-top:10px;text-align:center;font-size:14px;font-weight:800;color:var(--sub)}
+  .reveal.ok{color:#1a8f4a} .reveal.no{color:var(--red)}
+  .cover{position:absolute;inset:0;background:var(--bg);border-radius:22px;display:flex;
+    align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2}
+  .cover .cd{font-size:clamp(64px,20vw,88px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:24px;font:inherit;font-size:24px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:10px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260912-privacy">
+<script defer src="../../assets/game-ui.js?v=20260912-pairs"></script>
+</head>
+<body class="game-page" data-game="choseong">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">초성 퀴즈</span>
+  <h1 id="playHead">ㄸㅂㅇ, 뭔지 알아?<br><b>60초에 5문제.</b></h1>
+  <p class="lead" id="playLead">초성만 보고 <b>답을 입력</b>해. 같은 판이면 문제도 같아. 맞힌 개수가 같으면 더 빨리 끝낸 쪽이 이겨. 기회는 한 번.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">남은 시간</div><div class="v" id="clock">60.0</div></div>
+    <div class="c cnt"><div class="lab">맞힌 문제</div><div class="v" id="count">0<small>/5</small></div></div>
+  </div>
+
+  <div class="board" id="board">
+    <div class="kind"><span class="cat" id="cat">카테고리</span><span id="progress">1 / 5</span></div>
+    <div class="cho" id="cho">ㄸㅂㅇ</div>
+    <div class="hintbox" id="hintBox"></div>
+    <div class="ansrow">
+      <input type="text" id="ansIn" placeholder="정답 입력" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" disabled>
+      <button class="okbtn" id="okBtn" type="button" disabled>확인</button>
+    </div>
+    <div class="subrow">
+      <button class="subbtn" id="hintBtn" type="button" disabled>💡 힌트</button>
+      <button class="subbtn" id="passBtn" type="button" disabled>패스 →</button>
+    </div>
+    <div class="reveal" id="reveal" role="status" aria-live="polite"></div>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 열려</div></div>
+  </div>
+  <div class="info"><span>힌트 <b id="hints">0</b>번</span><span id="size">5문제 · 60초</span></div>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 5문제를 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 새 5문제로</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 새 5문제로</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 초성 퀴즈 =====
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js 에 있다.
+   여기에는 문제 고르기·초성 분해·입력 판정만 남는다.
+
+   규칙: 문제 은행(data.js)에서 시드로 5문제를 뽑는다. 60초 안에 초성만 보고 답을 친다.
+   맞히면 1점, 패스는 0점. 기록 = 맞힌 개수(많을수록 이김). 같으면 더 빨리 끝낸 쪽이 이긴다.
+   힌트는 10초가 지나거나 버튼을 누르면 보인다(감점 없음, 횟수만 표시). */
+const N_Q=5, LIMIT_MS=60000, HINT_MS=10000, REVEAL_MS=600;
+const CHO=['ㄱ','ㄲ','ㄴ','ㄷ','ㄸ','ㄹ','ㅁ','ㅂ','ㅃ','ㅅ','ㅆ','ㅇ','ㅈ','ㅉ','ㅊ','ㅋ','ㅌ','ㅍ','ㅎ'];
+/* 한글 음절 → 초성. 한글이 아닌 글자(띄어쓰기·숫자)는 그대로 둔다. */
+function choseongOf(str){
+  let out='';
+  for(const ch of String(str)){
+    const c=ch.charCodeAt(0);
+    out+=(c>=0xAC00&&c<=0xD7A3)?CHO[Math.floor((c-0xAC00)/588)]:ch;
+  }
+  return out;
+}
+/* 답 비교: 앞뒤 공백을 지우고, 띄어쓰기 없이도 받는다 */
+const norm=s=>String(s||'').replace(/\s+/g,'');
+const isRight=(input,answer)=>norm(input).length>0&&norm(input)===norm(answer);
+
+const LEVELS=[
+  {n:1,label:'짧은 말',limitMs:60000,goal:3,best:5},
+  {n:2,label:'세 글자',limitMs:60000,goal:3,best:5},
+  {n:3,label:'네 글자',limitMs:60000,goal:3,best:5},
+  {n:4,label:'긴 말',limitMs:60000,goal:3,best:5},
+  {n:5,label:'제일 긴',limitMs:60000,goal:3,best:5}
+];
+const fmt=ms=>(ms/1000).toFixed(1);
+function titleFor(score){
+  if(score>=5) return "초성 마스터";
+  if(score>=4) return "눈치 백단";
+  if(score>=3) return "평균 이상";
+  if(score>=2) return "감 잡는 중";
+  return "초성 초보";
+}
+const NEXT=[
+  {path:"../daily-word/", title:"오늘의 단어",  desc:"두 글자 단어, 자모로 맞히기. 6번 안에."},
+  {path:"../nonsense/",   title:"넌센스 대결",  desc:"같은 5문제, 누가 더 많이 맞힐까."},
+  {path:"../pairs/",      title:"짝 맞추기",    desc:"같은 카드 배치, 누가 더 빨리."}
+];
+
+/* ===== 문제 고르기 (시드 난수) =====
+   Math.random() 은 시드를 뽑을 때만 쓴다. 문제 5개는 오직 시드로만 정해지고 링크에 실린다.
+   레벨 0(둘이하기): 은행 전체에서. 레벨 1~5(혼자·혼자→도전장): 정답 길이 순으로 5등분한 풀에서. */
+function mulberry32(a){
+  return function(){
+    a=(a+0x6D2B79F5)|0;
+    let t=Math.imul(a^(a>>>15), 1|a);
+    t=(t+Math.imul(t^(t>>>7), 61|t))^t;
+    return ((t^(t>>>14))>>>0)/4294967296;
+  };
+}
+function shuffle(arr,rnd){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(rnd()*(i+1)); const t=arr[i];arr[i]=arr[j];arr[j]=t; } return arr; }
+function poolOf(level){
+  if(!level) return CHOSEONG_BANK.slice();
+  const sorted=CHOSEONG_BANK.map((q,i)=>({q,i,len:norm(q.a).length})).sort((x,y)=>x.len-y.len||x.i-y.i).map(x=>x.q);
+  const size=Math.ceil(sorted.length/5), k=Math.max(0,Math.min(4,level-1));
+  return sorted.slice(k*size,(k+1)*size);
+}
+function packOf(seed,level){
+  const rnd=mulberry32(seed>>>0);
+  return shuffle(poolOf(level),rnd).slice(0,N_Q).map(q=>({a:q.a,h:q.h,c:q.c,cho:choseongOf(q.a)}));
+}
+const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/choseong/",
+  og:"https://noljago.co.kr/assets/share-cards/choseong.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  gameName:"초성 퀴즈",
+  challengeDesc:"같은 5문제, 60초. 초성만 보고 누가 더 많이 맞힐까. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  hasSeed:true, higherWins:true,
+  scrollToShare:true,
+  state:{seed:0,level:0,pack:[],index:0,score:0,hints:0,elapsed:0,
+         running:false,done:false,t0:0,raf:0,cdTimer:0,hintTimer:0,revealTimer:0,limitTimer:0},
+  linkExtra:st=>({e:st.elapsed,l:st.level}),
+  roundExtra:(p,st)=>[p.e||0, st.elapsed],
+  extraKey:"e", extraDefault:0,
+  tieBreak:(me,them)=>me.e===them.e?null:{o:me.e<them.e?"win":"lose",why:`맞힌 개수는 같지만 더 빨리 끝낸 쪽이 이겨. (${fmt(me.e)}초 vs ${fmt(them.e)}초)`},
+  recordCell:x=>x.v+"<small>/5</small>",
+  detailCell:x=>`풀이 ${fmt(x.e)}초`,
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${r[1]}개 vs ${esc(who(r[2],!isA))} ${r[3]}개`,
+  verdictText:o=> o==="win"?"내가 더 많이 맞혔다!":o==="lose"?"상대가 더 많이 맞혔다":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"개수도 시간도 같은 건 거의 기적."
+      :`${me.v}개 vs ${them.v}개 — ${subj(o==="win"?meL:themL)} ${Math.abs(me.v-them.v)}개 더 맞혔어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 5문제야. 더 많이.`,
+  againHead:()=>`재도전. <b>새 5문제</b>로 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${me.v}개 vs ${nm(them.n)}${them.v}개${tail}`,
+  resultDesc:"같은 5문제, 60초. 초성만 보고 누가 더 많이 맞혔을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRound(); },
+  onPreset(p){ state.seed=p.s>>>0; state.level=p.l|0; buildRound(); toast('혼자놀기 Lv'+state.level+' 판이야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ state.seed=newSeed(); buildRound(); },
+  resetPlay(){ resetScreen(); }
+});
+
+/* ===== 판 만들기 ===== */
+function buildRound(){
+  state.pack=packOf(state.seed,state.level);
+  resetScreen();
+}
+function stopTimers(){
+  clearTimeout(state.cdTimer); clearTimeout(state.hintTimer); clearTimeout(state.revealTimer); clearTimeout(state.limitTimer);
+  if(state.raf) cancelAnimationFrame(state.raf);
+}
+function limitMs(){ return (Solo.active&&Solo.level&&Solo.level.limitMs)||LIMIT_MS; }
+function resetScreen(){
+  stopTimers();
+  state.done=false;state.running=false;state.index=0;state.score=0;state.hints=0;state.elapsed=0;
+  $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 열려";
+  $("clock").textContent=fmt(limitMs());$("count").innerHTML="0<small>/"+N_Q+"</small>";$("hints").textContent="0";
+  $("cho").textContent="ㅊㅅ ㅋㅈ";$("cat").textContent="카테고리";$("progress").textContent="1 / "+N_Q;
+  $("hintBox").textContent="";$("hintBox").className="hintbox";$("reveal").textContent="";$("reveal").className="reveal";
+  $("ansIn").value="";setInputs(false);
+  $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
+}
+function setInputs(on){ ["ansIn","okBtn","hintBtn","passBtn"].forEach(id=>{ $(id).disabled=!on; }); }
+
+/* ===== 문제 보여주기 ===== */
+function renderQ(){
+  const q=state.pack[state.index];
+  $("cat").textContent=q.c; $("progress").textContent=(state.index+1)+" / "+N_Q;
+  $("cho").textContent=q.cho;
+  $("hintBox").textContent=""; $("hintBox").className="hintbox";
+  $("reveal").textContent=""; $("reveal").className="reveal";
+  $("ansIn").value=""; $("ansIn").classList.remove("bad"); setInputs(true);
+  $("hintBtn").textContent="💡 힌트";
+  clearTimeout(state.hintTimer);
+  state.hintTimer=setTimeout(()=>{ if(state.running&&!state.done) showHint(); },HINT_MS);   // 10초 지나면 힌트가 저절로
+  try{ $("ansIn").focus({preventScroll:true}); }catch(e){}
+}
+function showHint(){
+  if(!state.running||state.done) return;
+  const q=state.pack[state.index]; if(!q||$("hintBox").classList.contains("on")) return;
+  clearTimeout(state.hintTimer);
+  $("hintBox").textContent="💡 "+q.h; $("hintBox").className="hintbox on";
+  $("hintBtn").textContent="힌트 봄"; $("hintBtn").disabled=true;
+  state.hints++; $("hints").textContent=state.hints;
+}
+/* 확인: 맞으면 1점 + 다음 문제, 틀리면 그대로 다시 */
+function submitAnswer(){
+  if(!state.running||state.done||$("ansIn").disabled) return;
+  const q=state.pack[state.index], v=$("ansIn").value;
+  if(!norm(v)) return;
+  if(isRight(v,q.a)){
+    state.score++; $("count").innerHTML=state.score+"<small>/"+N_Q+"</small>";
+    $("reveal").textContent="정답! "+q.a+" 🎉"; $("reveal").className="reveal ok";
+    advance();
+  }else{
+    $("reveal").textContent="땡! 다시 생각해 봐"; $("reveal").className="reveal no";
+    const inp=$("ansIn"); inp.classList.remove("bad"); void inp.offsetWidth; inp.classList.add("bad");
+    try{ inp.select(); }catch(e){}
+  }
+}
+function pass(){
+  if(!state.running||state.done||$("passBtn").disabled) return;
+  const q=state.pack[state.index];
+  $("reveal").textContent="정답은 "+q.a; $("reveal").className="reveal no";
+  advance();
+}
+function advance(){
+  setInputs(false); clearTimeout(state.hintTimer);
+  state.revealTimer=setTimeout(()=>{
+    if(!state.running||state.done) return;
+    state.index++;
+    if(state.index<N_Q) renderQ(); else finishPlay();
+  },REVEAL_MS);
+}
+
+$("okBtn").onclick=submitAnswer;
+$("ansIn").addEventListener("keydown",e=>{ if(e.key==="Enter"){ e.preventDefault(); submitAnswer(); } });
+$("hintBtn").onclick=showHint;
+$("passBtn").onclick=pass;
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent="곧 열려요";
+  let n=3;
+  $("cd").textContent=n;
+  const step=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(step,1000); return; }
+    cover.classList.add("hidden");
+    b.textContent="진행 중";
+    startPlay();
+  };
+  state.cdTimer=setTimeout(step,1000);
+}
+function startPlay(){
+  stopTimers();
+  state.pack=packOf(state.seed,state.level);
+  state.index=0; state.score=0; state.hints=0; state.elapsed=0;
+  $("count").innerHTML="0<small>/"+N_Q+"</small>"; $("hints").textContent="0";
+  $("cover").classList.add("hidden"); $("bigBtn").textContent="진행 중"; $("bigBtn").disabled=true;
+  state.running=true; state.done=false; state.t0=performance.now();
+  const limit=limitMs();
+  renderQ();
+  state.limitTimer=setTimeout(()=>{ if(state.running&&!state.done) finishPlay(true); },limit);   // 60초가 지나면 그 자리에서 끝
+  const tick=()=>{
+    if(!state.running) return;
+    const el=performance.now()-state.t0;
+    if(el>=limit){ finishPlay(true); return; }
+    $("clock").textContent=fmt(Math.max(0,limit-el));
+    state.raf=requestAnimationFrame(tick);
+  };
+  state.raf=requestAnimationFrame(tick);
+}
+function finishPlay(timeUp){
+  if(state.done) return;
+  state.running=false; state.done=true;
+  stopTimers(); setInputs(false);
+  const limit=limitMs();
+  state.elapsed=Math.min(limit,Math.max(1,Math.round(performance.now()-state.t0)));
+  const b=$("bigBtn"); b.disabled=true;
+  $("clock").textContent=timeUp?"0.0":fmt(state.elapsed);
+  if(Solo.active){   // 혼자놀기: 기록을 바로 보여주고 별을 매긴다
+    $("cover").classList.remove("hidden"); $("cd").textContent=timeUp?"⏰":"🎉"; $("cdSub").textContent=state.score+"문제 맞혔어!"; b.textContent="끝";
+    Solo.finish(state.score,{elapsed:state.elapsed,note:"풀이 "+fmt(state.elapsed)+"초 · 힌트 "+state.hints+"번"}); return;
+  }
+  /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
+  $("clock").textContent="🔒"; $("count").innerHTML="끝";
+  $("cover").classList.remove("hidden"); $("cd").textContent="🔒"; $("cdSub").textContent="기록 봉인";
+  b.textContent="봉인됨";
+  Duel.finish(state.score, {elapsed:state.elapsed});   // 기록 = 맞힌 개수, 덧붙임 = 걸린 시간(ms, 동점 처리)
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'choseong', levels:LEVELS, lowerWins:false,
+  fmt:v=>v+'개',
+  describe:l=>l.label+' 5문제, '+(l.limitMs/1000)+'초 안에',
+  onLevel(l){
+    state.seed=l.seed; state.level=l.n;
+    buildRound();
+  }
+});
+
+Duel.start();
+</script>
+</body>
+</html>
