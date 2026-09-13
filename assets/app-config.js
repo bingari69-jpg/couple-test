@@ -84,7 +84,7 @@
     if(id==='home')return slug==='home';
     if(id==='solo')return /[?&]solo=1/.test(location.search)||(slug==='home'&&/[?&]tab=solo/.test(location.search));
     if(id==='letter')return slug==='letter';
-    if(id==='psychology')return ['psychology','personality','fortune','tarot','seat','mbti','mind/fight','marriage','memory','ranking'].includes(slug);
+    if(id==='psychology')return ['know-me','next-scene','lucky','repair','living','psychology','personality','fortune','tarot','seat','mbti','mind/fight','marriage','memory','ranking'].includes(slug);
     return id==='play'&&slug!=='letter'&&!/[?&]solo=1/.test(location.search)&&!(slug==='home'&&/[?&]tab=solo/.test(location.search));
   }
   function rebuildBottomNav(nav,menu,root){

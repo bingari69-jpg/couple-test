@@ -49,6 +49,12 @@ async function main() {
       assert.equal(bytes.readUInt32BE(16),800);assert.equal(bytes.readUInt32BE(20),480);
     }
   }
+  for(const slug of ['know-me','next-scene','lucky','repair','living']){
+    const img='https://noljago.co.kr/assets/share-cards/'+slug+'.png?v=20260913-series',url='https://noljago.co.kr/t/'+slug+'/#r=result';
+    assert.equal(await sandbox.kakaoShare({url,title:'새 심리 결과',desc:'각자 고른 이야기',img,imageWidth:800,imageHeight:480,btn:'함께 보기'}),true);
+    assert.equal(message.content.title,'새 심리 결과');assert.equal(message.content.imageUrl,img);assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);assert.equal(message.content.link.webUrl,url);
+    const bytes=fs.readFileSync(path.join(__dirname,'../assets/share-cards/'+slug+'.png'));assert.equal(bytes.readUInt32BE(16),800);assert.equal(bytes.readUInt32BE(20),480);
+  }
   let decorated=false,afterShare=false;
   sandbox.ResultNotify={
     decorateShareUrl(target){decorated=true;const u=new URL(target);u.searchParams.set('ch','ABCDEF123456');return u.href;},

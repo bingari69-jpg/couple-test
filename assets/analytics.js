@@ -22,15 +22,15 @@
   if(!window.__GATCHI_APP_CONFIG__ && !window.__GATCHI_APP_CONFIG_LOADER__ && analyticsScript && analyticsScript.src){
     window.__GATCHI_APP_CONFIG_LOADER__=true;
     const appConfig=document.createElement("script");
-    appConfig.src=new URL("app-config.js?v=20260913-solo",analyticsScript.src).href;
+    appConfig.src=new URL("app-config.js?v=20260913-series",analyticsScript.src).href;
     document.head.appendChild(appConfig);
   }
 
   /* 처음 온 사람도 바로 시작할 수 있도록 공통 게임 설명을 붙인다. */
-  if(!window.__GATCHI_GUIDE_LOADER__ && analyticsScript && analyticsScript.src){
+  if(!window.__GATCHI_GUIDE_LOADER__ && analyticsScript && analyticsScript.src && !analyticsScript.hasAttribute('data-own-guide')){
     window.__GATCHI_GUIDE_LOADER__=true;
     const guideData=document.createElement("script");
-    guideData.src=new URL("guide-data.js?v=20260913-games",analyticsScript.src).href;
+    guideData.src=new URL("guide-data.js?v=20260913-series",analyticsScript.src).href;
     guideData.onload=function(){
       const helpGuide=document.createElement("script");
       helpGuide.src=new URL("help-guide.js?v=20260913-once",analyticsScript.src).href;
@@ -40,7 +40,7 @@
   }
 
   /* 잘린 링크 안내: 주소에 #c=/#i=/#r=가 있는데 풀리지 않으면 위쪽에 안내를 띄운다. */
-  if(!window.__GATCHI_LINK_GUARD_LOADER__ && analyticsScript && analyticsScript.src){
+  if(!window.__GATCHI_LINK_GUARD_LOADER__ && analyticsScript && analyticsScript.src && !analyticsScript.hasAttribute('data-own-link-guard')){
     window.__GATCHI_LINK_GUARD_LOADER__=true;
     const linkGuard=document.createElement("script");
     linkGuard.src=new URL("link-guard.js?v=20260912-1",analyticsScript.src).href;

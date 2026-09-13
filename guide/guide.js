@@ -6,8 +6,10 @@
   function configured(){
     const published=window.APP_PUBLISHED_CONFIG;
     const games=published&&Array.isArray(published.games)?published.games:[];
-    return Object.entries(window.GATCHI_GUIDES||{}).map(([slug,guide],index)=>{
-      const managed=games.find(game=>game.slug===slug);
+    const aliases={'know-me':'personality','next-scene':'tarot',lucky:'fortune',repair:'mind/fight',living:'marriage'};
+    return Object.entries(window.GATCHI_GUIDES||{}).filter(([slug])=>!['mbti','seat',...Object.values(aliases)].includes(slug)).map(([slug,guide],index)=>{
+      const current=games.find(game=>game.slug===slug),previous=games.find(game=>game.slug===aliases[slug]);
+      const managed=current||(previous?{visibility:previous.visibility,sortOrder:previous.sortOrder}:null);
       return {slug,visibility:managed&&managed.visibility||'listed',sortOrder:managed&&managed.sortOrder||index+1,...guide,...managed&&managed.guide||{},title:managed&&managed.title||guide.title,path:managed&&managed.path||('t/'+slug+'/')};
     }).filter(item=>item.visibility!=='hidden').sort((a,b)=>a.sortOrder-b.sortOrder);
   }
