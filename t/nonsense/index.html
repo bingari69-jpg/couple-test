@@ -6,7 +6,7 @@
 <title>넌센스 대결 — 이걸 맞힌다고?</title>
 <meta property="og:type" content="website">
 <meta property="og:title" content="넌센스 대결 — 이걸 맞힌다고?">
-<meta property="og:description" content="100문제 중 무작위 5문제. 같은 문제로 붙어보자!">
+<meta property="og:description" content="100문제 중 무작위 7문제. 문항마다 7초, 틀리면 5초 벌칙!">
 <meta property="og:image" content="https://noljago.co.kr/assets/share-cards/nonsense.png?v=20260910-final">
 <meta property="og:image:width" content="1672">
 <meta property="og:image:height" content="941">
@@ -32,7 +32,8 @@
   .card{background:#fff;border:2px solid var(--line);border-radius:20px;padding:17px;margin:14px 0}.lockrow{display:flex;gap:10px;align-items:center;color:var(--sub);font-size:14px}.lockrow .e{font-size:25px}.lockrow b{color:var(--ink)}
   .start-card{background:linear-gradient(145deg,#fff4cc,#ffe1d5);border:1px solid #f0d5ad;border-radius:24px;padding:22px 18px;text-align:center;margin-top:12px}.start-card .bubble{font-size:54px;line-height:1}.start-card p{font-size:14px;color:#8e6e58;margin:9px 0 16px}
   .hud{display:flex;align-items:center;justify-content:space-between;margin:15px 0 10px;padding:0 2px}.progress{font-size:14px;font-weight:850;color:var(--coral)}.clock{font-variant-numeric:tabular-nums;font-size:14px;font-weight:800;color:var(--sub)}
-  .bar{height:7px;background:#efe3d8;border-radius:99px;overflow:hidden;margin-bottom:14px}.bar i{display:block;height:100%;width:20%;border-radius:99px;background:linear-gradient(90deg,var(--coral),#f4a251);transition:width .25s ease}
+  .bar{height:7px;background:#efe3d8;border-radius:99px;overflow:hidden;margin-bottom:8px}
+  .qbar{height:5px;background:#f3e7dd;border-radius:99px;overflow:hidden;margin-bottom:14px}.qbar i{display:block;height:100%;width:100%;border-radius:99px;background:#9ec7a8}.qbar.low i{background:#e2584a}.bar i{display:block;height:100%;width:20%;border-radius:99px;background:linear-gradient(90deg,var(--coral),#f4a251);transition:width .25s ease}
   .quiz-card{background:#fff;border:2px solid var(--line);border-radius:24px;padding:22px 17px 18px;box-shadow:0 9px 30px #6b3f2010}.kind{font-size:11px;font-weight:850;letter-spacing:.08em;color:var(--violet);margin-bottom:10px}.question{font-size:clamp(22px,6.3vw,29px);font-weight:900;line-height:1.42;letter-spacing:-.025em;word-break:keep-all;min-height:74px;display:flex;align-items:center}
   .answers{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.answer{min-height:62px;border:1px solid #e7d9cf;background:#fff8f1;color:var(--ink);border-radius:16px;padding:10px 8px;font:inherit;font-size:14px;font-weight:750;line-height:1.4;cursor:pointer;word-break:keep-all;transition:transform .08s,border-color .15s,background .15s}.answer:nth-child(even){background:#f5f0fb;border-color:#e1d8ed}.answer:active{transform:scale(.97)}.answer:disabled{cursor:default;opacity:.5}.answer.correct{background:#dcf5e9;border:2px solid #59a47f;color:#236d4d;opacity:1}.answer.wrong{background:#ffe4df;border:2px solid #e47b68;color:#9c4032;opacity:1}
   .reveal{min-height:47px;margin-top:13px;border-radius:14px;background:#fff4d6;padding:11px 13px;font-size:14px;color:#845d2f;text-align:center;font-weight:750}.reveal.ok{background:#ddf4e9;color:#267052}.reveal.no{background:#ffe9e4;color:#984839}
@@ -45,14 +46,14 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260913-play"></script>
+<script defer src="../../assets/game-ui.js?v=20260913-nonsense7"></script>
 </head>
 <body class="game-page" data-game="nonsense">
 <div class="wrap">
   <section class="screen" id="s-play">
     <span class="tag" id="playTag">넌센스 대결</span>
-    <h1 id="playHead">이걸 맞힌다고?<br><b>5문제만 붙어봐.</b></h1>
-    <p class="lead" id="playLead"><strong>100문제 중 무작위 5개.</strong> 정답 수가 같으면 더 빨리 푼 사람이 이겨요. 내가 받은 문제와 보기 그대로 상대에게 갑니다.</p>
+    <h1 id="playHead">이걸 맞힌다고?<br><b>7문제만 붙어봐.</b></h1>
+    <p class="lead" id="playLead"><strong>100문제 중 무작위 7개.</strong> 한 문제에 7초, 틀리거나 놓치면 5초가 더해져요. 정답 수가 같으면 시간이 짧은 쪽이 이겨요.</p>
 
     <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 점수는 네가 다 푼 뒤 공개돼요.</span></div></div>
     <div class="card hidden" id="tallyCard"><div id="tallyText"></div></div>
@@ -60,12 +61,13 @@
     <label class="q" for="nameIn">내 이름 (선택)</label>
     <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
 
-    <div class="rules" id="rules"><span><b>100</b>문제은행</span><span><b>5</b>무작위 출제</span><span><b>1회</b>같은 문제 대결</span></div>
-    <div class="start-card" id="startCard"><div class="bubble" aria-hidden="true">🤔</div><p>시간은 시작 버튼을 누르는 순간부터 재요.</p><button class="bigbtn" id="startBtn">5문제 시작하기</button></div>
+    <div class="rules" id="rules"><span><b>7</b>무작위 출제</span><span><b>7초</b>문제마다</span><span><b>+5초</b>틀리면 벌칙</span></div>
+    <div class="start-card" id="startCard"><div class="bubble" aria-hidden="true">🤔</div><p>문제마다 7초예요. 틀리거나 시간을 넘기면 5초가 더해져요.</p><button class="bigbtn" id="startBtn">7문제 시작하기</button></div>
 
     <div class="hidden" id="quizArea">
-      <div class="hud"><span class="progress" id="progress">1 / 5</span><span class="clock" id="clock">0.0초</span></div>
+      <div class="hud"><span class="progress" id="progress">1 / 7</span><span class="clock" id="clock">0.0초</span></div>
       <div class="bar"><i id="barFill"></i></div>
+      <div class="qbar hidden" id="qBar" aria-hidden="true"><i id="qFill"></i></div>
       <article class="quiz-card">
         <div class="kind" id="kind">CLASSIC</div>
         <div class="question" id="question"></div>
@@ -75,8 +77,8 @@
     </div>
 
     <div class="hidden" id="afterPlay">
-      <div class="mine-score"><strong id="myScore">0 / 5</strong><span id="myTime">0.0초</span></div>
-      <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>내 점수를 봉인했어요.</b><br>상대가 같은 5문제를 풀면 함께 공개돼요.</span></div></div>
+      <div class="mine-score"><strong id="myScore">0 / 7</strong><span id="myTime">0.0초</span></div>
+      <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>내 점수를 봉인했어요.</b><br>상대가 같은 문제를 풀면 함께 공개돼요.</span></div></div>
       <div class="linkbox hidden" id="linkbox"></div>
       <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
       <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
@@ -102,9 +104,9 @@
       <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
       <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
       <div class="linkbox hidden" id="resLinkbox"></div>
-      <button class="btn btn-blue" id="again">새 5문제로 재도전</button>
+      <button class="btn btn-blue" id="again">새 7문제로 재도전</button>
     </div>
-    <div class="hidden" id="viewActions"><button class="btn btn-blue" id="again2">새 5문제로 재도전</button></div>
+    <div class="hidden" id="viewActions"><button class="btn btn-blue" id="again2">새 7문제로 재도전</button></div>
     <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
     <a class="btn btn-sub" href="../../#all" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
   </section>
@@ -112,7 +114,13 @@
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-const ROUND_SIZE=5, SCORE_UNIT=100000;
+/* 문항 수를 5→7로 늘리고, 문항마다 7초 제한과 오답 5초 벌칙을 둔다.
+   예전에는 시간이 무제한이라 느긋하게 소거법을 쓸 수 있었고, 찍어도 손해가 없어
+   둘 다 만점을 맞고 "누가 더 빨리 탭했나"로 승부가 갈렸다.
+   지난 도전장(#c= 에 q 가 없는 링크)은 보낸 사람이 푼 5문제 그대로 열리게 둔다. */
+const ROUND_SIZE=7, LEGACY_SIZE=5, SCORE_UNIT=100000;
+const QUESTION_MS=7000, WRONG_PENALTY_MS=5000;
+const MIX={5:[['classic',2],['word',2],['twist',1]],7:[['classic',3],['word',3],['twist',1]]};
 const LABEL={classic:'레전드 클래식',word:'말장난 주의',twist:'반전 수수께끼'};
 const NEXT=[
   {path:'../rps/',title:'가위바위보 도전장',desc:'내가 먼저 내고 상대에게 보내기.'},
@@ -121,9 +129,9 @@ const NEXT=[
 ];
 function mulberry32(a){return function(){a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
 function shuffle(list,rnd){const a=list.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function packOf(seed){
+function packOf(seed,size){
   const rnd=mulberry32(seed>>>0), picked=[];
-  [['classic',2],['word',2],['twist',1]].forEach(([category,count])=>{
+  (MIX[size]||MIX[ROUND_SIZE]).forEach(([category,count])=>{
     const pool=shuffle(NONSENSE_QUESTIONS.filter(x=>x.category===category),rnd);
     for(const q of pool){if(picked.some(x=>x.a===q.a))continue;picked.push(q);if(picked.filter(x=>x.category===category).length===count)break;}
   });
@@ -139,46 +147,71 @@ const titleFor=m=>['말장난 철벽 방어','아직은 맑은 정신','슬슬 �
 const state=Duel.setup({
   deployBase:'https://noljago.co.kr/t/nonsense/',
   og:'https://noljago.co.kr/assets/share-cards/nonsense.png?v=20260910-final',imageWidth:800,imageHeight:480,
-  gameName:'넌센스 5문제',challengeDesc:'100문제 중 무작위 5개. 내가 받은 문제와 보기 그대로 풀고 점수로 붙어봐.',
+  gameName:'넌센스 7문제',challengeDesc:'100문제 중 무작위 7개. 문항마다 7초, 틀리면 5초 벌칙. 같은 문제로 붙어봐.',
   next:NEXT,higherWins:true,metric,hasSeed:true,scrollToShare:true,
-  state:{seed:0,pack:[],index:0,score:0,mask:0,playing:false,t0:0,raf:0,nextTimer:0},
+  state:{seed:0,size:ROUND_SIZE,pack:[],index:0,score:0,mask:0,penalty:0,playing:false,t0:0,qStart:0,raf:0,nextTimer:0,qTimer:0},
+  linkExtra:st=>({q:st.size}),
   titleFor,
-  recordCell:x=>`${unpack(x.v).score}<small>/5</small>`,
+  recordCell:x=>`${unpack(x.v).score}<small>/${state.size}</small>`,
   detailCell:x=>`풀이 시간 ${fmt(unpack(x.v).ms)}초`,
   histRow:(r,isA,i)=>{const a=unpack(r[1]),b=unpack(r[3]);return `${i+1}판 · ${esc(who(r[0],isA))} ${a.score}개 vs ${esc(who(r[2],!isA))} ${b.score}개`;},
   verdictText:o=>o==='win'?'내가 이겼다!':o==='lose'?'상대가 이겼다':'완벽한 무승부!',
   subVerdictText:(o,me,them,meL,themL)=>{const a=unpack(me.v),b=unpack(them.v);if(a.score!==b.score)return `${a.score}개 vs ${b.score}개 — 정답을 더 많이 맞힌 쪽이 승리!`;if(o==='tie')return `${a.score}개, ${fmt(a.ms)}초까지 완전히 같아요.`;return `둘 다 ${a.score}개 정답. ${fmt(Math.abs(a.ms-b.ms))}초 차이로 승부가 났어요.`;},
-  challengeHead:p=>`<b>${esc(p.n||'상대')}</b>${subjTail(p.n||'상대')} 문제를 보냈어.<br>같은 5문제로 붙어봐.`,
-  againHead:()=>`이번엔 <b>새로운 5문제.</b><br>다시 붙어봐.`,
+  challengeHead:p=>`<b>${esc(p.n||'상대')}</b>${subjTail(p.n||'상대')} 문제를 보냈어.<br>같은 ${state.size}문제로 붙어봐.`,
+  againHead:()=>`이번엔 <b>새로운 ${ROUND_SIZE}문제.</b><br>다시 붙어봐.`,
   resultTitle:(me,them,tail,nm)=>{const a=unpack(me.v),b=unpack(them.v);return `${nm(me.n)}${a.score}개 vs ${nm(them.n)}${b.score}개${tail}`;},
-  resultDesc:'100문제 중 같은 5문제로 붙었다. 누가 더 많이 맞혔을까?',
-  onOpenChallenge:p=>{state.seed=p.s>>>0;state.pack=packOf(state.seed);resetRound();},
-  newRound:()=>{state.seed=newSeed();state.pack=packOf(state.seed);resetRound();},
+  resultDesc:'100문제 중 같은 문제로 붙었다. 누가 더 많이 맞혔을까?',
+  onOpenChallenge:p=>{state.seed=p.s>>>0;state.size=MIX[p.q]?p.q:LEGACY_SIZE;state.pack=packOf(state.seed,state.size);resetRound();},
+  newRound:()=>{state.seed=newSeed();state.size=ROUND_SIZE;state.pack=packOf(state.seed,state.size);resetRound();},
   resetPlay:resetRound
 });
 
 function resetRound(){
-  cancelAnimationFrame(state.raf);clearTimeout(state.nextTimer);state.index=0;state.score=0;state.mask=0;state.playing=false;
-  $('quizArea').classList.add('hidden');$('afterPlay').classList.add('hidden');$('startCard').classList.remove('hidden');$('rules').classList.remove('hidden');$('startBtn').disabled=false;$('startBtn').textContent='5문제 시작하기';$('clock').textContent='0.0초';
+  cancelAnimationFrame(state.raf);clearTimeout(state.nextTimer);clearInterval(state.qTimer);
+  state.index=0;state.score=0;state.mask=0;state.penalty=0;state.playing=false;
+  $('quizArea').classList.add('hidden');$('afterPlay').classList.add('hidden');$('startCard').classList.remove('hidden');$('rules').classList.remove('hidden');$('startBtn').disabled=false;$('startBtn').textContent=state.size+'문제 시작하기';$('clock').textContent='0.0초';
 }
-function tick(){if(!state.playing)return;$('clock').textContent=fmt(performance.now()-state.t0)+'초';state.raf=requestAnimationFrame(tick);}
+/* 시계에는 벌칙까지 더해 보여준다. 찍으면 손해라는 게 그 자리에서 보여야 한다 */
+const shownMs=()=>performance.now()-state.t0+state.penalty;
+function tick(){if(!state.playing)return;$('clock').textContent=fmt(shownMs())+'초';state.raf=requestAnimationFrame(tick);}
 function startRound(){
-  if(state.playing)return;state.index=0;state.score=0;state.mask=0;state.playing=true;state.t0=performance.now();
+  if(state.playing)return;state.index=0;state.score=0;state.mask=0;state.penalty=0;state.playing=true;state.t0=performance.now();
   $('startCard').classList.add('hidden');$('rules').classList.add('hidden');$('quizArea').classList.remove('hidden');renderQuestion();tick();track('nonsense_start',{challenge:state.incoming?1:0});
 }
+/* 문항마다 7초. 남은 시간을 막대로 보여주고, 다 쓰면 오답 처리한다 */
+function startQuestionClock(){
+  clearInterval(state.qTimer);state.qStart=performance.now();
+  $('qBar').classList.remove('hidden','low');$('qFill').style.width='100%';
+  state.qTimer=setInterval(()=>{
+    if(!state.playing)return;
+    const left=QUESTION_MS-(performance.now()-state.qStart);
+    $('qFill').style.width=Math.max(0,left/QUESTION_MS*100)+'%';
+    $('qBar').classList.toggle('low',left<2500);
+    if(left<=0){clearInterval(state.qTimer);choose(-1);}
+  },50);
+}
 function renderQuestion(){
-  const q=state.pack[state.index];$('progress').textContent=`${state.index+1} / ${ROUND_SIZE}`;$('barFill').style.width=((state.index+1)/ROUND_SIZE*100)+'%';$('kind').textContent=LABEL[q.category];$('question').textContent=q.q;
+  const q=state.pack[state.index];$('progress').textContent=`${state.index+1} / ${state.size}`;$('barFill').style.width=((state.index+1)/state.size*100)+'%';$('kind').textContent=LABEL[q.category];$('question').textContent=q.q;
   const box=$('answers');box.innerHTML='';$('reveal').className='reveal hidden';
   q.options.forEach((text,i)=>{const btn=document.createElement('button');btn.className='answer';btn.type='button';btn.textContent=text;btn.onclick=()=>choose(i);box.append(btn);});
+  startQuestionClock();
 }
+/* choice 가 -1 이면 시간 초과 */
 function choose(choice){
-  if(!state.playing)return;const q=state.pack[state.index],buttons=[...$('answers').children];buttons.forEach(b=>b.disabled=true);buttons[q.correct].classList.add('correct');
-  const ok=choice===q.correct;if(ok){state.score++;state.mask|=(1<<state.index);}else buttons[choice].classList.add('wrong');
-  $('reveal').textContent=ok?`정답! ${q.a} 🎉`:`정답은 ${q.a} 😆`;$('reveal').className='reveal '+(ok?'ok':'no');
-  state.nextTimer=setTimeout(()=>{state.index++;if(state.index<ROUND_SIZE)renderQuestion();else finishRound();},650);
+  if(!state.playing)return;clearInterval(state.qTimer);$('qBar').classList.add('hidden');
+  const q=state.pack[state.index],buttons=[...$('answers').children];buttons.forEach(b=>b.disabled=true);buttons[q.correct].classList.add('correct');
+  const ok=choice===q.correct;
+  if(ok){state.score++;state.mask|=(1<<state.index);}
+  else{state.penalty+=WRONG_PENALTY_MS;if(buttons[choice])buttons[choice].classList.add('wrong');}
+  $('reveal').textContent=ok?`정답! ${q.a} 🎉`:(choice<0?`시간 초과! 정답은 ${q.a} (+5초)`:`정답은 ${q.a} 😆 (+5초)`);
+  $('reveal').className='reveal '+(ok?'ok':'no');
+  state.nextTimer=setTimeout(()=>{state.index++;if(state.index<state.size)renderQuestion();else finishRound();},ok?650:950);
 }
 function finishRound(){
-  state.playing=false;cancelAnimationFrame(state.raf);const elapsed=Math.max(10,performance.now()-state.t0);$('quizArea').classList.add('hidden');$('myScore').textContent=`${state.score} / 5`;$('myTime').textContent=fmt(elapsed)+'초';track('nonsense_finish',{score:state.score});Duel.finish(packValue(state.score,elapsed),{mask:state.mask});
+  state.playing=false;cancelAnimationFrame(state.raf);clearInterval(state.qTimer);$('qBar').classList.add('hidden');
+  const elapsed=Math.max(10,shownMs());
+  $('quizArea').classList.add('hidden');$('myScore').textContent=`${state.score} / ${state.size}`;$('myTime').textContent=fmt(elapsed)+'초';
+  track('nonsense_finish',{score:state.score});Duel.finish(packValue(state.score,elapsed),{mask:state.mask});
 }
 $('startBtn').onclick=startRound;
 Duel.start();
