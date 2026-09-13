@@ -6,6 +6,18 @@ const server=http.createServer((req,res)=>{let file=path.resolve(root,'.'+new UR
 (async()=>{await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port;const browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});try{
  const context=await browser.newContext({viewport:{width:390,height:844},hasTouch:true,reducedMotion:'reduce'});await context.route('**/*',r=>r.request().url().startsWith(base)||r.request().url().startsWith('data:')||r.request().url().startsWith('blob:')?r.continue():r.abort());const p=await context.newPage(),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(base+'/t/letter/');await p.locator('#quickWrite').click();
  const value=()=>p.locator('#letterBody').inputValue(),count=()=>p.locator('#letterEditor [data-letter-sticker]').count();
+ // A placeholder must not occupy text space or move an empty editor's caret down.
+ await p.locator('#letterEditor').tap({position:{x:100,y:100}});
+ assert.equal(await p.locator('#letterEditor').evaluate(el=>getComputedStyle(el,'::before').content),'none');
+ await p.keyboard.insertText('첫 글자');assert.equal(await value(),'첫 글자');
+ assert.ok(await p.locator('#letterEditor').evaluate(el=>{const r=document.createRange();r.setStart(el.firstChild,0);r.setEnd(el.firstChild,1);return r.getBoundingClientRect().top-el.getBoundingClientRect().top<parseFloat(getComputedStyle(el).fontSize);}), 'typing starts on the first line');
+ await p.locator('#letterEditor').fill('');await p.locator('#stickerButton').tap();await p.locator('#stickerOptions [aria-label="고양이"]').tap();await p.locator('#continueWriting').tap();await p.keyboard.insertText('안녕');await p.locator('#stickerButton').tap();await p.locator('#stickerOptions [aria-label="리본"]').tap();
+ for(const font of ['sans','round','serif','pen','hand','title']){
+  await p.locator('#fontChoice').evaluate((el,font)=>{el.value=font;el.dispatchEvent(new Event('change'));},font);await p.evaluate(()=>document.fonts.ready);
+  const aligned=await p.locator('#letterEditor').evaluate(el=>{const boxes=[...el.querySelectorAll('.inline-letter-sticker')].map(s=>s.getBoundingClientRect()),text=[...el.childNodes].find(n=>n.nodeType===3&&n.textContent.includes('안녕')),r=document.createRange();r.selectNodeContents(text);const t=r.getBoundingClientRect(),center=t.top+t.height/2,tolerance=parseFloat(getComputedStyle(el).fontSize)*.6;return boxes.length===2&&Math.abs(boxes[0].top-boxes[1].top)<1&&boxes.every(b=>Math.abs(b.top+b.height/2-center)<tolerance);});assert.ok(aligned,'stickers align with text: '+font);
+  await p.locator('#composePaper').screenshot({path:path.join(out,'aligned-'+font+'.png')});
+ }
+ await p.locator('#fontChoice').evaluate(el=>{el.value='hand';el.dispatchEvent(new Event('change'));});await p.locator('#continueWriting').tap();
  await p.locator('#letterEditor').fill('안녕 친구야');await p.locator('#letterEditor').press('Home');await p.locator('#letterEditor').press('ArrowRight');await p.locator('#letterEditor').press('ArrowRight');
  await p.locator('#stickerButton').tap();await p.locator('#stickerOptions [aria-label="고양이"]').tap();assert.equal(await value(),'안녕\ufffc 친구야');await p.locator('#stickerOptions [aria-label="꽃"]').tap();assert.equal(await value(),'안녕\ufffc\ufffc 친구야');assert.equal(await count(),2);
  await p.locator('#emojiButton').tap();assert.equal(await p.locator('#stickerPanel').isVisible(),false);await p.locator('#emojiOptions [aria-label="💌 넣기"]').tap();assert.equal(await value(),'안녕\ufffc\ufffc💌 친구야');
