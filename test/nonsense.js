@@ -17,6 +17,16 @@ const input=(w,id,value)=>{const e=el(w,id);e.value=value;e.dispatchEvent(new w.
   assert.equal(new Set(bank.map(q=>q.id)).size,100);
   assert.equal(new Set(bank.map(q=>q.q)).size,100);
   bank.forEach(q=>{assert.ok(['classic','word','twist'].includes(q.category));assert.equal(q.w.length,3);assert.equal(new Set([q.a,...q.w]).size,4);});
+  /* 보기 넷의 생김새가 비슷해야 한다. 정답만 유독 길거나, 정답에만 띄어쓰기가 있으면
+     문제를 몰라도 모양만 보고 고를 수 있다. 오답을 다시 쓴 이유가 이것이다. */
+  const len = s => [...s].length;
+  bank.forEach(q => {
+    const others = q.w.map(len);
+    assert.ok(len(q.a) <= Math.max(...others) + 2 && len(q.a) >= Math.min(...others) - 2,
+      q.id + ': 정답 길이가 오답과 너무 달라 눈에 띈다 — ' + q.a + ' / ' + q.w.join(', '));
+    if (q.a.includes(' ')) assert.ok(q.w.some(w => w.includes(' ')),
+      q.id + ': 정답에만 띄어쓰기가 있어 눈에 띈다 — ' + q.a);
+  });
 
   const makerPack=maker.__ev('state.pack.map(q=>({id:q.id,options:q.options,correct:q.correct,category:q.category}))');
   assert.equal(makerPack.length,7);
