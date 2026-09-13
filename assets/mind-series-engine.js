@@ -5,12 +5,21 @@
  const int=(n,max)=>Number.isInteger(n)&&n>=0&&n<max;
  const name=n=>typeof n==='string'&&Array.from(n).length<=12&&!/[\u0000-\u001f\u007f]/.test(n);
  const ep=c=>D.series[c.s]?.episodes.find(e=>e.id===c.e);
+ /* 낱말 고르기 한 벌: 3~6개, 번호 중복 없음, 목록 안의 번호만 */
+ function wordPick(list){
+  const words=D.mirrorWords||[],range=D.mirrorRange||{min:3,max:6};
+  return Array.isArray(list)&&list.length>=range.min&&list.length<=range.max
+   &&list.every(x=>int(x,words.length))&&new Set(list).size===list.length;
+ }
  function person(p,c){
   const e=ep(c);if(!p||!name(p.n)||!Array.isArray(p.a)||!Array.isArray(p.g))return false;
   if(c.s==='next-scene')return p.a.length===1&&int(p.a[0],22)&&p.g.length===0;
+  /* 서로 보는 말: 문항이 아니라 낱말 고르기. a=나를 고른 말, g=상대를 고른 말 */
+  if(c.s==='mirror')return wordPick(p.a)&&wordPick(p.g);
   if(!e||p.a.length!==e.questions.length||!p.a.every((x,i)=>int(x,e.questions[i].options.length)))return false;
   if(c.s==='know-me')return p.g.length===3&&p.g.every(x=>int(x,4));
   if(p.g.length)return false;
+  if(c.s==='love-note'||c.s==='closeness')return true;
   if(c.s==='living'){
    const answered=p.a.map((v,i)=>v===4?-1:i).filter(i=>i>=0);
    return (answered.length?answered.includes(p.important):p.important===-1)&&Number.isInteger(p.rule)&&p.rule>=-1&&p.rule<3;

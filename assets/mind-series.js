@@ -43,6 +43,7 @@
  }
  function quiz(){
   if(slug==='next-scene'){drawTarot();return;}
+  if(slug==='mirror'){wordPicker();return;}
   const qs=questions(),q=qs[step];start(q.title,q.kicker);const progress=node('div','series-progress');progress.setAttribute('role','progressbar');progress.setAttribute('aria-label','질문 진행');progress.setAttribute('aria-valuemin','0');progress.setAttribute('aria-valuemax',String(qs.length));progress.setAttribute('aria-valuenow',String(step));const bar=node('i');bar.style.width=(step/qs.length*100)+'%';progress.append(bar);app.append(progress,node('p','progress-caption',(step+1)+' / '+qs.length+' · '+E.ep(c).title));
   const options=node('div','series-options');options.setAttribute('role','group');options.setAttribute('aria-label','가까운 답 하나');options.id='seriesOptions';const value=q.kind==='a'||q.kind==='g'?p[q.kind][q.index]:p[q.kind];
   q.options.forEach((text,i)=>{const v=q.values?q.values[i]:i,b=button(text,()=>{if(q.kind==='a'||q.kind==='g')p[q.kind][q.index]=v;else p[q.kind]=v;for(const x of options.children)x.setAttribute('aria-pressed',String(x===b));$('seriesNext').disabled=false;},'series-option');b.setAttribute('aria-pressed',String(value===v));options.append(b);});app.append(options);
@@ -66,6 +67,18 @@
   }else if(slug==='living'){
    box.append(paragraph(person.important>=0?'내가 가장 중요하게 고른 장면: '+ep.questions[person.important].title:'지금은 민감한 질문을 모두 건너뛰었어.'));
    box.append(paragraph(person.rule>=0?'내가 동의한 규칙: '+E.rules[c.e][person.rule]:'규칙은 아직 정하지 않았어.'));
+  }else if(slug==='love-note'){
+   const give=D.loveKeys[loveGiveTop(person).key],want=D.loveKeys[loveWantTop(person).key];
+   box.append(node('h3','','내가 주는 방식'),paragraph(give.name+' — '+give.give));
+   box.append(node('h3','','내가 받고 싶은 방식'),paragraph(want.name+' — '+want.want));
+   if(give!==want)box.append(node('small','','주는 방식과 받고 싶은 방식이 다른 건 흔한 일이야. 사람은 보통 자기가 받고 싶은 방식으로 주거든.'));
+  }else if(slug==='closeness'){
+   const top=D.closenessKeys[topTrait(person,0,E.ep(c).questions.length,4).key];
+   box.append(node('h3','','불안할 때 내가 바라는 것'),paragraph(top.need));
+   box.append(node('h3','','나에게 이렇게 해주면 좋아'),paragraph(top.give));
+   box.append(node('small','','애착 유형을 진단하는 검사가 아니야. 지금 내가 편한 거리를 적어 둔 것뿐이야.'));
+  }else if(slug==='mirror'){
+   box.append(node('h3','','내가 고른 나'),paragraph(person.a.map(i=>D.mirrorWords[i]).join(' · ')));
   }else if(slug==='next-scene')box.append(tarotFace(TarotDraw.layout(c.seed,'a')[person.a[0]],'내가 고른 카드'));
   return box;
  }
@@ -91,6 +104,7 @@
   else{
    app.append(ownCard(c.p,c.p.n+' · 먼저 보낸 사람'),ownCard(r.b,r.b.n+' · 답한 사람'));
    if(slug==='know-me')knowResult();if(slug==='repair')repairResult();if(slug==='living')livingResult();
+   if(slug==='love-note')loveResult();if(slug==='closeness')closenessResult();if(slug==='mirror')mirrorResult();
   }
   note('먼저 보낸 친구에게 이 결과 링크를 답장해줘. 링크에는 지금까지의 선택이 담겨 있어. 새 선택을 더했다면 새 링크를 보내줘.');
   share({title:S.title+' · 둘의 결과',desc:slug==='know-me'?'취향이 같은 답과 서로 맞힌 예상을 따로 확인해봐.':'각자 고른 답에서 찾은 우리 이야기. 같이 확인해봐.',hash:'#r='+encode(r),btn:'둘의 결과 보기'},true);
@@ -98,6 +112,40 @@
   put('result:'+c.id,r);
  }
  function comparisonRow(i,emphasis){const q=E.ep(c).questions[i],box=sheet((emphasis?'★ ':'')+q.title);box.classList.toggle('important-scene',!!emphasis);box.append(paragraph(c.p.n+' · '+q.options[c.p.a[i]]),paragraph(r.b.n+' · '+q.options[r.b.a[i]]));return box;}
+ /* ── 서로 보는 말: 문항 대신 낱말을 고른다. 0단계는 나, 1단계는 상대 ── */
+ function wordPicker(){
+  const words=D.mirrorWords,range=D.mirrorRange,mine=step===0,list=mine?p.a:p.g;
+  const who=joining?c.p.n:'상대';
+  start(mine?'나를 나타내는 말':who+'을 나타내는 말',mine?'남들이 뭐라 하든, 내가 보는 나':'떠오르는 대로 골라줘');
+  app.append(paragraph(range.min+'개에서 '+range.max+'개까지 고를 수 있어.'+(mine?'':' 이건 '+who+'에게 그대로 전해져.')));
+  const grid=node('div','word-grid');grid.id='wordGrid';grid.setAttribute('role','group');grid.setAttribute('aria-label',mine?'나를 나타내는 말':'상대를 나타내는 말');
+  const counter=node('p','progress-caption');counter.setAttribute('role','status');
+  const sync=()=>{counter.textContent=list.length+'개 고름 · 최소 '+range.min+'개';const n=$('seriesNext');if(n)n.disabled=list.length<range.min;};
+  words.forEach((w,i)=>{
+   const b=button(w,()=>{
+    const at=list.indexOf(i);
+    if(at>=0)list.splice(at,1);
+    else if(list.length>=range.max){counter.textContent='최대 '+range.max+'개까지야. 하나를 빼고 골라줘.';return;}
+    else list.push(i);
+    b.setAttribute('aria-pressed',String(list.includes(i)));sync();
+   },'word-chip');
+   b.setAttribute('aria-pressed',String(list.includes(i)));grid.append(b);
+  });
+  app.append(grid,counter);
+  app.append(button(mine?'다음 →':(joining?'둘의 말 함께 열기 →':'내 결과 확인하기 →'),()=>{if(mine){step=1;wordPicker();}else finish();},'primary','seriesNext'));
+  app.append(button('← 이전',()=>{if(step){step=0;wordPicker();}else if(joining)invitation();else intro();}));
+  sync();
+  note(mine?'좋은 말만 고르지 않아도 돼. 나를 설명하는 말이면 뭐든 괜찮아.':'상대가 자기를 어떻게 보는지는 아직 몰라. 그래서 재미있는 거야.');
+ }
+ /* 문항 구간의 갈래를 세어 가장 많이 고른 갈래를 돌려준다 */
+ function topTrait(person,from,to,size){
+  const qs=E.ep(c).questions,count=new Array(size).fill(0);
+  for(let i=from;i<to;i++)count[qs[i].traits[person.a[i]]]++;
+  let best=0;for(let k=1;k<size;k++)if(count[k]>count[best])best=k;
+  return {key:best,count,tied:count.filter(v=>v===count[best]).length>1};
+ }
+ const loveGiveTop=person=>topTrait(person,0,4,5);
+ const loveWantTop=person=>topTrait(person,4,8,5);
  function knowResult(){
   const x=E.compare(r),box=sheet('같은 취향과 예상 적중은 달라');box.id='seriesComparison';box.append(paragraph('같은 답을 고른 장면 '+x.same.length+' / 6'),paragraph(c.p.n+'님이 '+r.b.n+'님을 맞힌 예상 '+x.guessA+' / 3'),paragraph(r.b.n+'님이 '+c.p.n+'님을 맞힌 예상 '+x.guessB+' / 3'));app.append(box);
   const surprise=E.guessQuestions.find((i,j)=>c.p.g[j]!==r.b.a[i]||r.b.g[j]!==c.p.a[i]);
@@ -106,6 +154,74 @@
   const details=node('details','series-details');details.append(node('summary','','여섯 장면과 세 가지 예상 모두 보기'));
   for(let i=0;i<6;i++){const row=comparisonRow(i);const j=E.guessQuestions.indexOf(i);if(j>=0)row.append(paragraph('서로의 예상 · '+c.p.n+': '+E.ep(c).questions[i].options[c.p.g[j]]+' / '+r.b.n+': '+E.ep(c).questions[i].options[r.b.g[j]]));details.append(row);}app.append(details);
   note('같은 답의 개수는 관계 점수나 궁합이 아니야. 답이 다른 장면은 다음 대화의 소재로 써봐.');
+ }
+ /* 애정 표현: 점수판이 아니라 "내가 주는 방식"과 "상대가 받고 싶은 방식"의 어긋남을 본다 */
+ function loveResult(){
+  const pairs=[[c.p,r.b],[r.b,c.p]];
+  const box=sheet('주는 방식과 받고 싶은 방식');
+  let matched=0;
+  pairs.forEach(([giver,taker])=>{
+   const give=loveGiveTop(giver),want=loveWantTop(taker);
+   const g=D.loveKeys[give.key],w=D.loveKeys[want.key],hit=give.key===want.key;
+   if(hit)matched++;
+   box.append(node('h3','',giver.n+' → '+taker.n));
+   box.append(paragraph(giver.n+'님은 주로 ‘'+g.name+'’으로 표현해.'));
+   box.append(paragraph(taker.n+'님이 가장 기다리는 건 ‘'+w.name+'’이야.'));
+   box.append(paragraph(hit?'두 사람이 같은 곳을 보고 있어. 지금 방식 그대로 조금만 더 자주 해도 잘 닿아.'
+    :'좋은 마음이 다른 창구로 나가고 있어. ‘'+w.name+'’ 쪽으로 한 번만 바꿔 보면 체감이 달라져.'));
+  });
+  app.append(box);
+  const todo=sheet('오늘 해볼 것 하나씩','거창한 계획 말고, 오늘 안에 되는 것만 골랐어.');
+  pairs.forEach(([giver,taker])=>{
+   const w=D.loveKeys[loveWantTop(taker).key];
+   todo.append(node('h3','',giver.n+'이(가) '+taker.n+'에게'),paragraph(w.act));
+  });
+  app.append(todo);
+  const details=node('details','series-details');details.append(node('summary','','여덟 장면의 선택 모두 보기'));
+  E.ep(c).questions.forEach((q,i)=>details.append(comparisonRow(i,i<4?false:false)));
+  app.append(details);
+  note(matched===2?'둘 다 서로가 기다리는 방식으로 주고 있어. 드문 일이야.':'이건 궁합 점수가 아니야. 어긋난 쪽이 나쁜 게 아니라, 아직 서로의 창구를 몰랐던 것뿐이야.');
+ }
+ /* 가까움의 거리: 유형 이름을 붙이지 않고, 불안할 때 서로 필요한 것이 어떻게 다른지만 본다 */
+ function closenessResult(){
+  const n=E.ep(c).questions.length;
+  const a=topTrait(c.p,0,n,4),b=topTrait(r.b,0,n,4);
+  const ka=D.closenessKeys[a.key],kb=D.closenessKeys[b.key];
+  const box=sheet(a.key===b.key?'둘 다 같은 것을 바라고 있어':'불안할 때, 두 사람이 필요한 게 달라');
+  box.append(node('h3','',c.p.n+'이(가) 바라는 것'),paragraph(ka.need));
+  box.append(node('h3','',r.b.n+'이(가) 바라는 것'),paragraph(kb.need));
+  if(a.key===b.key)box.append(paragraph('같은 걸 바라니 서로의 방식이 이해되기 쉬워. 대신 둘 다 같은 순간에 같은 게 필요해서 부딪힐 수 있어. 그럴 땐 한 사람이 먼저 해주기로 정해두면 편해.'));
+  else if((a.key===0&&b.key===1)||(a.key===1&&b.key===0))box.append(paragraph('한 사람은 지금 확인하고 싶고, 한 사람은 혼자 정리할 시간이 필요해. 가장 자주 부딪히는 조합이야. 답은 둘 중 하나를 고르는 게 아니라 “30분 뒤에 다시 얘기하자”처럼 기다림의 끝을 정해두는 거야.'));
+  else box.append(paragraph('방식이 다르다고 마음이 다른 건 아니야. 서로 위의 문장을 그대로 읽어 주고, 그때 그렇게 해줄 수 있는지만 물어봐.'));
+  app.append(box);
+  const todo=sheet('이번 주에 하나씩');
+  todo.append(node('h3','',c.p.n+'이(가) '+r.b.n+'에게'),paragraph(kb.act));
+  todo.append(node('h3','',r.b.n+'이(가) '+c.p.n+'에게'),paragraph(ka.act));
+  app.append(todo);
+  const x=E.compare(r);
+  app.append(sheet('여덟 장면 중 같은 답','같은 답 '+x.same.length+'개 · 다른 답 '+x.different.length+'개. 다른 쪽이 문제는 아니야, 이야기할 거리일 뿐이야.'));
+  const details=node('details','series-details');details.append(node('summary','','여덟 장면 모두 보기'));
+  E.ep(c).questions.forEach((q,i)=>details.append(comparisonRow(i)));
+  app.append(details);
+  note('이건 애착 유형 검사가 아니야. 오늘 이 순간 내가 편한 거리를 적어 본 것뿐이고, 시기에 따라 달라져.');
+ }
+ /* 서로 보는 말: 각자에 대해 열린 창 / 나만 아는 나 / 너만 본 나 를 나눈다 */
+ function mirrorResult(){
+  const W=D.mirrorWords,names=[c.p.n,r.b.n],selves=[c.p.a,r.b.a],others=[r.b.g,c.p.g];
+  names.forEach((name,i)=>{
+   const self=selves[i],seen=others[i];
+   const both=self.filter(x=>seen.includes(x)),onlyMe=self.filter(x=>!seen.includes(x)),onlyYou=seen.filter(x=>!self.includes(x));
+   const box=sheet(name+'을(를) 고른 말');
+   const line=(title,list,empty)=>{box.append(node('h3','',title));box.append(paragraph(list.length?list.map(x=>W[x]).join(' · '):empty));};
+   line('둘 다 고른 말',both,'겹친 말이 하나도 없었어. 서로 다른 면을 보고 있다는 뜻이야.');
+   line('나만 고른 말',onlyMe,'내가 고른 말은 상대도 모두 봤어.');
+   line('상대만 본 말',onlyYou,'상대가 새로 붙여준 말은 없었어.');
+   if(onlyYou.length)box.append(paragraph('‘'+W[onlyYou[0]]+'’은(는) '+name+'님은 안 골랐는데 상대가 본 모습이야. 언제 그렇게 느꼈는지 물어봐.'));
+   else if(onlyMe.length)box.append(paragraph('‘'+W[onlyMe[0]]+'’은(는) 나만 고른 말이야. 상대에게 잘 안 보이는 면일 수 있어.'));
+   app.append(box);
+  });
+  const overlap=c.p.a.filter(x=>r.b.g.includes(x)).length+r.b.a.filter(x=>c.p.g.includes(x)).length;
+  note(overlap?'겹친 말이 많다고 더 가까운 건 아니야. 한 사람만 고른 말이 오히려 더 할 이야기가 많아.':'겹친 말이 없어도 괜찮아. 서로 다른 자리에서 본 거야.');
  }
  function repairResult(){
   const q=E.ep(c).questions,box=sheet('마음은 있는데, 시작 버튼이 달랐네');
