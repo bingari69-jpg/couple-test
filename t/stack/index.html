@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://noljago.co.kr/t/stack/">
 <meta name="twitter:card" content="summary_large_image">
 
-<script src="../../assets/analytics.js?v=20260913-mines-guide"></script>
+<script src="../../assets/analytics.js?v=20260913-2048-guide"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
 <script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
@@ -403,7 +403,9 @@ function loop(){
 }
 
 /* ===== 진행 ===== */
-$("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
+/* 진행 중에는 큰 버튼도 "멈추기"다. 딱 멈춰가 같은 버튼을 멈춤 버튼으로 쓰기 때문에,
+   여기서만 눌리지 않으면 "눌러도 안 멈춘다"가 된다. 판을 톡 치는 것도 그대로 된다. */
+$("bigBtn").onclick=()=>{ if(state.running){ drop(); return; } if(!state.done) countdown(); };
 
 function countdown(){
   const b=$("bigBtn"); b.disabled=true; b.textContent="…";
@@ -426,7 +428,7 @@ function startPlay(){
   state.running=true; state.done=false; state.t0=performance.now();
   $("cover").classList.add("hidden");
   setClock(state.limit,state.limit);
-  $("bigBtn").disabled=true; $("bigBtn").textContent="진행 중";
+  const play=$("bigBtn"); play.disabled=false; play.className="bigbtn stop"; play.textContent="멈추기";
   state.tickTimer=setTimeout(loop,TICK);
 }
 /* why: "time" 시간 끝 (탑이 무너져도 판은 안 끝난다) */

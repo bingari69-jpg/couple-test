@@ -31,6 +31,16 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - state.limit'); w.__
   assert.equal(w.__ev('state.misses'), missBefore, '빗나감으로도 세지 않는다');
   w.__ev('state.running=false');
 
+  /* 큰 버튼도 멈추기 버튼이다 — 딱 멈춰와 같은 자리라 여기서만 안 눌리면 "안 멈춘다"가 된다 */
+  w.__ev('startPlay()');
+  assert.equal(el(w, 'bigBtn').disabled, false, '진행 중에도 눌린다');
+  assert.equal(el(w, 'bigBtn').textContent, '멈추기');
+  const beforeBtn = w.__ev('state.floors') + w.__ev('state.misses');
+  w.__ev('state.cur.x = state.stack[state.stack.length-1].x');
+  el(w, 'bigBtn').click();
+  assert.equal(w.__ev('state.floors') + w.__ev('state.misses'), beforeBtn + 1, '버튼으로도 블록이 멈춘다');
+  w.__ev('state.running=false; state.done=false');
+
   /* 같은 시드 → 같은 블록 순서·같은 출발 위치, 다른 시드 → 다른 순서 */
   st.seed = 12345; w.__ev('buildBoard()'); const a = seq(w), x0 = cur(w).x, col0 = cur(w).c;
   const w2 = load('stack', '').window; w2.__ev('state.seed=12345; buildBoard()');
