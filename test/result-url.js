@@ -5,6 +5,12 @@ const fs = require('fs');
 const path = require('path');
 const { load, el, PAGE_ERRORS } = require('./dom');
 const tick = ms => new Promise(r => setTimeout(r, ms));
+/* 익명 로그인 → RPC 로 이어지는 비동기 사슬을 정해진 시간만 기다리면 기기가 느린 날 흔들린다.
+   조건이 만족될 때까지 짧게 여러 번 확인한다. */
+const until = async (check, label, limit = 4000) => {
+  for (let waited = 0; waited < limit; waited += 25) { if (check()) return true; await tick(25); }
+  throw new Error('기다려도 일어나지 않음: ' + label);
+};
 const source = fs.readFileSync(path.join(__dirname, '../assets/result-notify.js'), 'utf8');
 
 function attach(w) {
@@ -30,10 +36,9 @@ function attach(w) {
   const calls = attach(g);
   await tick(150);
   g.Duel.finish(250, { tries: [9950, 10050, 9900] });
-  await tick(1200);
+  await until(() => calls.some(c => c.name === 'complete_game_challenge'), '완료 RPC 호출');
   assert.equal(el(g, 's-result').classList.contains('hidden'), false);
   const done = calls.find(c => c.name === 'complete_game_challenge');
-  assert.ok(done, '완료 RPC가 호출돼야 함');
   assert.match(done.url, /^\/t\/ten\/#r=/, '결과 주소는 #r= 링크여야 함: ' + done.url);
   assert.equal(new URL('https://x' + done.url).searchParams.get('ch'), null, '결과 주소에 ch 코드가 남으면 안 됨');
 
