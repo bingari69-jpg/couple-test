@@ -30,10 +30,10 @@
   if(!window.__GATCHI_GUIDE_LOADER__ && analyticsScript && analyticsScript.src && !analyticsScript.hasAttribute('data-own-guide')){
     window.__GATCHI_GUIDE_LOADER__=true;
     const guideData=document.createElement("script");
-    guideData.src=new URL("guide-data.js?v=20260913-series",analyticsScript.src).href;
+    guideData.src=new URL("guide-data.js?v=20260913-mines-guide",analyticsScript.src).href;
     guideData.onload=function(){
       const helpGuide=document.createElement("script");
-      helpGuide.src=new URL("help-guide.js?v=20260913-once",analyticsScript.src).href;
+      helpGuide.src=new URL("help-guide.js?v=20260913-mines-guide",analyticsScript.src).href;
       document.head.appendChild(helpGuide);
     };
     document.head.appendChild(guideData);

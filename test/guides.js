@@ -47,6 +47,26 @@ const read=file=>fs.readFileSync(path.join(ROOT,file),'utf8');
   assert(!(await practiceText('ufo')).includes('🐹'),'UFO 게임에 두더지가 나오면 안 됨');
   assert((await practiceText('tap')).includes('빠르게 눌러요'),'연타 게임에는 연타 버튼이 필요함');
 
+  const mines=new JSDOM(`<!doctype html><html><body><main><div class="steps"></div><button id="startBtn">시작</button></main><script>HTMLDialogElement.prototype.showModal=function(){this.open=true};HTMLDialogElement.prototype.close=function(){this.open=false}</script><script>${data}</script><script>${runtime}</script></body></html>`,{url:'https://example.test/t/mines/?guide=1',runScripts:'dangerously',pretendToBeVisual:true});
+  await new Promise(resolve=>setTimeout(resolve,30));
+  const md=mines.window.document,lesson=md.querySelector('.mines-lesson'),cells=()=>[...lesson.querySelectorAll('.mines-example-cell')],next=()=>lesson.querySelector('.mines-next').click();
+  assert(md.getElementById('gameGuideDialog').open,'명시적인 그림 설명 링크는 설명창으로 열림');
+  assert.equal(cells().length,36);assert.equal(cells()[20].textContent,'3');assert.equal(cells()[27].textContent,'1');
+  next();cells()[0].click();assert(lesson.querySelector('.practice-status').textContent.includes('이번에는'));assert.equal(cells()[0].textContent,'','다른 칸을 눌러도 지뢰를 지어내지 않음');
+  for(const i of [13,14,15])cells()[i].click();assert.equal(cells().filter(c=>c.textContent==='🚩').length,3);
+  cells()[13].click();assert.equal(cells().filter(c=>c.textContent==='🚩').length,3,'반복 클릭으로 중복 집계하지 않음');
+  next();cells()[22].click();assert.equal(cells().filter(c=>c.textContent==='🚩').length,4);
+  next();for(const i of [12,16,23])cells()[i].click();assert.equal(cells().filter(c=>c.textContent==='✓').length,3);
+  next();assert(lesson.textContent.includes('나머지 노란 칸은 아직 몰라요'));next();assert.equal(cells().filter(c=>c.textContent==='🚩'||c.textContent==='✓').length,0,'처음부터 보기 초기화');
+  assert.equal(mines.window.localStorage.length,0,'연습은 실제 게임 기록을 저장하지 않음');mines.window.close();
+
+  // The example's four bombs and three safe cells follow from the visible numbers
+  // in EVERY possible six-mine board, not just one invented hidden answer.
+  const visible={18:1,19:2,20:3,21:3,24:0,25:0,26:0,27:1,28:1,29:1,30:0,31:0,32:0,33:0,34:0,35:0};
+  const unknown=Array.from({length:36},(_,i)=>i).filter(i=>!(i in visible));let solutions=0;
+  function verify(chosen,start){if(chosen.length===6){const mines=new Set(chosen);for(const [key,n] of Object.entries(visible)){const i=Number(key);let count=0;for(const m of chosen)if(Math.abs(Math.floor(m/6)-Math.floor(i/6))<=1&&Math.abs(m%6-i%6)<=1)count++;if(count!==n)return;}solutions++;for(const i of [13,14,15,22])assert(mines.has(i));for(const i of [12,16,23])assert(!mines.has(i));return;}for(let j=start;j<=unknown.length-(6-chosen.length);j++)verify([...chosen,unknown[j]],j+1);}
+  verify([],0);assert(solutions>0,'예시의 숫자와 지뢰 개수를 만족하는 판이 있어야 함');
+
   const admin=read('admin/index.html');
   ['gameRule','gameStep1','gameStep2','gameStep3','gameTip','gamePractice'].forEach(id=>assert(admin.includes(`id="${id}"`),'관리자 사용법 필드 #'+id+' 누락'));
   assert(admin.includes('href="guide/">? 관리자 사용법</a>'),'관리자 도움말 링크 누락');

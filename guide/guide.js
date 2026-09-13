@@ -25,7 +25,9 @@
     const list=document.createElement('ol');list.className='mini-steps';(item.steps||[]).slice(0,3).forEach((step,index)=>{const li=document.createElement('li');li.innerHTML='<b>'+(index+1)+'</b>';li.append(document.createTextNode(step));list.append(li);});
     const tip=document.createElement('p');tip.className='card-tip';tip.textContent='💡 '+(item.tip||'화면에 나온 순서대로 천천히 해보세요.');
     const link=document.createElement('a');link.className='play-link';link.href='../'+String(item.path).replace(/^\.\//,'');link.textContent=item.visibility==='maintenance'?'지금은 쉬는 중':'이 게임 해보기 →';if(item.visibility==='maintenance'){link.removeAttribute('href');link.setAttribute('aria-disabled','true');}
-    body.append(rule,list,tip,link);details.append(summary,body);return details;
+    body.append(rule,list,tip);
+    if(item.slug==='mines'){const lesson=document.createElement('a');lesson.className='play-link';lesson.href='../t/mines/?guide=1';lesson.textContent='그림으로 차근차근 배우기 →';body.append(lesson);}
+    body.append(link);details.append(summary,body);return details;
   }
   function render(){
     const query=$('guideSearch').value.trim().toLowerCase();const items=configured().filter(item=>(selected==='전체'||item.group===selected)&&(!query||(item.title+' '+item.rule+' '+item.group).toLowerCase().includes(query)));
