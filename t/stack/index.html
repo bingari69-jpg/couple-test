@@ -417,8 +417,7 @@ function countdown(){
     n--;
     if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(tickCd,1000); return; }
     cover.classList.add("hidden");
-    b.textContent="진행 중";
-    startPlay();
+    startPlay();   // 여기서 버튼이 "멈추기"가 된다
   };
   state.cdTimer=setTimeout(tickCd,1000);
 }
