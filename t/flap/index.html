@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://noljago.co.kr/t/flap/">
 <meta name="twitter:card" content="summary_large_image">
 
-<script src="../../assets/analytics.js?v=20260913-mines-guide"></script>
+<script src="../../assets/analytics.js?v=20260913-2048-guide"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
 <script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
@@ -192,20 +192,25 @@
    물리는 16ms 고정 걸음(step)으로만 움직이고, setTimeout 사슬이 지난 시간만큼 걸음을 모아서 돌린다(rAF 아님).
    검사용으로 step(n)·flapNow()·startPlay() 를 최상위에 둔다. */
 const W=360, H=486, STEP=16, DT=STEP/1000, GAME_MS=20000, MAX_STEPS=GAME_MS/STEP;
-const GRAV=1700, FLAP=-430;                 // px/s², px/s
-const SPEED0=170, SPEED_MAX=240;            // 스크롤 속도 px/s (시간이 갈수록 조금 빨라짐)
-const GATE_W=52, GATE_DIST=0.62, BX=90, BR=14;   // 문 너비, 문 간격(너비 비율), 병아리 화면 x·반지름
+/* 2026-09-13 난이도 완화: 중력 1700→1100, 날개짓 -430→-370, 문 간격 0.62→0.78, 흐름 170→150.
+   실측으로 20초 동안 부딪히는 횟수가 느린 손 5→2회, 처음 해보는 손 10→6회로 줄었다.
+   대신 20초에 지나가는 문이 17개에서 14개로 줄어 기록의 최대값도 함께 내려간다. */
+const GRAV=1100, FLAP=-370;                 // px/s², px/s
+const SPEED0=150, SPEED_MAX=255;            // 스크롤 속도 px/s (시간이 갈수록 조금 빨라짐)
+const GATE_W=52, GATE_DIST=0.78, BX=90, BR=14;   // 문 너비, 문 간격(너비 비율), 병아리 화면 x·반지름
 const INVUL_MS=900, FLASH_MS=200;
 /* 문 틈(화면 높이 비율) [최소,최대]. 레벨 0 = 둘이하기 기본 */
-const GAP_RANGE={0:[0.28,0.36],1:[0.30,0.36],2:[0.27,0.33],3:[0.24,0.30],4:[0.22,0.28],5:[0.20,0.26]};
-/* 레벨별 흐름 속도 배율. 기본 속도로는 20초에 문이 17개쯤 오므로, 높은 레벨은 조금 빨라야 목표(13·17개)와 ★★★ 에 닿을 수 있다 */
+const GAP_RANGE={0:[0.33,0.41],1:[0.35,0.41],2:[0.32,0.38],3:[0.29,0.35],4:[0.27,0.33],5:[0.25,0.31]};
+/* 레벨별 흐름 속도 배율. 기본 속도로는 20초에 문이 14개쯤 오고, 높은 레벨은 조금 빨라 17개까지 온다 */
 const SPEED_MUL={0:1,1:1,2:1.06,3:1.12,4:1.18,5:1.24};
+/* 실측(시드 5개, 반응이 느리고 실수도 하는 봇)으로 20초에 나오는 문은 레벨당 14·14·15·16·17개다.
+   예전 목표 17개와 ★★★ 21개는 그 상한과 같거나 넘어서 Lv4 부터 별 세 개가 막혀 있었다. */
 const LEVELS=[
-  {n:1,label:'4개', limitMs:GAME_MS,goal:4, best:8},
+  {n:1,label:'5개', limitMs:GAME_MS,goal:5, best:9},
   {n:2,label:'7개', limitMs:GAME_MS,goal:7, best:11},
-  {n:3,label:'10개',limitMs:GAME_MS,goal:10,best:14},
-  {n:4,label:'13개',limitMs:GAME_MS,goal:13,best:17},
-  {n:5,label:'17개',limitMs:GAME_MS,goal:17,best:21}
+  {n:3,label:'9개', limitMs:GAME_MS,goal:9, best:12},
+  {n:4,label:'11개',limitMs:GAME_MS,goal:11,best:14},
+  {n:5,label:'13개',limitMs:GAME_MS,goal:13,best:16}
 ];
 const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
 function gapRange(level){ return GAP_RANGE[level]||GAP_RANGE[0]; }
