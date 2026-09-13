@@ -148,22 +148,58 @@
     window.addEventListener('app-config-ready', applyManagedGame);
     if (window.APP_PUBLISHED_CONFIG) applyManagedGame({ detail: window.APP_PUBLISHED_CONFIG });
   }
-  /* 모바일: 조작 영역(판·캔버스·버튼) 위에서 시작한 손가락 움직임이 페이지 스크롤이나
-     '당겨서 새로고침'으로 넘어가지 않게 한다. CSS 의 touch-action:none 이 먼저 막고,
-     그것만으로는 안 멈추는 iOS 고무줄 스크롤을 여기서 한 번 더 막는다.
-     조작 영역 밖(설명·버튼 여백)에서 시작한 스크롤은 그대로 되므로 페이지는 계속 읽을 수 있다. */
+  /* ── 모바일 조작·화면 ──────────────────────────────────────────────
+     (1) 게임이 진행되는 동안에는 하단 메뉴를 감춘다. 판을 가리지 않고, 조작 버튼 바로 아래
+         메뉴를 잘못 눌러 한 번뿐인 판을 날리는 일도 막는다. 끝나면 다시 올라온다.
+     (2) 진행 중에만 조작 영역의 스크롤을 잠근다. 시작 전·끝난 뒤에는 판을 쓸어도 페이지가
+         평소처럼 움직이므로, 화면이 잘린 채 멈춰 버리는 일이 없다.
+     (3) 시작하는 순간 게임 영역을 화면 위로 올려 판 전체가 한눈에 들어오게 한다. */
   const PLAY_SURFACE = 'canvas,#board,#grid,#arena,#pads,#pad,#sky,#dpad,#clock,.board,.grid,.arena,.pad,.sky,.dpad,.clock,.cardbtn,.cell,.bigbtn,[data-play-surface]';
-  function lockTouch() {
+  let startTapped = 0, wasPlaying = false;
+
+  /* 게임마다 진행 표시가 조금씩 다르다: 대부분 state.running, 넌센스는 state.playing, 반응속도는 state.phase */
+  function isPlaying() {
+    const st = window.Duel && window.Duel.state;
+    if (st) {
+      if (st.running === true || st.playing === true) return true;
+      if (st.phase === 'wait' || st.phase === 'go') return true;
+    }
+    /* 시작을 누른 뒤 카운트다운(3초) 동안에도 미리 감춰 화면이 한 번만 움직이게 한다 */
+    return Date.now() - startTapped < 4000;
+  }
+
+  /* 시작할 때 게임 영역(시간·판·버튼)을 화면 위로 올린다 */
+  function focusPlay() {
+    const el = document.querySelector('.hud,#hud,.board,#board,canvas,#grid,.arena,#pads,.pad');
+    if (!el) return;
+    const top = el.getBoundingClientRect().top + window.scrollY - 8;
+    try { window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' }); }
+    catch (_) { window.scrollTo(0, Math.max(0, top)); }
+  }
+
+  function watchPlay() {
     document.documentElement.style.overscrollBehavior = 'none';
+    document.addEventListener('pointerdown', event => {
+      const node = event.target;
+      if (node && node.closest && node.closest('.bigbtn,#bigBtn,#pad')) startTapped = Date.now();
+    }, true);
     document.addEventListener('touchmove', event => {
+      if (!document.body.classList.contains('playing')) return;   // 진행 중에만 잠근다
       const node = event.target;
       if (!node || !node.closest) return;
       /* 글자를 쓰거나 고르는 칸(초성 퀴즈 답·타자 문장)은 그대로 둔다 */
       if (node.closest('input,textarea,select,[contenteditable]')) return;
       if (node.closest(PLAY_SURFACE)) event.preventDefault();
     }, { passive: false });
+    setInterval(() => {
+      const now = isPlaying();
+      if (now === wasPlaying) return;
+      wasPlaying = now;
+      document.body.classList.toggle('playing', now);
+      if (now) focusPlay();
+    }, 200);
   }
-  lockTouch();
+  watchPlay();
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
   else init();
