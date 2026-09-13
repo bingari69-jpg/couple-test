@@ -7,7 +7,7 @@
  const fonts=Object.fromEntries(Object.keys(D.fonts).map(id=>[id,D.fontCSS(id)]));
  const replyMode=params.get('reply')==='1',queryText=key=>(params.get(key)||'').slice(0,24);
  const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:replyMode?queryText('to'):'',from:replyMode?queryText('from'):'',body:'',font:'hand',size:22,occasion:'plain',number:100,stickers:[],inline:[],seal:'heart',color:''};
- let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
+ let view='library',occasion=occasionMap[params.get('occasion')]||'전체',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
  let activeReveal;
  function stopReveal(){if(activeReveal){activeReveal.finish();activeReveal=null;}}
  function startReveal(body,button){stopReveal();$(button).hidden=true;$(body).setAttribute('tabindex','-1');$(body).focus({preventScroll:true});}
@@ -48,7 +48,7 @@
  function selectTemplate(t){draft.template=t.id;draft.font=t.font;draft.size=t.size;draft.color='';saveDraft();}
  function renderFavorite(){const yes=favorites.includes(draft.template);$('favoriteTemplate').setAttribute('aria-pressed',String(yes));$('favoriteTemplate').textContent=yes?'♥ 찜한 편지지':'♡ 이 편지지 찜하기';}
  $('favoriteTemplate').onclick=()=>{favorites=favorites.includes(draft.template)?favorites.filter(id=>id!==draft.template):[...favorites,draft.template];try{localStorage.setItem(FAVORITES_KEY,JSON.stringify(favorites));}catch(_){toast('찜 목록은 이번 방문 동안만 유지돼요.');}renderFavorite();};
- $('favoritesOnly').onclick=()=>{onlyFavorites=!onlyFavorites;season='';renderLibrary();};
+ $('favoritesOnly').onclick=()=>{onlyFavorites=!onlyFavorites;renderLibrary();};
  function seal(el,id){const target=el.querySelector('.heart-seal');if(!target)return;const img=document.createElement('img');img.src=D.stickerURL(id);img.alt='';target.replaceChildren(img);}
  function renderTools(){
    $('fontOptions').replaceChildren();Object.entries(D.fonts).forEach(([id,f])=>{const b=document.createElement('button');b.className='font-option';b.setAttribute('aria-pressed',String(draft.font===id));b.style.fontFamily=fonts[id];const name=document.createElement('small');name.textContent=f.name;const sample=document.createElement('span');sample.textContent='오늘도 네 생각이 났어.';b.append(name,sample);b.onclick=()=>{$('fontChoice').value=id;$('fontChoice').dispatchEvent(new Event('change'));};$('fontOptions').append(b);});
@@ -99,10 +99,9 @@
  }
  function renderFilters(){
    $('occasionFilters').replaceChildren();['전체','그냥','생일','기념일','고마워','미안해','응원'].forEach(x=>{const b=document.createElement('button');b.className='chip';b.textContent=x;b.setAttribute('aria-pressed',String(occasion===x));b.onclick=()=>{occasion=x;renderLibrary();};$('occasionFilters').append(b);});
-   $('seasonFilters').replaceChildren();['전체','심플','다이어리','캐릭터','로맨틱','축하','수채화'].forEach(x=>{const b=document.createElement('button');b.className='chip';b.textContent=x;b.setAttribute('aria-pressed',String(x==='전체'?!season:season===x));b.onclick=()=>{season=x==='전체'?'':x;renderLibrary();};$('seasonFilters').append(b);});
- }
+  }
  function renderLibrary(){
-   renderSaved();renderFilters();$('occasionSummary').textContent=occasion==='전체'?'선택':occasion;$('favoritesOnly').setAttribute('aria-pressed',String(onlyFavorites));const visible=templates.filter(t=>(!season||t.style===season)&&(!onlyFavorites||favorites.includes(t.id)));
+   renderSaved();renderFilters();$('occasionSummary').textContent=occasion==='전체'?'선택':occasion;$('favoritesOnly').setAttribute('aria-pressed',String(onlyFavorites));const visible=templates.filter(t=>!onlyFavorites||favorites.includes(t.id));
    $('templateCount').textContent=visible.length+'가지';$('empty').hidden=!!visible.length;$('viewTemplate').disabled=!visible.some(t=>t.id===draft.template);
    $('templateGrid').replaceChildren();
    visible.forEach(t=>{
@@ -119,7 +118,7 @@
  function openSamplePaper(){setPreviewTab(false);startReveal('sampleBody','skipSample');$('samplePaper').scrollIntoView({block:'start'});}
  $('sampleEnvelope').onclick=()=>animateEnvelope($('sampleEnvelope'),openSamplePaper);
  $('openSample').onclick=()=>{setPreviewTab(true);$('envelopePreview').scrollIntoView({block:'center'});animateEnvelope($('sampleEnvelope'),openSamplePaper);};
- $('resetFilters').onclick=()=>{occasion='전체';season='';onlyFavorites=false;renderLibrary();};
+ $('resetFilters').onclick=()=>{occasion='전체';onlyFavorites=false;renderLibrary();};
  $('useTemplate').onclick=startWriting;
  function renderCount(){
    const count=D.segments(draft.body).length,over=count>MAX_LETTER;
@@ -140,7 +139,7 @@
  $('occasionChoice').onchange=e=>{draft.occasion=e.target.value;draft.number=draft.occasion==='day'?100:1;$('anniversaryNumber').value=draft.number;renderOccasion();saveDraft();};
  $('anniversaryNumber').onchange=e=>{draft.number=Math.max(1,Math.min(9999,parseInt(e.target.value,10)||1));e.target.value=draft.number;saveDraft();};
  function toggle(button,panel){$(panel).hidden=!$(panel).hidden;$(button).setAttribute('aria-expanded',String(!$(panel).hidden));}
- $('changePaper').onclick=()=>{syncDraft();changingPaper=true;occasion='전체';season='';onlyFavorites=false;go('library');};
+ $('changePaper').onclick=()=>{syncDraft();changingPaper=true;occasion='전체';onlyFavorites=false;go('library');};
  $('fontButton').onclick=()=>toggle('fontButton','fontPanel');$('sizeButton').onclick=()=>toggle('sizeButton','sizePanel');$('helpButton').onclick=()=>toggle('helpButton','helpPanel');
  $('stickerButton').onclick=()=>openDecorations('sticker');$('emojiButton').onclick=()=>openDecorations('emoji');
  $('fontChoice').onchange=e=>{draft.font=e.target.value;typography($('composePaper'),draft);resizeBody();if(document.fonts)document.fonts.ready.then(resizeBody);saveDraft();renderTools();};$('sizeChoice').oninput=e=>{draft.size=Number(e.target.value);$('sizeValue').textContent=draft.size;typography($('composePaper'),draft);resizeBody();saveDraft();};

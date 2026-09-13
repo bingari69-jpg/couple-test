@@ -25,7 +25,7 @@
 .draft-banner{border:1px solid #f3d5ca;background:#fff0ea;border-radius:12px;padding:15px 17px;margin:14px 0;display:flex;align-items:center;gap:12px;flex-wrap:wrap;overflow-wrap:anywhere}
 .draft-banner div{flex:1;min-width:150px}.draft-banner strong{display:block;font-size:14px}.draft-banner p{font-size:12px;color:#957365;margin:4px 0 0}.draft-banner button{background:#fff;padding:10px 14px;border:1px solid #f0d8ca;border-radius:9px;font-size:13px}
 .letter-studio .filters{display:flex;flex-wrap:wrap;gap:6px;overflow:visible;margin:8px 0;padding:0}.letter-studio .chip{padding:10px 15px;border:1px solid transparent;background:#f0ede7;color:#80786f;font-size:13px;min-height:42px;border-radius:999px}
-.letter-studio .chip[aria-pressed=true]{background:#ff6959;border-color:#ff6959;color:#fff}.letter-studio .filter-row{display:block;margin-top:12px}.letter-studio .filter-label{font-size:11px}
+.letter-studio .chip[aria-pressed=true]{background:#ff6959;border-color:#ff6959;color:#fff}
 .letter-studio .grid-title{margin-top:28px}.letter-studio .grid-title h2{font-size:22px;letter-spacing:-.5px}.letter-studio .grid-title button{font-size:12px;background:none;color:#80786f;padding:8px;border-radius:6px}
 .letter-studio .template-grid{gap:14px 12px}.letter-studio .template-card{background:var(--tint);border-radius:21px;border:2px solid transparent;box-shadow:0 3px 10px #49302a06;overflow:hidden}.letter-studio .template-card[aria-pressed=true]{border-color:var(--coral)}
 .letter-studio .template-card .paper-art{position:relative;aspect-ratio:1.05;margin:8px 8px 0;border-radius:13px;box-shadow:0 2px 8px #62462512;border:0;padding:20% 10% 10%;display:flex;align-items:center}
@@ -63,7 +63,7 @@
 @media(max-width:380px){.font-option span{font-size:16px}}
 
 .template-card .paper-art[data-legacy=true] .mini-copy{visibility:hidden}
-.letter-studio .toolbar button[aria-expanded=true]{color:#b45443}.letter-studio .filter-row{margin-top:14px}.letter-studio .template-count{font-family:'Letter Sans',sans-serif;font-weight:400;font-size:12px;color:var(--muted)}
+.letter-studio .toolbar button[aria-expanded=true]{color:#b45443}.letter-studio .template-count{font-family:'Letter Sans',sans-serif;font-weight:400;font-size:12px;color:var(--muted)}
 
 /* Keep decorations beside the writing task, including above a mobile keyboard. */
 .letter-editor{position:relative;min-height:290px;padding:8px 0 14px;font-family:var(--letter-font);font-size:var(--letter-size,20px);line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;outline:none;caret-color:#b14c3c;scroll-margin-bottom:260px}

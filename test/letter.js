@@ -22,7 +22,7 @@ async function main(){
  assert.equal($('library').hidden,false);
  const press=(container,text)=>[...$(container).querySelectorAll('button')].find(x=>x.textContent===text).click();
  press('occasionFilters','생일');assert.equal($('templateGrid').children.length,16);
- press('seasonFilters','다이어리');assert.equal($('templateGrid').children.length,2);assert.equal($('empty').hidden,true);
+ assert.equal($('seasonFilters'),null,'분위기 필터는 없앴다');assert.equal($('empty').hidden,true);
  $('favoritesOnly').click();assert.equal($('empty').hidden,false);assert.equal($('viewTemplate').disabled,true);
  $('resetFilters').click();assert.equal($('templateGrid').children.length,16);
  $('viewTemplate').click();assert.equal($('detail').hidden,false);$('envelopeTab').click();assert.equal($('envelopePreview').hidden,false);
