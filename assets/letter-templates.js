@@ -20,5 +20,5 @@
     {id:'autumn',name:'책 사이의 마음',tag:'가을 · 차분한',season:'가을',occasions:['그냥','고마워','기념일'],line:'오래 간직하고 싶은 한 페이지.',color:'#f6e8d5',x:50,y:100},
     {id:'winter',name:'눈 내리는 밤',tag:'겨울 · 포근한',season:'겨울',occasions:['그냥','생일','기념일','고마워'],line:'추운 날에도 마음은 따뜻하게.',color:'#e4edf9',x:100,y:100}
   ].map(t=>({...t,style:'수채화',legacy:true,font:'hand',size:22,paper:'#fffaf2',ink:'#443c37',accent:'#ac7163',occasions:['그냥','생일','기념일','고마워','미안해','응원']}));
-  window.LETTER_TEMPLATES = [...modern,...vintage];
+  window.LETTER_TEMPLATES = [...vintage,...modern];
 })();

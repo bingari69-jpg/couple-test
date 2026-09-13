@@ -6,7 +6,7 @@
  const occasionMap={birthday:'생일',anniversary:'기념일',plain:'그냥',thanks:'고마워',sorry:'미안해',cheer:'응원'};
  const fonts=Object.fromEntries(Object.keys(D.fonts).map(id=>[id,D.fontCSS(id)]));
  const replyMode=params.get('reply')==='1',queryText=key=>(params.get(key)||'').slice(0,24);
- const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'little-heart',to:replyMode?queryText('to'):'',from:replyMode?queryText('from'):'',body:'',font:'sans',size:20,occasion:'plain',number:100,stickers:[],seal:'heart',color:''};
+ const draft={template:templates.some(t=>t.id===params.get('template'))?params.get('template'):'spring',to:replyMode?queryText('to'):'',from:replyMode?queryText('from'):'',body:'',font:'hand',size:22,occasion:'plain',number:100,stickers:[],seal:'heart',color:''};
  let view='library',occasion=occasionMap[params.get('occasion')]||'전체',season='',returnFromPreview='compose',preview=false,incoming=null,changingPaper=false,toastTimer,animationTimer,madeUrl='',sdkPromise;
  let activeReveal;
  function stopReveal(){if(activeReveal){activeReveal.finish();activeReveal=null;}}
