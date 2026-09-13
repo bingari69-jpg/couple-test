@@ -60,6 +60,47 @@ const read=file=>fs.readFileSync(path.join(ROOT,file),'utf8');
   next();assert(lesson.textContent.includes('나머지 노란 칸은 아직 몰라요'));next();assert.equal(cells().filter(c=>c.textContent==='🚩'||c.textContent==='✓').length,0,'처음부터 보기 초기화');
   assert.equal(mines.window.localStorage.length,0,'연습은 실제 게임 기록을 저장하지 않음');mines.window.close();
 
+  const merge=new JSDOM(`<!doctype html><html><body><main><button id="startBtn">시작</button></main><script>HTMLDialogElement.prototype.showModal=function(){this.open=true};HTMLDialogElement.prototype.close=function(){this.open=false}</script><script>${data}</script><script>${runtime}</script></body></html>`,{url:'https://example.test/t/2048/?guide=1',runScripts:'dangerously',pretendToBeVisual:true});
+  await new Promise(resolve=>setTimeout(resolve,30));
+  const ed=merge.window.document,exercise=ed.querySelector('.merge-lesson');
+  const values=()=>[...exercise.querySelectorAll('.merge-tile')].map(c=>Number(c.dataset.value));
+  const arrow=dir=>exercise.querySelector('[data-dir="'+dir+'"]').click();
+  const advance=()=>exercise.querySelector('.merge-next').click();
+  const points=()=>Number(exercise.querySelector('.merge-score').textContent);
+  assert(ed.getElementById('gameGuideDialog').open);assert.equal(values().length,16);
+  advance();assert.equal(exercise.querySelector('.merge-count').textContent,'1 / 6','guided step needs a practice move');
+  const before=values();arrow('R');assert.deepEqual(values(),before,'wrong direction gets a hint, not a fake move');
+  arrow('L');assert.deepEqual(values().slice(0,4),[2,4,0,0]);assert.equal(points(),0);
+  advance();arrow('L');assert.deepEqual(values().slice(0,4),[4,0,0,0]);assert.equal(points(),4);
+  arrow('L');assert.equal(points(),4,'completed step cannot add points repeatedly');
+  advance();arrow('R');assert.deepEqual(values().slice(0,4),[0,0,2,4]);assert.equal(points(),0);
+  advance();arrow('L');assert.deepEqual(values().slice(0,4),[4,4,0,0]);assert.equal(points(),4,'new 4 cannot merge twice in a move');
+  assert.equal(exercise.querySelector('.merge-next').getAttribute('aria-disabled'),'true');arrow('L');assert.deepEqual(values().slice(0,4),[8,0,0,0]);assert.equal(points(),12);
+  advance();let leakedKeys=0;ed.addEventListener('keydown',()=>leakedKeys++);
+  exercise.querySelector('.merge-board').dispatchEvent(new merge.window.KeyboardEvent('keydown',{key:'ArrowUp',bubbles:true,cancelable:true}));
+  assert.equal(leakedKeys,0,'practice arrow keys must not reach the real game document handler');
+  assert.equal(values()[0],4);assert.equal(values()[15],2);assert.equal(points(),4);
+  assert.equal(exercise.querySelectorAll('.is-new').length,1);assert.equal(exercise.querySelectorAll('.is-merged').length,1);
+  advance();assert.equal(points(),0);assert.equal(exercise.querySelector('.merge-count').textContent,'6 / 6');
+  let moves=0,seed=741;
+  const directionKeys=['L','R','U','D'];
+  // Compare the independent teaching logic with the actual game's reducer, with spawning disabled there.
+  const gameSource=read('t/2048/index.html'),realContext={N:4,DIRS:{L:1,R:1,U:1,D:1},Solo:{active:false},spawn(){},render(){},canMove(){return true;},finishPlay(){},$:()=>({}),state:{running:true,done:false,score:0,moves:0}};
+  vm.createContext(realContext);
+  vm.runInContext(gameSource.slice(gameSource.indexOf('function lines(dir)'),gameSource.indexOf('function canMove()')),realContext);
+  for(let attempt=0;attempt<150;attempt++){
+    seed=(Math.imul(seed,1664525)+1013904223)>>>0;const dir=directionKeys[seed%4],previous=values(),oldScore=points();
+    realContext.state.board=previous.slice();realContext.state.score=oldScore;vm.runInContext('move("'+dir+'")',realContext);
+    arrow(dir);const changed=realContext.state.board.some((n,i)=>n!==previous[i]);
+    if(changed){moves++;const empty=realContext.state.board.map((n,i)=>n? -1:i).filter(i=>i>=0);realContext.state.board[empty[(moves*5)%empty.length]]=moves%10===0?4:2;}
+    assert.deepEqual(values(),Array.from(realContext.state.board),'practice must match actual merge in '+dir);
+    assert.equal(points(),realContext.state.score,'score equals sum of merged values');
+    if(!changed)assert.deepEqual(values(),previous,'blocked direction must not spawn a tile');
+  }
+  exercise.querySelector('.merge-reset').click();assert.equal(points(),0);assert.equal(values().filter(Boolean).length,4);
+  advance();assert.equal(exercise.querySelector('.merge-count').textContent,'1 / 6');assert.equal(points(),0);
+  assert.equal(merge.window.localStorage.length,0,'practice does not persist real scores');merge.window.close();
+
   // The example's four bombs and three safe cells follow from the visible numbers
   // in EVERY possible six-mine board, not just one invented hidden answer.
   const visible={18:1,19:2,20:3,21:3,24:0,25:0,26:0,27:1,28:1,29:1,30:0,31:0,32:0,33:0,34:0,35:0};

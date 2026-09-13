@@ -2,7 +2,7 @@
   'use strict';
   if(window.__GATCHI_HELP_GUIDE__)return;window.__GATCHI_HELP_GUIDE__=true;
   const script=document.currentScript;const root=new URL('../',script&&script.src||location.href);
-  const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('assets/help-guide.css?v=20260913-mines-guide',root).href;document.head.append(style);
+  const style=document.createElement('link');style.rel='stylesheet';style.href=new URL('assets/help-guide.css?v=20260913-2048-guide',root).href;document.head.append(style);
   const $=(selector,parent=document)=>parent.querySelector(selector);
   const slug=()=>{const m=location.pathname.match(/\/t\/(.+?)\/?$/);return m?m[1].replace(/\/$/,''):'home';};
   const entry=()=>/^(#|\?)(c|i)=/.test(location.hash||location.search)?'invite':'direct';
@@ -11,7 +11,7 @@
   function hasSeen(){try{return localStorage.getItem('gatchi_guide_seen_'+slug())==='1';}catch(_){return true;}}
   function firstAction(){const buttons=[...document.querySelectorAll('main button:not(.guide-help-button):not(.guide-sheet-close),main a.primary,main .btn-main,main .bigbtn')];return buttons.find(el=>!el.closest('header,nav,.topbar')&&!/back|menu|help|close|copy|share|kakao|preview/i.test((el.id||'')+' '+(el.className||'')))||buttons[0];}
   function close(dialog){markSeen();dialog.close();document.documentElement.classList.remove('guide-dialog-open');}
-  function practiceBox(type,key){if(key==='mines')return minesPractice();if(!type)return null;if(type==='tap')type=key==='ufo'?'ufo':key==='num25'?'numbers':key==='tap'?'rapid':'mole';if(type==='choice')type=key==='rps'?'rps':key==='stroop'?'color':key==='arrow'?'arrow':key==='nonsense'?'nonsense':'';if(type==='stop'&&key==='ten')type='timing';if(!type)return null;const box=document.createElement('section');box.className='guide-practice';box.innerHTML='<h3>먼저 연습해 볼까요?</h3><p>연습 점수는 기록에 들어가지 않아요.</p><div class="practice-stage"></div><p class="practice-status" role="status"></p>';const stage=$('.practice-stage',box),status=$('.practice-status',box);
+  function practiceBox(type,key){if(key==='mines')return minesPractice();if(key==='2048')return mergePractice();if(!type)return null;if(type==='tap')type=key==='ufo'?'ufo':key==='num25'?'numbers':key==='tap'?'rapid':'mole';if(type==='choice')type=key==='rps'?'rps':key==='stroop'?'color':key==='arrow'?'arrow':key==='nonsense'?'nonsense':'';if(type==='stop'&&key==='ten')type='timing';if(!type)return null;const box=document.createElement('section');box.className='guide-practice';box.innerHTML='<h3>먼저 연습해 볼까요?</h3><p>연습 점수는 기록에 들어가지 않아요.</p><div class="practice-stage"></div><p class="practice-status" role="status"></p>';const stage=$('.practice-stage',box),status=$('.practice-status',box);
     const addChoices=(question,labels,answer,success,fail)=>{stage.classList.add('with-question');const prompt=document.createElement('div');prompt.className='practice-question';prompt.innerHTML=question;const choices=document.createElement('div');choices.className='practice-choice';labels.forEach((label,index)=>{const b=document.createElement('button');b.textContent=label;b.onclick=()=>{choices.querySelectorAll('button').forEach(x=>x.disabled=true);if(index===answer)b.classList.add('correct');status.textContent=index===answer?success:fail;};choices.append(b);});stage.append(prompt,choices);};
     if(type==='reaction'){const b=document.createElement('button');b.className='practice-reaction';b.textContent='기다려요…';stage.append(b);let ready=false,timer=setTimeout(()=>{ready=true;b.classList.add('ready');b.textContent='지금 눌러요!';},900);b.onclick=()=>{if(!ready){clearTimeout(timer);status.textContent='조금 빨랐어요. 다시 기다려요!';timer=setTimeout(()=>{ready=true;b.classList.add('ready');b.textContent='지금 눌러요!';},900);}else{status.textContent='성공! 이렇게 초록색일 때 누르면 돼요.';b.textContent='잘했어요 ✓';b.disabled=true;}};}
     else if(type==='timing'){stage.classList.add('with-question');stage.innerHTML='<div class="practice-question"><strong>3초 맞히기</strong><small>시작하면 숫자는 보이지 않아요.</small></div><button class="practice-wide">연습 시작</button>';const b=$('.practice-wide',stage);let started=0;b.onclick=()=>{if(!started){started=Date.now();b.textContent='3초라고 느낄 때 누르기';status.textContent='속으로 하나, 둘, 셋을 세어보세요.';}else{const elapsed=(Date.now()-started)/1000;b.disabled=true;b.textContent=elapsed.toFixed(2)+'초';status.textContent=Math.abs(elapsed-3)<.5?'성공! 3초에 아주 가까워요.':'좋아요! 실제 게임에서는 10초를 맞혀보세요.';}};}
@@ -26,6 +26,82 @@
     else if(type==='nonsense')addChoices('<strong>세상에서 가장 뜨거운 과일은?</strong><small>보기 중 하나를 골라요.</small>',['사과','천도복숭아'],1,'정답! 천 도(1000℃) 복숭아예요.','정답은 천 도(1000℃) 복숭아예요!');
     else return null;
     return box;
+  }
+  // Independent teaching boards: no game timers, random stream, records or game inputs.
+  function mergePractice(){
+    const blank=()=>Array(16).fill(0),row=values=>values.concat(Array(12).fill(0));
+    const lessons=[
+      {title:'한쪽으로 쭉 밀어봐요',text:'왼쪽으로 밀면 숫자가 모두 왼쪽 끝으로 모여요. 빈칸은 건너뛰어요. 숫자 하나만 움직이는 게 아니라, 판 전체가 움직여요.',board:row([0,2,0,4]),directions:['L'],hint:'아래의 ← 왼쪽 버튼을 눌러보세요.',done:'2와 4가 왼쪽에 모였어요! 서로 다른 숫자라 합쳐지지는 않아요.'},
+      {title:'같은 숫자끼리 만나면 합체!',text:'2와 2가 만나면 4가 돼요. 4와 4는 8, 8과 8은 16! 합쳐서 만든 숫자만큼 점수를 얻어요.',board:row([2,2,0,0]),directions:['L'],hint:'← 왼쪽으로 밀어 2 + 2를 합쳐보세요.',done:'2 + 2 = 4! 새로 만든 숫자가 4니까 4점을 얻었어요.'},
+      {title:'다른 숫자는 합쳐지지 않아요',text:'2와 4는 서로 달라서 6이 되지 않아요. 나란히 움직이기만 해요. 합쳐진 숫자가 없으면 점수도 그대로예요.',board:row([2,4,0,0]),directions:['R'],hint:'이번에는 오른쪽 → 버튼을 눌러보세요.',done:'2와 4가 오른쪽으로 갔어요. 6으로 합쳐지지 않고 0점 그대로예요.'},
+      {title:'한 번 밀 때는 한 번만 합쳐요',text:'2 · 2 · 4를 왼쪽으로 밀면 4 · 4가 돼요. 방금 만든 4는 같은 움직임에서 또 합쳐지지 않아요. 한 번 더 밀어야 8이 돼요.',board:row([2,2,4,0]),directions:['L','L'],hint:'← 왼쪽을 한 번씩, 두 번 눌러보세요.',done:'이번에는 4 + 4 = 8! 처음 4점 + 이번 8점 = 모두 12점이에요.'},
+      {title:'움직인 뒤에는 새 숫자가 와요',text:'위아래로도 똑같이 합쳐져요. 실제 게임에서는 판이 움직일 때마다 빈칸에 새 2나 4가 하나 생겨요. 자리를 남겨두는 게 좋아요.',board:[0,0,0,0,0,0,0,0,2,0,0,0,2,0,0,0],directions:['U'],spawn:true,hint:'↑ 위로 밀어봐요. 새로 생기는 2도 찾아보세요.',done:'세로의 2 + 2가 위에서 4가 됐어요! 점선으로 표시한 2는 새로 들어온 숫자예요.'},
+      {title:'이제 혼자서 16을 만들어볼까요?',text:'네 방향으로 자유롭게 밀어봐요. 큰 숫자를 한쪽 구석에 모으면 정리하기 쉬워요. 실패해도 다시 연습하면 돼요!',board:[2,0,2,0,0,4,0,0,2,0,0,0,0,0,0,0],directions:[],spawn:true,hint:'방향 버튼 · 판을 쓸어 밀기 · 키보드 방향키 모두 가능해요.'}
+    ];
+    const directions={L:'왼쪽',R:'오른쪽',U:'위',D:'아래'};
+    const box=document.createElement('section');box.className='guide-practice merge-lesson';
+    box.innerHTML='<h3>숫자를 밀며 같이 배워요</h3><p>시간 제한 없는 연습이에요. 실제 점수에는 들어가지 않아요.</p><div class="merge-heading"><small class="merge-count"></small><h4></h4><p class="merge-copy"></p></div><div class="merge-scorebar"><span>연습 점수 <b class="merge-score">0</b></span><span class="merge-gain">합치면 점수를 얻어요</span></div><div class="merge-board" role="group" tabindex="0" aria-label="2048 연습판, 4줄 4칸. 방향키 또는 쓸어 밀기로 움직이세요."></div><p class="merge-board-note"></p><p class="merge-hint"></p><div class="merge-directions" role="group" aria-label="숫자를 밀 방향"><button type="button" data-dir="U">↑ 위</button><button type="button" data-dir="L">← 왼쪽</button><button type="button" data-dir="D">↓ 아래</button><button type="button" data-dir="R">오른쪽 →</button></div><p class="practice-status" role="status"></p><button type="button" class="merge-reset">이 단계 다시 해보기 ↻</button><div class="merge-actions"><button type="button" class="merge-prev">이전</button><button type="button" class="merge-next">다음 설명 →</button></div><details class="merge-extra"><summary>실제 게임에서는 어떻게 이겨요?</summary><p>숫자를 합쳐서 얻은 점수가 기록이에요. 2048을 꼭 만들어야 끝나는 건 아니에요. 기록 대결은 30초 동안 점수를 모으고, 혼자놀기는 선택한 레벨의 제한 시간 안에 목표 점수에 도전해요.</p><p>판이 꽉 차고, 가로·세로로 붙은 같은 숫자도 없으면 더 움직일 수 없어 게임이 끝나요. 대각선끼리는 합쳐지지 않아요.</p><p>휴대폰은 판 위에서 손가락을 쓸어 밀고, PC는 방향키를 눌러요. 이 연습의 방향 버튼은 배우기 쉽게 넣었어요.</p></details>';
+    let step=0,tiles=blank(),score=0,moves=0,newIndex=-1,gain=0,merged=[],pointer=null;
+    const board=$('.merge-board',box),status=$('.practice-status',box);
+    // Collapse from the destination edge; an output tile cannot merge twice in a move.
+    function slide(input,dir){
+      const output=input.slice(),joined=[];let points=0;
+      for(let line=0;line<4;line++){
+        const indices=Array.from({length:4},(_,i)=>dir==='L'?line*4+i:dir==='R'?line*4+3-i:dir==='U'?i*4+line:(3-i)*4+line);
+        const values=indices.map(i=>input[i]).filter(Boolean),packed=[];
+        for(let i=0;i<values.length;i++){
+          if(values[i]===values[i+1]){const value=values[i]*2;joined.push(indices[packed.length]);packed.push(value);points+=value;i++;}
+          else packed.push(values[i]);
+        }
+        indices.forEach((index,i)=>output[index]=packed[i]||0);
+      }
+      return {tiles:output,gain:points,merged:joined,changed:output.some((v,i)=>v!==input[i])};
+    }
+    function draw(){
+      const lesson=lessons[step],free=step===5,complete=!free&&moves>=lesson.directions.length;
+      $('.merge-count',box).textContent=(step+1)+' / '+lessons.length;
+      $('h4',box).textContent=lesson.title;$('.merge-copy',box).textContent=lesson.text;
+      $('.merge-score',box).textContent=score;$('.merge-gain',box).textContent=moves?(gain?'이번에 +'+gain+'점':'이번에는 이동만 · +0점'):'합치면 점수를 얻어요';
+      $('.merge-board-note',box).textContent=lesson.spawn?'점선: 새 숫자 · 진한 테두리: 합쳐진 숫자':'지금은 이동만 살펴봐요. 새 숫자는 5단계부터 나와요.';
+      $('.merge-hint',box).textContent=complete?'잘했어요! 다음 설명으로 넘어가도 좋아요.':lesson.hint;
+      // Keep the touched cells alive through pointerup/touchend on mobile browsers.
+      if(!board.children.length)for(let i=0;i<16;i++)board.append(document.createElement('div'));
+      tiles.forEach((value,index)=>{const cell=board.children[index];cell.className='merge-tile';cell.dataset.value=value;cell.textContent=value||'';cell.classList.toggle('is-new',index===newIndex);cell.classList.toggle('is-merged',merged.includes(index));cell.setAttribute('aria-label',(Math.floor(index/4)+1)+'줄 '+(index%4+1)+'칸: '+(value||'빈칸')+(index===newIndex?', 새 숫자':''));});
+      $('.merge-prev',box).disabled=step===0;$('.merge-next',box).setAttribute('aria-disabled',String(!free&&!complete));
+      $('.merge-next',box).textContent=free?'처음부터 보기 ↻':'다음 설명 →';
+      box.querySelectorAll('[data-dir]').forEach(button=>button.classList.toggle('is-suggested',!free&&!complete&&button.dataset.dir===lesson.directions[moves]));
+    }
+    function reset(){tiles=lessons[step].board.slice();score=0;moves=0;newIndex=-1;gain=0;merged=[];pointer=null;status.textContent='';draw();}
+    function move(dir){
+      const lesson=lessons[step],free=step===5;
+      if(!free&&moves>=lesson.directions.length){status.textContent='이 단계는 성공했어요! 다음 설명을 누르거나 다시 해볼 수 있어요.';return;}
+      if(!free&&dir!==lesson.directions[moves]){status.textContent='이번에는 '+directions[lesson.directions[moves]]+' 방향으로 밀어봐요. 색이 있는 버튼이 힌트예요.';return;}
+      const result=slide(tiles,dir);
+      if(!result.changed){status.textContent=Object.keys(directions).some(d=>slide(tiles,d).changed)?'이쪽으로는 움직이지 않아요. 다른 방향으로 밀어봐요. 새 숫자도 생기지 않아요.':'더 움직일 곳이 없어요. 이 단계 다시 해보기로 새 판을 받아요.';return;}
+      tiles=result.tiles;gain=result.gain;score+=gain;moves++;merged=result.merged;newIndex=-1;
+      if(lesson.spawn){const empty=tiles.map((v,i)=>v===0?i:-1).filter(i=>i>=0);newIndex=free?empty[(moves*5)%empty.length]:15;tiles[newIndex]=free&&moves%10===0?4:2;}
+      draw();
+      status.textContent=free?(Math.max(...tiles)>=16?'16 이상을 만들었어요! 잘했어요. 계속 연습해도 좋아요.':gain?'합체! '+gain+'점을 얻었어요. 같은 숫자를 다시 모아봐요.':'숫자가 이동하고 새 숫자가 하나 들어왔어요.'):(step===3&&moves===1?'2 + 2가 합쳐져 4 · 4가 됐어요. 아직 8은 아니에요! 왼쪽으로 한 번 더 밀어봐요.':lesson.done);
+      if(free&&!Object.keys(directions).some(d=>slide(tiles,d).changed))status.textContent+=' 더 움직일 곳이 없어요. 다시 해보기로 새 판을 받아요.';
+    }
+    box.querySelectorAll('[data-dir]').forEach(button=>button.onclick=()=>move(button.dataset.dir));
+    box.addEventListener('keydown',event=>{const dir={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D'}[event.key];if(!dir)return;event.preventDefault();event.stopPropagation();move(dir);});
+    board.addEventListener('pointerdown',event=>{if(event.button!==0||event.isPrimary===false)return;pointer={id:event.pointerId,x:event.clientX,y:event.clientY};});
+    function swipe(event){if(!pointer||event.pointerId!==pointer.id)return;const dx=event.clientX-pointer.x,dy=event.clientY-pointer.y;if(Math.max(Math.abs(dx),Math.abs(dy))<24)return;pointer=null;move(Math.abs(dx)>Math.abs(dy)?dx>0?'R':'L':dy>0?'D':'U');}
+    board.addEventListener('pointermove',swipe);
+    board.addEventListener('pointerup',event=>{swipe(event);pointer=null;});
+    board.addEventListener('pointercancel',()=>{pointer=null;});
+    $('.merge-reset',box).onclick=reset;
+    $('.merge-prev',box).onclick=()=>{step=Math.max(0,step-1);reset();};
+    const nextButton=$('.merge-next',box);
+    nextButton.onclick=()=>{if(step!==5&&moves<lessons[step].directions.length){status.textContent='먼저 색이 있는 방향 버튼으로 연습해봐요.';return;}step=(step+1)%lessons.length;reset();};
+    // Some mobile browsers suppress the compatibility click after a board swipe.
+    // Handle a stationary tap once; prevent its synthetic click and leave scrolling alone.
+    let nextTouch=null;
+    nextButton.addEventListener('touchstart',event=>{const touch=event.touches.length===1&&event.touches[0];nextTouch=touch?{id:touch.identifier,x:touch.clientX,y:touch.clientY}:null;},{passive:true});
+    nextButton.addEventListener('touchmove',event=>{if(!nextTouch)return;const touch=Array.from(event.touches).find(t=>t.identifier===nextTouch.id);if(!touch||Math.max(Math.abs(touch.clientX-nextTouch.x),Math.abs(touch.clientY-nextTouch.y))>12)nextTouch=null;},{passive:true});
+    nextButton.addEventListener('touchend',event=>{if(!nextTouch)return;const start=nextTouch;nextTouch=null;const touch=Array.from(event.changedTouches).find(t=>t.identifier===start.id);if(!touch||Math.max(Math.abs(touch.clientX-start.x),Math.abs(touch.clientY-start.y))>12||!event.cancelable)return;event.preventDefault();nextButton.click();},{passive:false});
+    nextButton.addEventListener('touchcancel',()=>{nextTouch=null;});reset();return box;
   }
   // Fixed teaching board from the example: no timer, RNG, score, or game state changes.
   function minesPractice(){
@@ -70,7 +146,7 @@
        설명 내용은 버튼을 누르는 순간 managedGuide() 로 다시 읽으므로 나중에 온 설정도 그대로 반영된다. */
     if(document.querySelector('.guide-help-button'))return;const button=document.createElement('button');button.type='button';button.className='guide-help-button';button.textContent='게임 방법';button.onclick=()=>openGuide(false);const steps=document.querySelector('.game-steps,.rps-steps,.steps');if(steps)steps.after(button);else{const header=document.querySelector('.game-header,.rps-header,.topbar');if(header)header.after(button);else document.querySelector('main').prepend(button);}
     if(entry()==='invite'){const note=document.createElement('div');note.className='guide-invite-note';note.innerHTML='<strong>친구가 같이 하자고 보냈어요!</strong>같은 놀이를 끝내면 두 사람의 결과가 함께 보여요.';button.after(note);}
-    if(key==='mines' && new URLSearchParams(location.search).get('guide')==='1')openGuide(false);
+    if(['mines','2048'].includes(key) && new URLSearchParams(location.search).get('guide')==='1')openGuide(false);
     // 첫 방문 자동 설명창은 사용자 요청(2026-09-12)으로 끈다. 게임 화면에 이미 규칙이 있고, 필요하면 '게임 방법' 버튼으로 연다.
   }
   function init(){gameHelp();}
