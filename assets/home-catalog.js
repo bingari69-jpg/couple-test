@@ -2,9 +2,6 @@ const ITEMS = [
   { path:"t/ranking/", rel:"친구", kind:"예측",
     title:"내 취향 맞혀봐",
     desc:"보기 세 개 중 내 최애 하나를 골라 카톡으로 보내면 친구가 맞혀요." },
-  { path:"t/living/",  rel:"부부",  kind:"비교형",
-    title:"우리 같이 살면 생기는 일",
-    desc:"함께 사는 하루 속 선택, 가장 중요한 장면, 우리 집 규칙." },
   { path:"t/letter/",    rel:"연인",  kind:"편지형",
     title:"기념일 편지 만들기",
     desc:"생일·100일·결혼기념일. 몇 가지만 고르면 편지가 완성되고, 직접 쓸 수도 있습니다." },
@@ -23,12 +20,6 @@ const ITEMS = [
   { path:"t/ten/",       rel:"친구",  kind:"대결",
     title:"10초 맞추기",
     desc:"안 보고 10초 세다가 멈추기. 둘 다 같은 조건으로 딱 한 번." },
-  { path:"t/react/",     rel:"친구",  kind:"대결",
-    title:"반응속도 대결",
-    desc:"초록으로 바뀌는 순간 눌러. 3번 평균으로 승부." },
-  { path:"t/repair/", rel:"연인",  kind:"심리",
-    title:"나 서운하면, 이렇게 풀어줘",
-    desc:"내 행동과 바라는 반응을 따로 골라 만드는 화해 설명서." },
   { path:"t/memory/",    rel:"연인",  kind:"기억",
     title:"우리의 기억 — 같은 걸 기억하고 있을까",
     desc:"첫 키스, 첫 데이트, 처음 준 선물. 한 문제씩. 나는 답했어, 너는?" },
@@ -61,7 +52,7 @@ const ITEMS = [
     desc:"빨간 테두리면 반대로 밀기. 20초, 네 기록은 봉인됐어." },
   { path:"t/stop/",      rel:"친구",  kind:"대결",
     title:"딱 멈춰 — 한가운데서 멈출 수 있어?",
-    desc:"5번 멈춰서 오차 합. 적은 쪽이 이겨." },
+    desc:"10번 멈춰서 오차 합. 적은 쪽이 이겨." },
   { path:"t/exam/",      rel:"가족",  kind:"공부",
     title:"시험지 보내기 — 카톡으로 단어 시험",
     desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." },
@@ -106,10 +97,7 @@ const ITEMS = [
     desc:"톡톡 눌러 병아리를 띄워. 20초, 같은 문, 부딪혀도 다시 날아." },
   { path:"t/typing/",     rel:"친구",  kind:"대결",
     title:"한글 타자 20초 — 같은 문장, 누가 더 많이 치나?",
-    desc:"시드로 정해진 같은 순서의 문장을 따라 쳐. 20초에 몇 글자?" },
-  { path:"t/group-room/", rel:"친구", kind:"단체",
-    title:"단체방 커피 내기",
-    desc:"모두 같은 방에 들어와 준비하면 커피 살 사람을 공평하게 정해요." }
+    desc:"시드로 정해진 같은 순서의 문장을 따라 쳐. 20초에 몇 글자?" }
 ];
 
 // The catalogue order and artwork follow the browsing cards on the home screen.
@@ -123,7 +111,6 @@ const CARDS = [
  ['stop','atlas',15,'#fff0c9',['친구','연인','가족'],'한가운데서 딱 멈춰! 오차가 적은 쪽이 승리.'],
  ['ten','classic',1,'#fff0ae',['친구','연인','가족'],'안 보고 10초 세다가 멈추기. 둘 다 딱 한 번!'],
  ['tap','atlas',12,'#ffe0da',['친구','연인','가족'],'10초 동안 몇 번 누를까? 두 손가락도 OK.'],
- ['react','atlas',1,'#dceeff',['친구','연인','가족'],'초록으로 바뀌는 순간 눌러! 누가 더 빠를까?'],
  ['delivery','classic',2,'#d4f5ee',['친구','연인'],'내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 쏴.'],
  ['stroop','atlas',13,'#e4f2d3',['친구','연인','가족'],'글자 말고 색깔을 답해. 알고도 헷갈려!'],
  ['arrow','atlas',14,'#dceffa',['친구','연인','가족'],'빨간 테두리면 반대로! 순간 판단 대결.'],
@@ -133,11 +120,8 @@ const CARDS = [
  ['lucky','atlas',17,'#fff4d6',['친구','연인','가족'],'오늘의 작은 힌트. 친구 카드와 만나면 둘이 해볼 일이 생겨.'],
  ['letter','letter',0,'#ffedcf',['연인','부부','친구','가족'],'특별한 날에도, 그냥 네 생각이 난 날에도.'],
  ['next-scene','tarot',0,'#ece4f7',['연인','부부','친구'],'각자 카드 한 장, 함께 한 장. 두 사람이 직접 고른 다음 장면.'],
- ['living','atlas',4,'#fbe1df',['연인','부부'],'함께 사는 하루 속 선택, 가장 중요한 장면, 우리 집 규칙.'],
- ['repair','atlas',5,'#ece2f9',['연인','부부'],'내 행동과 바라는 반응을 따로 골라 만드는 화해 설명서.'],
  ['memory','atlas',6,'#ffe6ee',['연인','부부'],'첫 데이트, 첫 선물. 같은 기억을 떠올릴까?'],
  ['ladder','atlas',7,'#fff0d3',['친구','가족'],'오늘 커피는 누가 쏠까? 이름 넣고 사다리!'],
- ['group-room','atlas',7,'#e6f2ea',['친구','가족'],'다 같이 한 방에 모여서 커피 살 사람 뽑기.'],
  ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
  ['exam','atlas',16,'#e9e5fa',['친구','가족'],'단어로 시험지 만들기. 채점까지 한 번에.'],
  ['simon','atlas',13,'#efe6fb',['친구', '연인', '가족'],'불빛 순서 따라 누르기, 몇 라운드까지?'],
@@ -196,7 +180,7 @@ function appendUnknownLocal(merged,rows){
 
 // Translate older published settings to the new series while preserving visibility and order.
 // Retired standalone MBTI/seat entries must not be reintroduced by a cached server catalogue.
-const PSY_SERIES_ALIASES={"personality": "know-me", "tarot": "next-scene", "fortune": "lucky", "mind/fight": "repair", "marriage": "living"};
+const PSY_SERIES_ALIASES={"personality": "know-me", "tarot": "next-scene", "fortune": "lucky"};
 function migratePsychologyRows(rows){
  const explicit=new Set(rows.filter(row=>row&&!PSY_SERIES_ALIASES[row.slug]).map(row=>row.slug));
  const seen=new Set();

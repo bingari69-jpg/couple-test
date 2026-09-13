@@ -7,7 +7,7 @@
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="딱 멈춰 — 한가운데서 멈출 수 있어?">
-<meta property="og:description" content="왔다갔다하는 바를 5번. 오차가 적은 쪽이 이긴다.">
+<meta property="og:description" content="왔다갔다하는 바를 10번. 오차가 적은 쪽이 이긴다.">
 <meta property="og:image" content="https://noljago.co.kr/assets/share-cards/stop.png?v=20260910-unified">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
@@ -135,7 +135,7 @@
 <section class="screen" id="s-play">
   <span class="tag" id="playTag">딱 멈춰</span>
   <h1 id="playHead">왔다갔다하는 바를<br><b>한가운데</b>서 멈춰.</h1>
-  <p class="lead" id="playLead">둘이 <b>똑같은 속도</b>로 받아. <b>5번</b> 멈추고 오차를 더해 — 적은 쪽이 이겨. 기회는 한 번.</p>
+  <p class="lead" id="playLead">둘이 <b>똑같은 속도</b>로 받아. <b>10번</b> 멈추고 오차를 더해 — 적은 쪽이 이겨. 기회는 한 번.</p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -206,17 +206,20 @@
    공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260913-blank-tie 에 있다.
    여기에는 바 화면과 회차 만들기만 남는다.
    10초 맞추기의 형제 — 오차가 적을수록 이긴다. */
-const ROUNDS=5;
+/* 회차 수. 5→10 으로 늘렸다. 지난 도전장(#c= 에 r 이 없는 링크)은 보낸 사람이 친 5회 그대로 열린다.
+   오차는 회차마다 더해지므로, 5회 기록과 10회 기록을 그냥 맞대면 5회 쪽이 무조건 유리하다. */
+const ROUNDS=10, LEGACY_ROUNDS=5;
 /* 바 자리는 0~1000 논리 단위, 한가운데가 500.
    오차는 가운데에서 벗어난 정도를 0~100.0 으로 바꿔 0.1 단위 정수로 담는다. */
 const W=1000, MID=W/2;
 const err10 = x => Math.round(Math.abs(x-MID)/(W/2)*1000);   // 0(정중앙) ~ 1000(끝)
 const fmtE = v => (v/10).toFixed(1);                          // 137 → "13.7"
 function titleFor(v){
-  if(v<=40)  return "사람 아님";
-  if(v<=100) return "손이 정확하다";
-  if(v<=180) return "보통 사람";
-  if(v<=300) return "조급한 손";
+  const per=v/(state&&state.size?state.size:ROUNDS);   // 회차당 평균 오차
+  if(per<=8)  return "사람 아님";
+  if(per<=20) return "손이 정확하다";
+  if(per<=36) return "보통 사람";
+  if(per<=60) return "조급한 손";
   return "바가 더 빨랐다";
 }
 const NEXT=[
@@ -238,11 +241,12 @@ function mulberry32(a){
   };
 }
 /* 반환: [{p 왕복 한 번에 걸리는 시간(ms), s 시작 위상 0~1}] — 뒤로 갈수록 빨라진다 */
-function roundsOf(seed){
+function roundsOf(seed,count){
   const rnd=mulberry32(seed>>>0);
-  const out=[];
-  for(let i=0;i<ROUNDS;i++){
-    const base=1500-i*160;                       // 1500 → 860ms
+  const out=[], n=count||ROUNDS;
+  for(let i=0;i<n;i++){
+    /* 처음 1500ms, 마지막 860ms. 회차가 늘어도 시작·끝 속도는 그대로고 사이만 촘촘해진다 */
+    const base=n>1 ? 1500-Math.round(i*640/(n-1)) : 1500;
     out.push({ p: Math.round(base + rnd()*260), s: Math.round(rnd()*1000)/1000 });
   }
   return out;
@@ -260,15 +264,15 @@ const state = Duel.setup({
   deployBase:"https://noljago.co.kr/t/stop/",
   og:"https://noljago.co.kr/og/og-stop-sq.png",
   gameName:"딱 멈춰",
-  challengeDesc:"왔다갔다하는 바를 한가운데서 멈추기. 5번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개.",
+  challengeDesc:"왔다갔다하는 바를 한가운데서 멈추기. 10번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개.",
   next:NEXT,
   titleFor,
   hasSeed:true,                     // 같은 속도를 나눠 쓰므로 시드를 링크에 싣는다
   scrollToShare:true,
   /* c: 회차별 오차 5개 */
-  state:{seed:0,rounds:[],idx:0,errs:[],sum:0,stat:null,
+  state:{seed:0,size:ROUNDS,rounds:[],idx:0,errs:[],sum:0,stat:null,
          running:false,t0:0,raf:0,done:false,cdTimer:0,gapTimer:0},
-  linkExtra:st=>({c:st.stat}),
+  linkExtra:st=>({c:st.stat,r:st.size}),
   roundExtra:(p,st)=>[p.c||[], st.stat],
   extraKey:"c", extraDefault:[],
   recordCell:x=>fmtE(x.v)+"<small>오차</small>",
@@ -283,13 +287,13 @@ const state = Duel.setup({
   challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>같은 속도야. 더 정확히.`,
   againHead:()=>`재도전. <b>새 속도</b>로 다시.`,
   resultTitle:(me,them,tail,nm)=>`${nm(me.n)}오차 ${fmtE(me.v)} vs ${nm(them.n)}오차 ${fmtE(them.v)}${tail}`,
-  resultDesc:"5번 멈춰서 오차 합. 누가 더 정확했을까. 재도전은 여기서.",
-  onOpenChallenge(p){ state.seed=p.s>>>0; state.rounds=roundsOf(state.seed); drawDots(); },
-  newRound(){ state.seed=newSeed(); state.rounds=roundsOf(state.seed); drawDots(); },
+  resultDesc:"10번 멈춰서 오차 합. 누가 더 정확했을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.seed=p.s>>>0; state.size=(p.r>=1&&p.r<=20)?p.r:LEGACY_ROUNDS; state.rounds=roundsOf(state.seed,state.size); drawDots(); },
+  newRound(){ state.seed=newSeed(); state.size=ROUNDS; state.rounds=roundsOf(state.seed,state.size); drawDots(); },
   resetPlay(){
     state.stat=null;state.done=false;state.idx=0;state.errs=[];state.sum=0;
     $("cover").classList.remove("hidden");$("cd").textContent="준비";$("cdSub").textContent="시작을 누르면 3초 뒤 시작";
-    $("roundN").textContent="1 / "+ROUNDS; $("sumN").textContent="0.0";
+    $("roundN").textContent="1 / "+state.size; $("sumN").textContent="0.0";
     $("msg").textContent="시작을 누르면 바가 움직여";
     $("marker").classList.remove("stop"); setMarker(MID);
     drawDots();
@@ -305,7 +309,7 @@ function setMarker(x){
 }
 function drawDots(){
   const box=$("dots"); box.innerHTML="";
-  for(let i=0;i<ROUNDS;i++){
+  for(let i=0;i<state.size;i++){
     const d=document.createElement("div");
     d.className="dot"+(i<state.errs.length?" done":(i===state.idx&&state.running?" on":""));
     d.textContent = i<state.errs.length ? fmtE(state.errs[i]) : (i+1);
@@ -340,7 +344,7 @@ function stopNow(){
     + (e<=40 ? " — 거의 한가운데!" : "");
   state.idx++;
   drawDots();
-  if(state.idx>=ROUNDS){
+  if(state.idx>=state.size){
     $("bigBtn").disabled=true;
     state.gapTimer=setTimeout(()=>finishPlay(),500);
   }else{
@@ -352,7 +356,7 @@ function startRound(){
   state.running=true;
   state.t0=performance.now();
   $("marker").classList.remove("stop");
-  $("roundN").textContent=(state.idx+1)+" / "+ROUNDS;
+  $("roundN").textContent=(state.idx+1)+" / "+state.size;
   $("msg").innerHTML=`<b>${state.idx+1}회</b> — 한가운데서 눌러!`;
   $("bigBtn").className="bigbtn stop"; $("bigBtn").textContent="멈춤!"; $("bigBtn").disabled=false;
   drawDots();

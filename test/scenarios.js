@@ -34,7 +34,7 @@ const REC = {
   ufo:   { fields: { ms: 23, stat: [20, 2, 1, 30], seed: 12345 }, theirRaw: 19 },
   stroop:{ fields: { ms: 27, stat: [27, 4], seed: 12345 },     theirRaw: 21 },
   arrow: { fields: { ms: 31, stat: [31, 5, 8], seed: 12345 },  theirRaw: 24 },
-  stop:  { fields: { ms: 137, stat: [21, 44, 12, 38, 22], seed: 12345 }, theirRaw: 205 },
+  stop:  { fields: { ms: 274, stat: [21, 44, 12, 38, 22, 30, 17, 41, 26, 19], seed: 12345 }, theirRaw: 410 },
 };
 
 function snapResult(w) {
