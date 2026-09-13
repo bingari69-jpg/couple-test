@@ -53,18 +53,25 @@
  function renderTools(){
    $('fontOptions').replaceChildren();Object.entries(D.fonts).forEach(([id,f])=>{const b=document.createElement('button');b.className='font-option';b.setAttribute('aria-pressed',String(draft.font===id));b.style.fontFamily=fonts[id];const name=document.createElement('small');name.textContent=f.name;const sample=document.createElement('span');sample.textContent='오늘도 네 생각이 났어.';b.append(name,sample);b.onclick=()=>{$('fontChoice').value=id;$('fontChoice').dispatchEvent(new Event('change'));};$('fontOptions').append(b);});
    $('colorOptions').replaceChildren();COLORS.forEach((c,i)=>{const b=document.createElement('button');b.className='color-option';b.style.setProperty('--swatch',c||template().ink);b.setAttribute('aria-label',['편지지 추천 색','먹색','말린 장미','짙은 파랑','숲색'][i]);b.setAttribute('aria-pressed',String(draft.color===c));b.onclick=()=>{draft.color=c;typography($('composePaper'),draft);saveDraft();renderTools();};$('colorOptions').append(b);});
-   $('stickerOptions').replaceChildren();D.stickers.forEach(s=>{const b=document.createElement('button');b.className='sticker-option';b.setAttribute('aria-label',s.name);const img=document.createElement('img');img.src=D.stickerURL(s.id);img.alt='';b.append(img);b.onclick=()=>{editor.insertSticker(s.id);};$('stickerOptions').append(b);});
+   $('stickerOptions').replaceChildren();D.stickers.forEach(s=>{const b=document.createElement('button');b.className='sticker-option';b.setAttribute('aria-label',s.name);const img=document.createElement('img');img.src=D.stickerURL(s.id);img.alt='';b.append(img);b.onclick=()=>{decorating=true;editor.insertSticker(s.id);decorating=false;};$('stickerOptions').append(b);});
    $('sealOptions').replaceChildren();['heart','flower','cat','bear','stamp','clover'].forEach(id=>{const b=document.createElement('button');b.setAttribute('aria-label',D.sticker(id).name+' 봉인');b.setAttribute('aria-pressed',String(draft.seal===id));const img=document.createElement('img');img.src=D.stickerURL(id);img.alt='';b.append(img);b.onclick=()=>{draft.seal=id;saveDraft();renderTools();};$('sealOptions').append(b);});
  }
  const editor=I.create($('letterEditor'),$('letterBody'),(text,inline)=>{draft.inline=inline;syncDraft();keepCaretVisible();},toast);
  const EMOJI=['♡','♥','💌','💕','🥰','😊','🥹','😘','🫶','🤍','💛','💜','✨','🌷','🌸','🍀','🌙','⭐','☀️','🌈','🎂','🎉','🎁','🎈','👏','💪','☕','🐱','🐻','🐰'];
  function rememberSelection(){const el=$('letterBody');selection={start:el.selectionStart,end:el.selectionEnd};}
  ['select','keyup','click','blur','input'].forEach(event=>$('letterBody').addEventListener(event,rememberSelection));
- EMOJI.forEach(emoji=>{const b=document.createElement('button');b.textContent=emoji;b.setAttribute('aria-label',emoji+' 넣기');b.onclick=()=>editor.insertText(emoji);$('emojiOptions').append(b);});
+ EMOJI.forEach(emoji=>{const b=document.createElement('button');b.textContent=emoji;b.setAttribute('aria-label',emoji+' 넣기');b.onclick=()=>{decorating=true;editor.insertText(emoji);decorating=false;};$('emojiOptions').append(b);});
  $('clearStickers').onclick=()=>{draft.stickers=[];D.decorate($('composePaper'),[]);editor.clear();saveDraft();};
+ let decorating=false;
  function closeDecorations(focus=false){for(const kind of ['sticker','emoji']){$(kind+'Panel').hidden=true;$(kind+'Button').setAttribute('aria-expanded','false');}$('writingDock').classList.remove('expanded');if(focus)editor.focus();}
  function openDecorations(kind){const opened=!$(kind+'Panel').hidden;editor.remember();closeDecorations();if(!opened){$(kind+'Panel').hidden=false;$(kind+'Button').setAttribute('aria-expanded','true');$('writingDock').classList.add('expanded');}updateDock();}
  $('continueWriting').onclick=()=>closeDecorations(true);
+ /* 스티커·이모지 창이 열린 채로 다시 글을 쓰면 키보드와 창 사이에 편지가 끼어 글자가 안 보인다.
+    본문을 눌러 커서를 옮기거나 글자를 치기 시작하면 창을 닫는다.
+    닫기는 pointerup 뒤에 한다 — pointerdown 에서 닫으면 화면이 밀려 커서가 엉뚱한 곳에 찍힌다.
+    버튼으로 스티커를 넣는 동안(decorating)에는 닫지 않는다. 연달아 여러 개를 넣을 수 있어야 한다. */
+ $('letterEditor').addEventListener('pointerup',()=>{if(!decorating)closeDecorations();});
+ $('letterEditor').addEventListener('beforeinput',()=>{if(!decorating)closeDecorations();});
  $('writingDock').addEventListener('pointerdown',e=>{if(e.target.closest('button'))e.preventDefault();});
  $('letterEditor').addEventListener('keydown',e=>{if(e.key==='Escape')closeDecorations(true);});
  function keepCaretVisible(){if(!window.requestAnimationFrame)return;requestAnimationFrame(()=>{

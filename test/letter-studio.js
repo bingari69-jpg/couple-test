@@ -48,5 +48,20 @@ assert.equal(ime.$('letterBody').value.startsWith('안녕하세'),true,'치던 �
 ime.$('emojiOptions').children[0].click();
 assert.equal(ime.$('letterBody').value.includes('♡'),true,'이모지도 막히지 않는다');
 ime.close();
+// 꾸미기 창은 연달아 넣는 동안 열려 있고, 다시 글을 쓰기 시작하면 닫힌다(창이 글자를 가리지 않게).
+const dock=load();dock.$('quickWrite').click();
+dock.$('stickerButton').click();
+assert.equal(dock.$('stickerPanel').hidden,false,'스티커 창이 열린다');
+dock.$('stickerOptions').children[0].click();
+dock.$('stickerOptions').children[1].click();
+assert.equal(dock.$('stickerPanel').hidden,false,'연달아 넣는 동안에는 열려 있다');
+assert.equal(dock.$('letterEditor').querySelectorAll('.inline-letter-sticker').length,2);
+dock.$('letterEditor').dispatchEvent(new dock.w.Event('pointerup',{bubbles:true}));
+assert.equal(dock.$('stickerPanel').hidden,true,'본문을 누르면 닫힌다');
+dock.$('emojiButton').click();
+assert.equal(dock.$('emojiPanel').hidden,false);
+dock.$('letterEditor').dispatchEvent(new dock.w.InputEvent('beforeinput',{bubbles:true,inputType:'insertText',data:'ㄱ'}));
+assert.equal(dock.$('emojiPanel').hidden,true,'글자를 치기 시작해도 닫힌다');
+dock.close();
 assert.deepEqual(errors,[]);
-console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 조합 중 스티커/이모지, 안전한 링크');
+console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 조합 중 스티커/이모지, 쓰기 시작하면 꾸미기 창 닫힘, 안전한 링크');
