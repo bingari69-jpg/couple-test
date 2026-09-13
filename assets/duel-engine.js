@@ -25,7 +25,7 @@
      gameName     "10초 맞추기" — 도전장 카톡 제목에 들어간다
      next         [{path,title,desc}] 결과 화면 아래 "다음은 이거 어때?"
      higherWins   true 면 큰 값이 이긴다 (두더지·연타). 기본 false
-     metric(v)    비교용 값으로 바꾼다. 기본 v 그대로 (10초 맞추기는 |v-10000|)
+     metric(v, extra) 비교용 값으로 바꾼다. extra는 extraKey의 부가 기록. 기본 v 그대로
      hasSeed      링크에 시드(s)를 싣는다 (같은 판을 공유하는 게임)
      lockOffset   봉인 전에 더할 값 (점수가 음수가 될 수 있는 두더지용)
      linkExtra()  #c= 에 더 실을 필드. 키 순서가 링크 바이트에 그대로 남는다
@@ -146,7 +146,7 @@
       let w = 0, l = 0, t = 0;
       hist.forEach(r => {
         const isA = meIsA(r, meId, meName);
-        const mine = metric(isA ? r[1] : r[3]), theirs = metric(isA ? r[3] : r[1]);
+        const mine = metric(isA ? r[1] : r[3], isA ? r[6] : r[7]), theirs = metric(isA ? r[3] : r[1], isA ? r[7] : r[6]);
         if (better(mine, theirs)) w++; else if (better(theirs, mine)) l++;
         else {
           let res = "t";
@@ -249,7 +249,7 @@
         them[cfg.extraKey] = (isB ? aX : bX) || cfg.extraDefault;
       }
       const meL = who(me.n, true), themL = who(them.n, false);
-      const em = metric(me.v), et = metric(them.v);
+      const em = metric(me.v, me[cfg.extraKey]), et = metric(them.v, them[cfg.extraKey]);
       let o = better(em, et) ? "win" : (better(et, em) ? "lose" : "tie");
       /* 점수가 같으면 게임이 정한 2차 판정(폭탄 수·명중률·오답 수 등)으로 승부를 가른다 */
       let tieWhy = "";

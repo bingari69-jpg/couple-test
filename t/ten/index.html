@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -164,7 +164,7 @@
 
 <script>
 /* ===== 10초 맞추기 =====
-   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260910-bets2 에 있다.
+   공통 부분(도전장·봉인·전적·결과 화면)은 assets/duel-engine.js?v=20260913-score-input 에 있다.
    여기에는 타이머 화면만 남는다. */
 const TARGET=10000, SHOW_UNTIL=3000;   // ms
 const fmt=ms=>(ms/1000).toFixed(2);
@@ -183,11 +183,12 @@ const NEXT=[
 ];
 
 const TRIES=1;   // 한 번만. (세 번 합산은 사용자가 원치 않아 되돌림. 링크 형식 t:[ms]는 유지)
-/* 링크 값: 예전 링크는 1회 기록(ms, 약 10000), 새 링크는 세 번의 오차 합(ms, 보통 3000 미만) */
-const isLegacy=v=>v>=5000;
-const errOf=v=>isLegacy(v)?Math.abs(v-10000):v;
+/* t가 없는 예전 링크는 경과 시간, t가 있는 링크는 측정값별 오차 합.
+   빠르게 멈춘 새 기록도 오차가 크므로 숫자의 크기로 형식을 구분하면 안 된다. */
+const hasTries=t=>Array.isArray(t)&&t.length>0&&t.every(ms=>Number.isFinite(ms)&&ms>=0);
+const errOf=(v,t)=>hasTries(t)?t.reduce((sum,ms)=>sum+Math.abs(ms-TARGET),0):Math.abs(v-TARGET);
 const signed=ms=>{const d=(ms-10000)/1000;return (d>0?"+":"−")+Math.abs(d).toFixed(2);};
-const label=v=>isLegacy(v)?fmt(v):"오차 "+fmt(v);
+const label=(v,t)=>hasTries(t)?"오차 "+fmt(errOf(v,t)):fmt(v);
 
 const state = Duel.setup({
   deployBase:"https://noljago.co.kr/t/ten/",
@@ -195,21 +196,21 @@ const state = Duel.setup({
   gameName:"10초 맞추기",
   challengeDesc:"안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개.",
   next:NEXT,
-  metric:errOf,                     // 10초에서 벗어난 정도(세 번 합)가 적을수록 이긴다
+  metric:errOf,                     // 10초에서 벗어난 정도가 적을수록 이긴다
   titleFor:e=>titleFor(e/TRIES),
   state:{running:false,t0:0,raf:0,tries:[]},
   linkExtra:st=>({t:st.tries}),
   roundExtra:(p,st)=>[p.t||[],st.tries],
   extraKey:"t", extraDefault:[],
-  recordCell:x=>label(x.v)+"<small>초</small>",
-  detailCell:(x,m)=>isLegacy(x.v)?"차이 "+fmt(m):(x.t&&x.t.length?x.t.map(signed).join(" · ")+"초":"오차 "+fmt(m)),
-  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${label(r[1])} vs ${esc(who(r[2],!isA))} ${label(r[3])}`,
+  recordCell:x=>label(x.v,x.t)+"<small>초</small>",
+  detailCell:(x,m)=>hasTries(x.t)?x.t.map(signed).join(" · ")+"초":"차이 "+fmt(m),
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${label(r[1],r[6])} vs ${esc(who(r[2],!isA))} ${label(r[3],r[7])}`,
   verdictText:o=> o==="win"?"내가 더 가까워!":o==="lose"?"상대가 더 가까워":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL,em,et)=>
     o==="tie"?"천분의 일 초까지 같은 건 거의 기적.":`${subj(o==="win"?meL:themL)} 10초에 ${fmt(Math.abs(em-et))}초 더 가까웠어.`,
   challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>10초, 더 가까이 멈춰봐.`,
   againHead:()=>`재도전. 이번엔 <b>내가 먼저</b> 기록 낸다.`,
-  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${label(me.v)} vs ${nm(them.n)}${label(them.v)}${tail}`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${label(me.v,me.t)} vs ${nm(them.n)}${label(them.v,them.t)}${tail}`,
   resultDesc:"10초에 누가 더 가까웠을까. 재도전은 여기서.",
   resetPlay(){
     state.tries=[];

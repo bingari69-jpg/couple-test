@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-solo"></script>
+<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <script src="data.js?v=20260913-new"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -298,7 +298,10 @@ const state = Duel.setup({
 
 /* ===== 문장판 ===== */
 const inp=$("typeIn");
+let imeActive=false, imePending=false, imeTimer=0, imeEcho=null;
+function resetIme(){ clearTimeout(imeTimer); imeActive=false; imePending=false; imeEcho=null; }
 function buildBoard(){
+  resetIme();
   state.order=orderOf(state.seed); state.idx=0; state.typed=""; state.correct=0; state.errors=0; state.strokes=0; state.sentences=0;
   state.target=SENT[state.order[0]];
   inp.value="";
@@ -349,11 +352,14 @@ function updateHud(){
   $("cpmInfo").textContent=Math.round(state.strokes/min);
 }
 /* input 이벤트마다 — IME 조합 중 글자도 그대로 들어온다 */
-function applyInput(v){
+function applyInput(v,composing=false,committed=false){
   if(!state.running || state.done){ inp.value=""; return; }
   state.typed=String(v==null?inp.value:v).normalize("NFC");
   const t=state.target;
-  if(state.typed===t){
+  const partialEnd=state.typed.length===t.length && partialOf(state.typed.slice(-1),t.slice(-1));
+  if(composing || (!committed && partialEnd)){
+    renderTarget();
+  }else if(state.typed===t){
     const s=scoreOf(state.typed,t); state.correct+=s.ok; state.strokes+=s.strokes;
     nextSentence();
   }else if(state.typed.length>=t.length){
@@ -362,10 +368,28 @@ function applyInput(v){
   }else renderTarget();
   updateHud();
 }
-inp.addEventListener("input",()=>applyInput());
+// 조합 중에는 입력칸을 비우지 않는다. compositionend 뒤 마지막 input이 오는
+// 브라우저와 compositionend만 오는 브라우저 모두 한 번만 채점한다.
+inp.addEventListener("compositionstart",()=>{ resetIme(); imeActive=true; });
+inp.addEventListener("compositionend",()=>{
+  imeActive=false; imePending=true; clearTimeout(imeTimer);
+  imeTimer=setTimeout(()=>{
+    imePending=false;
+    const value=inp.value, idx=state.idx;
+    applyInput(value,false,true);
+    if(state.idx!==idx) imeEcho=value;
+  },0);
+});
+inp.addEventListener("input",e=>{
+  clearTimeout(imeTimer);
+  if(imeEcho!==null && inp.value===imeEcho && !imeActive && !e.isComposing){ imeEcho=null; inp.value=""; return; }
+  imeEcho=null;
+  const committed=imePending; imePending=false;
+  applyInput(undefined,imeActive||e.isComposing,committed);
+});
 inp.addEventListener("paste",e=>e.preventDefault());
 inp.addEventListener("drop",e=>e.preventDefault());
-inp.addEventListener("keydown",e=>{ if(e.key==="Enter") e.preventDefault(); });   // 엔터는 아무것도 안 한다 (한글 판정은 keydown 을 안 본다)
+inp.addEventListener("keydown",e=>{ if(e.key==="Enter" && !imeActive && !e.isComposing) e.preventDefault(); }); // IME의 조합 확정 Enter는 허용한다.
 
 /* ===== 진행 ===== */
 $("bigBtn").onclick=()=>{ if(!state.running && !state.done) countdown(); };
@@ -407,6 +431,7 @@ function finishPlay(){
   if(!state.running) return;
   state.running=false; state.done=true;
   clearTimers();
+  resetIme();
   if(state.typed.length){ const s=scoreOf(state.typed,state.target); state.correct+=s.ok; state.errors+=s.bad; state.strokes+=s.strokes; }
   const cpm=Math.round(state.strokes/(GAME_MS/60000));
   inp.disabled=true; inp.blur();
