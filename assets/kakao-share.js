@@ -59,6 +59,8 @@
         const sharedUrl=notifier ? notifier.decorateShareUrl(o.url,slug,isResult) : o.url;
         const link = { mobileWebUrl:sharedUrl, webUrl:sharedUrl };
         const cardTitle=CARD_TITLES[slug];
+        // Letters provide curated stationery cards; every game's existing card stays fixed.
+        const letterImage=slug==='letter'&&/^https:\/\/noljago\.co\.kr\/assets\/share-cards\/letter-[a-z0-9-]+\.png\?v=\d{8}-studio$/.test(o.img||'') ? o.img : null;
         const message = o.textOnly ? {
           objectType:"text",
           text:[o.title,o.desc].filter(Boolean).join("\n").slice(0,200),
@@ -69,7 +71,7 @@
           content:{
             title:cardTitle ? (slug==='letter'?'너에게 편지가 도착했어요':cardTitle+(isResult?' · 결과 도착':' · 초대 도착')) : o.title,
             description:cardTitle ? Array.from([o.title,o.desc].filter(Boolean).join(' · ')).slice(0,100).join('') : o.desc,
-            imageUrl:cardTitle ? CARD_ROOT+slug.replace('/','-')+'.png?v=20260910-unified' : o.img,
+            imageUrl:letterImage || (cardTitle ? CARD_ROOT+slug.replace('/','-')+'.png?v=20260910-unified' : o.img),
             imageWidth:o.imageWidth||800, imageHeight:o.imageHeight||(cardTitle?480:800),
             link
           },

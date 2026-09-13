@@ -23,6 +23,13 @@ async function main() {
   const old = {objectType:'feed',content:message.content,buttons:[{title:input.btn,link:message.content.link}]};
   assert.ok(JSON.stringify(message).length < JSON.stringify(old).length * .6);
   assert.deepEqual(JSON.parse(Buffer.from(message.content.link.mobileWebUrl.split('#l=')[1], 'base64url')), payload);
+  const stationery='https://noljago.co.kr/assets/share-cards/letter-daily-note.png?v=20260913-studio';
+  assert.equal(await sandbox.kakaoShare({...input,img:stationery}),true);
+  assert.equal(message.content.imageUrl,stationery);
+  assert.equal(message.content.link.webUrl,url);
+  assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);
+  assert.equal(await sandbox.kakaoShare({...input,url:'https://noljago.co.kr/t/rps/#c=test',img:stationery}),true);
+  assert.ok(message.content.imageUrl.endsWith('rps.png?v=20260910-unified'));
   assert.equal(await sandbox.kakaoShare({...input,textOnly:true}), true);
   assert.equal(message.objectType, 'text');
   assert.equal(message.content, undefined); // No remote image scraping in the retry path.
