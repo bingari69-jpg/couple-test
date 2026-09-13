@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#fffbf5">
+<meta name="color-scheme" content="light">
+<title>오목 한판 — 다섯 알에 담는 한 수 | 같이놀자</title>
+<meta name="description" content="15×15 자유오목. 컴퓨터와 혼자, 카톡으로 친구를 초대해서 둘이. 자리를 고르고 확정하면 다섯 알의 승부가 시작돼요.">
+<link rel="stylesheet" href="game.css?v=20260914-online">
+</head>
+<body>
+<main class="om-shell">
+ <header class="om-header"><a class="om-brand" href="../../">같이놀자<b aria-hidden="true">♥</b></a><button class="om-help" id="helpOpen">게임방법 <span aria-hidden="true">?</span></button></header>
+ <section id="lobby" aria-labelledby="lobbyTitle">
+  <p class="om-eyebrow">천천히 생각해도 괜찮아 · 오목 한판</p>
+  <h1 id="lobbyTitle">딱 다섯 알.<br><em>다음 한 수는 너야.</em></h1>
+  <p class="om-lead">내 길은 잇고, 상대의 길은 막고.<br>작은 바둑판 위에서 두는 우리 한판.</p>
+  <div class="om-hero" aria-hidden="true"><div class="om-hero-board"><span class="hero-stone black s1"></span><span class="hero-stone black s2"></span><span class="hero-stone black s3"></span><span class="hero-stone black s4"></span><span class="hero-stone ghost s5"></span><span class="hero-stone white s6"></span><span class="hero-stone white s7"></span><span class="hero-stone white s8"></span></div><span class="om-hero-note">여기에 두면…?</span><span class="om-five">다섯 알의<br>작은 승부</span></div>
+  <fieldset class="om-field"><legend>누구와 둘까요?</legend><div class="om-segments"><button data-mode="ai" aria-pressed="true"><strong>컴퓨터와</strong><small>혼자서 한판</small></button><button data-mode="online" aria-pressed="false"><strong>친구와</strong><small>카톡으로 초대하기</small></button></div></fieldset>
+  <button class="om-local-option" data-mode="local" aria-pressed="false">같이 있다면, 한 화면에서 번갈아 →</button>
+  <div id="onlineOptions" class="om-online-options" hidden><p id="onlineIntro">이름만 적으면 준비 끝. 카톡으로 친구 한 명을 초대해요.</p><label for="nickname">친구에게 보여줄 이름</label><input id="nickname" maxlength="12" placeholder="예: 오목 좋아하는 나" autocomplete="nickname"><p class="om-note">방 만든 사람이 흑돌 · 초대받은 친구가 백돌</p><button class="om-local-option" id="newInvite" hidden>내 초대방을 새로 만들기 →</button></div>
+  <p id="onlineMessage" class="om-network-message" role="status" aria-live="polite"></p>
+  <div id="aiOptions" class="om-options"><fieldset class="om-field"><legend>어떤 한판이 좋아요?</legend><div class="om-chips"><button data-level="easy" aria-pressed="false">가볍게</button><button data-level="steady" aria-pressed="true">생각하며</button></div></fieldset><fieldset class="om-field"><legend>내 돌 고르기</legend><div class="om-chips"><button data-color="1" aria-pressed="true"><i class="mini-stone black" aria-hidden="true"></i> 흑돌 · 먼저</button><button data-color="2" aria-pressed="false"><i class="mini-stone white" aria-hidden="true"></i> 백돌 · 나중에</button></div></fieldset></div>
+  <div class="om-facts"><span>15 × 15줄</span><span>시간 제한 없이</span><span>5개 이상이면 승리</span></div>
+  <button class="om-primary" id="start">오목 한판 시작하기 <span aria-hidden="true">→</span></button>
+  <p class="om-note" id="modeNote">컴퓨터와 번갈아 둬요. 흑돌이 먼저 시작해요.</p>
+ </section>
+ <section id="game" hidden aria-label="오목 게임">
+  <div class="om-game-title"><div><p class="om-eyebrow" id="modeLabel">컴퓨터와 한판</p><h1>오목 한판</h1></div><span class="om-rule-label">15 × 15 · 자유오목</span></div>
+  <section id="roomPanel" class="om-room-panel" hidden><h2 id="roomTitle">친구가 오면 한판 시작!</h2><p id="roomNote"></p><div id="inviteActions" class="om-game-actions"><button class="om-kakao" id="inviteKakao">카톡으로 초대</button><button class="om-secondary" id="inviteCopy">링크 복사</button></div><input id="inviteURL" aria-label="친구 초대 링크" readonly hidden><p id="connectionMessage" role="status" aria-live="polite"></p><button class="om-secondary" id="reconnect" hidden>다시 연결하기</button></section>
+  <div class="om-seats"><div id="blackSeat" class="om-seat"><i class="mini-stone black" aria-hidden="true"></i><span><strong id="blackName">나</strong><small>흑돌 · 선공</small></span><b class="seat-turn">차례</b></div><div id="whiteSeat" class="om-seat"><i class="mini-stone white" aria-hidden="true"></i><span><strong id="whiteName">컴퓨터</strong><small>백돌 · 후공</small></span><b class="seat-turn">차례</b></div></div>
+  <div class="om-status"><p id="turnStatus" role="status" aria-live="polite"></p><span id="moveCount">0수</span></div>
+  <div class="om-board-frame"><div id="board" class="om-board" role="grid" aria-label="15줄 오목판. 방향키로 자리를 옮기고 Enter로 선택하세요." aria-rowcount="15" aria-colcount="15"></div></div>
+  <div class="om-board-caption"><span id="lastMove">흑돌부터 시작해요</span><span>테두리 표시 = 마지막 돌</span></div>
+  <div id="placement" class="om-placement"><div class="om-selection"><div><span class="om-eyebrow">놓을 자리 미리보기</span><strong id="selectedPoint">판에서 자리를 골라주세요</strong></div><div class="om-nudge" role="group" aria-label="선택 위치 한 칸씩 옮기기"><button data-nudge="up" aria-label="위로 한 칸">↑</button><button data-nudge="left" aria-label="왼쪽으로 한 칸">←</button><button data-nudge="down" aria-label="아래로 한 칸">↓</button><button data-nudge="right" aria-label="오른쪽으로 한 칸">→</button></div></div><button class="om-primary" id="place" disabled>자리를 고른 뒤 여기에 두기</button><p class="om-note">판을 톡 누르면 미리보기. 버튼을 눌러야 돌이 놓여요.</p></div>
+  <section class="om-result" id="result" hidden aria-labelledby="resultTitle"><span class="om-eyebrow">이번 한판의 마침표</span><h2 id="resultTitle"></h2><p id="resultNote"></p><button class="om-primary" id="replay">같은 설정으로 한판 더 →</button></section>
+  <div class="om-game-actions"><button class="om-secondary" id="undo" disabled>한 수 무르기</button><button class="om-secondary" id="resign" hidden>이번 판 양보하기</button><button class="om-secondary" id="settings">새 판 고르기</button></div>
+  <p class="om-note" id="sessionNote">이 판은 현재 화면에서만 이어져요. 새로고침하면 처음부터 시작해요.</p>
+ </section>
+ <a class="om-back" id="backLink" href="../../?tab=solo#all">← 다른 혼자놀기</a>
+ <footer class="om-footer">소중한 사람과, 조금 더 가까이.</footer>
+</main>
+<nav class="om-nav" aria-label="하단 메뉴"><a href="../../?home=play#all"><span data-icon="play" aria-hidden="true"></span>둘이놀기</a><a href="../../?tab=solo#all" aria-current="page"><span data-icon="star" aria-hidden="true"></span>혼자놀기</a><a href="../letter/"><span data-icon="letter" aria-hidden="true"></span>편지</a><a href="../psychology/"><span data-icon="mind" aria-hidden="true"></span>심리</a></nav>
+<dialog id="helpDialog" aria-labelledby="helpTitle"><div class="om-dialog-top"><h2 id="helpTitle">다섯 알만 이어봐!</h2><button id="helpClose" aria-label="게임방법 닫기">×</button></div><p class="om-lead">내 돌 다섯 개를 나란히 잇는 놀이예요.<br>상대보다 먼저 완성하면 이겨요.</p><ol class="om-guide"><li><strong>흑돌, 백돌 하나씩 번갈아</strong><p>흑돌이 먼저 시작해요. 돌은 칸 안이 아니라 <b>선이 만나는 점</b>에 놓아요. 이미 돌이 있는 곳에는 놓을 수 없어요.</p></li><li><strong>자리를 고르고, 여기에 두기!</strong><p>판을 누르면 놓을 자리가 미리 보여요. 화살표로 한 칸씩 움직여도 돼요. <b>‘여기에 두기’</b>를 누르면 확정!</p></li><li><strong>가로·세로·대각선으로 다섯 알</strong><p>중간에 빈자리나 상대 돌 없이 이어져야 해요. 상대 돌이 네 개 이어졌다면, 다섯 번째 자리를 막아봐요.</p></li></ol><div class="om-example"><div aria-label="흑돌 다섯 개가 가로로 연결된 승리 예시"><i class="mini-stone black"></i><i class="mini-stone black"></i><i class="mini-stone black"></i><i class="mini-stone black"></i><i class="mini-stone black"></i></div><strong>이렇게 이어지면 흑돌 승리!</strong><p>세로로 서도, 비스듬히 이어져도 똑같아요.</p></div><details><summary>우리 한판의 약속</summary><p>15줄 × 15줄, 총 225곳이에요. 먼저 다섯 개 이상 잇는 <b>자유오목</b>으로, 6개 이상도 승리하고 삼삼·사사 금수는 적용하지 않아요. 판이 가득 찼는데 아무도 이기지 못하면 무승부예요.</p><p>컴퓨터전에서 무르기는 내 마지막 돌과 그 뒤의 컴퓨터 돌을 함께 되돌려요. 한 화면에서 둘 때는 마지막 돌 한 개를 되돌리니 서로 이야기하고 눌러주세요. 카톡 친구전에는 무르기가 없고, 두 사람 모두 ‘한판 더’를 눌러야 새 판이 시작돼요.</p><p>키보드에서는 방향키로 이동하고 Enter 또는 Space로 자리를 선택해요. ‘여기에 두기’ 버튼에서 확정해요.</p></details></dialog>
+<dialog id="newDialog" aria-labelledby="newTitle"><h2 id="newTitle">이번 판을 마칠까요?</h2><p>현재 놓인 돌은 지워져요.<br>새 판에서 상대와 내 돌을 다시 고를 수 있어요.</p><div class="om-game-actions"><button class="om-secondary" id="keepPlaying">계속 두기</button><button class="om-primary" id="newGame">새 판 고르기</button></div></dialog>
+<dialog id="resignDialog" aria-labelledby="resignTitle"><h2 id="resignTitle">이번 판은 양보할까요?</h2><p>친구의 승리로 이번 판을 마쳐요.<br>둘 다 원하면 한판 더 둘 수 있어요.</p><div class="om-game-actions"><button class="om-secondary" id="resignCancel">계속 두기</button><button class="om-primary" id="resignConfirm">양보하고 마치기</button></div></dialog>
+<script src="../../assets/group-room-service.js?v=20260911-1"></script>
+<script src="../../assets/kakao-share.js?v=20260913-letter"></script>
+<script src="online.js?v=20260914-online"></script>
+<script src="rules.js?v=20260914-omok"></script>
+<script src="game.js?v=20260914-online"></script>
+<script src="../../assets/ui.js?v=20260913-solo"></script>
+</body>
+</html>

@@ -1,6 +1,6 @@
 (function(){
   'use strict';
-  const GROUPS=['전체','기록 대결','마음 맞히기','편지와 운세','단체 놀이'];
+  const GROUPS=['전체','기록 대결','보드게임','마음 맞히기','편지와 운세','단체 놀이'];
   const $=id=>document.getElementById(id);
   let selected='전체';
   function configured(){
@@ -26,7 +26,7 @@
     const tip=document.createElement('p');tip.className='card-tip';tip.textContent='💡 '+(item.tip||'화면에 나온 순서대로 천천히 해보세요.');
     const link=document.createElement('a');link.className='play-link';link.href='../'+String(item.path).replace(/^\.\//,'');link.textContent=item.visibility==='maintenance'?'지금은 쉬는 중':'이 게임 해보기 →';if(item.visibility==='maintenance'){link.removeAttribute('href');link.setAttribute('aria-disabled','true');}
     body.append(rule,list,tip);
-    if(['mines','2048'].includes(item.slug)){const lesson=document.createElement('a');lesson.className='play-link';lesson.href='../t/'+item.slug+'/?guide=1';lesson.textContent='그림으로 차근차근 배우기 →';body.append(lesson);}
+    if(['mines','2048','omok','alkkagi'].includes(item.slug)){const lesson=document.createElement('a');lesson.className='play-link';lesson.href='../t/'+item.slug+'/?guide=1';lesson.textContent='그림으로 차근차근 배우기 →';body.append(lesson);}
     body.append(link);details.append(summary,body);return details;
   }
   function render(){

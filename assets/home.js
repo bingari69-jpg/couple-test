@@ -29,13 +29,13 @@ function soloBadge(slug){
 }
 function renderModes(){
  const box=$('catalogModes');if(!box)return;box.replaceChildren();
- [['duel','둘이놀기','카톡으로 보내고 같이'],['solo','혼자놀기','레벨 깨고 별 모으기']].forEach(([key,label,sub])=>{
+ [['duel','둘이놀기','카톡으로, 때로는 한 화면에서'],['solo','혼자놀기','레벨 도전부터 컴퓨터 대전까지']].forEach(([key,label,sub])=>{
    const b=document.createElement('button');b.type='button';b.className='mode-tab';b.dataset.mode=key;b.setAttribute('aria-pressed',String(mode===key));
    b.innerHTML='<b></b><small></small>';b.querySelector('b').textContent=label;b.querySelector('small').textContent=sub;
    b.onclick=()=>{mode=key;render();};box.append(b);
  });
  $('catalogTitle').textContent=mode==='solo'?'혼자서도 재밌게':'조금 더 놀다 갈래?';
- const lead=document.querySelector('.catalog-lead');if(lead)lead.textContent=mode==='solo'?'레벨을 깨고 별을 모아. 깬 판은 친구에게 도전장으로 보낼 수 있어.':'마음에 드는 놀이를 골라, 카톡으로 보내봐.';
+ const lead=document.querySelector('.catalog-lead');if(lead)lead.textContent=mode==='solo'?'레벨을 깨고 별을 모으거나, 컴퓨터와 가볍게 한판 해봐.':'카톡으로 주고받거나 한 화면에서 같이. 마음에 드는 놀이를 골라봐.';
 }
 function render(){
  renderModes();
@@ -45,13 +45,13 @@ function render(){
  $('catalogFilters').replaceChildren();
  if(!soloMode) ['전체','연인','부부','친구','가족'].forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',String(r===relationship));b.onclick=()=>{relationship=r;render();[...$('catalogFilters').children].find(el=>el.textContent===r).focus({preventScroll:true});};$('catalogFilters').append(b);});
  $('catalogList').replaceChildren();
- const visible=HOME_ITEMS.filter(it=>(rel==='전체'||it.relationships.includes(rel))&&(!soloMode||SOLO[slugOf(it)]));
+ const visible=HOME_ITEMS.filter(it=>(rel==='전체'||it.relationships.includes(rel))&&(!soloMode||SOLO[slugOf(it)]||it.soloFree));
  // 받침이 있으면 '과', 없으면 '와' (연인과 · 부부와)
  const withJosa=n=>{const c=n.charCodeAt(n.length-1);return n+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0)?'과':'와')+' 함께';};
  $('catalogCount').textContent=(soloMode?'혼자놀기':(rel==='전체'?'전체':withJosa(rel)))+' · '+visible.length+'가지';
  visible.forEach(it=>{
    const slug=slugOf(it),solo=soloMode;
-   const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path;a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
+   const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path+((it.localDuel||it.onlineDuel)?'?mode=online':'');a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
    const art=document.createElement('div');art.className='catalog-art';art.setAttribute('aria-hidden','true');
    /* 인기 순위는 둘이놀기 기준이라 혼자놀기 탭에서는 붙이지 않는다 */
    if(!solo&&it.popularRank){const rank=document.createElement('span');rank.className='catalog-rank';rank.textContent='인기 '+it.popularRank+'위';art.append(rank);}
@@ -60,11 +60,11 @@ function render(){
    if(it.thumbnailUrl){art.style.backgroundImage='url("'+String(it.thumbnailUrl).replace(/["\\]/g,'')+'")';art.style.backgroundSize='cover';art.style.backgroundPosition='center';mascot.hidden=true;}
    const content=document.createElement('div');content.className='catalog-content';
    const title=document.createElement('h3');title.textContent=it.title.split(' — ')[0];
-   const description=document.createElement('p');description.textContent=it.summary;
+   const description=document.createElement('p');description.textContent=slug==='omok'?(solo?'컴퓨터와 15×15 오목. 다섯 알을 먼저 이어봐.':'카톡으로 초대해서 각자 휴대폰으로 두는 15×15 오목.'):(solo&&it.soloSummary?it.soloSummary:it.summary);
    const tags=document.createElement('div');tags.className='catalog-tags';
    it.relationships.forEach(rel=>{const tag=document.createElement('span');tag.textContent=rel;tag.dataset.relationship=rel;tags.append(tag);});
    const start=document.createElement('span');start.className='catalog-start';start.textContent=solo?'혼자 하기 →':'시작하기 →';
-   if(solo){const s=soloBadge(slug);const badge=document.createElement('span');badge.className='catalog-badge';badge.textContent=s.total===1?(s.cleared?'오늘 완료 ★'.replace('★','★'.repeat(s.stars)):'오늘 한 판'):(s.cleared>=s.total?'모두 클리어 · ★'+s.stars:'Lv'+s.next+' 도전 · ★'+s.stars+'/'+(s.total*3));tags.replaceChildren(badge);}
+   if(solo){const s=soloBadge(slug);const badge=document.createElement('span');badge.className='catalog-badge';badge.textContent=it.soloFree?'컴퓨터와 · 자유 한판':s.total===1?(s.cleared?'오늘 완료 ★'.replace('★','★'.repeat(s.stars)):'오늘 한 판'):(s.cleared>=s.total?'모두 클리어 · ★'+s.stars:'Lv'+s.next+' 도전 · ★'+s.stars+'/'+(s.total*3));tags.replaceChildren(badge);}
    content.append(title,description,tags,start);a.append(art,content);$('catalogList').append(a);
  });
  // 목록을 다 그렸다고 알린다. app-config.js 가 이 신호로 홈 목록 광고를 다시 붙인다.

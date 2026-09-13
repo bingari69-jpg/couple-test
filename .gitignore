@@ -1,5 +1,6 @@
 .claude/
 node_modules/
+.npm-cache/
 
 # Local preview, nested release checkout, and intermediate artifacts
 tmp/
