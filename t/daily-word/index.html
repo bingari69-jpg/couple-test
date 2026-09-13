@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <script src="data.js?v=20260913-new"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
@@ -303,6 +303,7 @@ const state = Duel.setup({
   linkExtra:st=>({e:st.elapsed,l:st.level}),
   roundExtra:(p,st)=>[p.e||0, st.elapsed],
   extraKey:"e", extraDefault:0,
+  blank:v=>Number(v)>=FAIL_V,   // 둘 다 못 맞혔으면 빨리 포기한 쪽이 이기지 않게
   tieBreak:(me,them)=>me.e===them.e?null:{o:me.e<them.e?"win":"lose",why:`시도 횟수는 같지만 더 빨리 맞힌 쪽이 이겨. (${fmt(me.e)}초 vs ${fmt(them.e)}초)`},
   recordCell:x=>x.v>=FAIL_V?"실패":x.v+"<small>번</small>",
   detailCell:x=>x.v>=FAIL_V?"6번 안에 못 맞힘":`${fmt(x.e)}초 만에`,
@@ -350,12 +351,20 @@ function applyDayLock(){
   const box=$("dayLock");
   if(!rec){ box.classList.add("hidden"); $("randomBtn").classList.add("hidden"); return; }
   box.innerHTML=`🔒 <b>오늘 단어는 이미 풀었어.</b> (${rec.tries>=FAIL_V?"6번 안에 못 맞힘":rec.tries+"번 만에 맞힘"}) 내일 새 단어가 나와.`
-    +(state.incoming?"<br>이 도전장은 오늘 단어라 다시 풀 수 없어. 내일 다시 붙어 보자.":"");
+    +(state.incoming?"<br>답을 이미 아니까 이 판을 다시 푸는 건 공평하지 않아. 둘 다 처음 보는 단어로 맞붙자.":"");
   box.classList.remove("hidden");
   $("bigBtn").disabled=true; $("bigBtn").textContent="오늘은 끝";
-  $("randomBtn").classList.toggle("hidden", !!(Solo.active||state.incoming));
+  /* 받은 도전장이 오늘 단어일 때도 길이 막히지 않게 한다. 예전에는 이 버튼까지 감춰서
+     "내일 다시"라는 안내만 남고 받은 쪽이 아무것도 할 수 없었다. */
+  $("randomBtn").classList.toggle("hidden", !!Solo.active);
+  $("randomBtn").textContent=state.incoming?"둘 다 처음 보는 단어로 맞붙기":"다른 단어로 도전장 만들기";
 }
-$("randomBtn").onclick=()=>{ state.seed=newSeed(); buildRound(); toast('새 단어야. 이 판은 도전장으로만 같이 풀 수 있어.'); };
+$("randomBtn").onclick=()=>{
+  /* 받은 도전장을 내려놓고 내가 새 판을 내는 쪽이 된다(전적은 그대로 이어 간다) */
+  if(state.incoming) Duel.startNext(state.hist, state.name||"", state.id||"");
+  state.seed=newSeed(); buildRound();
+  toast('새 단어야. 이 판은 도전장으로만 같이 풀 수 있어.');
+};
 
 function renderRows(){
   const box=$("rows"); box.innerHTML="";

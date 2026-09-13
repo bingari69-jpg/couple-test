@@ -181,6 +181,33 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
   assert.equal(guest.__ev('state.level'), 1); assert.deepEqual(food(guest), foodLog(du).length ? [foodLog(du)[0] % COLS, Math.floor(foodLog(du)[0] / COLS)] : null);
   guest.close(); du.close();
 
+  /* ===== 먹이 순서가 몸 위치에 흔들리지 않는다 =====
+     예전에는 후보가 몸에 겹칠 때마다 난수를 더 써서, 한 번 겹치면 이후 순서가 영구히 어긋났다.
+     지금은 겹친 그 먹이만 비켜가고 다음 먹이부터 같은 순서로 돌아온다. */
+  const fw = load('snake', '').window;
+  fw.__ev('state.seed = 777; buildBoard()');
+  const list = JSON.parse(fw.__ev('JSON.stringify(state.foodList.slice(0, 8))'));
+  assert.equal(list.length, 8, '먹이 목록이 시드로 미리 뽑힌다');
+  const plain = [];
+  for (let i = 0; i < 4; i++) { plain.push(JSON.parse(fw.__ev('JSON.stringify(state.food)'))); fw.__ev('placeFood()'); }
+  fw.close();
+
+  /* 같은 시드인데 몸이 두 번째 먹이 칸을 덮고 있는 경우 */
+  const bw = load('snake', '').window;
+  bw.__ev('state.seed = 777; buildBoard()');
+  const blocked = JSON.parse(bw.__ev('JSON.stringify(state.foodList[1])'));
+  bw.__ev('state.snake = [[' + (blocked % COLS) + ',' + Math.floor(blocked / COLS) + '],[0,0],[1,0]]');
+  bw.__ev('placeFood()');   // 1번째 → 2번째로 넘어가는데 그 칸이 몸 밑
+  const second = JSON.parse(bw.__ev('JSON.stringify(state.food)'));
+  assert.notDeepEqual(second, [blocked % COLS, Math.floor(blocked / COLS)], '몸 밑 칸은 피한다');
+  bw.__ev('state.snake = [[0,0],[1,0],[2,0]]');   // 몸을 비켜 준다
+  bw.__ev('placeFood()');
+  assert.deepEqual(JSON.parse(bw.__ev('JSON.stringify(state.food)')), plain[2],
+    '막혔던 다음 먹이는 원래 순서로 돌아온다(영구 어긋남 없음)');
+  bw.__ev('placeFood()');
+  assert.deepEqual(JSON.parse(bw.__ev('JSON.stringify(state.food)')), plain[3], '그 뒤도 같은 순서');
+  bw.close();
+
   assert.deepEqual(PAGE_ERRORS, [], '페이지 스크립트 예외');
-  console.log('스네이크 20초 검사 통과 — 시드 지렁이(12×16)·출발 자리·180° 금지·먹을수록 빨라짐·벽/몸 충돌은 재출발·20초 끝에 봉인(s·l·c)·같은 자리 복원·많이 먹은 쪽 승·부딪힘 동점 처리·혼자놀기 레벨·별·프리셋');
+  console.log('스네이크 20초 검사 통과 — 시드 지렁이(12×16)·출발 자리·180° 금지·먹을수록 빨라짐·벽/몸 충돌은 재출발·20초 끝에 봉인(s·l·c)·같은 자리 복원·많이 먹은 쪽 승·부딪힘 동점 처리·혼자놀기 레벨·별·프리셋·몸에 흔들리지 않는 먹이 순서');
 })().catch(e => { console.error(e); process.exit(1); });

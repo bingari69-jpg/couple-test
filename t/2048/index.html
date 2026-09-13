@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -215,12 +215,18 @@
    한 번 밀기는 move(dir) 하나에 모아 둔다. */
 const N=4, GAME_MS=30000;
 const DIRS={U:1,D:1,L:1,R:1};
+/* 혼자놀기 목표는 '최고 타일'이 아니라 둘이하기와 같은 '점수'로 센다.
+   타일 목표는 2배씩 뛰어 사다리가 너무 거칠었다. 실측(초당 2.2회 밀기, 시드 5개)으로는
+   30초 64 · 45초 128 · 150초에도 256이 한계였는데 예전 목표는 Lv2 256, Lv4 1024, Lv5 2048이라
+   Lv4·Lv5는 사람이 도달할 수 없었고 ★★★ 은 Lv1 부터 사실상 막혀 있었다.
+   아래 수치는 같은 실측의 점수 중간값(30초 516 · 45초 964 · 60초 1304 · 90초 1936 · 120초 2444)에서
+   목표는 조금 아래, ★★★ 은 위로 잡은 것이다. */
 const LEVELS=[
-  {n:1,label:'128', limitMs:40000, goal:128, best:256},
-  {n:2,label:'256', limitMs:60000, goal:256, best:512},
-  {n:3,label:'512', limitMs:90000, goal:512, best:1024},
-  {n:4,label:'1024',limitMs:120000,goal:1024,best:2048},
-  {n:5,label:'2048',limitMs:150000,goal:2048,best:4096}
+  {n:1,label:'400점',  limitMs:30000, goal:400,  best:650},
+  {n:2,label:'700점',  limitMs:45000, goal:700,  best:1100},
+  {n:3,label:'1000점', limitMs:60000, goal:1000, best:1500},
+  {n:4,label:'1500점', limitMs:90000, goal:1500, best:2200},
+  {n:5,label:'2100점', limitMs:120000,goal:2100, best:3000}
 ];
 const fmtT=ms=>String(Math.ceil(Math.max(0,ms)/1000));
 function setClock(left,limit){ $("clock").textContent=fmtT(left); $("clockWrap").classList.toggle("warn", left<=5000); $("bar").style.width=(Math.max(0,left)/limit*100)+"%"; }
@@ -352,8 +358,8 @@ function move(dir){
   state.mx=Math.max.apply(null,state.board);
   $("score").textContent=state.score; $("maxTile").textContent=state.mx; $("moves").textContent=state.moves;
   render();
-  if(Solo.active && Solo.level && state.mx>=Solo.level.goal){   // 목표에 닿으면 여기서 끝낼 수 있다 (계속하면 별 더)
-    const b=$("bigBtn"); b.disabled=false; b.className="bigbtn stop"; b.textContent=state.mx>=Solo.level.best?"여기서 끝내기 ★★★":"여기서 끝내기 (계속하면 별 더)";
+  if(Solo.active && Solo.level && state.score>=Solo.level.goal){   // 목표에 닿으면 여기서 끝낼 수 있다 (계속하면 별 더)
+    const b=$("bigBtn"); b.disabled=false; b.className="bigbtn stop"; b.textContent=state.score>=Solo.level.best?"여기서 끝내기 ★★★":"여기서 끝내기 (계속하면 별 더)";
   }
   if(!canMove()) finishPlay("stuck");
   return true;
@@ -413,7 +419,7 @@ function clockTick(){
 /* ===== 진행 ===== */
 $("bigBtn").onclick=()=>{
   if(!state.running && !state.done){ countdown(); return; }
-  if(state.running && Solo.active && Solo.level && state.mx>=Solo.level.goal) finishPlay("stop");
+  if(state.running && Solo.active && Solo.level && state.score>=Solo.level.goal) finishPlay("stop");
 };
 
 function countdown(){
@@ -448,12 +454,12 @@ function finishPlay(why){
   const score=state.score, mx=state.mx;
   const b=$("bigBtn"); b.disabled=true; b.className="bigbtn start";
   setClock(why==="time"?0:state.limit-(performance.now()-state.t0),state.limit);
-  if(Solo.active){   // 혼자놀기: 기록(최고 타일)을 바로 보여주고 별을 매긴다. 시간이 끝나도 최고 타일이 기록
-    const ok=Solo.level&&mx>=Solo.level.goal;
+  if(Solo.active){   // 혼자놀기: 기록(점수)을 바로 보여주고 별을 매긴다. 둘이하기와 같은 기준
+    const ok=Solo.level&&score>=Solo.level.goal;
     $("cover").classList.remove("hidden"); $("cd").textContent=ok?"🎉":(why==="stuck"?"💥":"⏰");
-    $("cdSub").textContent=ok?"목표 타일 "+Solo.level.goal+" 달성":(why==="stuck"?"더 밀 곳이 없어":"시간 끝");
+    $("cdSub").textContent=ok?"목표 "+Solo.level.goal+"점 달성":(why==="stuck"?"더 밀 곳이 없어":"시간 끝");
     b.textContent="끝";
-    Solo.finish(mx,{score,note:"점수 "+score+" · "+state.moves+"번 밀기"}); return;
+    Solo.finish(score,{mx,note:"최고 타일 "+mx+" · "+state.moves+"번 밀기"}); return;
   }
   /* 둘이하기: 최종 기록은 여기서 보여주지 않는다 — 상대가 끝낸 뒤에 같이 열린다 */
   $("score").textContent="🔒"; $("maxTile").textContent="🔒";
@@ -465,8 +471,8 @@ function finishPlay(why){
 /* ===== 혼자놀기 ===== */
 Solo.init({
   game:'2048', levels:LEVELS, lowerWins:false,
-  fmt:v=>v+' 타일',
-  describe:l=>(l.limitMs/1000)+'초 안에 · 목표 타일 '+l.goal,
+  fmt:v=>v+'점',
+  describe:l=>(l.limitMs/1000)+'초 안에 · 목표 '+l.goal+'점',
   onLevel(l){
     state.seed=l.seed; state.level=l.n;
     clearTimeout(state.cdTimer);

@@ -155,15 +155,15 @@ const ONE = [[1]], SQ = [[1, 1], [1, 1]];
   assert.equal(lv.length, 5); assert.ok(lv[0].classList.contains('on')); assert.ok(lv[1].classList.contains('locked'));
   assert.equal(ss.level, 1); assert.equal(ss.seed, s.Solo.seedFor('fit', 1));
   assert.equal(el(s, 'nameIn').classList.contains('hidden'), true); assert.equal(el(s, 'playTag').textContent, '혼자놀기');
-  assert.match(el(s, 'soloDesc').textContent, /클리어 60점/); assert.match(el(s, 'soloDesc').textContent, /★★★ 96점/);
+  assert.match(el(s, 'soloDesc').textContent, /클리어 80점/); assert.match(el(s, 'soloDesc').textContent, /★★★ 130점/);
   assert.match(el(s, 'rule').textContent, /Lv1/);
   const L = s.Solo.levels[0];
-  assert.equal(s.Solo.starsFor(L, 96), 3); assert.equal(s.Solo.starsFor(L, 80), 2); assert.equal(s.Solo.starsFor(L, 60), 1); assert.equal(s.Solo.starsFor(L, 59), 0);
+  assert.equal(s.Solo.starsFor(L, 130), 3); assert.equal(s.Solo.starsFor(L, 110), 2); assert.equal(s.Solo.starsFor(L, 80), 1); assert.equal(s.Solo.starsFor(L, 79), 0);
   const seedLv1 = ss.seed;
 
-  /* 클리어: 줄을 여러 번 지워 96점 이상 → ★★★, 저장, Lv2 해제, 도전장 링크. 봉인 카드는 없음 */
+  /* 클리어: 줄을 여러 번 지워 130점 이상 → ★★★, 저장, Lv2 해제, 도전장 링크. 봉인 카드는 없음 */
   s.__ev('startPlay()');
-  while (ss.score < 96) { fillExcept(s, [0], []); setTray(s, [ONE, SQ, SQ]); s.__ev('placeAt(0,0,0)'); }
+  while (ss.score < 130) { fillExcept(s, [0], []); setTray(s, [ONE, SQ, SQ]); s.__ev('placeAt(0,0,0)'); }
   assert.equal(ss.done, false);
   s.__ev('state.t0 = performance.now() - 60000'); s.__ev('clockTick()');
   const res = el(s, 'soloResult'); assert.ok(res, '혼자 결과 카드');

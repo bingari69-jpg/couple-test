@@ -115,52 +115,58 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - state.limit'); w.__
   assert.match(el(g2, 'subVerdict').textContent, /더 큰 타일을 만든 쪽이 이겨/);
   g2.close(); w.close();
 
-  /* 혼자놀기: 레벨 표, Lv1 만 열림, 고정 시드, 40초, 목표 128, 둘이하기 UI 숨김 */
+  /* 혼자놀기: 레벨 표, Lv1 만 열림, 고정 시드, 30초, 목표 400점(둘이하기와 같은 점수 기준), 둘이하기 UI 숨김.
+     예전 목표는 최고 타일이었는데 2배씩 뛰는 사다리라 Lv4·Lv5(1024·2048 타일)는 사람이 도달할 수 없었다. */
   const s = load('2048', '?solo=1').window;
   const sd = s.document, ss = s.__ev('state');
   assert.equal(s.Solo.active, true); assert.ok(el(s, 'soloPanel'));
   const lv = [...sd.querySelectorAll('.solo-lv')];
   assert.equal(lv.length, 5); assert.ok(lv[0].classList.contains('on')); assert.ok(lv[1].classList.contains('locked'));
-  assert.equal(ss.level, 1); assert.equal(ss.seed, s.Solo.seedFor('2048', 1)); assert.equal(ss.limit, 40000);
-  assert.equal(el(s, 'clock').textContent, '40');
+  assert.equal(ss.level, 1); assert.equal(ss.seed, s.Solo.seedFor('2048', 1)); assert.equal(ss.limit, 30000);
+  assert.equal(el(s, 'clock').textContent, '30');
   assert.equal(el(s, 'nameIn').classList.contains('hidden'), true); assert.equal(el(s, 'playTag').textContent, '혼자놀기');
-  assert.match(el(s, 'soloDesc').textContent, /클리어 128 타일/); assert.match(el(s, 'soloDesc').textContent, /★★★ 256 타일/);
+  assert.match(el(s, 'soloDesc').textContent, /클리어 400점/); assert.match(el(s, 'soloDesc').textContent, /★★★ 650점/);
   const L = s.Solo.levels[0];
-  assert.equal(s.Solo.starsFor(L, 256), 3); assert.equal(s.Solo.starsFor(L, 128), 1); assert.equal(s.Solo.starsFor(L, 64), 0); assert.equal(s.Solo.starsFor(L, null), 0);
+  assert.equal(s.Solo.starsFor(L, 650), 3); assert.equal(s.Solo.starsFor(L, 400), 1); assert.equal(s.Solo.starsFor(L, 300), 0); assert.equal(s.Solo.starsFor(L, null), 0);
   const seedLv1 = ss.seed;
 
-  /* 클리어: 128을 만들면 "여기서 끝내기" 버튼, 256 을 만들고 시간이 끝나면 최고 타일 256 으로 ★★★, 저장, Lv2 해제. 봉인 카드 없음 */
+  /* 클리어: 400점을 넘으면 "여기서 끝내기" 버튼, 650점을 넘기고 시간이 끝나면 ★★★, 저장, Lv2 해제. 봉인 카드 없음 */
   s.__ev('startPlay()');
   assert.equal(el(s, 'bigBtn').disabled, true);
-  setBoard(s, [64, 64, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
-  assert.equal(ss.mx, 128); assert.equal(el(s, 'bigBtn').disabled, false); assert.match(el(s, 'bigBtn').textContent, /여기서 끝내기/);
-  assert.equal(ss.done, false, '목표를 넘어도 계속할 수 있다');
   setBoard(s, [128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
-  assert.equal(ss.mx, 256);
+  assert.equal(ss.score, 256);
+  assert.equal(el(s, 'bigBtn').disabled, true, '목표 아래면 아직 끝낼 수 없다');
+  setBoard(s, [128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
+  assert.equal(ss.score, 512);
+  assert.equal(el(s, 'bigBtn').disabled, false); assert.match(el(s, 'bigBtn').textContent, /여기서 끝내기/);
+  assert.equal(ss.done, false, '목표를 넘어도 계속할 수 있다');
+  setBoard(s, [256, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
+  assert.equal(ss.score, 1024); assert.match(el(s, 'bigBtn').textContent, /★★★/);
   timeUp(s);
   assert.equal(ss.done, true);
   const res = el(s, 'soloResult'); assert.ok(res, '혼자 결과 카드');
-  assert.equal(res.querySelector('.stars').textContent, '★★★'); assert.match(res.querySelector('.rec').textContent, /256 타일/); assert.match(res.querySelector('.rec').textContent, /점수/);
+  assert.equal(res.querySelector('.stars').textContent, '★★★'); assert.match(res.querySelector('.rec').textContent, /1024점/); assert.match(res.querySelector('.rec').textContent, /최고 타일/);
   assert.equal(el(s, 'afterPlay').classList.contains('hidden'), true, '봉인 카드 없음');
   assert.equal(el(s, 'soloDuel').getAttribute('href'), '/t/2048/?s=' + seedLv1 + '&l=1');
   const saved = JSON.parse(s.localStorage.getItem('gatchi_solo_v1'));
-  assert.equal(saved['2048']['1'].stars, 3); assert.equal(saved['2048']['1'].best, 256);
+  assert.equal(saved['2048']['1'].stars, 3); assert.equal(saved['2048']['1'].best, 1024);
   assert.equal(sd.querySelectorAll('.solo-lv')[1].classList.contains('locked'), false, 'Lv2 해제');
 
-  /* 다음 레벨: 60초·목표 256, 새 시드. 목표 못 채우고 시간 끝 → 최고 타일이 기록되지만 별 0 */
+  /* 다음 레벨: 45초·목표 700점, 새 시드. 목표 못 채우고 시간 끝 → 점수는 기록되지만 별 0 */
   el(s, 'soloNext').click();
   assert.equal(ss.level, 2); assert.notEqual(ss.seed, seedLv1); assert.equal(el(s, 'soloResult'), null);
-  assert.equal(ss.limit, 60000); assert.equal(el(s, 'clock').textContent, '60');
+  assert.equal(ss.limit, 45000); assert.equal(el(s, 'clock').textContent, '45');
   s.__ev('startPlay()');
   setBoard(s, [32, 32, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
   timeUp(s);
   const fail = el(s, 'soloResult'); assert.equal(fail.querySelector('.stars').textContent, '☆☆☆'); assert.match(fail.querySelector('.verdict').textContent, /아쉽/);
-  assert.match(fail.querySelector('.rec').textContent, /64 타일/, '시간이 끝나도 최고 타일이 기록');
+  assert.match(fail.querySelector('.rec').textContent, /64점/, '시간이 끝나도 점수가 기록');
   assert.equal(JSON.parse(s.localStorage.getItem('gatchi_solo_v1'))['2048']['2'].best, 64);
   assert.equal(sd.querySelectorAll('.solo-lv')[2].classList.contains('locked'), true, 'Lv3 은 아직 잠김');
-  /* "여기서 끝내기": 목표를 채운 뒤 버튼으로 끝내면 그 자리의 최고 타일로 기록 */
+  /* "여기서 끝내기": 목표(Lv2 = 700점)를 채운 뒤 버튼으로 끝내면 그 자리의 점수로 기록 */
   el(s, 'soloRetry').click(); s.__ev('startPlay()');
-  setBoard(s, [128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
+  setBoard(s, [256, 256, 128, 128, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); s.__ev('move("L")');
+  assert.equal(ss.score, 768, '목표 700점은 넘고 ★★(900점)에는 못 미침');
   el(s, 'bigBtn').click();
   assert.equal(ss.done, true); assert.equal(el(s, 'soloResult').querySelector('.stars').textContent, '★☆☆');
   s.close();

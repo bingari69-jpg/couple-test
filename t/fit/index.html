@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -201,12 +201,16 @@ const SHAPES=[
   {m:[[1,1,1],[1,1,1]],c:'#FFC21C'}, {m:[[0,1,0],[1,1,1],[0,1,0]],c:'#FF6B4A'},
 ];
 const cellsOf=m=>m.reduce((s,row)=>s+row.reduce((a,b)=>a+b,0),0);
+/* 시간은 60초 고정이라 한계는 "1분에 조각을 몇 개 놓느냐"다. 끌어 놓기 한 번에 1.2~1.5초,
+   즉 40~50조각이 사람의 상한이다. 실측(시드 5개, 빈틈을 피하는 정책)으로 40조각 중간값 245점,
+   50조각 313점, 60조각까지 밀어도 345점이었다. 예전 Lv5 목표 420점과 ★★★ 672점은
+   조각을 무한히 놓아도 닿지 않는 값이라 별 세 개가 Lv4 부터 사실상 막혀 있었다. */
 const LEVELS=[
-  {n:1,label:'60점', limitMs:GAME_MS,goal:60, best:96},
-  {n:2,label:'120점',limitMs:GAME_MS,goal:120,best:192},
-  {n:3,label:'200점',limitMs:GAME_MS,goal:200,best:320},
-  {n:4,label:'300점',limitMs:GAME_MS,goal:300,best:480},
-  {n:5,label:'420점',limitMs:GAME_MS,goal:420,best:672}
+  {n:1,label:'80점', limitMs:GAME_MS,goal:80, best:130},
+  {n:2,label:'130점',limitMs:GAME_MS,goal:130,best:190},
+  {n:3,label:'180점',limitMs:GAME_MS,goal:180,best:250},
+  {n:4,label:'240점',limitMs:GAME_MS,goal:240,best:310},
+  {n:5,label:'300점',limitMs:GAME_MS,goal:300,best:380}
 ];
 const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
 function titleFor(v){

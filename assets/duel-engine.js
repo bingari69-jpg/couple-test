@@ -141,6 +141,11 @@
     window.isSandbox = isSandbox;
     window.baseUrl = baseUrl;
 
+    /* 아무 성과가 없는 기록(점수 0, 또는 게임이 blank 로 정한 값)인지.
+       2차 판정이 대개 "실수·시간이 적은 쪽"이라, 둘 다 0점이면 시작만 하고 가만히 있은 쪽이
+       이기게 된다. 양쪽 다 성과가 없으면 2차 판정을 쓰지 않고 무승부로 둔다. */
+    const blank = cfg.blank || (v => !cfg.lowerWins && !Number(v));
+
     /* ── 전적 ── */
     function tallyOf(hist, meId, meName) {
       let w = 0, l = 0, t = 0;
@@ -150,7 +155,7 @@
         if (better(mine, theirs)) w++; else if (better(theirs, mine)) l++;
         else {
           let res = "t";
-          if (cfg.tieBreak && cfg.extraKey) {
+          if (cfg.tieBreak && cfg.extraKey && !(blank(isA ? r[1] : r[3]) && blank(isA ? r[3] : r[1]))) {
             const meO = { v: isA ? r[1] : r[3] }, thO = { v: isA ? r[3] : r[1] };
             meO[cfg.extraKey] = (isA ? r[6] : r[7]) || cfg.extraDefault; thO[cfg.extraKey] = (isA ? r[7] : r[6]) || cfg.extraDefault;
             const tb = cfg.tieBreak(meO, thO); if (tb && tb.o === "win") res = "w"; else if (tb && tb.o === "lose") res = "l";
@@ -253,7 +258,7 @@
       let o = better(em, et) ? "win" : (better(et, em) ? "lose" : "tie");
       /* 점수가 같으면 게임이 정한 2차 판정(폭탄 수·명중률·오답 수 등)으로 승부를 가른다 */
       let tieWhy = "";
-      if (o === "tie" && cfg.tieBreak) { const tb = cfg.tieBreak(me, them); if (tb && (tb.o === "win" || tb.o === "lose")) { o = tb.o; tieWhy = tb.why || ""; } }
+      if (o === "tie" && cfg.tieBreak && !(blank(me.v) && blank(them.v))) { const tb = cfg.tieBreak(me, them); if (tb && (tb.o === "win" || tb.o === "lose")) { o = tb.o; tieWhy = tb.why || ""; } }
 
       $("nameA").textContent = me.n ? me.n + " (나)" : "나";
       $("tA").innerHTML = cfg.recordCell(me);

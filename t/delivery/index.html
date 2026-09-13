@@ -197,7 +197,8 @@
     <div class="linkbox hidden" id="resLinkbox"></div>
   </div>
   <div id="ownerActions" class="hidden">
-    <button class="btn btn-main hidden" id="guessBack">나도 맞혀보기 — 상대 답 맞히러 가기</button>
+    <button class="btn btn-main" id="askBack" style="background:#FEE500;color:#191600">💬 이번엔 네가 답해 — 카톡으로 부르기</button>
+    <button class="btn btn-sub" id="againBtn">한 판 더 — 새로 답 고르고 도전장 만들기</button>
   </div>
   <div class="next" id="nextBox"><h3>다음은 이거 어때요?</h3><div id="nextList"></div></div>
   <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none;line-height:1.4">다른 놀이 보기</a>
@@ -403,7 +404,19 @@ function renderResult(R){
       state.qi=0; renderA(); show("s-answer");
     };
   }else{
+    /* 결과를 받은 주인 화면. 예전에는 끝내 눌리지 않는 버튼 하나뿐이라 여기서 길이 막혔다.
+       주인은 상대의 답을 모르니 대신 맞힐 수 없다. 그래서 할 수 있는 두 가지만 둔다.
+       ① 상대에게 "이번엔 네가 답해" 하고 빈 게임 링크를 보내기 ② 새로 답을 골라 한 판 더. */
     $("ownerActions").classList.remove("hidden");
+    const backUrl=baseUrl();
+    $("askBack").onclick=()=>kakaoShare({url:backUrl,btn:"내 답 고르기",img:"https://noljago.co.kr/og/og-delivery-sq.png",
+      title:`${nm(R.guesser)||"너"} 배달 취향은? 이번엔 내가 맞혀볼게`,
+      desc:`${subj(guesserL)} ${R.score}/10 맞혔어. 이번엔 네가 답하고 내가 맞힐 차례.`},
+      ()=>copy(backUrl,"카톡 공유를 못 열어 링크를 복사했어요"));
+    $("againBtn").onclick=()=>{
+      history.replaceState(null,"",location.pathname);
+      state.prev=null; state.ans=[]; state.qi=0; renderA(); show("s-answer");
+    };
   }
   // 다음 놀이
   $("nextList").innerHTML=NEXT.map(n=>`<a href="${n.path}">${esc(n.title)}<small>${esc(n.desc)}</small></a>`).join("");

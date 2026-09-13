@@ -334,7 +334,13 @@ function renderRows(){
 }
 $("pasteApply").onclick=()=>{
   const r=window.parseQuiz ? parseQuiz($("pasteText").value,{max:MAX_Q}) : {rows:[],over:0};
-  if(!r.rows.length){ toast("문제를 찾지 못했어요. 한 줄에 “단어 뜻” 으로 넣어주세요"); return; }
+  if(!r.rows.length){
+    /* 붙여넣기를 못 알아들으면 예전에는 알림만 띄우고 끝이었다. 문제 표(+ 문제 추가)는
+       문제가 하나라도 있을 때만 열리므로 직접 넣을 길이 아예 없었다. 빈 줄 하나를 열어 준다. */
+    if(!mk.rows.length){ mk.rows=[["",[""]]]; renderRows(); $("qWrap").scrollIntoView({block:"nearest",behavior:"smooth"}); }
+    toast("문제를 찾지 못했어요. 한 줄에 “단어 뜻” 으로 넣거나 아래에 직접 입력해 주세요");
+    return;
+  }
   mk.rows=r.rows.map(x=>[x[0],x[1].slice()]);
   renderRows();
   track("exam_paste",{n:mk.rows.length});

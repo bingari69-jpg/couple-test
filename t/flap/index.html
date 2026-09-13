@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -278,7 +278,7 @@ function addGate(){
   const [lo,hi]=gapRange(state.level);
   const gap=Math.round(H*(lo+state.rnd()*(hi-lo)));
   const top=Math.round(H*0.12+state.rnd()*(H*0.76-gap));
-  state.gates.push({x:state.nextGateX,top,gap,passed:false});
+  state.gates.push({x:state.nextGateX,top,gap,passed:false,skip:false});
   state.nextGateX+=W*GATE_DIST;
 }
 function fillGates(){ while(state.nextGateX<state.worldX+W*3) addGate(); }
@@ -352,12 +352,15 @@ document.addEventListener("keydown",e=>{
 });
 
 /* 부딪힘: 끝내지 않고 그 자리에서 다시 — 병아리를 가운데 높이로, 잠깐 무적, 빨간 번쩍.
-   병아리 바로 앞의 아직 안 지난 문은 통과 처리 없이 비켜가도록 살짝 뒤로 민다. */
+   되살아난 자리에 걸친 문은 '건너뜀'으로 표시해 충돌·점수에서 뺀다.
+   예전에는 그 문을 화면 폭의 0.5만큼 뒤로 밀었는데, 문 간격이 0.62W(223px)라 밀고 나면
+   다음 문과 43px 만 떨어져 문 너비 52px 보다 좁아졌다. 두 문이 겹쳐 틈이 어긋나면
+   통과 자체가 불가능한 이중 벽이 남고, 거기서 연쇄 충돌이 났다. 문은 이제 움직이지 않는다. */
 function hit(){
   const now=state.ticks*STEP;
   state.crashes++; state.streak=0; state.flashUntil=now+FLASH_MS; state.invulUntil=now+INVUL_MS;
   state.y=H*0.45; state.vy=0;
-  for(const g of state.gates){ const gx=g.x-state.worldX; if(gx<BX+GATE_W+40 && gx>BX-GATE_W-40 && !g.passed) g.x+=W*0.5; }
+  for(const g of state.gates){ const gx=g.x-state.worldX; if(gx<BX+GATE_W+40 && gx>BX-GATE_W-40 && !g.passed) g.skip=true; }
   $("crashInfo").textContent=state.crashes;
 }
 
@@ -379,9 +382,13 @@ function step(n){
     if(!crashed) for(const g of state.gates){
       const gx=g.x-state.worldX;
       if(!g.passed && gx+GATE_W<BX-BR){
-        g.passed=true; state.passed++; state.streak++; state.bestStreak=Math.max(state.bestStreak,state.streak);
-        $("score").textContent=state.passed; $("streakInfo").textContent=state.bestStreak;
+        g.passed=true;
+        if(!g.skip){   // 부딪혀 건너뛴 문은 통과로 세지 않는다
+          state.passed++; state.streak++; state.bestStreak=Math.max(state.bestStreak,state.streak);
+          $("score").textContent=state.passed; $("streakInfo").textContent=state.bestStreak;
+        }
       }
+      if(g.skip) continue;
       if(now<state.invulUntil) continue;
       if(BX+BR>gx && BX-BR<gx+GATE_W && (by-BR<g.top || by+BR>g.top+g.gap)){ crashed=true; break; }
     }

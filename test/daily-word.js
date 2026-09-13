@@ -112,6 +112,26 @@ const other = (w, not) => JSON.parse(w.__ev('JSON.stringify(DAILY_WORDS.slice(0,
   el(d, 'randomBtn').click();
   assert.notEqual(dsn.seed, today); assert.equal(el(d, 'dayLock').classList.contains('hidden'), true); assert.equal(el(d, 'bigBtn').disabled, false);
   d.close();
+
+  /* 오늘 단어를 이미 푼 사람이 "오늘 단어" 도전장을 받은 경우.
+     답을 아니까 그 판을 다시 풀게 하진 않지만, 길이 막혀서도 안 된다.
+     예전에는 다른 단어 버튼까지 감춰서 받은 쪽이 할 수 있는 게 없었다. */
+  const inc = load('daily-word', '').window; const ist = inc.__ev('state');
+  inc.__ev('startPlay()'); guess(inc, ist.answer);           // 먼저 오늘 단어를 끝낸다
+  assert.ok(inc.localStorage.getItem('dw_done:' + key), '오늘 기록 저장');
+  inc.__ev('Duel.state.incoming = {v:1,n:"상대",i:"idz",s:' + today + ',l:0}; state.hist=[]; state.seed=daySeed(); buildRound()');
+  assert.equal(el(inc, 'dayLock').classList.contains('hidden'), false);
+  assert.match(el(inc, 'dayLock').textContent, /공평하지 않아/, '받은 쪽에는 이유를 말해 준다');
+  const rb = el(inc, 'randomBtn');
+  assert.equal(rb.classList.contains('hidden'), false, '받은 쪽도 다른 단어로 갈 수 있어야 함');
+  assert.match(rb.textContent, /처음 보는 단어/);
+  rb.click();
+  assert.notEqual(ist.seed, today, '새 단어로 바뀜');
+  assert.equal(inc.__ev('Duel.state.incoming'), null, '받은 도전장은 내려놓는다');
+  assert.equal(el(inc, 'dayLock').classList.contains('hidden'), true);
+  assert.equal(el(inc, 'bigBtn').disabled, false, '새 단어는 풀 수 있다');
+  inc.close();
+
   /* 다른 기기(새 창)는 오늘 단어를 아직 풀 수 있다 */
   const d2 = load('daily-word', '').window;
   assert.equal(el(d2, 'dayLock').classList.contains('hidden'), true); assert.equal(el(d2, 'bigBtn').disabled, false);
@@ -149,5 +169,5 @@ const other = (w, not) => JSON.parse(w.__ev('JSON.stringify(DAILY_WORDS.slice(0,
   pg.close(); p.close();
 
   assert.deepEqual(PAGE_ERRORS, [], '페이지 스크립트 예외');
-  console.log('오늘의 단어 검사 통과 — 목록·자모 분해·판정 색·오늘 시드·입력 검증·봉인·같은 판·적은 시도 승·동점은 빠른 쪽·실패 7·하루 한 번·혼자 오늘 한 판·별');
+  console.log('오늘의 단어 검사 통과 — 목록·자모 분해·판정 색·오늘 시드·입력 검증·봉인·같은 판·적은 시도 승·동점은 빠른 쪽·실패 7·하루 한 번·받은 도전장도 탈출구·혼자 오늘 한 판·별');
 })().catch(e => { console.error(e); process.exit(1); });

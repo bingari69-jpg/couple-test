@@ -17,7 +17,7 @@
 <script src="../../assets/analytics.js?v=20260913-series"></script>
 <script src="../../assets/kakao-share.js?v=20260913-letter"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-score-input"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -256,7 +256,7 @@ const state = Duel.setup({
   higherWins:true,                  // 지렁이를 많이 먹을수록 이긴다
   hasSeed:true,                     // 같은 지렁이를 나눠 쓰므로 시드를 링크에 싣는다
   scrollToShare:true,
-  state:{seed:0,level:0,rand:null,food:null,foodLog:[],snake:[],dir:"R",pending:"R",eaten:0,crash:0,maxLen:3,stat:null,
+  state:{seed:0,level:0,rand:null,food:null,foodLog:[],foodList:null,foodIdx:0,snake:[],dir:"R",pending:"R",eaten:0,crash:0,maxLen:3,stat:null,
          running:false,t0:0,done:false,cdTimer:0,tickTimer:0,clockTimer:0,flashTimer:0,swipe:null},
   linkExtra:st=>({c:st.stat,l:st.level}),
   roundExtra:(p,st)=>[p.c||[0,3], st.stat],
@@ -301,6 +301,7 @@ function spawnSnake(){
 /* 시드로 난수를 새로 잡고 병아리를 출발 자리에 놓는다 */
 function buildBoard(){
   state.rand=mulberry32(state.seed>>>0); state.foodLog=[];
+  state.foodList=buildFoodList(); state.foodIdx=0;
   state.eaten=0; state.crash=0; state.maxLen=3; state.stat=null;
   spawnSnake(); placeFood();
   $("speed").textContent="한 칸 "+(baseTick(state.level)/1000).toFixed(2)+"초";
@@ -308,11 +309,25 @@ function buildBoard(){
   draw();
 }
 const occupied=(x,y)=>state.snake.some(s=>s[0]===x&&s[1]===y);
-/* 시드 난수 순서대로 다음 자리. 몸 밑이면 다음 후보 */
+/* 먹이 자리는 시드로 미리 뽑아둔 목록에서 꺼낸다. n번째 먹이는 목록의 n번째 칸.
+   예전에는 후보가 몸에 겹칠 때마다 난수를 더 소비했다. 몸 위치는 조작에 따라 다르니
+   한 번 겹치는 순간부터 둘의 먹이 순서가 영구히 어긋났다 — "같은 자리 같은 지렁이"가 깨졌다.
+   지금은 겹친 그 먹이만 목록 뒤 칸으로 비켜가고, 자리 번호는 한 칸만 올라간다.
+   그래서 어긋남이 그 한 마리에 그치고 다음 먹이부터 다시 같은 순서로 돌아온다. */
+const FOOD_POOL=600;
+function buildFoodList(){
+  const r=mulberry32((state.seed>>>0)^0x9E3779B9), list=[];
+  for(let i=0;i<FOOD_POOL;i++) list.push(Math.floor(r()*ROWS)*COLS+Math.floor(r()*COLS));
+  return list;
+}
 function placeFood(){
-  for(let i=0;i<500;i++){
-    const x=Math.floor(state.rand()*COLS), y=Math.floor(state.rand()*ROWS);
-    if(!occupied(x,y)){ state.food=[x,y]; state.foodLog.push(y*COLS+x); return; }
+  const list=state.foodList||(state.foodList=buildFoodList());
+  for(let k=0;k<list.length;k++){
+    const cell=list[(state.foodIdx+k)%list.length], x=cell%COLS, y=Math.floor(cell/COLS);
+    if(!occupied(x,y)){
+      state.food=[x,y]; state.foodLog.push(cell);
+      state.foodIdx=(state.foodIdx+1)%list.length; return;
+    }
   }
   state.food=null;
 }
