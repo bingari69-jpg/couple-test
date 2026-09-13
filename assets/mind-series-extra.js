@@ -97,6 +97,25 @@
     }
   });
 
+  /* 조사 붙이기. '말로 알아주기'로 / '먼저 해두는 행동'으로 처럼 받침에 따라 갈린다.
+     ㄹ 받침은 '으로'가 아니라 '로'를 쓴다(서울로). */
+  function tail(word) {
+    const ch = String(word || '').replace(/[’'”"\s)\]]+$/, '').slice(-1).charCodeAt(0);
+    if (!(ch >= 0xAC00 && ch <= 0xD7A3)) return -1;      // 한글이 아니면 모름
+    return (ch - 0xAC00) % 28;                            // 0 = 받침 없음, 8 = ㄹ
+  }
+  D.josa = function (word, kind) {
+    const t = tail(word), has = t > 0, rieul = t === 8;
+    if (kind === 'ro') return t < 0 ? '로' : (!has || rieul) ? '로' : '으로';
+    if (t < 0) return { eun: '는', i: '가', ya: '야', eul: '를', gwa: '와' }[kind] || '';
+    if (kind === 'eun') return has ? '은' : '는';
+    if (kind === 'i') return has ? '이' : '가';
+    if (kind === 'ya') return has ? '이야' : '야';
+    if (kind === 'eul') return has ? '을' : '를';
+    if (kind === 'gwa') return has ? '과' : '와';
+    return '';
+  };
+
   D.mirrorWords = MIRROR_WORDS;
   D.mirrorRange = { min: MIRROR_MIN, max: MIRROR_MAX };
   /* 애정 표현 다섯 갈래. 결과 문구와 오늘 해볼 행동에 함께 쓴다 */

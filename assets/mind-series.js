@@ -99,7 +99,9 @@
   c=r.c;episode=c.e;const cached=get('result:'+c.id);
   // A newer local vote may enrich the same immutable pair, never a different pair with the same ID.
   if(E.result(cached)&&same(cached.c,c)&&same(cached.b,r.b)){r.votes=r.votes.map((v,i)=>v===null?cached.votes[i]:v);}
-  start(slug==='next-scene'?'우리의 다음 장면':slug==='repair'?'두 사람의 화해 설명서':slug==='living'?'우리 집의 다음 장면':'네가 아는 나,\n내가 고른 나.',E.ep(c).title);
+  const RESULT_TITLES={'next-scene':'우리의 다음 장면',repair:'두 사람의 화해 설명서',living:'우리 집의 다음 장면',
+   'love-note':'주는 마음과\n받고 싶은 마음',closeness:'우리에게 맞는 거리',mirror:'내가 고른 말,\n네가 고른 말','know-me':'네가 아는 나,\n내가 고른 나.'};
+  start(RESULT_TITLES[slug]||RESULT_TITLES['know-me'],E.ep(c).title);
   if(slug==='next-scene')tarotResult();
   else{
    app.append(ownCard(c.p,c.p.n+' · 먼저 보낸 사람'),ownCard(r.b,r.b.n+' · 답한 사람'));
@@ -116,7 +118,7 @@
  function wordPicker(){
   const words=D.mirrorWords,range=D.mirrorRange,mine=step===0,list=mine?p.a:p.g;
   const who=joining?c.p.n:'상대';
-  start(mine?'나를 나타내는 말':who+'을 나타내는 말',mine?'남들이 뭐라 하든, 내가 보는 나':'떠오르는 대로 골라줘');
+  start(mine?'나를 나타내는 말':who+D.josa(who,'eul')+' 나타내는 말',mine?'남들이 뭐라 하든, 내가 보는 나':'떠오르는 대로 골라줘');
   app.append(paragraph(range.min+'개에서 '+range.max+'개까지 고를 수 있어.'+(mine?'':' 이건 '+who+'에게 그대로 전해져.')));
   const grid=node('div','word-grid');grid.id='wordGrid';grid.setAttribute('role','group');grid.setAttribute('aria-label',mine?'나를 나타내는 말':'상대를 나타내는 말');
   const counter=node('p','progress-caption');counter.setAttribute('role','status');
@@ -165,8 +167,8 @@
    const g=D.loveKeys[give.key],w=D.loveKeys[want.key],hit=give.key===want.key;
    if(hit)matched++;
    box.append(node('h3','',giver.n+' → '+taker.n));
-   box.append(paragraph(giver.n+'님은 주로 ‘'+g.name+'’으로 표현해.'));
-   box.append(paragraph(taker.n+'님이 가장 기다리는 건 ‘'+w.name+'’이야.'));
+   box.append(paragraph(giver.n+'님은 주로 ‘'+g.name+'’'+D.josa(g.name,'ro')+' 표현해.'));
+   box.append(paragraph(taker.n+'님이 가장 기다리는 건 ‘'+w.name+'’'+D.josa(w.name,'ya')+'.'));
    box.append(paragraph(hit?'두 사람이 같은 곳을 보고 있어. 지금 방식 그대로 조금만 더 자주 해도 잘 닿아.'
     :'좋은 마음이 다른 창구로 나가고 있어. ‘'+w.name+'’ 쪽으로 한 번만 바꿔 보면 체감이 달라져.'));
   });
@@ -174,7 +176,7 @@
   const todo=sheet('오늘 해볼 것 하나씩','거창한 계획 말고, 오늘 안에 되는 것만 골랐어.');
   pairs.forEach(([giver,taker])=>{
    const w=D.loveKeys[loveWantTop(taker).key];
-   todo.append(node('h3','',giver.n+'이(가) '+taker.n+'에게'),paragraph(w.act));
+   todo.append(node('h3','',giver.n+D.josa(giver.n,'i')+' '+taker.n+'에게'),paragraph(w.act));
   });
   app.append(todo);
   const details=node('details','series-details');details.append(node('summary','','여덟 장면의 선택 모두 보기'));
@@ -188,15 +190,15 @@
   const a=topTrait(c.p,0,n,4),b=topTrait(r.b,0,n,4);
   const ka=D.closenessKeys[a.key],kb=D.closenessKeys[b.key];
   const box=sheet(a.key===b.key?'둘 다 같은 것을 바라고 있어':'불안할 때, 두 사람이 필요한 게 달라');
-  box.append(node('h3','',c.p.n+'이(가) 바라는 것'),paragraph(ka.need));
-  box.append(node('h3','',r.b.n+'이(가) 바라는 것'),paragraph(kb.need));
+  box.append(node('h3','',c.p.n+D.josa(c.p.n,'i')+' 바라는 것'),paragraph(ka.need));
+  box.append(node('h3','',r.b.n+D.josa(r.b.n,'i')+' 바라는 것'),paragraph(kb.need));
   if(a.key===b.key)box.append(paragraph('같은 걸 바라니 서로의 방식이 이해되기 쉬워. 대신 둘 다 같은 순간에 같은 게 필요해서 부딪힐 수 있어. 그럴 땐 한 사람이 먼저 해주기로 정해두면 편해.'));
   else if((a.key===0&&b.key===1)||(a.key===1&&b.key===0))box.append(paragraph('한 사람은 지금 확인하고 싶고, 한 사람은 혼자 정리할 시간이 필요해. 가장 자주 부딪히는 조합이야. 답은 둘 중 하나를 고르는 게 아니라 “30분 뒤에 다시 얘기하자”처럼 기다림의 끝을 정해두는 거야.'));
   else box.append(paragraph('방식이 다르다고 마음이 다른 건 아니야. 서로 위의 문장을 그대로 읽어 주고, 그때 그렇게 해줄 수 있는지만 물어봐.'));
   app.append(box);
   const todo=sheet('이번 주에 하나씩');
-  todo.append(node('h3','',c.p.n+'이(가) '+r.b.n+'에게'),paragraph(kb.act));
-  todo.append(node('h3','',r.b.n+'이(가) '+c.p.n+'에게'),paragraph(ka.act));
+  todo.append(node('h3','',c.p.n+D.josa(c.p.n,'i')+' '+r.b.n+'에게'),paragraph(kb.act));
+  todo.append(node('h3','',r.b.n+D.josa(r.b.n,'i')+' '+c.p.n+'에게'),paragraph(ka.act));
   app.append(todo);
   const x=E.compare(r);
   app.append(sheet('여덟 장면 중 같은 답','같은 답 '+x.same.length+'개 · 다른 답 '+x.different.length+'개. 다른 쪽이 문제는 아니야, 이야기할 거리일 뿐이야.'));
@@ -211,13 +213,13 @@
   names.forEach((name,i)=>{
    const self=selves[i],seen=others[i];
    const both=self.filter(x=>seen.includes(x)),onlyMe=self.filter(x=>!seen.includes(x)),onlyYou=seen.filter(x=>!self.includes(x));
-   const box=sheet(name+'을(를) 고른 말');
+   const box=sheet(name+D.josa(name,'eul')+' 고른 말');
    const line=(title,list,empty)=>{box.append(node('h3','',title));box.append(paragraph(list.length?list.map(x=>W[x]).join(' · '):empty));};
    line('둘 다 고른 말',both,'겹친 말이 하나도 없었어. 서로 다른 면을 보고 있다는 뜻이야.');
    line('나만 고른 말',onlyMe,'내가 고른 말은 상대도 모두 봤어.');
    line('상대만 본 말',onlyYou,'상대가 새로 붙여준 말은 없었어.');
-   if(onlyYou.length)box.append(paragraph('‘'+W[onlyYou[0]]+'’은(는) '+name+'님은 안 골랐는데 상대가 본 모습이야. 언제 그렇게 느꼈는지 물어봐.'));
-   else if(onlyMe.length)box.append(paragraph('‘'+W[onlyMe[0]]+'’은(는) 나만 고른 말이야. 상대에게 잘 안 보이는 면일 수 있어.'));
+   if(onlyYou.length)box.append(paragraph('‘'+W[onlyYou[0]]+'’'+D.josa(W[onlyYou[0]],'eun')+' '+name+'님은 안 골랐는데 상대가 본 모습이야. 언제 그렇게 느꼈는지 물어봐.'));
+   else if(onlyMe.length)box.append(paragraph('‘'+W[onlyMe[0]]+'’'+D.josa(W[onlyMe[0]],'eun')+' 나만 고른 말이야. 상대에게 잘 안 보이는 면일 수 있어.'));
    app.append(box);
   });
   const overlap=c.p.a.filter(x=>r.b.g.includes(x)).length+r.b.a.filter(x=>c.p.g.includes(x)).length;

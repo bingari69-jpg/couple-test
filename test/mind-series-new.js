@@ -69,7 +69,10 @@ function pickWords(w, mine, theirs) {
     $(b, 'joinSeries').click();
     answerAll(b, i => (i < 4 ? 0 : 3));   // 주는 건 말로, 받고 싶은 건 행동으로
     const body = text(b);
+    assert.match(body, /주는 마음과/, '결과 제목이 이 시리즈 것이어야 한다');
+    assert.doesNotMatch(body, /네가 아는 나/, '다른 시리즈 제목이 새면 안 된다');
     assert.match(body, /주는 방식과 받고 싶은 방식/, '결과가 열린다');
+    assert.doesNotMatch(body, /이\(가\)|은\(는\)|을\(를\)/, '조사를 괄호로 얼버무리지 않는다');
     assert.match(body, /같은 곳을 보고 있어/, '서로 맞은 쪽은 맞았다고 말해준다');
     assert.match(body, /오늘 해볼 것 하나씩/, '오늘 할 행동을 준다');
     assert.ok(b.location.hash.startsWith('#r='), '결과 링크가 생긴다');
@@ -90,7 +93,9 @@ function pickWords(w, mine, theirs) {
     $(b, 'joinSeries').click();
     answerAll(b, () => 1);            // 늘 '혼자 가라앉힐 시간'
     const body = text(b);
+    assert.match(body, /우리에게 맞는 거리/, '결과 제목');
     assert.match(body, /필요한 게 달라/, '서로 다른 쪽을 골랐음을 알아본다');
+    assert.doesNotMatch(body, /이\(가\)|은\(는\)|을\(를\)/, '조사를 괄호로 얼버무리지 않는다');
     assert.match(body, /기다림의 끝을 정해두는/, '가장 자주 부딪히는 조합에 맞는 제안을 준다');
     assert.match(body, /이번 주에 하나씩/, '행동 제안이 있다');
     assert.ok(b.location.hash.startsWith('#r='));
@@ -112,7 +117,9 @@ function pickWords(w, mine, theirs) {
     $(b, 'joinSeries').click();
     pickWords(b, [4, 7, 8], [0, 9, 10]);      // 나 = 예민/계획적/든든, 상대 = 다정/수줍음/적극
     const body = text(b);
+    assert.match(body, /내가 고른 말/, '결과 제목');
     assert.match(body, /둘 다 고른 말/, '열린 창');
+    assert.doesNotMatch(body, /이\(가\)|은\(는\)|을\(를\)/, '조사를 괄호로 얼버무리지 않는다');
     assert.match(body, /나만 고른 말/, '숨은 창');
     assert.match(body, /상대만 본 말/, '보이지 않는 창');
     /* 보낸 사람은 '다정한'(0)을 스스로 골랐고 받은 사람도 그를 '다정한'으로 봤다 */
