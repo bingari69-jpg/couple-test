@@ -159,6 +159,30 @@ const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=
 }));
 window.HOME_ITEMS=LOCAL_HOME_ITEMS;
 
+/* 인기 순위: 서버가 매일 계산한 1~5위(game_catalog.popular_rank)를 목록 맨 앞에 순서대로 세운다.
+   나머지 게임의 순서는 건드리지 않는다 — 목록 전체를 인기순으로 정렬하면 어제 셋째였던 게
+   오늘 아홉째가 되어 찾던 걸 못 찾고, 기록이 0인 새 게임이 영영 바닥에 깔린다.
+   순위가 비어 있으면(기록이 기준에 못 미치면) 평소 순서 그대로 나온다. */
+const slugKey=item=>String(item.path||'').replace(/^t\//,'').replace(/\/$/,'');
+let popularRank=new Map();
+function orderByPopularity(items){
+  if(!popularRank.size)return items.map(it=>it.popularRank?{...it,popularRank:0}:it);
+  const ranked=[],rest=[];
+  items.forEach(it=>{const r=popularRank.get(slugKey(it));if(r)ranked.push([r,it]);else rest.push(it.popularRank?{...it,popularRank:0}:it);});
+  ranked.sort((a,b)=>a[0]-b[0]);
+  return ranked.map(([r,it])=>({...it,popularRank:r})).concat(rest);
+}
+function setPopularRanks(rows){
+  const next=new Map();
+  (rows||[]).forEach(row=>{const r=Number(row&&row.popular_rank);if(row&&row.slug&&r>=1&&r<=5)next.set(row.slug,r);});
+  const same=next.size===popularRank.size&&[...next].every(([k,v])=>popularRank.get(k)===v);
+  popularRank=next;
+  if(same)return false;
+  window.HOME_ITEMS=orderByPopularity(window.HOME_ITEMS||[]);
+  window.dispatchEvent(new CustomEvent('home-catalog-updated'));
+  return true;
+}
+
 // 서버 목록(관리자 게시본·game_catalog)에 아직 등록되지 않은 로컬 게임은 목록 끝에 그대로 붙인다.
 // 새 게임을 코드에만 추가했을 때 서버 등록 전이라고 홈에서 사라지는 일을 막는다.
 // 서버가 명시적으로 '숨김'으로 둔 게임은 rows에 있으므로 여기서 다시 살아나지 않는다.
@@ -207,7 +231,7 @@ function applyPublishedCatalog(config){
   if(!merged.length)return false;
   appendUnknownLocal(merged,config.games);
   publishedCatalogApplied=true;
-  window.HOME_ITEMS=merged;
+  window.HOME_ITEMS=orderByPopularity(merged);
   window.dispatchEvent(new CustomEvent('home-catalog-updated'));
   return true;
 }
@@ -218,6 +242,8 @@ if(window.APP_PUBLISHED_CONFIG)applyPublishedCatalog(window.APP_PUBLISHED_CONFIG
 // 연결에 실패하거나 아직 등록되지 않은 항목은 기존 로컬 목록을 그대로 쓴다.
 if(window.SupabaseData){
   window.SupabaseData.getGameCatalog().then(rows=>{
+    // 순위는 관리자 게시본을 쓰는 경우에도 적용한다(게시본에는 순위가 없다)
+    if(Array.isArray(rows))setPopularRanks(rows);
     if(publishedCatalogApplied)return;
     if(!Array.isArray(rows)||!rows.length)return;
     rows=migratePsychologyRows(rows);
@@ -238,7 +264,7 @@ if(window.SupabaseData){
     }).filter(Boolean);
     if(!merged.length)return;
     appendUnknownLocal(merged,rows);
-    window.HOME_ITEMS=merged;
+    window.HOME_ITEMS=orderByPopularity(merged);
     window.dispatchEvent(new CustomEvent('home-catalog-updated'));
   }).catch(()=>{});
 }

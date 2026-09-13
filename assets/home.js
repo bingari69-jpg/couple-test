@@ -53,6 +53,8 @@ function render(){
    const slug=slugOf(it),solo=soloMode;
    const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path;a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
    const art=document.createElement('div');art.className='catalog-art';art.setAttribute('aria-hidden','true');
+   /* 인기 순위는 둘이놀기 기준이라 혼자놀기 탭에서는 붙이지 않는다 */
+   if(!solo&&it.popularRank){const rank=document.createElement('span');rank.className='catalog-rank';rank.textContent='인기 '+it.popularRank+'위';art.append(rank);}
    const mascot=document.createElement('div');mascot.className='catalog-mascot '+it.art;
    mascot.style.setProperty('--sprite-x',(it.index%3)*50+'%');mascot.style.setProperty('--sprite-y',Math.floor(it.index/3)*20+'%');art.append(mascot);
    if(it.thumbnailUrl){art.style.backgroundImage='url("'+String(it.thumbnailUrl).replace(/["\\]/g,'')+'")';art.style.backgroundSize='cover';art.style.backgroundPosition='center';mascot.hidden=true;}

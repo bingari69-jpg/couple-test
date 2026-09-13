@@ -22,7 +22,7 @@
   async function getGameCatalog() {
     return read(
       "game_catalog",
-      "select=slug,path,title,content_type,category,relationships,sort_order,summary" +
+      "select=slug,path,title,content_type,category,relationships,sort_order,summary,popular_rank" +
       "&is_enabled=eq.true&order=sort_order.asc"
     );
   }
