@@ -56,15 +56,9 @@ const ITEMS = [
   { path:"t/exam/",      rel:"가족",  kind:"공부",
     title:"시험지 보내기 — 카톡으로 단어 시험",
     desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." },
-  { path:"t/next-scene/",     rel:"연인",  kind:"심리",
-    title:"우리 사이, 다음 장면",
-    desc:"각자 카드 한 장, 함께 한 장. 두 사람이 직접 고른 다음 장면." },
   { path:"t/know-me/", rel:"친구", kind:"심리",
     title:"너, 나 얼마나 알아?",
     desc:"내 답 6개와 상대 예상 3개. 여행·단톡방·모임 속 선택을 비교해봐." },
-  { path:"t/lucky/",   rel:"친구",  kind:"심리",
-    title:"오늘의 행운 한 장",
-    desc:"오늘의 작은 힌트. 친구 카드와 만나면 둘이 해볼 일이 생겨." },
   { path:"t/simon/",      rel:"친구",  kind:"대결",
     title:"순서 기억 — 누가 더 길게 외울까?",
     desc:"불빛이 켜지는 순서를 보고 그대로 따라 눌러. 한 번 틀리면 끝, 몇 라운드까지 가나." },
@@ -74,9 +68,6 @@ const ITEMS = [
   { path:"t/choseong/",   rel:"친구",  kind:"대결",
     title:"초성 퀴즈 — ㄸㅂㅇ 뭔지 알아?",
     desc:"같은 5문제, 60초. 초성만 보고 답을 쳐서 누가 더 많이 맞히나." },
-  { path:"t/daily-word/", rel:"친구",  kind:"대결",
-    title:"오늘의 단어 — 두 글자, 몇 번 만에 맞힐까?",
-    desc:"자모 힌트로 두 글자 단어를 6번 안에. 오늘은 둘 다 같은 단어, 더 적은 시도로 이기기." },
   { path:"t/fit/",        rel:"친구",  kind:"대결",
     title:"끼워넣기 — 같은 조각, 누가 더 채우나?",
     desc:"60초, 같은 순서의 조각을 8×8 판에 끼워 넣고 줄을 지워. 점수로 승부." },
@@ -117,9 +108,7 @@ const CARDS = [
  ['ranking','ranking',0,'#f9edcc',['친구','연인','가족'],'세 가지 중 내 최애는? 하나씩 골라 친구에게 보내봐.'],
  ['know-me','atlas',4,'#e3f1e6',['친구','연인','가족'],'내 답 6개와 상대 예상 3개. 여행·단톡방·모임 속 선택을 비교해봐.'],
  ['crash','atlas',2,'#e5f2cb',['친구','연인'],'정답 없는 8개의 극한 선택. 우리는 어디서 갈릴까?'],
- ['lucky','atlas',17,'#fff4d6',['친구','연인','가족'],'오늘의 작은 힌트. 친구 카드와 만나면 둘이 해볼 일이 생겨.'],
  ['letter','letter',0,'#ffedcf',['연인','부부','친구','가족'],'특별한 날에도, 그냥 네 생각이 난 날에도.'],
- ['next-scene','tarot',0,'#ece4f7',['연인','부부','친구'],'각자 카드 한 장, 함께 한 장. 두 사람이 직접 고른 다음 장면.'],
  ['memory','atlas',6,'#ffe6ee',['연인','부부'],'첫 데이트, 첫 선물. 같은 기억을 떠올릴까?'],
  ['ladder','atlas',7,'#fff0d3',['친구','가족'],'오늘 커피는 누가 쏠까? 이름 넣고 사다리!'],
  ['groups','atlas',8,'#e3f1d0',['친구','가족'],'이번엔 누구랑 한 조? 뽑기로 정해봐.'],
@@ -127,7 +116,6 @@ const CARDS = [
  ['simon','atlas',13,'#efe6fb',['친구', '연인', '가족'],'불빛 순서 따라 누르기, 몇 라운드까지?'],
  ['choseong','atlas',16,'#fff0d3',['친구', '연인', '가족'],'초성만 보고 5문제, 60초 대결'],
  ['snake','atlas',1,'#e2f2e6',['친구', '연인', '가족'],'20초, 같은 지렁이, 누가 더 많이 먹나'],
- ['daily-word','atlas',0,'#e9e3f9',['친구', '연인', '가족'],'두 글자 단어, 자모 힌트로 6번 안에'],
  ['fit','atlas',17,'#e6f0fb',['친구', '연인', '가족'],'같은 조각 60초, 줄 지워 점수 대결'],
  ['2048','atlas',9,'#fff0d3',['친구', '연인', '가족'],'30초 밀어 합치기, 점수로 승부'],
  ['stack','atlas',12,'#ffe3dc',['친구', '연인', '가족'],'톡 쳐서 멈추는 블록 탑, 20초'],
@@ -137,7 +125,7 @@ const CARDS = [
  ['typing','atlas',16,'#ece6f8',['친구', '연인', '가족'],'20초 한글 타자, 몇 글자?']
 ];
 // 혼자놀기(?solo=1)가 있는 게임과 레벨 수. 홈의 '혼자놀기' 탭과 진행도 배지가 쓴다.
-window.SOLO_GAMES={pairs:5,num25:5,mole:5,simon:5,snake:5,choseong:5,'daily-word':1,'2048':5,stack:5,mines:5,slide15:5,flap:5,typing:5,fit:5};
+window.SOLO_GAMES={pairs:5,num25:5,mole:5,simon:5,snake:5,choseong:5,'2048':5,stack:5,mines:5,slide15:5,flap:5,typing:5,fit:5};
 const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
  ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
 }));
@@ -180,7 +168,7 @@ function appendUnknownLocal(merged,rows){
 
 // Translate older published settings to the new series while preserving visibility and order.
 // Retired standalone MBTI/seat entries must not be reintroduced by a cached server catalogue.
-const PSY_SERIES_ALIASES={"personality": "know-me", "tarot": "next-scene", "fortune": "lucky"};
+const PSY_SERIES_ALIASES={"personality": "know-me"};
 function migratePsychologyRows(rows){
  const explicit=new Set(rows.filter(row=>row&&!PSY_SERIES_ALIASES[row.slug]).map(row=>row.slug));
  const seen=new Set();

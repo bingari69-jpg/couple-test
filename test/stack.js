@@ -14,14 +14,22 @@ const perfect = w => w.__ev('state.cur.x=state.stack[state.stack.length-1].x; dr
 const timeUp = w => { w.__ev('state.t0 = performance.now() - state.limit'); w.__ev('step(16)'); };
 
 (async () => {
-  /* 첫 진입: 바닥 블록(0.25~0.75) 하나, 첫 블록은 같은 폭으로 왼쪽 화면 밖에서 오른쪽으로, 덮개, 20초 */
+  /* 첫 진입: 바닥 블록(0.25~0.75) 하나, 첫 블록은 같은 폭으로 왼쪽 가장자리에서 오른쪽으로, 덮개, 20초 */
   const w = load('stack', '').window;
   const st = w.__ev('state');
   assert.deepEqual(stack(w).map(s => [s.x, s.w]), [[0.25, 0.5]]);
-  const c0 = cur(w); assert.equal(c0.w, 0.5); assert.equal(c0.dir, 1); assert.ok(c0.x <= -0.5, '화면 밖에서 출발: ' + c0.x);
+  const c0 = cur(w); assert.equal(c0.w, 0.5); assert.equal(c0.dir, 1); assert.ok(c0.x >= -0.5 && c0.x + c0.w > 0, '가장자리에서 출발해 바로 보인다: ' + c0.x);
   assert.equal(st.seq.length, 200); assert.equal(st.level, 0); assert.equal(st.speed, 0.55);
   assert.equal(el(w, 'cover').classList.contains('hidden'), false);
   assert.equal(el(w, 'clock').textContent, '20'); assert.equal(el(w, 'score').textContent, '0'); assert.equal(el(w, 'width').textContent, '50');
+  /* 화면 밖에 나가 있는 동안 누른 건 무시한다 — 안 보이는 걸 맞히라고 할 수는 없다 */
+  w.__ev('state.running=true; state.done=false');
+  const towerBefore = stack(w).length, missBefore = w.__ev('state.misses');
+  w.__ev('state.cur.x = 1.2'); assert.equal(w.__ev('drop()'), false, '오른쪽 밖이면 무시');
+  w.__ev('state.cur.x = -0.9'); assert.equal(w.__ev('drop()'), false, '왼쪽 밖이면 무시');
+  assert.equal(stack(w).length, towerBefore, '탑이 무너지지 않는다');
+  assert.equal(w.__ev('state.misses'), missBefore, '빗나감으로도 세지 않는다');
+  w.__ev('state.running=false');
 
   /* 같은 시드 → 같은 블록 순서·같은 출발 위치, 다른 시드 → 다른 순서 */
   st.seed = 12345; w.__ev('buildBoard()'); const a = seq(w), x0 = cur(w).x, col0 = cur(w).c;
@@ -46,7 +54,7 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - state.limit'); w.__
   let s = stack(w); assert.equal(s.length, 2); near(s[1].x, 0.35); near(s[1].w, 0.4);
   assert.equal(st.floors, 1); assert.equal(st.best, 1); near(st.cut, 0.1);
   assert.equal(el(w, 'score').textContent, '1'); assert.equal(el(w, 'best').textContent, '1'); assert.equal(el(w, 'width').textContent, '40');
-  let c = cur(w); assert.equal(c.dir, -1); assert.ok(c.x >= 1, '오른쪽 화면 밖에서 출발: ' + c.x); near(c.w, 0.4); near(st.speed, 0.58);
+  let c = cur(w); assert.equal(c.dir, -1); assert.ok(c.x <= 1 && c.x < 1, '오른쪽 가장자리에서 출발해 바로 보인다: ' + c.x); near(c.w, 0.4); near(st.speed, 0.58);
   assert.equal(c.c, w.__ev('COLORS[state.seq[1][0]]'), '색은 시드 순서');
   w.__ev('state.cur.x=-0.41'); w.__ev('step(16)'); near(cur(w).x, 1, '왼쪽 밖으로 나가면 오른쪽에서 다시');
 

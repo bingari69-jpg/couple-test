@@ -3,9 +3,7 @@
  const menu=document.getElementById('menu'),menuButton=document.getElementById('menuButton');
  if(menu&&menuButton){menuButton.onclick=()=>{const open=menu.hidden;menu.hidden=!open;menuButton.setAttribute('aria-expanded',String(open));};menu.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{menu.hidden=true;menuButton.setAttribute('aria-expanded','false');}));}
  const items=[
-  {href:'../know-me/',icon:'🦦',category:'성격',title:'너, 나 얼마나 알아?',desc:'내 MBTI는 알아도, 이건 모를걸? 내 선택과 네 예상을 비교해봐.',tag:'대표 시리즈 · 6개 에피소드 · 각자 9문항'},
-  {href:'../next-scene/',icon:'🌙',category:'운세',title:'우리 사이, 다음 장면',desc:'각자 카드 한 장. 함께 열린 이야기에서 다음에 할 일을 골라봐.',tag:'타로 22장 · 3가지 이야기 · 우리 타로 보관함'},
-  {href:'../lucky/',icon:'🍀',category:'운세',title:'오늘의 행운 한 장',desc:'오늘 이 카드 보고 네 생각났어. 네 카드와 만나면 어떤 제안이 생길까?',tag:'하루 한 장 · 10초 · 나만의 카드 기록'}
+  {href:'../know-me/',icon:'🦦',category:'성격',title:'너, 나 얼마나 알아?',desc:'내 MBTI는 알아도, 이건 모를걸? 내 선택과 네 예상을 비교해봐.',tag:'대표 시리즈 · 6개 에피소드 · 각자 9문항'}
  ];
  const list=document.getElementById('tests');
  function render(category){

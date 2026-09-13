@@ -4,10 +4,10 @@ const opened=[];
 function open(slug,hash){const w=load(slug,hash).window;opened.push(w);return w;}
 function complete(w,type){el(w,'begin').click();for(let i=0;i<6;i++){assert.equal(el(w,'answers').children.length,3);el(w,'answers').children[type].click();el(w,'nextQuestion').click();}}
 (async()=>{
- const hub=open('psychology');assert.equal(el(hub,'tests').children.length,3);
+ const hub=open('psychology');assert.equal(el(hub,'tests').children.length,1);
  const homeSwitch=[...hub.document.querySelectorAll('.home-switch a')];assert.deepEqual(homeSwitch.map(a=>a.textContent),['마음 전하기','나랑 한판','심리테스트','게임방법']);assert.equal(homeSwitch[0].getAttribute('href'),'../../?home=letter');assert.equal(homeSwitch[1].getAttribute('href'),'../../?home=play#play');assert.equal(homeSwitch[2].getAttribute('aria-current'),'page');assert.equal(homeSwitch[3].getAttribute('href'),'../../guide/');assert.equal(el(hub,'menu').hidden,true);el(hub,'menuButton').click();assert.equal(el(hub,'menu').hidden,false);assert.equal(el(hub,'menuButton').getAttribute('aria-expanded'),'true');el(hub,'menuButton').click();assert.equal(el(hub,'menu').hidden,true);
- assert.equal(hub.document.querySelector('[data-category="관계"]').hidden,true,'항목 없는 분류는 숨긴다');
- for(const [cat,count] of [['성격',1],['운세',2],['전체',3]]){const btn=hub.document.querySelector('[data-category="'+cat+'"]');assert.equal(btn.hidden,false);btn.click();assert.equal(el(hub,'tests').children.length,count);}
+ for(const cat of ['관계','운세'])assert.equal(hub.document.querySelector('[data-category="'+cat+'"]').hidden,true,cat+': 항목 없는 분류는 숨긴다');
+ for(const [cat,count] of [['성격',1],['전체',1]]){const btn=hub.document.querySelector('[data-category="'+cat+'"]');assert.equal(btn.hidden,false);btn.click();assert.equal(el(hub,'tests').children.length,count);}
  for(const [i,title] of ['포근한 곰','반짝이는 여우','느긋한 고양이'].entries()){
   const w=open('personality');el(w,'makerName').value='나';complete(w,i);
   assert.equal(el(w,'sealed').hidden,false);assert.equal(el(w,'outcome').hidden,true);assert.equal(el(w,'animals').children.length,0);
