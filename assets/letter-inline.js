@@ -27,8 +27,13 @@
    const points=[];let at=0;const walk=n=>{if(n.nodeType===3){for(let i=0;i<=n.data.length;i++)points[at+i]=[n,i];at+=n.data.length;}else if(n.nodeType===1&&n.dataset.letterSticker){const i=Array.prototype.indexOf.call(n.parentNode.childNodes,n);points[at]=[n.parentNode,i];at++;points[at]=[n.parentNode,i+1];}else{for(const child of n.childNodes)walk(child);}};walk(el);
    const fallback=[el,el.childNodes.length],a=points[start]||fallback,b=points[end]||fallback,r=document.createRange();r.setStart(...a);r.setEnd(...b);saved=r;
   }
+  /* 조합 중이면 우리가 끝낸다. 예전에는 안내만 띄우고 돌려보냈는데, 버튼을 눌러도
+     compositionend 를 보내지 않는 안드로이드 키보드가 있어서 그런 기기에서는 안내만 반복되고
+     스티커·이모지를 영영 넣을 수 없었다. blur 하면 IME 가 조합 중인 글자를 확정한다.
+     바로 뒤 restore() 가 다시 포커스를 주고 저장해 둔 커서 자리로 돌아간다. */
+  function endComposition(){if(!composing)return;try{el.blur();}catch(_){}composing=false;changed();}
   function insert(text,id,enforceLimit=true){
-   if(composing){onLimit('한글 입력을 마친 뒤 다시 눌러주세요.');return false;}
+   endComposition();
    const range=restore(),before=read(el),selected=read(range.cloneContents());
    if(id&&before.inline.length-selected.inline.length>=MAX_STICKERS){onLimit('글 사이 스티커는 24개까지 넣을 수 있어요.');return false;}
    const n=D.segments(before.text).length-D.segments(selected.text).length+D.segments(id?MARK:text).length;

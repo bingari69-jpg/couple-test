@@ -37,5 +37,16 @@ const quota=load({blocked:true});quota.$('quickWrite').click();quota.input('lett
 for(const seed of ['{broken',JSON.stringify({version:99,draft:{body:'미래 형식'}}),JSON.stringify({version:1,draft:{body:42}})]){const x=load({seed});assert.equal(x.$('library').hidden,false);assert.equal(x.$('savedDraftBanner').hidden,true);x.close();}
 const unsafe=load({suffix:hash({v:5,w:'<img src=x onerror=alert(1)>',n:'<script>',font:'__proto__',tpl:'../../bad',st:['cat','bogus','<svg onload=alert(1)>'],color:'red;position:fixed',seal:'../bad'})});assert.equal(unsafe.$('readBody').children.length,0);assert.equal(unsafe.$('readPaper').querySelectorAll('.paper-stickers img').length,1);assert.equal(unsafe.$('readPaper').style.getPropertyValue('--letter-font').includes('Letter Sans'),true);unsafe.close();
 const inlineSafe=load({suffix:hash({v:6,w:'A\ufffcB\ufffc',inl:[[1,'cat'],[1,'bear'],[3,'../../remote'],[-1,'heart'],[0,'flower']],st:[]})});assert.equal(inlineSafe.$('readBody').querySelectorAll('.inline-letter-sticker').length,1);assert.equal(inlineSafe.$('readBody').querySelector('img').getAttribute('alt'),'고양이 스티커');assert.equal(inlineSafe.w.LetterInline.clean('\ufffc'.repeat(30),Array.from({length:30},(_,i)=>[i,'cat'])).length,24);assert.equal(inlineSafe.w.LetterInline.plain('A\ufffcB',[[1,'cat']]),'A[고양이]B');inlineSafe.close();
+// 조합을 끝내지 않는 안드로이드 키보드: 예전에는 "한글 입력을 마친 뒤" 안내만 반복되고 영영 못 넣었다.
+const ime=load();ime.$('quickWrite').click();
+const imeEditor=ime.$('letterEditor');
+imeEditor.textContent='안녕하세';imeEditor.dispatchEvent(new ime.w.Event('input',{bubbles:true}));
+imeEditor.dispatchEvent(new ime.w.CompositionEvent('compositionstart',{bubbles:true}));   // 끝내지 않는다
+ime.$('stickerOptions').children[0].click();
+assert.equal(imeEditor.querySelectorAll('.inline-letter-sticker').length,1,'조합 중에도 스티커가 들어간다');
+assert.equal(ime.$('letterBody').value.startsWith('안녕하세'),true,'치던 글자는 살아 있다');
+ime.$('emojiOptions').children[0].click();
+assert.equal(ime.$('letterBody').value.includes('♡'),true,'이모지도 막히지 않는다');
+ime.close();
 assert.deepEqual(errors,[]);
-console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 안전한 링크');
+console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 조합 중 스티커/이모지, 안전한 링크');
