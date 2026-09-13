@@ -5,8 +5,8 @@
     round: {name:'부드러운 둥근체', family:'Letter Round', file:'letter-round.woff2'},
     serif: {name:'차분한 명조체', family:'Letter Serif', file:'letter-serif.woff2'},
     pen: {name:'정갈한 손글씨', family:'Letter Pen', file:'letter-pen.woff2'},
-    hand: {name:'귀여운 손글씨', family:'Gatchi Hand', file:'gaegu-regular.woff2'},
-    title: {name:'통통한 제목체', family:'Gatchi Title', file:'jua-regular.woff2'}
+    hand: {name:'귀여운 손글씨', family:'Letter Hand', file:'gaegu-regular.woff2'},
+    title: {name:'통통한 제목체', family:'Letter Title', file:'jua-regular.woff2'}
   };
   const heart = '<path d="M32 53C18 43 7 34 7 22C7 8 26 5 32 18C38 5 57 8 57 22C57 34 46 43 32 53Z" fill="#d85762"/>';
   const star = '<path d="m32 5 8 17 19 3-14 13 3 19-16-9-17 9 4-19L5 25l19-3Z" fill="#f2c65a"/>';
@@ -53,7 +53,7 @@
     }
     return svg(out,600,160);
   }
-  const fontCSS=id=>`"${(fonts[id]||fonts.sans).family}", "Gatchi Hand", sans-serif`;
+  const fontCSS=id=>`"${(fonts[id]||fonts.sans).family}", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;
   function paint(el,t) {
     el.dataset.template=t.id;el.dataset.style=t.style;el.dataset.legacy=String(!!t.legacy);
     el.style.setProperty('--tint',t.color);el.style.setProperty('--paper-color',t.paper||'#fffaf2');

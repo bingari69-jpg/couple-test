@@ -15,19 +15,19 @@ const a=load();a.$('quickWrite').click();a.input('recipient','지민');a.input('
 a.$('fontChoice').value='pen';a.$('fontChoice').dispatchEvent(new a.w.Event('change'));
 a.$('stickerOptions').querySelector('[aria-label="고양이"]').click();a.$('stickerOptions').querySelector('[aria-label="꽃"]').click();a.$('sealOptions').querySelector('[aria-label="클로버 봉인"]').click();
 a.$('colorOptions').children[2].click();
-let saved=a.saved();assert.equal(JSON.parse(saved).draft.font,'pen');assert.equal(JSON.parse(saved).draft.stickers.length,2);
+let saved=a.saved();assert.equal(JSON.parse(saved).draft.font,'pen');assert.equal(JSON.parse(saved).draft.inline.length,2);
 // Cursor insertion and selection replacement, rather than always appending emoji.
 const body=a.$('letterBody');body.setSelectionRange(0,2);body.dispatchEvent(new a.w.Event('select'));a.$('emojiOptions').children[0].click();assert.ok(body.value.startsWith('♡ 💌'));
-a.input('letterBody','안녕 💌\n내 마음을 전해.');saved=a.saved();
-a.$('packLetter').click();const p=JSON.parse(Buffer.from(a.$('shareLink').value.split('#l=')[1],'base64url'));assert.equal(p.v,5);assert.deepEqual(p.st,['cat','flower']);assert.equal(p.seal,'clover');assert.equal(p.color,'#754954');
+a.input('letterBody','안녕 💌\n내 마음을 전해.');a.$('stickerOptions').querySelector('[aria-label="고양이"]').click();a.$('stickerOptions').querySelector('[aria-label="꽃"]').click();saved=a.saved();
+a.$('packLetter').click();const p=JSON.parse(Buffer.from(a.$('shareLink').value.split('#l=')[1],'base64url'));assert.equal(p.v,6);assert.deepEqual(p.st,[]);assert.deepEqual(p.inl.map(x=>x[1]),['cat','flower']);assert.equal(p.seal,'clover');assert.equal(p.color,'#754954');
 assert.ok(fs.existsSync(path.join(root,'assets/share-cards/letter-'+p.tpl+'.png')));
 a.close();
 // Refresh only offers restoration; it doesn't expose the body on the library screen.
-const restored=load({seed:saved});assert.equal(restored.$('savedDraftBanner').hidden,false);assert.equal(restored.$('letterBody').value,'');restored.$('resumeDraft').click();assert.equal(restored.$('letterBody').value,p.w);assert.equal(restored.$('fontChoice').value,'pen');assert.equal(restored.$('composePaper').querySelectorAll('.paper-stickers img').length,2);
+const restored=load({seed:saved});assert.equal(restored.$('savedDraftBanner').hidden,false);assert.equal(restored.$('letterBody').value,'');restored.$('resumeDraft').click();assert.equal(restored.$('letterBody').value,p.w);assert.equal(restored.$('fontChoice').value,'pen');assert.equal(restored.$('composePaper').querySelectorAll('.inline-letter-sticker img').length,2);
 // Changing paper preserves the whole text, including an over-limit draft.
 restored.input('letterBody','가'.repeat(451));restored.$('changePaper').click();restored.$('templateGrid').querySelector('[data-template="cat-note"]').click();restored.$('useTemplate').click();assert.equal(restored.$('letterBody').value.length,451);assert.equal(restored.$('packLetter').disabled,true);restored.close();
 // Incoming letters must never overwrite a user's existing draft, even on reply.
-const incoming=load({seed:saved,suffix:hash({...p,n:'받는이',f:'보낸이',w:'받은 편지'})});assert.equal(incoming.saved(),saved);assert.equal(incoming.$('readBody').textContent,'받은 편지');assert.equal(incoming.$('readPaper').querySelectorAll('.paper-stickers img').length,2);
+const incoming=load({seed:saved,suffix:hash({...p,v:5,st:['cat','flower'],n:'받는이',f:'보낸이',w:'받은 편지'})});assert.equal(incoming.saved(),saved);assert.equal(incoming.$('readBody').textContent,'받은 편지');assert.equal(incoming.$('readPaper').querySelectorAll('.paper-stickers img').length,2);
 incoming.$('quickReplies').children[0].click();assert.equal(incoming.$('draftDialog').hasAttribute('open'),true);assert.equal(incoming.saved(),saved);incoming.$('dialogCancel').click();assert.equal(incoming.saved(),saved);
 incoming.$('quickReplies').children[0].click();incoming.$('dialogDiscard').click();assert.equal(incoming.$('recipient').value,'보낸이');assert.equal(incoming.$('sender').value,'받는이');assert.ok(incoming.$('letterBody').value.includes('고마워'));incoming.close();
 const resumeFromReader=load({seed:saved,suffix:hash({...p,w:'받은 편지'})});resumeFromReader.$('replyLetter').click();resumeFromReader.$('dialogResume').click();assert.equal(resumeFromReader.$('letterBody').value,p.w);assert.equal(resumeFromReader.w.location.hash,'');resumeFromReader.close();
@@ -36,5 +36,6 @@ const del=load({seed:saved});del.$('deleteDraft').click();del.$('dialogCancel').
 const quota=load({blocked:true});quota.$('quickWrite').click();quota.input('letterBody','이 글은 지워지면 안 돼');assert.equal(quota.$('letterBody').value,'이 글은 지워지면 안 돼');assert.equal(quota.$('saveStatus').dataset.error,'true');quota.$('packLetter').click();assert.equal(quota.$('send').hidden,false);quota.close();
 for(const seed of ['{broken',JSON.stringify({version:99,draft:{body:'미래 형식'}}),JSON.stringify({version:1,draft:{body:42}})]){const x=load({seed});assert.equal(x.$('library').hidden,false);assert.equal(x.$('savedDraftBanner').hidden,true);x.close();}
 const unsafe=load({suffix:hash({v:5,w:'<img src=x onerror=alert(1)>',n:'<script>',font:'__proto__',tpl:'../../bad',st:['cat','bogus','<svg onload=alert(1)>'],color:'red;position:fixed',seal:'../bad'})});assert.equal(unsafe.$('readBody').children.length,0);assert.equal(unsafe.$('readPaper').querySelectorAll('.paper-stickers img').length,1);assert.equal(unsafe.$('readPaper').style.getPropertyValue('--letter-font').includes('Letter Sans'),true);unsafe.close();
+const inlineSafe=load({suffix:hash({v:6,w:'A\ufffcB\ufffc',inl:[[1,'cat'],[1,'bear'],[3,'../../remote'],[-1,'heart'],[0,'flower']],st:[]})});assert.equal(inlineSafe.$('readBody').querySelectorAll('.inline-letter-sticker').length,1);assert.equal(inlineSafe.$('readBody').querySelector('img').getAttribute('alt'),'고양이 스티커');assert.equal(inlineSafe.w.LetterInline.clean('\ufffc'.repeat(30),Array.from({length:30},(_,i)=>[i,'cat'])).length,24);assert.equal(inlineSafe.w.LetterInline.plain('A\ufffcB',[[1,'cat']]),'A[고양이]B');inlineSafe.close();
 assert.deepEqual(errors,[]);
 console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 안전한 링크');

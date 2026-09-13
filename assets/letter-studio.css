@@ -1,7 +1,10 @@
-@font-face{font-family:"Letter Sans";src:url('fonts/letter-sans.woff2') format('woff2');font-display:swap}
-@font-face{font-family:"Letter Round";src:url('fonts/letter-round.woff2') format('woff2');font-display:swap}
-@font-face{font-family:"Letter Serif";src:url('fonts/letter-serif.woff2') format('woff2');font-display:swap}
-@font-face{font-family:"Letter Pen";src:url('fonts/letter-pen.woff2') format('woff2');font-display:swap}
+@font-face{font-family:"Letter Sans";src:url('fonts/letter-sans.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
+@font-face{font-family:"Letter Round";src:url('fonts/letter-round.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
+@font-face{font-family:"Letter Serif";src:url('fonts/letter-serif.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
+@font-face{font-family:"Letter Pen";src:url('fonts/letter-pen.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
+/* Let system emoji fonts handle supplementary symbols instead of blank webfont glyphs. */
+@font-face{font-family:"Letter Hand";src:url('fonts/gaegu-regular.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
+@font-face{font-family:"Letter Title";src:url('fonts/jua-regular.woff2') format('woff2');font-display:swap;unicode-range:U+0-1EFFF}
 .letter-studio{--bg:#fffbf5;--ink:#2b201a;--muted:#77756f;--coral:#ff6959;--line:#ece5de;--paper:#fffdf9;font-family:'Letter Sans',system-ui,sans-serif}
 .letter-studio .shell{max-width:560px;background:var(--bg);padding-bottom:100px;box-shadow:none}
 .letter-studio .heading,.letter-studio .grid-title h2,.letter-studio .template-caption strong{font-family:'Gatchi Title','Letter Sans',sans-serif;font-weight:400;letter-spacing:-.6px;overflow-wrap:anywhere}
@@ -61,3 +64,20 @@
 
 .template-card .paper-art[data-legacy=true] .mini-copy{visibility:hidden}
 .letter-studio .toolbar button[aria-expanded=true]{color:#b45443}.letter-studio .filter-row{margin-top:14px}.letter-studio .template-count{font-family:'Letter Sans',sans-serif;font-weight:400;font-size:12px;color:var(--muted)}
+
+/* Keep decorations beside the writing task, including above a mobile keyboard. */
+.letter-editor{position:relative;min-height:290px;padding:8px 0 14px;font-family:var(--letter-font);font-size:var(--letter-size,20px);line-height:1.9;white-space:pre-wrap;overflow-wrap:anywhere;tab-size:4;outline:none;caret-color:#b14c3c;scroll-margin-bottom:260px}
+.letter-editor:empty::before,.letter-editor[data-empty=true]::before{content:attr(data-placeholder);white-space:pre-wrap;color:#ae9890;pointer-events:none}
+.letter-editor:focus-visible{outline:1px dashed #d7a899;outline-offset:8px;border-radius:4px}
+.inline-letter-sticker{display:inline-block;width:1.55em;height:1.55em;vertical-align:-.36em;line-height:1;white-space:normal;user-select:all;position:relative}
+.inline-letter-sticker img{display:inline-block;width:100%;height:100%;max-width:none;vertical-align:top;pointer-events:none}
+#compose{padding-bottom:var(--dock-height,74px)}
+.writing-dock{position:fixed;z-index:24;bottom:var(--keyboard-inset,0px);left:50%;transform:translateX(-50%);width:min(560px,100%);background:#fffaf5f5;border:1px solid #eddbce;border-bottom:0;border-radius:20px 20px 0 0;padding:10px 14px max(10px,env(safe-area-inset-bottom));box-shadow:0 -6px 28px #80563712;backdrop-filter:blur(10px)}
+.writing-dock-tabs{display:flex;gap:7px}.writing-dock-tabs button{flex:1;min-width:0;min-height:44px;padding:9px 6px;font-size:13px;white-space:nowrap}
+.writing-dock-tabs [aria-expanded=true]{background:#ffe5dd;border-color:#ef9b89;color:#a74334}
+.writing-dock .tool-panel{margin:8px 0 0;padding:11px 3px 3px;border:0;border-top:1px solid #eeded2;border-radius:0;background:transparent;max-height:min(230px,32dvh);overflow-y:auto;overscroll-behavior:contain}
+.writing-dock .panel-heading{font-size:12px;margin:0 0 10px;gap:8px}.writing-dock .panel-heading button{padding:5px;font-size:11px;min-height:32px}
+.writing-dock .sticker-options,.writing-dock .emoji-options{grid-template-columns:repeat(8,minmax(0,1fr));gap:5px}
+.writing-dock .sticker-option,.writing-dock .emoji-options button{min-height:42px;padding:5px;aspect-ratio:1;font-size:24px;touch-action:manipulation}
+.writing-dock .sticker-option img{width:32px;height:32px}.seal-details{font-size:12px;color:#8e6b57;margin-top:13px}.seal-details summary{cursor:pointer;padding:8px 0}.seal-details .seal-options{margin-top:8px}
+@media(max-width:400px){.writing-dock .sticker-options,.writing-dock .emoji-options{grid-template-columns:repeat(6,minmax(0,1fr))}.writing-dock{padding-left:10px;padding-right:10px}.writing-dock-tabs button{font-size:12px}}

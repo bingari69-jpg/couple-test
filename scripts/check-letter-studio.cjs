@@ -16,12 +16,12 @@ const server=http.createServer((req,res)=>{let p=path.resolve(root,'.'+decodeURI
  await page.screenshot({path:path.join(output,'library-mobile.png'),fullPage:true});await page.screenshot({path:path.join(output,'library-first-screen.png')});
  await page.locator('#templateGrid > [data-template="daily-note"]').click();await page.locator('#favoriteTemplate').click();await page.locator('#useTemplate').click();
  const body='오늘도 네 생각이 났어.\n\n함께 걸었던 골목, 별것 아닌 얘기에도 웃던 네 얼굴. 그런 작은 순간들이 내 하루를 다정하게 만들어.\n\n말로는 쑥스러워서 이렇게 남겨. 늘 내 편이 되어 줘서 고마워. 다음 주말에도 우리, 천천히 산책하자. ♡';
- await page.locator('#recipient').fill('지민');await page.locator('#sender').fill('민수');await page.locator('#letterBody').fill(body);
- await page.locator('#stickerButton').click();await page.locator('#stickerOptions [aria-label="고양이"]').click();await page.locator('#stickerOptions [aria-label="클로버"]').click();await page.locator('#sealOptions [aria-label="클로버 봉인"]').click();await page.locator('#stickerButton').click();
+ await page.locator('#recipient').fill('지민');await page.locator('#sender').fill('민수');await page.locator('#letterEditor').fill(body);
+ await page.locator('#stickerButton').click();await page.locator('#stickerOptions [aria-label="고양이"]').click();await page.locator('#stickerOptions [aria-label="클로버"]').click();await page.locator('.seal-details summary').click();await page.locator('#sealOptions [aria-label="클로버 봉인"]').click();await page.locator('#stickerButton').click();
  await page.locator('#fontButton').click();await page.getByRole('button',{name:'정갈한 손글씨 오늘도 네 생각이 났어.'}).click();await page.locator('#fontButton').click();
  await page.evaluate(()=>document.fonts.ready);await page.screenshot({path:path.join(output,'compose-mobile.png'),fullPage:true});
- await page.reload();await page.locator('#resumeDraft').click();assert.equal(await page.locator('#letterBody').inputValue(),body);assert.equal(await page.locator('#composePaper .paper-stickers img').count(),2);
- await page.locator('#packLetter').click();const link=await page.locator('#shareLink').inputValue();const payload=JSON.parse(Buffer.from(link.split('#l=')[1],'base64url'));assert.equal(payload.w,body);assert.equal(payload.seal,'clover');
+ await page.reload();await page.locator('#resumeDraft').click();assert.equal((await page.locator('#letterBody').inputValue()).replaceAll('\ufffc',''),body);assert.equal(await page.locator('#letterEditor .inline-letter-sticker img').count(),2);
+ await page.locator('#packLetter').click();const link=await page.locator('#shareLink').inputValue();const payload=JSON.parse(Buffer.from(link.split('#l=')[1],'base64url'));assert.equal(payload.w.replaceAll('\ufffc',''),body);assert.equal(payload.inl.length,2);assert.equal(payload.seal,'clover');
  const reader=await context.newPage();reader.on('pageerror',e=>errors.push(e.message));await reader.goto(base+'/t/letter/#l='+link.split('#l=')[1]);await reader.locator('#readerEnvelope').click();await reader.locator('#openedLetter').waitFor({state:'visible'});await reader.evaluate(()=>document.fonts.ready);
  assert.equal(await reader.locator('#readBody').textContent(),body);assert.equal(await reader.locator('#skipRead').isVisible(),false);
  await reader.screenshot({path:path.join(output,'reader-mobile.png'),fullPage:true});

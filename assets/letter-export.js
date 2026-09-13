@@ -14,18 +14,21 @@
     const measure=document.createElement('canvas').getContext('2d');
     if(!measure)throw new Error('이 브라우저에서는 이미지 저장을 지원하지 않아요. 본문 복사를 이용해 주세요.');
     measure.font=font;
-    const lines=[];
-    String(p.w||'').replace(/\r\n?/g,'\n').split('\n').forEach(paragraph=>{
-      let line='';
-      for(const character of D.segments(paragraph.replace(/\t/g,'    '))){
-        if(line&&measure.measureText(line+character).width>bodyWidth){lines.push(line);line='';}
-        line+=character;
-      }
-      lines.push(line);
-    });
+    const parts=window.LetterInline?LetterInline.tokens(String(p.w||''),p.inl):D.segments(String(p.w||'')).map(text=>({text}));
+    const lines=[];let line=[],lineWidth=0;const inlineSize=size*1.55;
+    for(const part of parts){
+      if(/^[\r\n]+$/.test(part.text)){lines.push(line);line=[];lineWidth=0;continue;}
+      const text=part.text==='\t'?'    ':part.text,w=part.sticker?inlineSize:measure.measureText(text).width;
+      const previous=line[line.length-1],extra=!part.sticker&&previous&&!previous.sticker?measure.measureText(previous.text+text).width-measure.measureText(previous.text).width:w;
+      if(line.length&&lineWidth+extra>bodyWidth){lines.push(line);line=[];lineWidth=0;}
+      const tail=line[line.length-1];if(!part.sticker&&tail&&!tail.sticker){lineWidth+=measure.measureText(tail.text+text).width-measure.measureText(tail.text).width;tail.text+=text;}
+      else{line.push({...part,text,x:lineWidth});lineWidth+=w;}
+    }
+    lines.push(line);
     const perPage=Math.max(8,Math.floor(1060/lineHeight)),count=Math.max(1,Math.ceil(lines.length/perPage));
     const art=t.legacy?[await loadImage('../../assets/art/stationery-atlas.png')]:await Promise.all(['top','bottom'].map(edge=>loadImage(D.uri(D.art(t,edge)))));
     const stickers=await Promise.all((p.st||[]).filter(id=>D.sticker(id)).slice(0,3).map(id=>loadImage(D.stickerURL(id))));
+    const inlineImages=new Map(await Promise.all([...new Set(parts.filter(x=>x.sticker).map(x=>x.sticker))].map(async id=>[id,await loadImage(D.stickerURL(id))])));
     async function page(index) {
       index=Math.max(0,Math.min(count-1,index));
       const part=lines.slice(index*perPage,(index+1)*perPage),last=index===count-1;
@@ -39,7 +42,10 @@
       }
       c.fillStyle=p.color||t.ink||'#393637';c.font=`28px ${family}`;c.textBaseline='top';
       c.fillText(p.n?'To. '+p.n:'너에게',pad,top-62,bodyWidth);
-      c.font=font;part.forEach((line,i)=>c.fillText(line,pad,top+i*lineHeight));
+      c.font=font;part.forEach((line,i)=>line.forEach(run=>{
+        if(run.sticker)c.drawImage(inlineImages.get(run.sticker),pad+run.x,top+i*lineHeight,inlineSize,inlineSize);
+        else c.fillText(run.text,pad+run.x,top+i*lineHeight);
+      }));
       let y=top+part.length*lineHeight+28;c.textAlign='right';c.font=`26px ${family}`;
       if(last){if(p.f)c.fillText('From. '+p.f,width-pad,y,bodyWidth);y+=48;c.font='19px "Letter Sans", sans-serif';c.fillStyle='#727a70';const label=p.k===0?(p.num||100)+'일':p.k===1?(p.num||1)+'주년':p.k===2?'결혼기념일':p.k===3?'생일':'';c.fillText([p.d,label].filter(Boolean).join(' · '),width-pad,y,bodyWidth);y+=42;stickers.forEach((img,i)=>c.drawImage(img,width-pad-(stickers.length-i)*70,y,58,58));}
       else{c.fillStyle='#727a70';c.font='19px "Letter Sans", sans-serif';c.fillText('다음 장에 마음이 이어져요',width-pad,y);}
