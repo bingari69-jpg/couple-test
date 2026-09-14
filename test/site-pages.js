@@ -1,8 +1,9 @@
 const assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');
 const {JSDOM}=require('jsdom');
 const root=path.join(__dirname,'..'),read=file=>fs.readFileSync(path.join(root,file),'utf8');
-const menuLabels=['같이놀자가 뭘까요?','할 말 있어요','제휴문의'];
+const menuLabels=['같이놀자란?','문의사항','제휴문의','사용법'];
 const home=read('index.html');menuLabels.forEach(label=>assert.match(home,new RegExp(label)));
+for(const removed of ['둘이놀기','혼자놀기','편지 쓰기','심리테스트'])assert.doesNotMatch(home.match(/<nav id="menu"[\s\S]*?<\/nav>/)[0],new RegExp(removed));
 for(const file of ['about/index.html','contact/index.html','partnership/index.html']){
  const html=read(file);menuLabels.forEach(label=>assert.match(html,new RegExp(label),file+' 메뉴 누락'));
  assert.match(html,/infoMenuButton/);assert.match(html,/회원가입|제휴/);
@@ -24,5 +25,5 @@ async function submission(ok=true){
  await submission(true);await submission(false);
  const sql=read('supabase/migrations/20260914_site_inquiries.sql');assert.match(sql,/enable row level security/i);assert.match(sql,/submit_site_inquiry/);assert.match(sql,/is_app_admin/);assert.match(sql,/revoke all on public\.site_inquiries from public, anon, authenticated/i);
  const privacy=read('privacy/index.html');assert.match(privacy,/의견과 제휴문의/);assert.match(privacy,/관리자만 확인/);
- console.log('소개·문의 메뉴 검사 통과 — 상단 메뉴 3종, 문의 전송·실패, 관리자 전용 저장, 개인정보 안내');
+ console.log('소개·문의 메뉴 검사 통과 — 상단 안내 메뉴 4종, 문의 전송·실패, 관리자 전용 저장, 개인정보 안내');
 })().catch(error=>{console.error(error);process.exit(1);});

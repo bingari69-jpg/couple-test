@@ -15,7 +15,7 @@ $('play').classList.toggle('game-hero',playing);
 $(playing?'playHomeLink':'letterHomeLink').setAttribute('aria-current','page');
 document.title=playing?'같이놀자 — 가위바위보로 한판 할래?':'같이놀자 — 너에게 보내고 싶은 게 있어';
 $('menuButton').onclick=()=>{const open=$('menu').hidden;$('menu').hidden=!open;$('menuButton').setAttribute('aria-expanded',String(open));};
-$('menuAll').onclick=()=>{$('menu').hidden=true;$('menuButton').setAttribute('aria-expanded','false');};
+$('menu').querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{$('menu').hidden=true;$('menuButton').setAttribute('aria-expanded','false');}));
 let relationship='전체';
 // 둘이놀기(기본) / 혼자놀기 탭. ?tab=solo 또는 #solo 로 바로 열 수 있다.
 const SOLO=window.SOLO_GAMES||{};

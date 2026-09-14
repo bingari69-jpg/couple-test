@@ -47,7 +47,7 @@ function runtimeDom(url, value) {
   const home = runtimeDom('https://example.test/couple-test/?admin_preview=1', config());
   await new Promise(resolve => setTimeout(resolve, 20));
   assert.equal(home.window.document.querySelector('.brand').childNodes[0].nodeValue, '우리놀자');
-  assert.equal(home.window.document.querySelector('#menu a').textContent, '처음');
+  assert.deepEqual([...home.window.document.querySelectorAll('#menu a')].map(a=>a.textContent), ['같이놀자란?','문의사항','제휴문의','사용법']);
   assert(home.window.document.getElementById('managed-app-style').textContent.includes('#123456'));
   assert.equal(home.window.document.querySelector('#letterHome .hero-art').src, 'https://cdn.example.test/chuseok.webp');
   home.window.close();
