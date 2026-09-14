@@ -60,5 +60,11 @@ function runtimeDom(url, value) {
   assert(game.window.document.querySelector('.managed-maintenance'), '점검 안내가 표시되어야 함');
   game.window.close();
 
+  const campaignConfig=config();campaignConfig.site.campaign={enabled:true,from:'2000-01-01',to:'2100-12-31',title:'계절 인사\n마음을 전해요',body:'감사 인사',button:'편지 고르기'};
+  const campaign=runtimeDom('https://example.test/?admin_preview=1',campaignConfig);await new Promise(r=>setTimeout(r,20));
+  assert.equal(campaign.window.GatchiCampaignActive,true,'한국 날짜가 기간 안이면 계절 안내 활성');
+  campaignConfig.site.campaign.to='2000-01-02';campaign.window.AppConfigRuntime.apply(campaignConfig);
+  assert.equal(campaign.window.GatchiCampaignActive,false,'기간이 지나면 안내 비활성');campaign.window.close();
+
   console.log('관리센터 검사 통과 — 권한·초안·게시·복원·공통 설정 연결 확인');
 })().catch(error => { console.error(error.stack || error); process.exit(1); });

@@ -64,6 +64,13 @@ const rowsFor = rankBySlug => ['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'n
   if (soloTab) { soloTab.click(); await tick(); assert.deepEqual(ranks(ranked).filter(Boolean), [], '혼자놀기 탭에는 순위 없음'); }
   ranked.close();
 
+  const manual=loadHome(rowsFor({mole:1,ten:2}));await tick();
+  const managed={site:{catalogOrder:'manual'},games:[{slug:'ten',title:'열 초',sortOrder:1,featured:false},{slug:'mole',title:'두더지',sortOrder:2,featured:true}]};
+  manual.APP_PUBLISHED_CONFIG=managed;manual.dispatchEvent(new manual.CustomEvent('app-config-ready',{detail:managed}));await tick();
+  assert.deepEqual(titles(manual).slice(0,2),['두더지','열 초'],'관리자 지정 모드에서 추천 우선 후 지정 순서');
+  managed.games[1].featured=false;manual.dispatchEvent(new manual.CustomEvent('app-config-ready',{detail:managed}));await tick();
+  assert.deepEqual(titles(manual).slice(0,2),['열 초','두더지'],'추천 해제 시 인기 순위보다 지정 순서 우선');manual.close();
+
   /* 잘못된 값은 무시한다 */
   const bad = loadHome(rowsFor({ mole: 0, pairs: 9, ten: -1 }));
   await tick();

@@ -24,6 +24,7 @@
     if (/Invalid login credentials/i.test(raw)) return '이메일이나 비밀번호를 확인해 주세요.';
     if (/Email not confirmed/i.test(raw)) return '이메일 확인을 먼저 완료해 주세요.';
     if (/ADMIN_REQUIRED/i.test(raw)) return '이 계정에는 관리자 권한이 없습니다.';
+    if (/CONFIG_CONFLICT/i.test(raw)) return '다른 기기에서 설정을 변경했습니다. 내 초안을 내려받은 뒤 최신 설정을 불러와 주세요.';
     if (/Failed to fetch|NetworkError/i.test(raw)) return '서버에 연결하지 못했습니다. 인터넷 연결을 확인해 주세요.';
     return raw;
   }
@@ -44,7 +45,7 @@
     const text = await response.text();
     let data = null;
     try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
-    if (!response.ok) throw new Error(messageFrom(data || response.status));
+    if (!response.ok) { const error=new Error(messageFrom(data || response.status));error.code=data&&data.code;error.status=response.status;throw error; }
     return data;
   }
   async function ensureSession(session) {
@@ -102,11 +103,18 @@
     hasSession: () => !!readSession(),
     signIn,
     signOut,
-    getState: () => rpc('admin_get_app_state'),
-    saveDraft: (config, note) => rpc('admin_save_app_draft', { p_config: config, p_note: note || null }),
-    publish: (config, note) => rpc('admin_publish_app_config', { p_config: config, p_note: note || null }),
-    restore: (version) => rpc('admin_restore_app_version', { p_version: Number(version), p_note: version + '번 버전 복원' }),
+    getState: async () => {try{return await rpc('admin_get_app_state_v2');}catch(e){if(e.code!=='PGRST202')throw e;return rpc('admin_get_app_state');}},
+    write: (action, revision, config, note, version) => {
+      if (!Number.isSafeInteger(revision)) return Promise.reject(new Error('서버 개선 SQL을 먼저 적용해 주세요. 초안은 이 기기에 보관되며 내려받을 수 있습니다.'));
+      return rpc('admin_write_app_config', {p_action:action,p_expected_revision:revision,p_config:config||null,p_note:note||null,p_version:version||null});
+    },
     getStats: days => rpc('admin_get_app_stats', { p_days: Number(days) || 7 }),
+    getStatsRange: (from,to,legacy) => rpc('admin_get_app_stats_v2',{p_from:from,p_to:to,p_legacy:!!legacy}),
+    getInquiries: (status,offset) => request('/rest/v1/site_inquiries?select=id,kind,category,name,company,email,phone,message,reply_requested,status,created_at&order=created_at.desc&limit=20&offset='+Number(offset||0)+(status?'&status=eq.'+encodeURIComponent(status):''),{auth:true}),
+    updateInquiry: (id,status) => {
+      if(!/^[0-9a-f-]{36}$/i.test(id)||!['new','reviewing','replied','closed'].includes(status))throw new Error('문의 상태를 확인해 주세요.');
+      return request('/rest/v1/site_inquiries?id=eq.'+encodeURIComponent(id),{method:'PATCH',auth:true,headers:{Prefer:'return=representation'},json:{status,updated_at:new Date().toISOString()}});
+    },
     uploadImage,
     messageFrom,
     projectUrl: PROJECT_URL

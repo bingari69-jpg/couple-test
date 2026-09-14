@@ -63,5 +63,13 @@ assert.equal(dock.$('emojiPanel').hidden,false);
 dock.$('letterEditor').dispatchEvent(new dock.w.InputEvent('beforeinput',{bubbles:true,inputType:'insertText',data:'ㄱ'}));
 assert.equal(dock.$('emojiPanel').hidden,true,'글자를 치기 시작해도 닫힌다');
 dock.close();
+// Published choices apply to new letters, without changing an existing received letter.
+const managed=load();const preferences={letter:{papers:Object.fromEntries(managed.w.LETTER_TEMPLATES.map(t=>[t.id,{enabled:t.id==='little-heart'}])),fonts:['sans'],stickers:['heart']}};
+managed.w.APP_PUBLISHED_CONFIG=preferences;managed.w.dispatchEvent(new managed.w.CustomEvent('app-config-ready',{detail:preferences}));
+assert.equal(managed.$('templateGrid').children.length,1);managed.$('quickWrite').click();
+assert.equal(managed.$('composePaper').dataset.template,'little-heart');assert.equal(managed.$('fontOptions').children.length,1);assert.equal(managed.$('stickerOptions').children.length,1);managed.close();
+const kept=load({suffix:hash({v:5,w:'기존 편지는 그대로',tpl:'spring',font:'hand',size:22,st:['cat']})});
+kept.w.APP_PUBLISHED_CONFIG=preferences;kept.w.dispatchEvent(new kept.w.CustomEvent('app-config-ready',{detail:preferences}));
+assert.equal(kept.$('readPaper').dataset.template,'spring');assert.match(kept.$('readBody').textContent,/기존 편지는 그대로/);kept.close();
 assert.deepEqual(errors,[]);
 console.log('편지 스튜디오 검사 통과 — 초안 복원·삭제·수신 보호·저장 실패, 커서 이모지, 꾸미기 왕복, 조합 중 스티커/이모지, 쓰기 시작하면 꾸미기 창 닫힘, 안전한 링크');

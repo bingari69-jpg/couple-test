@@ -46,6 +46,18 @@
     const image=document.querySelector('#letterHome .hero-art');if(!image)return;if(!image.dataset.defaultSrc)image.dataset.defaultSrc=image.getAttribute('src')||'';
     image.src=safeImage(config.site&&config.site.homeHeroImage)||image.dataset.defaultSrc;
   }
+  function applyCampaign(config){
+    const c=config.site.campaign;if(!c)return;
+    const today=new Date(Date.now()+9*3600000).toISOString().slice(0,10);
+    const active=c.enabled!==false&&typeof c.from==='string'&&typeof c.to==='string'&&today>=c.from&&today<=c.to;
+    window.GatchiCampaignActive=active;
+    const title=document.querySelector('#letterHome #heroTitle'),body=document.querySelector('#letterHome .lead'),button=document.querySelector('#letterHome .primary');
+    if(title){title.textContent=active?(c.title||'고마운 마음을 전해봐.'):'너에게 보내고\n싶은 게 있어.';title.style.whiteSpace='pre-line';}
+    if(body)body.textContent=active?(c.body||''): '특별한 날에도, 그냥 네 생각이 난 날에도.';
+    if(button)button.textContent=active?(c.button||'편지 쓰기'):'편지 한 장 보내기 →';
+    const open=document.querySelector('#letterHome .hero-open');if(open){open.setAttribute('aria-label','편지지 고르기');const caption=open.querySelector('span');if(caption)caption.textContent=active?'계절 편지지를 골라봐':'눌러서 열어봐';}
+    const hero=document.getElementById('chuseokHero');if(hero){hero.hidden=!active;const heading=hero.querySelector('h3');if(heading&&c.title){heading.textContent=c.title;heading.style.whiteSpace='pre-line';}}
+  }
   function applyStyle(config) {
     const site = config.site || {};
     const slug = getSlug();
@@ -171,7 +183,7 @@
     if(ad.imageUrl){const img=document.createElement('img');img.src=ad.imageUrl;img.alt=ad.alt||'광고';img.loading='lazy';a.append(img);}else{const strong=document.createElement('strong');strong.textContent=ad.alt||ad.name||'같이놀자 추천';a.append(strong);}
     a.addEventListener('click',()=>sendEvent('ad_clicked',ad.id||''));wrap.append(a);sendEvent('ad_viewed',ad.id||'');return wrap;
   }
-  function loadAdsense(client,ins){if(!document.querySelector('script[data-managed-adsense]')){const script=document.createElement('script');script.async=true;script.dataset.managedAdsense='true';script.crossOrigin='anonymous';script.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(client);document.head.append(script);}setTimeout(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(_){}},0);}
+  function loadAdsense(client,ins){if(new URLSearchParams(location.search).get('admin_preview')==='1'){ins.textContent='광고가 표시될 자리';ins.style.padding='30px';return;}if(!document.querySelector('script[data-managed-adsense]')){const script=document.createElement('script');script.async=true;script.dataset.managedAdsense='true';script.crossOrigin='anonymous';script.src='https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client='+encodeURIComponent(client);document.head.append(script);}setTimeout(()=>{try{(window.adsbygoogle=window.adsbygoogle||[]).push({});}catch(_){}},0);}
   function mountHomeAds(config){const list=document.getElementById('catalogList');if(!list)return;list.querySelectorAll('.managed-ad').forEach(el=>el.remove());const ads=activeAds(config,'home_catalog');ads.forEach((ad,index)=>{const el=adElement(ad);el.style.gridColumn='1 / -1';const after=list.children[Math.min(3+index,list.children.length)-1];if(after)after.after(el);else list.append(el);});}
   function mountResultAds(config){document.querySelectorAll('.managed-ad[data-placement="result_bottom"]').forEach(el=>el.remove());const ads=activeAds(config,'result_bottom');if(!ads.length)return;const target=document.querySelector('#s-result,#s-report,#v-compare,#opened,#resultScreen,[data-result-screen]');if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='result_bottom';target.append(el);});}
   function mountRecommendationAds(config){document.querySelectorAll('.managed-ad[data-placement="recommendation_top"]').forEach(el=>el.remove());const ads=activeAds(config,'recommendation_top');if(!ads.length)return;const target=document.querySelector('.next,#nextList,.recommendations,[data-recommendations]');if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='recommendation_top';target.before(el);});}
@@ -179,11 +191,11 @@
   function mountChallengeAds(config){document.querySelectorAll('.managed-ad[data-placement="challenge_open"]').forEach(el=>el.remove());if(!/^#[ci]=/.test(location.hash))return;const ads=activeAds(config,'challenge_open');if(!ads.length)return;const screen=[...document.querySelectorAll('.screen')].find(s=>!s.classList.contains('hidden'));if(!screen)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement='challenge_open';const home=screen.querySelector('.homelink');if(home)home.before(el);else screen.append(el);});}
   /* 편지 페이지 전용 자리: 읽기 화면 맨 아래(#reader, 편지를 열었을 때만 보임) · 쓰기 화면 맨 아래(#compose, 작성 중에만 보임) */
   function mountLetterAds(config){if(getSlug()!=='letter')return;[['letter_bottom','reader'],['letter_compose','compose']].forEach(([placement,id])=>{document.querySelectorAll('.managed-ad[data-placement="'+placement+'"]').forEach(el=>el.remove());const ads=activeAds(config,placement);if(!ads.length)return;const target=document.getElementById(id);if(!target)return;ads.forEach(ad=>{const el=adElement(ad);el.dataset.placement=placement;target.append(el);});});}
-  function sendEvent(event,method){if(typeof fetch!=='function')return;try{fetch(PROJECT_URL+'/rest/v1/rpc/track_app_event',{method:'POST',keepalive:true,headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_event:event,p_game:getSlug(),p_entry:'direct',p_method:method||null,p_session_id:null})}).catch(()=>{});}catch(_){}}
+  function sendEvent(event,method){if(typeof fetch!=='function'||!['noljago.co.kr','www.noljago.co.kr'].includes(location.hostname)||navigator.webdriver||new URLSearchParams(location.search).get('admin_preview')==='1')return;try{if(localStorage.getItem('gatchi_analytics_optout')==='1'||sessionStorage.getItem('gatchi_admin_session_v2'))return;}catch(_){}try{fetch(PROJECT_URL+'/rest/v1/rpc/track_app_event',{method:'POST',keepalive:true,headers:{apikey:PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({p_event:event,p_game:getSlug(),p_entry:'direct',p_method:method||null,p_session_id:null})}).catch(()=>{});}catch(_){}}
   function apply(config) {
     if (!valid(config)) return;
     current = config; window.APP_PUBLISHED_CONFIG = config;
-    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); applyHomeHero(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config); mountChallengeAds(config); mountLetterAds(config);
+    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); applyHomeHero(config); applyCampaign(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config); mountChallengeAds(config); mountLetterAds(config);
     if(getSlug()==='home')document.title=(config.site.name||'같이놀자')+' — 너에게 보내고 싶은 게 있어';
     setTimeout(()=>applyMenu(config),0);
     window.dispatchEvent(new CustomEvent('app-config-ready', { detail: config }));
@@ -194,7 +206,11 @@
   async function start() {
     let preview=null;
     if(new URLSearchParams(location.search).get('admin_preview')==='1')preview=readLocal(PREVIEW_KEY);
-    if(valid(preview)){apply(preview);return;}
+    if(valid(preview)){
+      apply(preview);
+      document.addEventListener('click',event=>{const a=event.target.closest('a[href]');if(!a)return;const url=new URL(a.href,location.href);if(url.origin!==location.origin||!/^https?:$/.test(url.protocol))return;url.searchParams.set('admin_preview','1');a.href=url.href;},true);
+      return;
+    }
     const cached=readLocal(CACHE_KEY);if(valid(cached))apply(cached);
     try{const published=await fetchPublished();if(valid(published)){writeLocal(CACHE_KEY,published);apply(published);}}catch(_){}
   }

@@ -1,6 +1,8 @@
 (function(){
  'use strict';
  const $=id=>document.getElementById(id),templates=window.LETTER_TEMPLATES,D=window.LetterDesign,I=window.LetterInline,seasonal=window.CHUSEOK_LETTERS||{active:false,groups:[],examples:[]};
+ const letterPrefs=()=>window.APP_PUBLISHED_CONFIG?.letter||{};
+ const allowedOption=(key,id)=>!Array.isArray(letterPrefs()[key])||letterPrefs()[key].includes(id);
  const params=new URLSearchParams(location.search),initialHash=location.hash;
  const MAX_LETTER=450,WARN_AT=430;
  const occasionMap={birthday:'생일',anniversary:'기념일',plain:'그냥',thanks:'고마워',sorry:'미안해',cheer:'응원',chuseok:'추석'};
@@ -44,6 +46,8 @@
  }
  function startWriting(){
    if(ownDraft){changingPaper=false;go('compose');return;}
+   if(letterPrefs().papers?.[draft.template]?.enabled===false){const available=templates.find(t=>letterPrefs().papers?.[t.id]?.enabled!==false);if(!available)return toast('지금 선택할 수 있는 편지지가 없어요. 잠시 뒤 다시 와주세요.');selectTemplate(available);}
+   if(!allowedOption('fonts',draft.font))draft.font=Object.keys(D.fonts).find(id=>allowedOption('fonts',id))||'sans';
     requestNew(()=>{ownDraft=true;draft.occasion=({추석:'chuseok',생일:'bday',기념일:'day',고마워:'thanks',미안해:'sorry',응원:'cheer'})[occasion]||'plain';changingPaper=false;go('compose');});
  }
  $('resumeDraft').onclick=resumeDraft;$('dialogResume').onclick=resumeDraft;$('dialogCancel').onclick=()=>{pendingNew=null;closeDialog('draftDialog');};
@@ -54,15 +58,15 @@
  $('chuseokStart').onclick=()=>{chuseokGroup='전체';go('chuseok');};
  $('chuseokPapers').onclick=()=>{occasion='추석';onlyFavorites=false;renderLibrary();$('templateGrid').scrollIntoView({block:'start'});};
  $('backToLetters').onclick=()=>go('library');
- function selectTemplate(t){draft.template=t.id;draft.font=t.font;draft.size=t.size;draft.color='';saveDraft();}
+ function selectTemplate(t){draft.template=t.id;draft.font=allowedOption('fonts',t.font)?t.font:Object.keys(D.fonts).find(id=>allowedOption('fonts',id))||'sans';draft.size=t.size;draft.color='';saveDraft();}
  function renderFavorite(){const yes=favorites.includes(draft.template);$('favoriteTemplate').setAttribute('aria-pressed',String(yes));$('favoriteTemplate').textContent=yes?'♥ 찜한 편지지':'♡ 이 편지지 찜하기';}
  $('favoriteTemplate').onclick=()=>{favorites=favorites.includes(draft.template)?favorites.filter(id=>id!==draft.template):[...favorites,draft.template];try{localStorage.setItem(FAVORITES_KEY,JSON.stringify(favorites));}catch(_){toast('찜 목록은 이번 방문 동안만 유지돼요.');}renderFavorite();};
  $('favoritesOnly').onclick=()=>{onlyFavorites=!onlyFavorites;renderLibrary();};
  function seal(el,id){const target=el.querySelector('.heart-seal');if(!target)return;const img=document.createElement('img');img.src=D.stickerURL(id);img.alt='';target.replaceChildren(img);}
  function renderTools(){
-   $('fontOptions').replaceChildren();Object.entries(D.fonts).forEach(([id,f])=>{const b=document.createElement('button');b.className='font-option';b.setAttribute('aria-pressed',String(draft.font===id));b.style.fontFamily=fonts[id];const name=document.createElement('small');name.textContent=f.name;const sample=document.createElement('span');sample.textContent='오늘도 네 생각이 났어.';b.append(name,sample);b.onclick=()=>{$('fontChoice').value=id;$('fontChoice').dispatchEvent(new Event('change'));};$('fontOptions').append(b);});
+   $('fontOptions').replaceChildren();Object.entries(D.fonts).filter(([id])=>allowedOption("fonts",id)||draft.font===id).forEach(([id,f])=>{const b=document.createElement('button');b.className='font-option';b.setAttribute('aria-pressed',String(draft.font===id));b.style.fontFamily=fonts[id];const name=document.createElement('small');name.textContent=f.name;const sample=document.createElement('span');sample.textContent='오늘도 네 생각이 났어.';b.append(name,sample);b.onclick=()=>{$('fontChoice').value=id;$('fontChoice').dispatchEvent(new Event('change'));};$('fontOptions').append(b);});
    $('colorOptions').replaceChildren();COLORS.forEach((c,i)=>{const b=document.createElement('button');b.className='color-option';b.style.setProperty('--swatch',c||template().ink);b.setAttribute('aria-label',['편지지 추천 색','먹색','말린 장미','짙은 파랑','숲색'][i]);b.setAttribute('aria-pressed',String(draft.color===c));b.onclick=()=>{draft.color=c;typography($('composePaper'),draft);saveDraft();renderTools();};$('colorOptions').append(b);});
-   $('stickerOptions').replaceChildren();D.stickers.forEach(s=>{const b=document.createElement('button');b.className='sticker-option';b.setAttribute('aria-label',s.name);const img=document.createElement('img');img.src=D.stickerURL(s.id);img.alt='';b.append(img);b.onclick=()=>{decorating=true;editor.insertSticker(s.id);decorating=false;};$('stickerOptions').append(b);});
+   $('stickerOptions').replaceChildren();D.stickers.filter(s=>allowedOption("stickers",s.id)).forEach(s=>{const b=document.createElement('button');b.className='sticker-option';b.setAttribute('aria-label',s.name);const img=document.createElement('img');img.src=D.stickerURL(s.id);img.alt='';b.append(img);b.onclick=()=>{decorating=true;editor.insertSticker(s.id);decorating=false;};$('stickerOptions').append(b);});
    $('sealOptions').replaceChildren();['heart','flower','cat','bear','stamp','clover'].forEach(id=>{const b=document.createElement('button');b.setAttribute('aria-label',D.sticker(id).name+' 봉인');b.setAttribute('aria-pressed',String(draft.seal===id));const img=document.createElement('img');img.src=D.stickerURL(id);img.alt='';b.append(img);b.onclick=()=>{draft.seal=id;saveDraft();renderTools();};$('sealOptions').append(b);});
  }
  const editor=I.create($('letterEditor'),$('letterBody'),(text,inline)=>{draft.inline=inline;syncDraft();keepCaretVisible();},toast);
@@ -110,7 +114,7 @@
    $('occasionFilters').replaceChildren();['전체','추석','그냥','생일','기념일','고마워','미안해','응원'].forEach(x=>{const b=document.createElement('button');b.className='chip';b.textContent=x;b.setAttribute('aria-pressed',String(occasion===x));b.onclick=()=>{occasion=x;renderLibrary();};$('occasionFilters').append(b);});
   }
  function renderLibrary(){
-   renderSaved();renderFilters();$('occasionSummary').textContent=occasion==='전체'?'선택':occasion;$('favoritesOnly').setAttribute('aria-pressed',String(onlyFavorites));const visible=templates.filter(t=>(occasion==='전체'||t.occasions.includes(occasion))&&(!onlyFavorites||favorites.includes(t.id)));
+   renderSaved();renderFilters();$('occasionSummary').textContent=occasion==='전체'?'선택':occasion;$('favoritesOnly').setAttribute('aria-pressed',String(onlyFavorites));const visible=templates.filter(t=>letterPrefs().papers?.[t.id]?.enabled!==false&&(occasion==='전체'||t.occasions.includes(occasion))&&(!onlyFavorites||favorites.includes(t.id))).sort((a,b)=>Number(!!letterPrefs().papers?.[b.id]?.featured)-Number(!!letterPrefs().papers?.[a.id]?.featured)||(letterPrefs().papers?.[a.id]?.order??templates.indexOf(a))-(letterPrefs().papers?.[b.id]?.order??templates.indexOf(b)));
    $('templateCount').textContent=visible.length+'가지';$('empty').hidden=!!visible.length;$('viewTemplate').disabled=!visible.some(t=>t.id===draft.template);
    $('templateGrid').replaceChildren();
    visible.forEach(t=>{
@@ -258,4 +262,5 @@
  window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#l='))openIncoming(location.hash);});
  function openIncoming(hash){try{read(decode(hash),false);show('reader',{historyMode:'replace',focus:false});}catch(e){show('error',{historyMode:'replace',focus:false});}}
  if(initialHash.startsWith('#l='))openIncoming(initialHash);else{renderLibrary();if(params.get('view')==='preview')go('detail',{historyMode:'replace',focus:false});else go('library',{historyMode:'replace',focus:false});}
+ window.addEventListener('app-config-ready',()=>{if(view==='library')renderLibrary();if(view==='compose')renderTools();});
 })();

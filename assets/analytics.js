@@ -22,7 +22,7 @@
   if(!window.__GATCHI_APP_CONFIG__ && !window.__GATCHI_APP_CONFIG_LOADER__ && analyticsScript && analyticsScript.src){
     window.__GATCHI_APP_CONFIG_LOADER__=true;
     const appConfig=document.createElement("script");
-    appConfig.src=new URL("app-config.js?v=20260914-info-menu",analyticsScript.src).href;
+    appConfig.src=new URL("app-config.js?v=20260915-admin-ops",analyticsScript.src).href;
     document.head.appendChild(appConfig);
   }
 
@@ -47,6 +47,14 @@
     document.head.appendChild(linkGuard);
   }
 
+  // 공개 도메인만 측정. 관리자·미리보기·개발 접속은 GA와 자체 통계 모두 제외한다.
+  function excluded(){
+    if(!['noljago.co.kr','www.noljago.co.kr'].includes(location.hostname)||navigator.webdriver||new URLSearchParams(location.search).get('admin_preview')==='1')return true;
+    try{return localStorage.getItem('gatchi_analytics_optout')==='1'||!!sessionStorage.getItem('gatchi_admin_session_v2');}catch(_){return false;}
+  }
+  window.GatchiAnalyticsExcluded=excluded;
+  if(excluded()){window.track=function(){};return;}
+
   /* gtag 로드 */
   const s=document.createElement("script"); s.async=true;
   s.src="https://www.googletagmanager.com/gtag/js?id="+ID; document.head.appendChild(s);
@@ -66,7 +74,7 @@
   const game = m ? m[1] : "home";
   const entry = (function(){
     const h=(location.hash||location.search).slice(1);
-    if(/^(c|i)=/.test(h)) return "invite";
+    if(/^(c|i|room)=/.test(h)) return "invite";
     if(/^r=/.test(h))     return "result";
     if(/^l=/.test(h))     return "letter";
     return "direct";
@@ -80,27 +88,22 @@
     }catch(e){return null;}
   }
   function supabaseEvent(ev,params){
-    if(typeof fetch!=="function")return;
+    if(typeof fetch!=="function"||excluded())return;
     const allowed=["page_view","game_started","game_completed","link_made","invite_opened","responded","invite_shared","result_opened","result_shared","replay","letter_opened","solo_started","solo_cleared","solo_failed","solo_to_duel"];
     let normalized=ev;
-    if(/(?:^|_)start(?:ed)?$/.test(ev))normalized="game_started";
+    if(!ev.startsWith("solo_")&&/(?:^|_)start(?:ed)?$/.test(ev))normalized="game_started";
     else if(/(?:^|_)(?:finish|finished|graded)$/.test(ev))normalized="game_completed";
     if(!allowed.includes(normalized))return;
     try{fetch(PROJECT_URL+"/rest/v1/rpc/track_app_event",{
       method:"POST",keepalive:true,headers:{apikey:PUBLISHABLE_KEY,"Content-Type":"application/json"},
-      body:JSON.stringify({p_event:normalized,p_game:game,p_entry:entry,p_method:params&&params.method||null,p_session_id:sessionId()})
+      body:JSON.stringify({p_event:normalized,p_game:game,p_entry:entry,p_method:"v2:"+String(params&&params.method||"manual").replace(/[^a-z0-9_-]/gi,"").slice(0,17),p_session_id:sessionId()})
     }).catch(()=>{});}catch(e){}
   }
 
-  let completionSent=false;
-
   window.track=function(ev, params){
-    try{ gtag("event", ev, Object.assign({ game, entry }, params||{})); }catch(e){}
-    const finishingEvent=/(?:^|_)(?:finish|finished|graded)$/.test(ev);
-    if(!completionSent && (ev==="link_made" || ev==="responded" || finishingEvent)){
-      completionSent=true;
-      if(!finishingEvent&&ev!=="game_completed")supabaseEvent("game_completed",params||{});
-    }
+    if(excluded())return;
+    try{gtag("event",ev,Object.assign({game,entry},params||{}));}catch(_){}
+    // 링크 생성/공유와 게임 종료는 서로 다른 이벤트다. 종료를 임의로 만들어 내지 않는다.
     supabaseEvent(ev,params||{});
   };
 
@@ -127,24 +130,15 @@
     const c=classify(b.id); if(c) track(c[0], c[1]?{method:c[1]}:{});
   }, true);
 
-  /* 게임 화면에서 처음 의미 있는 조작을 한 시점을 시작으로 센다. */
-  if(game!=="home"){
-    let started=false;
-    document.addEventListener("click",function(e){
-      if(started)return;
-      const b=e.target.closest("button");
-      if(!b||!b.closest("main")||/kakao|copy|share|back|menu|help|font|size|other|change|preview/i.test(b.id||""))return;
-      started=true;supabaseEvent("game_started",{});
-    },true);
-  }
+  /* 시작은 콘텐츠가 명시적으로 보낸 이벤트만 사용한다. 메뉴·난이도 클릭을 시작으로 추정하지 않는다. */
 
   /* 초대로 들어온 사람이 결과 화면에 도달 → responded (한 번만) */
   if(entry==="invite"){
     let done=false;
     const check=()=>{
       if(done) return;
-      const el=[...document.querySelectorAll('[id*="result"],[id*="compare"],[id="opened"]')]
-        .find(x=> !x.classList.contains("hidden") && (x.classList.contains("on") || getComputedStyle(x).display!=="none"));
+      const el=[...document.querySelectorAll('#s-result,#s-report,#v-compare,#opened,#resultScreen,[data-result-screen]')]
+        .find(x=> !x.hidden && x.getClientRects().length>0 && getComputedStyle(x).visibility!=="hidden");
       if(el){ done=true; track("responded"); obs.disconnect(); }
     };
     const obs=new MutationObserver(check);

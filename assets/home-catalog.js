@@ -160,6 +160,7 @@ window.HOME_ITEMS=LOCAL_HOME_ITEMS;
 const slugKey=item=>String(item.path||'').replace(/^t\//,'').replace(/\/$/,'');
 let popularRank=new Map();
 function orderByPopularity(items){
+  if(window.APP_PUBLISHED_CONFIG?.site?.catalogOrder==='manual')return items.slice().sort((a,b)=>(Number(!!b.featured)-Number(!!a.featured))||((a.adminOrder??999)-(b.adminOrder??999)));
   if(!popularRank.size)return items.map(it=>it.popularRank?{...it,popularRank:0}:it);
   const ranked=[],rest=[];
   items.forEach(it=>{const r=popularRank.get(slugKey(it));if(r)ranked.push([r,it]);else rest.push(it.popularRank?{...it,popularRank:0}:it);});
@@ -219,10 +220,9 @@ function applyPublishedCatalog(config){
         title:row.title||local.title,
         summary:row.summary||local.summary,
         relationships:Array.isArray(row.relationships)&&row.relationships.length?row.relationships:local.relationships,
-        thumbnailUrl:row.thumbnailUrl||local.thumbnailUrl||''
+        thumbnailUrl:row.thumbnailUrl||local.thumbnailUrl||'', featured:!!row.featured,adminOrder:Number(row.sortOrder)||0
       };
     }).filter(Boolean);
-  if(!merged.length)return false;
   appendUnknownLocal(merged,config.games);
   publishedCatalogApplied=true;
   window.HOME_ITEMS=orderByPopularity(merged);

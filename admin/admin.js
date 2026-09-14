@@ -1,7 +1,7 @@
 (function () {
   'use strict';
   const $ = id => document.getElementById(id);
-  const VIEW_TITLES = { dashboard:'운영 현황', games:'게임 관리', menus:'메뉴 관리', design:'디자인', ads:'광고 관리', versions:'게시 이력' };
+  const VIEW_TITLES = { dashboard:'운영 현황', games:'콘텐츠 관리', menus:'홈 꾸미기', design:'홈 꾸미기', inquiries:'문의함', ads:'광고·홍보', versions:'게시·설정' };
   // 2026-09-13 사용자 결정: 메뉴 4축 둘이놀기 | 혼자놀기 | 편지 | 심리
   const DEFAULT_MENU = [
     { id:'play', label:'둘이놀기', href:'#all', enabled:true },
@@ -24,7 +24,12 @@
   let serverState = null;
   let dirty = false;
   let editingIndex = -1;
-  let statsDays = 7;
+  let statsDays = 7, statsRequest = 0, statsData = null, previewTimer, autosaveTimer, writing = false, autosavePaused = false;
+  const LOCAL_DRAFT = 'gatchi_admin_work_v2';
+  let savedFingerprint = '', pendingPublish = null, inquiryOffset = 0;
+  const fingerprint = value => JSON.stringify(value);
+  const localSnapshot = () => {try{return JSON.parse(localStorage.getItem(LOCAL_DRAFT)||'null');}catch(_){return null;}};
+
 
   function clone(value) { return JSON.parse(JSON.stringify(value)); }
   function guideFor(slug) {
@@ -102,14 +107,31 @@
     next.ads.slots = Array.isArray(next.ads.slots) ? next.ads.slots : base.ads.slots;
     // 옛 설정의 노출 위치 하나(placement)를 여러 위치(placements)로 옮긴다. placement 는 첫 값으로 남겨 옛 스크립트도 읽게 한다.
     next.ads.slots = next.ads.slots.map(ad => { const placements = placementsOf(ad).filter(p => PLACEMENT_LABEL[p]); return Object.assign({}, ad, { placements: placements.length ? placements : ['result_bottom'], placement: (placements[0] || 'result_bottom') }); });
+    next.letter=Object.assign({papers:{}},next.letter||{});
     return next;
   }
   function setDirty(value) {
     dirty = value;
-    $('saveState').textContent = value ? '미게시 변경 있음' : '게시된 상태';
-    $('saveState').classList.toggle('dirty', value);
+    const unpublished = config && (!serverState.published || fingerprint(config)!==fingerprint(normalize(serverState.published)));
+    $('saveState').textContent = value ? '미저장 변경 있음' : unpublished ? '초안 저장됨 · 미게시' : '게시 완료';
+    $('saveState').classList.toggle('dirty', !!(value || unpublished));
+    if($('operationStatus'))$('operationStatus').textContent = (serverState && Number.isSafeInteger(serverState.revision) ? '' : '서버 개선 SQL 적용이 필요합니다. ') + (unpublished ? '이용자에게 아직 보이지 않는 변경이 있어요.' : '게시한 설정과 일치합니다.');
   }
-  function changed() { setDirty(true); renderPreview(); }
+  function changed() {
+    setDirty(fingerprint(config)!==savedFingerprint);renderPreview();
+    try{localStorage.setItem(LOCAL_DRAFT,JSON.stringify({config,revision:serverState.revision,at:Date.now()}));$('localSaveStatus').textContent='이 기기에 자동 보관됨';}catch(_){$('localSaveStatus').textContent='이 기기에 보관하지 못했습니다. 초안을 내려받아 주세요.';}
+    clearTimeout(autosaveTimer);
+    if(!autosavePaused&&Number.isSafeInteger(serverState.revision))autosaveTimer=setTimeout(()=>saveDraft(true),1800);
+  }
+  function validConfig(show=true) {
+    const supported=new Map(localGames().map(g=>[g.slug,g.path]));
+    const invalid=config.games.find(g=>!g.title.trim()||(g.visibility==='listed'&&(!supported.has(g.slug)||g.path!==supported.get(g.slug))));
+    if(invalid){if(show)notice('제목과 연결 주소를 확인해 주세요. 공개할 콘텐츠는 앱에 구현된 주소여야 합니다.',true);return false;}
+    if(config.site.campaign?.enabled&&(!config.site.campaign.from||!config.site.campaign.to||config.site.campaign.to<config.site.campaign.from)){if(show)notice('계절 안내의 시작일과 종료일을 확인해 주세요.',true);return false;}
+    if(!$('designForm').checkValidity()||(!$('gameEditor').hidden&&!$('gameEditor').checkValidity())){if(show)notice('입력 항목의 길이와 주소 형식을 확인해 주세요.',true);return false;}
+    return true;
+  }
+
   function notice(message, error) {
     const el = $('notice'); el.hidden = false; el.textContent = message; el.classList.toggle('error', !!error);
     clearTimeout(notice.timer); notice.timer = setTimeout(() => { el.hidden = true; }, 4200);
@@ -134,9 +156,12 @@
   async function loadState() {
     serverState = await AdminAPI.getState();
     config = normalize(serverState.draft || serverState.published);
+    editingIndex=-1;$('gameEditor').hidden=true;
     $('adminName').textContent = serverState.admin && serverState.admin.name || '운영자';
     $('adminRole').textContent = serverState.admin && serverState.admin.role || 'owner';
-    setDirty(false); showApp(); renderAll(); loadStats(statsDays);
+    autosavePaused=false;showApp();renderAll();savedFingerprint=fingerprint(config);setDirty(false);loadStats(statsDays);
+    try{localStorage.setItem('gatchi_analytics_optout','1');}catch(_){}
+    $('excludeTraffic').checked=true;$('recoverDraft').hidden=!localSnapshot();
   }
   async function login(event) {
     event.preventDefault();
@@ -146,21 +171,23 @@
     catch (error) { $('loginStatus').textContent = AdminAPI.messageFrom(error); }
     finally { buttonBusy(button, false); }
   }
-  async function logout() { await AdminAPI.signOut(); config = null; showLogin(); }
+  async function logout() { if(writing)return notice('저장이 끝난 뒤 로그아웃해 주세요.');clearTimeout(autosaveTimer);await AdminAPI.signOut(); config = null; showLogin(); }
 
   function switchView(name) {
     document.querySelectorAll('[data-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.panel === name));
     document.querySelectorAll('#adminNav [data-view]').forEach(button => button.classList.toggle('active', button.dataset.view === name));
     $('viewTitle').textContent = VIEW_TITLES[name] || '관리센터';
     if (name === 'dashboard') loadStats(statsDays);
+    if (name === 'inquiries') loadInquiries();
+    if (name === 'design') renderPreview();
     window.scrollTo(0, 0);
   }
   function gameLabel(slug) {
     const found = config && config.games.find(game => game.slug === slug);
-    return found ? found.title : slug;
+    return found ? found.title : ({home:'메인 화면',psychology:'심리 메뉴',letter:'편지 보내기'})[slug] || slug;
   }
   function renderAll() {
-    renderGames(); renderMenus(); renderDesign(); renderAds(); renderVersions(); renderPreview();
+    renderGames(); renderMenus(); renderDesign(); renderAds(); renderVersions(); renderLetters(); renderPreview();
   }
 
   function renderGames() {
@@ -168,11 +195,13 @@
     const list = $('gameList'); list.replaceChildren();
     config.games.slice().sort((a,b) => a.sortOrder - b.sortOrder).forEach(game => {
       const index = config.games.indexOf(game);
+      if($('contentFilter').value && game.category!==$('contentFilter').value)return;
+      if($('visibilityFilter').value && game.visibility!==$('visibilityFilter').value)return;
       if (query && !(game.title + ' ' + game.slug + ' ' + game.summary).toLowerCase().includes(query)) return;
       const row = document.createElement('article'); row.className = 'game-row';
       const order = document.createElement('div'); order.className = 'game-order';
       [['↑',-1],['↓',1]].forEach(([label, direction]) => { const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>moveGame(index,direction);order.append(b); });
-      const main = document.createElement('div'); main.className = 'game-row-main'; main.innerHTML = '<strong></strong><small></small>'; main.querySelector('strong').textContent = game.title; main.querySelector('small').textContent = game.summary || game.path;
+      const main = document.createElement('div'); main.className = 'game-row-main'; main.innerHTML = '<strong></strong><small></small>'; main.querySelector('strong').textContent = (game.featured?'★ ':'')+game.title; main.querySelector('small').textContent = game.summary || game.path;
       const status = document.createElement('span'); status.className = 'status-pill ' + game.visibility; status.textContent = ({listed:'공개',hidden:'숨김',maintenance:'점검'})[game.visibility] || '공개';
       const edit = document.createElement('button'); edit.className='edit-game';edit.type='button';edit.textContent='수정';edit.onclick=()=>openGame(index);
       row.append(order,main,status,edit); list.append(row);
@@ -192,28 +221,22 @@
     const guide=Object.assign(guideFor(game.slug),game.guide||{});const steps=guide.steps||[];$('gameRule').value=guide.rule||'';$('gameStep1').value=steps[0]||'';$('gameStep2').value=steps[1]||'';$('gameStep3').value=steps[2]||'';$('gameTip').value=guide.tip||'';$('gamePractice').value=guide.practice||'';
   }
   function saveGame(event) {
-    event.preventDefault(); if (editingIndex < 0) return;
+    if(event)event.preventDefault(); if (editingIndex < 0) return;
     const game = config.games[editingIndex];
     game.title=$('gameTitle').value.trim();game.summary=$('gameSummary').value.trim();game.category=$('gameCategory').value;game.visibility=$('gameVisibility').value;game.path=$('gamePath').value.trim();game.relationships=$('gameRelationships').value.split(',').map(v=>v.trim()).filter(Boolean);game.thumbnailUrl=$('gameThumbnail').value.trim();game.featured=$('gameFeatured').checked;game.adsMode=$('gameAdsMode').value;
     game.guide={rule:$('gameRule').value.trim(),steps:[$('gameStep1').value.trim(),$('gameStep2').value.trim(),$('gameStep3').value.trim()],tip:$('gameTip').value.trim(),practice:$('gamePractice').value};
-    if (!game.title) return notice('게임 제목을 입력해 주세요.', true);
-    changed(); renderGames(); $('gameEditor').hidden=true; editingIndex=-1; notice('게임 수정이 초안에 반영됐습니다.');
+    changed(); renderGames(); if(event&&event.type==='submit'){if(!game.title)return notice('제목을 입력해 주세요.',true);$('gameEditor').hidden=true;editingIndex=-1;notice('편집 내용이 초안에 반영됐습니다.');}
   }
-  function addGame() {
-    const number = config.games.length + 1;
-    config.games.push({slug:'new-game-'+number,path:'t/new-game-'+number+'/',title:'새 게임',summary:'게임 설명을 입력하세요.',category:'게임',relationships:['친구'],visibility:'hidden',featured:false,sortOrder:number,adsMode:'inherit',thumbnailUrl:'',guide:guideFor('new-game-'+number)});
-    changed(); renderGames(); openGame(config.games.length-1);
-  }
+  function addGame() {notice('새 게임은 개발 후 목록에 자동 등록됩니다. 여기서는 등록된 콘텐츠의 공개·숨김·설명을 관리합니다.');}
   function removeGame() {
-    if (editingIndex < 0) return;
-    const game = config.games[editingIndex];
-    if (!confirm('“'+game.title+'”을 관리 목록에서 삭제할까요? 실제 게임 파일은 삭제되지 않습니다.')) return;
-    config.games.splice(editingIndex,1); editingIndex=-1;$('gameEditor').hidden=true;changed();renderGames();
+    if(editingIndex<0)return;
+    config.games[editingIndex].visibility='hidden';$('gameEditor').hidden=true;editingIndex=-1;changed();renderGames();notice('숨김으로 변경했습니다. 게시 후 목록에서 제외되며 기존 링크는 유지됩니다.');
   }
   async function uploadGameImage() {
     const file=$('gameImageFile').files[0]; if(!file)return;
+    const slug=$('gameSlug').value;
     const label=$('gameImageFile').closest('.upload'); buttonBusy(label,true,'올리는 중…');
-    try{$('gameThumbnail').value=await AdminAPI.uploadImage(file,$('gameSlug').value||'game');changed();notice('이미지가 등록됐습니다.');}
+    try{const url=await AdminAPI.uploadImage(file,slug||'game');const game=config.games.find(g=>g.slug===slug);if(game){game.thumbnailUrl=url;if(editingIndex>=0&&config.games[editingIndex].slug===slug)$('gameThumbnail').value=url;changed();}notice('이미지가 등록됐습니다.');}
     catch(error){notice(AdminAPI.messageFrom(error),true);}finally{buttonBusy(label,false);}
   }
 
@@ -233,9 +256,9 @@
   function addMenu(){config.site.menu.push({id:'menu-'+Date.now(),label:'새 메뉴',href:'./',enabled:true});changed();renderMenus();}
 
   function renderDesign() {
-    const site=config.site;$('siteName').value=site.name;$('headingFont').value=site.headingFont;$('bodyFont').value=site.bodyFont;$('fontScale').value=String(site.fontScale);$('primaryColor').value=site.primaryColor;$('secondaryColor').value=site.secondaryColor;$('backgroundColor').value=site.backgroundColor;$('homeHeroImage').value=site.homeHeroImage||'';
+    const site=config.site;const campaign=site.campaign||{enabled:true,from:'2026-09-01',to:'2026-09-27',title:'이번 추석,\n고마운 마음을\n편지로 전해봐.',body:'평소 못다 한 감사를 한가위 편지지에 담아보세요.',button:'추석 감사편지 만들기'};$('campaignEnabled').checked=campaign.enabled!==false;['From','To','Title','Body','Button'].forEach(k=>$('campaign'+k).value=campaign[k.toLowerCase()]||'');$('siteName').value=site.name;$('catalogOrder').value=site.catalogOrder||'popular';$('headingFont').value=site.headingFont;$('bodyFont').value=site.bodyFont;$('fontScale').value=String(site.fontScale);$('primaryColor').value=site.primaryColor;$('secondaryColor').value=site.secondaryColor;$('backgroundColor').value=site.backgroundColor;$('homeHeroImage').value=site.homeHeroImage||'';
   }
-  function readDesign(){const site=config.site;site.name=$('siteName').value.trim()||'같이놀자';site.headingFont=$('headingFont').value;site.bodyFont=$('bodyFont').value;site.fontScale=$('fontScale').value;site.primaryColor=$('primaryColor').value;site.secondaryColor=$('secondaryColor').value;site.backgroundColor=$('backgroundColor').value;site.homeHeroImage=$('homeHeroImage').value.trim();changed();}
+  function readDesign(){const site=config.site;site.campaign={enabled:$('campaignEnabled').checked};['From','To','Title','Body','Button'].forEach(k=>site.campaign[k.toLowerCase()]=$('campaign'+k).value.trim());site.catalogOrder=$('catalogOrder').value;site.name=$('siteName').value.trim()||'같이놀자';site.headingFont=$('headingFont').value;site.bodyFont=$('bodyFont').value;site.fontScale=$('fontScale').value;site.primaryColor=$('primaryColor').value;site.secondaryColor=$('secondaryColor').value;site.backgroundColor=$('backgroundColor').value;site.homeHeroImage=$('homeHeroImage').value.trim();changed();}
   async function uploadHomeHeroImage(){
     const file=$('homeHeroImageFile').files[0];if(!file)return;const label=$('homeHeroImageFile').closest('.upload');buttonBusy(label,true,'올리는 중…');
     try{config.site.homeHeroImage=await AdminAPI.uploadImage(file,'home-hero');$('homeHeroImage').value=config.site.homeHeroImage;changed();notice('편지 메인 이미지가 등록됐습니다. 미리보기에서 확인해 주세요.');}
@@ -244,11 +267,14 @@
   function resetHomeHeroImage(){config.site.homeHeroImage='';$('homeHeroImage').value='';changed();notice('기존 메인 꽃 편지 봉투 이미지로 되돌렸습니다.');}
   function fontValue(name){return name==='jua'?'Gatchi, sans-serif':name==='gaegu'?'Gaegu, cursive':name==='system'?'Arial, sans-serif':'Pretendard, Arial, sans-serif';}
   function renderPreview(mode) {
-    const phone=$('designPreview');if(!phone||!config)return;mode=mode||document.querySelector('.preview-switch .active').dataset.preview;
-    const site=config.site;phone.style.setProperty('--mock-primary',site.primaryColor);phone.style.setProperty('--mock-bg',site.backgroundColor);phone.style.setProperty('--mock-heading',fontValue(site.headingFont));phone.style.setProperty('--mock-body',fontValue(site.bodyFont));phone.style.fontSize=(16*Number(site.fontScale||1))+'px';
-    if(mode==='tarot'){phone.innerHTML='<div class="mock-tarot"><div>✦ '+escapeHtml(site.name)+' ✦</div><h3>나와 너의 마음 타로</h3><div class="mock-tarot-card">☀</div><p>우리의 카드를 한 장 골라봐.</p></div>';return;}
-    if(mode==='game'){phone.innerHTML='<div class="mock-brand">'+escapeHtml(site.name)+'<b>♥</b></div><div class="mock-hero"><small>네 감각을 믿어봐!</small><h3>10초를<br>맞혀볼까?</h3><p>속으로 세고, 딱 지금이라고 느낄 때 눌러봐.</p><span class="mock-button">한판 시작하기</span></div><div class="mock-card"><strong>이번 판, 뭐 걸까?</strong><p>커피 한 잔 · 밥 한 끼 · 그냥 하기</p></div>';return;}
-    const hero=/^https:\/\//.test(site.homeHeroImage||'')?site.homeHeroImage:'../assets/art/envelope-hero.png';phone.innerHTML='<div class="mock-brand">'+escapeHtml(site.name)+'<b>♥</b></div><div class="mock-hero"><small>2026 한가위 마음편지</small><h3><span style="color:var(--mock-primary)">이번 추석,</span><br>고마운 마음을<br>편지로 전해봐.</h3><p>평소 못다 한 감사를 한가위 편지지에 담아보세요.</p><img class="mock-hero-image" src="'+escapeHtml(hero)+'" alt="편지 메인 이미지 미리보기"><span class="mock-button">추석 감사편지 만들기</span></div><div class="mock-card"><strong>조금 더 놀다 갈래?</strong><p>가위바위보 · 마음동물 · 타로</p></div>';
+    const phone=$('designPreview');if(!phone||!config)return;
+    mode=mode||(document.querySelector('.preview-switch .active')||{}).dataset?.preview||'home';
+    clearTimeout(previewTimer);
+    if(!document.querySelector('[data-panel="design"]').classList.contains('active'))return;
+    previewTimer=setTimeout(()=>{
+      try{localStorage.setItem('gatchi_admin_preview',JSON.stringify(config));}catch(_){return notice('미리보기를 준비하지 못했습니다.',true);}
+      const frame=document.createElement('iframe');frame.title='실제 이용자 화면 미리보기';frame.src='../'+({home:'',game:'t/ten/',tarot:'t/tarot/',letter:'t/letter/'})[mode]+'?admin_preview=1';phone.replaceChildren(frame);
+    },600);
   }
   function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -267,23 +293,102 @@
   function addAd(){config.ads.slots.push({id:'ad-'+Date.now(),name:'새 광고 자리',placement:'result_bottom',placements:['result_bottom'],enabled:false,type:'own',imageUrl:'',linkUrl:'',alt:'광고',excludedGames:[],networkClient:'',networkSlot:''});changed();renderAds();}
 
   function renderVersions(){const list=$('versionList');list.replaceChildren();const versions=serverState&&serverState.versions||[];if(!versions.length){list.innerHTML='<p class="empty">아직 게시한 버전이 없습니다.</p>';return;}versions.forEach(version=>{const row=document.createElement('div');row.className='version-row';const no=document.createElement('div');no.className='version-number';no.textContent='v'+version.version;const info=document.createElement('div');const strong=document.createElement('strong');strong.textContent=version.note||'게시 메모 없음';const small=document.createElement('small');small.textContent=new Date(version.published_at).toLocaleString('ko-KR');info.append(strong,small);const restore=document.createElement('button');restore.className='restore-btn';restore.type='button';restore.textContent='복원';restore.onclick=()=>restoreVersion(version.version);row.append(no,info,restore);list.append(row);});}
-  async function restoreVersion(version){if(!confirm(version+'번 설정을 다시 게시할까요?'))return;try{await AdminAPI.restore(version);await loadState();notice(version+'번 설정을 새 버전으로 복원했습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}}
-
-  async function loadStats(days){statsDays=days;$('statsPeriod').textContent=days===1?'오늘':'최근 '+days+'일';try{const stats=await AdminAPI.getStats(days);renderStats(stats);}catch(error){renderStats({totals:{},visitors:0,games:[]});notice(AdminAPI.messageFrom(error),true);}}
-  function renderStats(stats){const totals=stats.totals||{};const metrics=[['방문자',stats.visitors||0],['게임 시작',totals.game_started||0],['게임 완료',totals.game_completed||0],['카톡·링크 공유',totals.invite_shared||0],['초대 방문',totals.invite_opened||0],['친구 참여 완료',totals.responded||0]];const grid=$('metricGrid');grid.replaceChildren();metrics.forEach(([label,value])=>{const card=document.createElement('div');card.className='metric';card.innerHTML='<span></span><strong></strong>';card.querySelector('span').textContent=label;card.querySelector('strong').textContent=Number(value).toLocaleString();grid.append(card);});const body=$('statsBody');body.replaceChildren();(stats.games||[]).filter(row=>row.slug!=='home').forEach(row=>{const tr=document.createElement('tr');const rate=row.starts?Math.round(row.completes/row.starts*100)+'%':'–';[gameLabel(row.slug),row.visits,row.starts,row.completes,row.shares,row.responses,rate].forEach(value=>{const td=document.createElement('td');td.textContent=value;tr.append(td);});body.append(tr);});$('statsEmpty').hidden=body.children.length>0;}
-
-  function preview(){try{localStorage.setItem('gatchi_admin_preview',JSON.stringify(config));}catch(_){}window.open('../?admin_preview=1&v='+Date.now(),'_blank','noopener');}
-  async function saveDraft(){const button=$('saveDraftBtn');buttonBusy(button,true,'저장 중…');try{await AdminAPI.saveDraft(config,serverState&&serverState.draft_note);setDirty(false);notice('초안을 저장했습니다. 이용자 화면에는 아직 반영되지 않았습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}finally{buttonBusy(button,false);}}
-  async function publishConfirmed(event){event.preventDefault();const button=$('confirmPublish');buttonBusy(button,true,'게시 중…');try{await AdminAPI.publish(config,$('publishNote').value.trim());$('publishDialog').close();await loadState();notice('새 설정을 게시했습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}finally{buttonBusy(button,false);}}
+  async function restoreVersion(version){
+    if(writing)return notice('저장이 끝난 뒤 다시 시도해 주세요.');
+    if(!confirm(version+'번 화면 설정을 새 버전으로 게시합니다. 현재 초안은 덮어씁니다. 게임 코드와 통계는 복원되지 않습니다. 계속할까요?'))return;
+    clearTimeout(autosaveTimer);writing=true;
+    try{await AdminAPI.write('restore',serverState.revision,null,null,version);localStorage.removeItem(LOCAL_DRAFT);await loadState();notice('설정을 복원하여 게시했습니다.');}catch(error){notice(AdminAPI.messageFrom(error),true);}finally{writing=false;}
+  }
+  function dateRange(days){const today=new Date(Date.now()+9*3600000).toISOString().slice(0,10);const start=new Date(today+'T00:00:00Z');start.setUTCDate(start.getUTCDate()-days+1);return [start.toISOString().slice(0,10),today];}
+  async function loadStats(days,custom=false){
+    statsDays=days;const request=++statsRequest;
+    if(!custom){const range=dateRange(days);$('statsFrom').value=range[0];$('statsTo').value=range[1];}
+    const from=$('statsFrom').value,to=$('statsTo').value;
+    if(!from||!to||to<from||(Date.parse(to)-Date.parse(from))/86400000>89){$('statsStatus').textContent='기간은 1~90일로 선택해 주세요.';return;}
+    $('statsStatus').textContent='통계를 불러오는 중…';
+    try{
+      let stats;
+      try{stats=await AdminAPI.getStatsRange(from,to,$('statsBasis').value==='legacy');}
+      catch(e){if(e.code!=='PGRST202')throw e;stats=await AdminAPI.getStats(days);stats.fallback=true;stats.legacy=true;}
+      if(request!==statsRequest)return;
+      statsData=stats;renderStats(stats);
+      $('statsPeriod').textContent=stats.fallback?'최근 '+days+'×24시간 · 이전 집계':from+' ~ '+to+' · 한국 시간';
+      $('statsStatus').textContent=(stats.fallback?'날짜별 통계를 쓰려면 서버 개선 SQL을 적용해 주세요. 현재는 이전 집계입니다. ':'')+'마지막 갱신 '+new Date().toLocaleTimeString('ko-KR')+(stats.legacy?' · 기존 기록에는 테스트 접속·자동 추정이 포함됩니다.':' · 개선된 수집 기준. 오늘 수치는 아직 집계 중입니다.');
+    }catch(error){if(request!==statsRequest)return;$('statsStatus').textContent='통계를 불러오지 못했습니다. '+(statsData?'아래는 마지막으로 불러온 값입니다. ':'')+AdminAPI.messageFrom(error);if(!statsData){$('metricGrid').textContent='연결 후 수치를 표시합니다.';$('statsEmpty').hidden=true;}}
+  }
+  function metricValues(stats){const t=stats.totals||{};return [stats.visitors||0,(t.game_started||0)+(t.solo_started||0),(t.game_completed||0)+(t.solo_cleared||0)+(t.solo_failed||0),(t.invite_shared||0)+(t.result_shared||0),t.invite_opened||0,t.responded||0];}
+  function renderStats(stats){
+    const values=metricValues(stats),previous=stats.previous?metricValues(stats.previous):null;
+    const grid=$('metricGrid');grid.replaceChildren();
+    ['방문 브라우저','시작 기록','종료 기록','공유 시도','초대 링크 방문','친구 결과 도달'].forEach((label,i)=>{
+      const card=document.createElement('div');card.className='metric';const name=document.createElement('span');name.textContent=label;const value=document.createElement('strong');value.textContent=values[i].toLocaleString();card.append(name,value);
+      if(previous){const diff=document.createElement('small');const n=values[i]-previous[i];diff.textContent='직전 기간 대비 '+(n>0?'+':'')+n.toLocaleString();card.append(diff);}grid.append(card);
+    });
+    const body=$('statsBody');body.replaceChildren();const sort=$('statsSort').value;
+    (stats.games||[]).slice().sort((a,b)=>(b[sort]||0)-(a[sort]||0)).forEach(row=>{
+      const tr=document.createElement('tr');[gameLabel(row.slug),row.visits,row.starts,row.completes,row.shares,row.responses,stats.legacy?'이전 기준':'이벤트 수'].forEach(value=>{const td=document.createElement('td');td.textContent=value??0;tr.append(td);});body.append(tr);
+    });$('statsEmpty').hidden=body.children.length>0;
+    const chart=$('dailyChart');chart.replaceChildren();if(stats.from&&stats.to){
+      const map=new Map((stats.daily||[]).map(d=>[d.day,d]));const max=Math.max(1,...(stats.daily||[]).map(d=>Number(d.visitors)));let day=new Date(stats.from+'T00:00:00Z');
+      while(day.toISOString().slice(0,10)<=stats.to){const key=day.toISOString().slice(0,10),n=Number(map.get(key)?.visitors||0),col=document.createElement('div');col.className='daily-column';col.title=key+' 방문 브라우저 '+n;const bar=document.createElement('i');bar.style.height=(n/max*85+2)+'px';const count=document.createElement('b');count.textContent=n;const label=document.createElement('small');label.textContent=key.slice(5);col.append(count,bar,label);chart.append(col);day.setUTCDate(day.getUTCDate()+1);}
+    }
+  }
+  function preview(){if(!validConfig())return;try{localStorage.setItem('gatchi_admin_preview',JSON.stringify(config));}catch(_){return notice('미리보기를 준비하지 못했습니다.',true);}window.open('../?admin_preview=1&v='+Date.now(),'_blank','noopener');}
+  async function saveDraft(automatic=false){
+    if(writing||!dirty||!validConfig(!automatic))return;
+    clearTimeout(autosaveTimer);writing=true;const snapshot=clone(config),button=$('saveDraftBtn');buttonBusy(button,true,'저장 중…');
+    try{serverState=await AdminAPI.write('draft',serverState.revision,snapshot,serverState.draft_note);savedFingerprint=fingerprint(snapshot);setDirty(fingerprint(config)!==savedFingerprint);if(!dirty){localStorage.removeItem(LOCAL_DRAFT);$('localSaveStatus').textContent='서버에 초안 저장됨 · 미게시';}if(!automatic)notice('초안을 저장했습니다. 이용자 화면에는 아직 반영되지 않았습니다.');}
+    catch(error){autosavePaused=true;notice(AdminAPI.messageFrom(error),true);$('localSaveStatus').textContent='서버 저장 실패 · 내 초안을 내려받아 보관할 수 있습니다.';}
+    finally{writing=false;buttonBusy(button,false);if(dirty&&!autosavePaused)autosaveTimer=setTimeout(()=>saveDraft(true),1800);}
+  }
+  function diffSummary(){
+    const before=normalize(serverState.published),items=[];
+    config.games.forEach(g=>{const old=before.games.find(x=>x.slug===g.slug);if(fingerprint(old)!==fingerprint(g)){const fields=[];if(old?.visibility!==g.visibility)fields.push(({listed:'공개',hidden:'숨김',maintenance:'점검'})[g.visibility]);if(old?.sortOrder!==g.sortOrder)fields.push('순서');if(old?.featured!==g.featured)fields.push('추천');items.push(g.title+' · '+(fields.join(', ')||'내용 수정'));}});
+    if(fingerprint(before.site)!==fingerprint(config.site))items.push('홈 메뉴·디자인 설정 변경');
+    if(fingerprint(before.letter)!==fingerprint(config.letter))items.push('편지지·글꼴·스티커 설정 변경');
+    if(fingerprint(before.ads)!==fingerprint(config.ads))items.push('광고 설정 변경');
+    if(!serverState.published)items.unshift('첫 설정 게시');return items;
+  }
+  function preparePublish(){if(writing)return notice('초안 저장이 끝난 뒤 게시해 주세요.');if(!validConfig())return;clearTimeout(autosaveTimer);pendingPublish=clone(config);const list=$('publishChanges');list.replaceChildren();const items=diffSummary();(items.length?items:['현재 게시본과 변경 사항이 없습니다.']).forEach(x=>{const li=document.createElement('li');li.textContent=x;list.append(li);});$('publishNote').value='';$('publishError').textContent='';$('publishDialog').showModal();}
+  async function publishConfirmed(event){
+    event.preventDefault();if(writing||!pendingPublish)return;writing=true;clearTimeout(autosaveTimer);const button=$('confirmPublish');buttonBusy(button,true,'게시 중…');
+    try{serverState=await AdminAPI.write('publish',serverState.revision,pendingPublish,$('publishNote').value.trim());config=normalize(serverState.published);savedFingerprint=fingerprint(config);localStorage.removeItem(LOCAL_DRAFT);$('publishDialog').close();setDirty(false);renderAll();notice('새 설정을 게시했습니다.');}
+    catch(error){notice(AdminAPI.messageFrom(error),true);$('publishError').textContent=AdminAPI.messageFrom(error);}finally{writing=false;buttonBusy(button,false);}
+  }
+  function downloadDraft(){const url=URL.createObjectURL(new Blob([JSON.stringify({config,revision:serverState.revision},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='같이놀자-관리초안.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+  async function loadInquiries(){
+    const request=++loadInquiries.request;$('inquiryStatus').textContent='불러오는 중…';
+    try{const rows=await AdminAPI.getInquiries($('inquiryFilter').value,inquiryOffset);if(request!==loadInquiries.request)return;$('inquiryList').replaceChildren();$('inquiryStatus').textContent=rows.length?'상태 변경은 문의함에 바로 저장됩니다. 이메일은 발송하지 않습니다.':'이 조건에 해당하는 문의가 없습니다.';$('inquiryPrev').disabled=inquiryOffset===0;$('inquiryNext').disabled=rows.length<20;
+      rows.forEach(row=>{const card=document.createElement('details');card.className='inquiry-card';const summary=document.createElement('summary');summary.textContent=({new:'신규',reviewing:'확인 중',replied:'답변 완료',closed:'종료'})[row.status]+' · '+(row.kind==='partnership'?'제휴':row.category||'문의')+' · '+new Date(row.created_at).toLocaleDateString('ko-KR');const info=document.createElement('p');info.textContent=[row.name,row.company,row.email,row.phone].filter(Boolean).join(' · ');const message=document.createElement('p');message.className='inquiry-message';message.textContent=row.message;const label=document.createElement('label');label.textContent='처리 상태';const select=document.createElement('select');Object.entries({new:'신규',reviewing:'확인 중',replied:'답변 완료',closed:'종료'}).forEach(([value,text])=>select.add(new Option(text,value)));select.value=row.status;select.onchange=async()=>{const old=row.status;select.disabled=true;try{const result=await AdminAPI.updateInquiry(row.id,select.value);if(!result?.length)throw new Error('문의 상태를 저장하지 못했습니다.');await loadInquiries();}catch(e){select.value=old;notice(AdminAPI.messageFrom(e),true);}finally{select.disabled=false;}};label.append(select);card.append(summary,info,message,label);$('inquiryList').append(card);});
+    }catch(e){if(request!==loadInquiries.request)return;$('inquiryStatus').textContent='문의 조회 실패 · '+AdminAPI.messageFrom(e);}
+  }
+  loadInquiries.request=0;
+  function renderLetters(){
+    config.letter=config.letter||{};const prefs=config.letter;
+    const list=$('letterPapers');list.replaceChildren();
+    const papers=window.LETTER_TEMPLATES||[];prefs.papers=prefs.papers||{};
+    papers.slice().sort((a,b)=>(prefs.papers[a.id]?.order??papers.indexOf(a))-(prefs.papers[b.id]?.order??papers.indexOf(b))).forEach((p,index,ordered)=>{
+      const row=document.createElement('article');row.className='paper-setting';const art=document.createElement('div');art.className='paper-thumb';window.LetterDesign.paint(art,p);art.setAttribute('aria-hidden','true');const name=document.createElement('strong');name.textContent=p.name||p.title||p.id;const controls=document.createElement('div');
+      [['표시','enabled',true],['추천','featured',false]].forEach(([text,key,fallback])=>{const label=document.createElement('label');label.className='check';const input=document.createElement('input');input.type='checkbox';input.checked=prefs.papers[p.id]?.[key]??fallback;input.onchange=()=>{if(key==='enabled'&&!input.checked&&papers.filter(x=>prefs.papers[x.id]?.enabled!==false).length<=1){input.checked=true;return notice('편지지는 한 가지 이상 표시해 주세요.',true);}prefs.papers[p.id]={...prefs.papers[p.id],[key]:input.checked};changed();};label.append(input,document.createTextNode(text));controls.append(label);});
+      [['↑',-1],['↓',1]].forEach(([text,d])=>{const b=document.createElement('button');b.type='button';b.textContent=text;b.setAttribute('aria-label',name.textContent+' 순서 '+text);b.disabled=!ordered[index+d];b.onclick=()=>{const next=ordered.slice();[next[index],next[index+d]]=[next[index+d],next[index]];next.forEach((x,i)=>{prefs.papers[x.id]={...prefs.papers[x.id],order:i};});changed();renderLetters();};controls.append(b);});row.append(art,name,controls);list.append(row);
+    });
+    [['letterFonts','fonts',Object.entries(window.LetterDesign.fonts).map(([id,f])=>({id,name:f.name}))],['letterStickers','stickers',window.LetterDesign.stickers]].forEach(([target,key,options])=>{const parent=$(target);parent.replaceChildren();options.forEach(o=>{const label=document.createElement('label');label.className='check';const box=document.createElement('input');box.type='checkbox';box.checked=!Array.isArray(prefs[key])||prefs[key].includes(o.id);box.onchange=()=>{const selected=[...parent.querySelectorAll('input:checked')].map(x=>x.value);if(!selected.length){box.checked=true;return notice('한 가지 이상 남겨 주세요.',true);}prefs[key]=selected;changed();};box.value=o.id;label.append(box,document.createTextNode(o.name));parent.append(label);});});
+  }
 
   function bind(){
     $('loginForm').addEventListener('submit',login);$('logoutBtn').onclick=logout;
     $('adminNav').onclick=e=>{const button=e.target.closest('[data-view]');if(button)switchView(button.dataset.view);};
-    $('gameSearch').oninput=renderGames;$('addGameBtn').onclick=addGame;$('gameEditor').onsubmit=saveGame;$('closeGameEditor').onclick=()=>{$('gameEditor').hidden=true;editingIndex=-1;};$('removeGameBtn').onclick=removeGame;$('gameImageFile').onchange=uploadGameImage;
+    $('gameSearch').oninput=renderGames;$('contentFilter').onchange=$('visibilityFilter').onchange=renderGames;$('gameEditor').oninput=saveGame;$('addGameBtn').onclick=addGame;$('gameEditor').onsubmit=saveGame;$('closeGameEditor').onclick=()=>{$('gameEditor').hidden=true;editingIndex=-1;};$('removeGameBtn').onclick=removeGame;$('gameImageFile').onchange=uploadGameImage;
     $('addMenuBtn').onclick=addMenu;$('designForm').oninput=readDesign;$('homeHeroImageFile').onchange=uploadHomeHeroImage;$('resetHomeHeroImage').onclick=resetHomeHeroImage;$('adsEnabled').onchange=e=>{config.ads.enabled=e.target.checked;changed();};$('addAdBtn').onclick=addAd;
     document.querySelector('.preview-switch').onclick=e=>{const button=e.target.closest('[data-preview]');if(!button)return;document.querySelectorAll('.preview-switch button').forEach(b=>b.classList.toggle('active',b===button));renderPreview(button.dataset.preview);};
     $('periodTabs').onclick=e=>{const button=e.target.closest('[data-days]');if(!button)return;document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.toggle('active',b===button));loadStats(Number(button.dataset.days));};
-    $('previewBtn').onclick=preview;$('saveDraftBtn').onclick=saveDraft;$('publishBtn').onclick=()=>{$('publishNote').value='';$('publishDialog').showModal();};$('closePublishDialog').onclick=$('cancelPublish').onclick=()=>$('publishDialog').close();$('publishForm').onsubmit=publishConfirmed;
+    $('previewBtn').onclick=preview;$('saveDraftBtn').onclick=()=>saveDraft(false);$('publishBtn').onclick=preparePublish;$('closePublishDialog').onclick=$('cancelPublish').onclick=()=>$('publishDialog').close();$('publishForm').onsubmit=publishConfirmed;
+    $('statsApply').onclick=()=>loadStats(statsDays,true);$('statsBasis').onchange=()=>loadStats(statsDays,true);$('statsSort').onchange=()=>{if(statsData)renderStats(statsData);};
+    $('inquiryFilter').onchange=()=>{inquiryOffset=0;loadInquiries();};$('inquiryRefresh').onclick=()=>loadInquiries();$('inquiryNext').onclick=()=>{inquiryOffset+=20;loadInquiries();};$('inquiryPrev').onclick=()=>{inquiryOffset=Math.max(0,inquiryOffset-20);loadInquiries();};
+    $('downloadDraft').onclick=downloadDraft;$('reloadState').onclick=()=>{if(!dirty||confirm('저장하지 않은 변경은 내려받아 보관해 주세요. 최신 서버 설정을 불러올까요?')){clearTimeout(autosaveTimer);if(writing)return notice('저장이 끝난 뒤 다시 시도해 주세요.');loadState().catch(e=>notice(AdminAPI.messageFrom(e),true));}};
+    $('recoverDraft').onclick=()=>{const saved=localSnapshot();if(!saved?.config)return;clearTimeout(autosaveTimer);autosavePaused=true;config=normalize(saved.config);if(saved.revision!==serverState.revision)notice('다른 기기의 변경이 있을 수 있어 자동 저장을 멈췄습니다. 내용을 내려받아 비교해 주세요.',true);serverState.revision=saved.revision;renderAll();changed();};
+    $('excludeTraffic').onchange=e=>{try{localStorage.setItem('gatchi_analytics_optout',e.target.checked?'1':'0');notice('이 브라우저의 새 방문부터 '+(e.target.checked?'통계에서 제외합니다.':'통계에 포함합니다.'));}catch(_){notice('브라우저 설정을 저장하지 못했습니다.',true);}};
+    $('mobileLogout').onclick=logout;
     window.addEventListener('beforeunload',event=>{if(dirty){event.preventDefault();event.returnValue='';}});
   }
   bind();
