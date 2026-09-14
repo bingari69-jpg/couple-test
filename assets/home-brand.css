@@ -1,0 +1,9 @@
+/* Keep the supplied artwork intact; frame its generous outer whitespace. */
+.topbar:has(.home-brand),.hub-topbar:has(.home-brand){height:120px;padding:16px 0 20px}
+.brand.home-brand{display:block;letter-spacing:0;line-height:1;white-space:normal}
+.home-brand .brand-art{position:relative;display:block;width:98px;height:80px;overflow:hidden;mix-blend-mode:multiply}
+.home-brand .brand-art img{position:absolute;display:block;width:124px;height:124px;max-width:none;left:-13px;top:-21px}
+.topbar:has(.home-brand--compact){height:86px;padding:0}
+.brand.home-brand--compact{display:block}
+.home-brand--compact .brand-art{width:68px;height:56px}
+.home-brand--compact .brand-art img{width:86px;height:86px;left:-9px;top:-14px}
