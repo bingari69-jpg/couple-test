@@ -27,10 +27,11 @@
   if(mode==='online'&&state.reason==='limit'&&finished()&&!busy)$('resultNote').textContent='120번의 승부! 남은 돌이 많은 쪽이 이겼어요. 한판 더 겨뤄볼까요?';
  }
  function paintGauge(){
-  $('powerLabel').textContent=charging?'힘 '+power+' · '+(power<40?'살짝':power<80?'힘 있게':'시원하게'):'방향을 정하고 힘 모으기를 눌러요';
+  $('powerLabel').textContent=charging?(power>=95?'MAX! · 먼 돌을 노려요':'힘 '+power+' · '+(power<40?'살짝':power<80?'밀어내기':'강하게 밀기')):'맨 끝 MAX 구간에서 먼 돌을 노려요';
   $('powerFill').style.width=((power-10)/90*100)+'%';$('powerNeedle').style.left=((power-10)/90*100)+'%';
   $('powerMeter').setAttribute('aria-valuenow',String(power));$('powerMeter').setAttribute('aria-valuetext','힘 '+power);
   $('powerMeter').classList.toggle('charging',charging);
+  $('powerMeter').classList.toggle('max-hit',charging&&power>=95);
  }
  function beginCharge(){if(!canPlay()||selected<0||document.hidden)return;charging=true;chargeStart=performance.now();power=10;render();
   function tick(now){if(!charging)return;if(document.hidden||!canPlay()){cancelCharge();render();return;}power=R.gaugePower(now-chargeStart);paintGauge();chargeFrame=requestAnimationFrame(tick);}chargeFrame=requestAnimationFrame(tick);
@@ -50,14 +51,14 @@
   if(selected>=0){angle=R.aim(state.stones[selected],target);render();}else $('shotNote').textContent='먼저 내 돌을 골라주세요. 그다음 방향을 정할 수 있어요.';
  });
  document.querySelectorAll('[data-angle]').forEach(b=>b.addEventListener('click',()=>{if(canPlay()&&!charging&&selected>=0){angle=+b.dataset.angle;render();}}));
- $('place').addEventListener('click',()=>{if(!canPlay()||selected<0||document.hidden)return;if(!charging){beginCharge();return;}const elapsed=performance.now()-chargeStart;if(elapsed<250)return;power=R.gaugePower(elapsed);cancelCharge();$('shotNote').textContent='방금 힘 '+power+'로 튕겼어요. 다음엔 타이밍을 바꿔봐요.';if(mode==='online')online.shoot(selected,angle,power);else perform(selected,angle,power);});
+ $('place').addEventListener('click',()=>{if(!canPlay()||selected<0||document.hidden)return;if(!charging){beginCharge();return;}const elapsed=performance.now()-chargeStart;if(elapsed<250)return;power=R.gaugePower(elapsed);cancelCharge();$('shotNote').textContent=power>=95?'방금 힘 '+power+' · MAX 성공! 먼 돌을 향해 톡!':'방금 힘 '+power+'로 밀었어요. 먼 돌은 MAX 구간을 노려봐요.';if(mode==='online')online.shoot(selected,angle,power);else perform(selected,angle,power);});
  $('place').addEventListener('keydown',e=>{if(e.repeat&&(e.code==='Space'||e.code==='Enter'))e.preventDefault();});
  $('cancelCharge').addEventListener('click',()=>{cancelCharge();power=10;render();});
  $('start').addEventListener('click',()=>start());$('replay').addEventListener('click',()=>{if(mode==='online')online.rematch();else start(true);});
  document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{if(mode==='online'&&b.dataset.mode!=='online')online.leave();mode=b.dataset.mode;options();}));
  $('helpOpen').addEventListener('click',()=>{cancelCharge();render();$('helpDialog').showModal();});$('helpClose').addEventListener('click',()=>$('helpDialog').close());
  $('settings').addEventListener('click',()=>{cancelCharge();render();if(!state.shots&&mode!=='online'){lobby();return;}$('leaveNote').textContent=mode==='online'?'판은 서버에 남아 있어요. 초대 링크를 같은 브라우저에서 열면 돌아올 수 있어요.':'지금 판을 마치고 새 판을 골라요.';$('newDialog').showModal();});$('keepPlaying').addEventListener('click',()=>$('newDialog').close());$('newGame').addEventListener('click',()=>{$('newDialog').close();lobby();});
- online=window.AlkkagiOnline.attach({mode:()=>mode,setMode(value){mode=value;options();},render,apply(next){const previous=state.shots,visible=!$('game').hidden;let frames=[];if(visible&&next.shots===previous+1&&next.last){const last=next.last,r=R.shoot({stones:last.before,turn:last.turn,shots:previous,winner:0,draw:false},last.stone,last.angle,last.power);if(r)frames=r.frames;}
+ online=window.AlkkagiOnline.attach({mode:()=>mode,setMode(value){mode=value;options();},render,apply(next){const previous=state.shots,visible=!$('game').hidden;let frames=[];if(visible&&next.shots===previous+1&&next.last){const last=next.last,r=R.shoot({stones:last.before,turn:last.turn,shots:previous,winner:0,draw:false,physicsVersion:next.physicsVersion},last.stone,last.angle,last.power);if(r)frames=r.frames;}
   if(frames.length){animate(next,frames);}else{const changed=next.shots!==state.shots||next.winner!==state.winner||next.draw!==state.draw||next.turn!==state.turn||next.round!==state.round;if(changed){stop();selected=-1;}state=next;if(!busy)view=next.stones;}
  }});
  window.addEventListener('pagehide',stop);window.addEventListener('pageshow',()=>{if(!$('game').hidden){view=state.stones;render();if(mode==='ai'&&!busy)scheduleBot();}});

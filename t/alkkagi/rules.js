@@ -2,15 +2,16 @@
  'use strict';
  const RADIUS=.035,DT=1/120,DRAG=.985,STEPS=720;
  const round=n=>Math.round(n*1e6)/1e6;
- const FORMATION=[[.22,.64],[.46,.64],[.70,.64],[.34,.82],[.62,.82]];
- function create(starter=1){return {stones:Array.from({length:10},(_,id)=>{const [x,y]=FORMATION[id%5];return {id,color:id<5?1:2,x:round(id<5?x:1-x),y:round(id<5?y:1-y),alive:true};}),turn:starter===2?2:1,shots:0,winner:0,draw:false};}
+ const FORMATION=[[.18,.72],[.46,.72],[.74,.72],[.32,.88],[.64,.88]];
+ function create(starter=1){return {stones:Array.from({length:10},(_,id)=>{const [x,y]=FORMATION[id%5];return {id,color:id<5?1:2,x:round(id<5?x:1-x),y:round(id<5?y:1-y),alive:true};}),turn:starter===2?2:1,shots:0,winner:0,draw:false,physicsVersion:2};}
+ function launchSpeed(power,version=2){return version===1?.35+power*.0225:power>=95?1.95:.35+(power-10)/84*.9;}
  // One full low-high-low cycle. The shot samples the clock again on release.
- function gaugePower(elapsed){const phase=((Math.max(0,elapsed)%2600)/1300);return Math.round(10+90*(phase<=1?phase:2-phase));}
+ function gaugePower(elapsed){const phase=((Math.max(0,elapsed)*1.5%2600)/1300);return Math.round(10+90*(phase<=1?phase:2-phase));}
  function counts(stones){return [stones.filter(s=>s.alive&&s.color===1).length,stones.filter(s=>s.alive&&s.color===2).length];}
  function shoot(state,id,angle,power,record=true){
   if(state.winner||state.draw||!Number.isInteger(id)||!Number.isInteger(angle)||angle<0||angle>359||!Number.isInteger(power)||power<10||power>100)return null;
   const chosen=state.stones.find(s=>s.id===id);if(!chosen||!chosen.alive||chosen.color!==state.turn)return null;
-  const stones=state.stones.map(s=>({...s,vx:0,vy:0})),p=stones[id],speed=.35+power*.0225,rad=angle*Math.PI/180,frames=[];
+  const stones=state.stones.map(s=>({...s,vx:0,vy:0})),p=stones[id],speed=launchSpeed(power,state.physicsVersion),rad=angle*Math.PI/180,frames=[];
   p.vx=Math.cos(rad)*speed;p.vy=Math.sin(rad)*speed;
   const frame=()=>stones.map(({vx,vy,...s})=>({...s}));if(record)frames.push(frame());
   for(let step=0;step<STEPS;step++){
@@ -26,7 +27,7 @@
   }
   const final=stones.map(({vx,vy,...s})=>({...s,x:round(s.x),y:round(s.y)})),[black,white]=counts(final),shots=state.shots+1;
   const finished=black===0||white===0||shots>=120,winner=finished?(black===white?0:black>white?1:2):0;
-  return {state:{stones:final,shots,turn:finished?state.turn:3-state.turn,winner,draw:finished&&!winner},frames};
+  return {state:{stones:final,shots,turn:finished?state.turn:3-state.turn,winner,draw:finished&&!winner,physicsVersion:state.physicsVersion===1?1:2},frames};
  }
  function aim(from,to){return (Math.round(Math.atan2(to.y-from.y,to.x-from.x)*180/Math.PI)+360)%360;}
  function choose(state){
@@ -40,5 +41,5 @@
   }
   return best;
  }
- return {RADIUS,create,counts,shoot,aim,choose,gaugePower};
+ return {RADIUS,create,counts,shoot,aim,choose,gaugePower,launchSpeed};
 });

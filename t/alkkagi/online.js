@@ -20,7 +20,7 @@
    if(code&&code!==s.code.toUpperCase())return;
    if(snapshot&&s.version<snapshot.version)return;
    snapshot=s;code=s.code.toUpperCase();fresh=true;terminal=false;
-   hooks.apply({stones:s.board,shots:s.shots,turn:s.turn,winner:s.winner,draw:s.status==='finished'&&!s.winner,last:s.last,reason:s.reason,round:s.round,starter:s.starter},s.me);
+   hooks.apply({stones:s.board,shots:s.shots,turn:s.turn,winner:s.winner,draw:s.status==='finished'&&!s.winner,last:s.last,reason:s.reason,round:s.round,starter:s.starter,physicsVersion:s.physicsVersion||1},s.me);
   }
   function show(){const entering=!active;active=true;$('lobby').hidden=true;$('game').hidden=false;document.body.classList.add('playing');history.replaceState(null,'',location.pathname+'?mode=online#room='+code);hooks.render();schedule();if(entering)window.scrollTo({top:0,behavior:'auto'});}
   function schedule(){clearTimeout(poll);if(active&&!terminal&&!document.hidden)poll=setTimeout(refresh,fresh?1500:4000);}
@@ -62,7 +62,7 @@
    $('blackName').textContent=s.hostName+(s.me===1?' (나)':'');$('whiteName').textContent=(s.guestName||'기다리는 친구')+(s.me===2?' (나)':'');
    $('blackSeat').classList.toggle('active',s.status==='playing'&&s.turn===1);$('whiteSeat').classList.toggle('active',s.status==='playing'&&s.turn===2);
    $('roomTitle').textContent=s.status==='waiting'?'친구가 오면 한판 시작!':'멀리 있어도, 같은 알까기판';
-   $('roomNote').textContent=s.status==='waiting'?'내가 흑돌 다섯 개, 친구가 백돌 다섯 개예요. 아래 버튼으로 초대해주세요.':'이번 판은 '+(s.starter===2?'백돌':'흑돌')+'부터! 방향을 정하고, 힘 게이지를 멈춰 튕겨요.';
+   $('roomNote').textContent=s.status==='waiting'?'내가 흑돌 다섯 개, 친구가 백돌 다섯 개예요. 아래 버튼으로 초대해주세요.':'이번 판은 '+(s.starter===2?'백돌':'흑돌')+'부터! '+(s.physicsVersion===2?'방향을 정하고, 힘 게이지를 멈춰 튕겨요.':'이 판은 기존 힘 규칙으로 진행돼요.');
    $('connectionMessage').textContent=notice||(working?'서버에서 확인하고 있어요…':fresh?'연결됐어요 · 각자 휴대폰에서 번갈아':'다시 연결하고 있어요…');
    $('reconnect').hidden=fresh&&!notice;$('reconnect').disabled=working||reading;
    $('turnStatus').textContent=!fresh?'연결을 확인할 때까지 잠시 기다려주세요.':working?'확인하고 있어요…':s.status==='waiting'?'초대 링크를 보내고 친구를 기다려요.':s.status==='finished'?(s.reason==='draw'?'무승부! 팽팽한 한판이었어요.':(s.winner===s.me?'내가 이겼어요!':'친구가 이겼어요!')):s.turn===s.me?'내 차례예요. 어느 돌을 튕길까요?':'친구 차례예요. 다음 한 방을 생각해봐요.';
