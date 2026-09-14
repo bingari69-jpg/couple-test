@@ -60,7 +60,7 @@
       schemaVersion: 1,
       site: {
         name: '같이놀자', headingFont: 'jua', bodyFont: 'pretendard', fontScale: '1',
-        primaryColor: '#f66b59', secondaryColor: '#8972bb', backgroundColor: '#fffbf5',
+        primaryColor: '#f66b59', secondaryColor: '#8972bb', backgroundColor: '#fffbf5', homeHeroImage: '',
         menu: clone(DEFAULT_MENU)
       },
       games: localGames(),
@@ -233,16 +233,22 @@
   function addMenu(){config.site.menu.push({id:'menu-'+Date.now(),label:'새 메뉴',href:'./',enabled:true});changed();renderMenus();}
 
   function renderDesign() {
-    const site=config.site;$('siteName').value=site.name;$('headingFont').value=site.headingFont;$('bodyFont').value=site.bodyFont;$('fontScale').value=String(site.fontScale);$('primaryColor').value=site.primaryColor;$('secondaryColor').value=site.secondaryColor;$('backgroundColor').value=site.backgroundColor;
+    const site=config.site;$('siteName').value=site.name;$('headingFont').value=site.headingFont;$('bodyFont').value=site.bodyFont;$('fontScale').value=String(site.fontScale);$('primaryColor').value=site.primaryColor;$('secondaryColor').value=site.secondaryColor;$('backgroundColor').value=site.backgroundColor;$('homeHeroImage').value=site.homeHeroImage||'';
   }
-  function readDesign(){const site=config.site;site.name=$('siteName').value.trim()||'같이놀자';site.headingFont=$('headingFont').value;site.bodyFont=$('bodyFont').value;site.fontScale=$('fontScale').value;site.primaryColor=$('primaryColor').value;site.secondaryColor=$('secondaryColor').value;site.backgroundColor=$('backgroundColor').value;changed();}
+  function readDesign(){const site=config.site;site.name=$('siteName').value.trim()||'같이놀자';site.headingFont=$('headingFont').value;site.bodyFont=$('bodyFont').value;site.fontScale=$('fontScale').value;site.primaryColor=$('primaryColor').value;site.secondaryColor=$('secondaryColor').value;site.backgroundColor=$('backgroundColor').value;site.homeHeroImage=$('homeHeroImage').value.trim();changed();}
+  async function uploadHomeHeroImage(){
+    const file=$('homeHeroImageFile').files[0];if(!file)return;const label=$('homeHeroImageFile').closest('.upload');buttonBusy(label,true,'올리는 중…');
+    try{config.site.homeHeroImage=await AdminAPI.uploadImage(file,'home-hero');$('homeHeroImage').value=config.site.homeHeroImage;changed();notice('편지 메인 이미지가 등록됐습니다. 미리보기에서 확인해 주세요.');}
+    catch(error){notice(AdminAPI.messageFrom(error),true);}finally{buttonBusy(label,false);$('homeHeroImageFile').value='';}
+  }
+  function resetHomeHeroImage(){config.site.homeHeroImage='';$('homeHeroImage').value='';changed();notice('기존 메인 꽃 편지 봉투 이미지로 되돌렸습니다.');}
   function fontValue(name){return name==='jua'?'Gatchi, sans-serif':name==='gaegu'?'Gaegu, cursive':name==='system'?'Arial, sans-serif':'Pretendard, Arial, sans-serif';}
   function renderPreview(mode) {
     const phone=$('designPreview');if(!phone||!config)return;mode=mode||document.querySelector('.preview-switch .active').dataset.preview;
     const site=config.site;phone.style.setProperty('--mock-primary',site.primaryColor);phone.style.setProperty('--mock-bg',site.backgroundColor);phone.style.setProperty('--mock-heading',fontValue(site.headingFont));phone.style.setProperty('--mock-body',fontValue(site.bodyFont));phone.style.fontSize=(16*Number(site.fontScale||1))+'px';
     if(mode==='tarot'){phone.innerHTML='<div class="mock-tarot"><div>✦ '+escapeHtml(site.name)+' ✦</div><h3>나와 너의 마음 타로</h3><div class="mock-tarot-card">☀</div><p>우리의 카드를 한 장 골라봐.</p></div>';return;}
     if(mode==='game'){phone.innerHTML='<div class="mock-brand">'+escapeHtml(site.name)+'<b>♥</b></div><div class="mock-hero"><small>네 감각을 믿어봐!</small><h3>10초를<br>맞혀볼까?</h3><p>속으로 세고, 딱 지금이라고 느낄 때 눌러봐.</p><span class="mock-button">한판 시작하기</span></div><div class="mock-card"><strong>이번 판, 뭐 걸까?</strong><p>커피 한 잔 · 밥 한 끼 · 그냥 하기</p></div>';return;}
-    phone.innerHTML='<div class="mock-brand">'+escapeHtml(site.name)+'<b>♥</b></div><div class="mock-hero"><small>마음을 전하고 같이 놀아요</small><h3><span style="color:var(--mock-primary)">너에게</span> 보내고<br>싶은 게 있어.</h3><p>특별한 날에도, 그냥 네 생각이 난 날에도.</p><span class="mock-button">편지 한 장 보내기</span></div><div class="mock-card"><strong>조금 더 놀다 갈래?</strong><p>가위바위보 · 마음동물 · 타로</p></div>';
+    const hero=/^https:\/\//.test(site.homeHeroImage||'')?site.homeHeroImage:'../assets/art/envelope-hero.png';phone.innerHTML='<div class="mock-brand">'+escapeHtml(site.name)+'<b>♥</b></div><div class="mock-hero"><small>2026 한가위 마음편지</small><h3><span style="color:var(--mock-primary)">이번 추석,</span><br>고마운 마음을<br>편지로 전해봐.</h3><p>평소 못다 한 감사를 한가위 편지지에 담아보세요.</p><img class="mock-hero-image" src="'+escapeHtml(hero)+'" alt="편지 메인 이미지 미리보기"><span class="mock-button">추석 감사편지 만들기</span></div><div class="mock-card"><strong>조금 더 놀다 갈래?</strong><p>가위바위보 · 마음동물 · 타로</p></div>';
   }
   function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
@@ -274,7 +280,7 @@
     $('loginForm').addEventListener('submit',login);$('logoutBtn').onclick=logout;
     $('adminNav').onclick=e=>{const button=e.target.closest('[data-view]');if(button)switchView(button.dataset.view);};
     $('gameSearch').oninput=renderGames;$('addGameBtn').onclick=addGame;$('gameEditor').onsubmit=saveGame;$('closeGameEditor').onclick=()=>{$('gameEditor').hidden=true;editingIndex=-1;};$('removeGameBtn').onclick=removeGame;$('gameImageFile').onchange=uploadGameImage;
-    $('addMenuBtn').onclick=addMenu;$('designForm').oninput=readDesign;$('adsEnabled').onchange=e=>{config.ads.enabled=e.target.checked;changed();};$('addAdBtn').onclick=addAd;
+    $('addMenuBtn').onclick=addMenu;$('designForm').oninput=readDesign;$('homeHeroImageFile').onchange=uploadHomeHeroImage;$('resetHomeHeroImage').onclick=resetHomeHeroImage;$('adsEnabled').onchange=e=>{config.ads.enabled=e.target.checked;changed();};$('addAdBtn').onclick=addAd;
     document.querySelector('.preview-switch').onclick=e=>{const button=e.target.closest('[data-preview]');if(!button)return;document.querySelectorAll('.preview-switch button').forEach(b=>b.classList.toggle('active',b===button));renderPreview(button.dataset.preview);};
     $('periodTabs').onclick=e=>{const button=e.target.closest('[data-days]');if(!button)return;document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.toggle('active',b===button));loadStats(Number(button.dataset.days));};
     $('previewBtn').onclick=preview;$('saveDraftBtn').onclick=saveDraft;$('publishBtn').onclick=()=>{$('publishNote').value='';$('publishDialog').showModal();};$('closePublishDialog').onclick=$('cancelPublish').onclick=()=>$('publishDialog').close();$('publishForm').onsubmit=publishConfirmed;

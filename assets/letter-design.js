@@ -51,6 +51,24 @@
       out=Array.from({length:16},(_,i)=>`<rect x="${28+i*35}" y="${bottom?78+(i*23)%60:15+(i*17)%60}" width="${i%2?5:9}" height="${i%2?16:5}" rx="2" fill="${[a,'#e9be56','#92b5b4','#dca5ba'][i%4]}" transform="rotate(${i%2?25:-25} ${28+i*35} ${bottom?110:45})"/>`).join('');
       if(!bottom)out+=put(sticker(t.id==='party-pop'?'cake':'gift').art,266,40,1.05);
     }
+    if(t.style==='한가위') {
+      const moonArt='<circle cx="32" cy="32" r="27" fill="#edc96c"/><circle cx="23" cy="23" r="3" fill="#d8ad4f" opacity=".45"/><circle cx="42" cy="39" r="5" fill="#d8ad4f" opacity=".35"/>';
+      const songpyeonArt='<path d="M7 43q25-38 50 0-25 24-50 0Z" fill="#9fbd88" stroke="#66805b" stroke-width="2"/><path d="M17 41q15-19 30 0" fill="none" stroke="#dce8c8" stroke-width="3"/>';
+      const persimmonArt='<circle cx="32" cy="36" r="22" fill="#dc8247"/><path d="M32 16q-7-12-16-3 9 8 16 3 7-12 16-3-8 8-16 3Z" fill="#6f895a"/>';
+      const roofArt='<path d="M5 31q27-8 54 0L48 15H16Z" fill="#607269"/><path d="M13 32v23m38-23v23M8 55h48" fill="none" stroke="#7b6046" stroke-width="4"/><rect x="25" y="35" width="14" height="20" fill="#e9b85c" opacity=".85"/>';
+      const cosmosArt='<path d="M32 30v31M32 43q-11-8-18 1m18 7q10-9 18-1" fill="none" stroke="#6f8b62" stroke-width="2.5"/><g fill="#d990aa"><ellipse cx="32" cy="17" rx="6" ry="14"/><ellipse cx="32" cy="17" rx="6" ry="14" transform="rotate(60 32 17)"/><ellipse cx="32" cy="17" rx="6" ry="14" transform="rotate(120 32 17)"/></g><circle cx="32" cy="17" r="5" fill="#e7c967"/>';
+      const cloudLine=`<path d="M35 ${bottom?108:70}q72-42 144 0t144 0 144 0 98 0" fill="none" stroke="${a}" stroke-width="2" opacity=".38"/>`;
+      if(t.id==='harvest-moon')out=bottom?cloudLine+put(sticker('leaf').art,455,57,.72,-18):put(moonArt,270,10,1.12)+cloudLine;
+      if(t.id==='moon-rabbit')out=bottom?put(songpyeonArt,96,74,.7,-8)+put(songpyeonArt,410,83,.55,8):put(moonArt,250,3,1.35)+put(sticker('bunny').art,276,35,.82);
+      if(t.id==='songpyeon')out=bottom?[70,160,250,340,430].map((x,i)=>put(songpyeonArt,x,72,.62,i%2?8:-7)).join(''):put(sticker('leaf').art,70,34,.6,-18)+put(sticker('leaf').art,455,28,.6,18);
+      if(t.id==='golden-field')out=bottom?`<path d="M0 132q95-54 190 0t190 0 220 0v28H0Z" fill="#d6b557" opacity=".65"/><path d="M60 145q55-70 110 0m95 0q55-85 110 0m65 0q40-62 80 0" fill="none" stroke="#9c7a2c" stroke-width="3"/>`:put(moonArt,440,8,.88)+`<path d="M38 82h240" stroke="${a}" opacity=".35"/>`;
+      if(t.id==='bojagi')out=bottom?`<path d="M0 80h600v80H0Z" fill="#d8b55b" opacity=".22"/><path d="M0 80h200v80H0Zm400 0h200v80H400Z" fill="#b45f62" opacity=".23"/><path d="M200 80h200v80H200Z" fill="#648b79" opacity=".23"/>`:put(sticker('ribbon').art,268,30,1.05)+`<path d="M55 82h490" stroke="${a}" opacity=".35"/>`;
+      if(t.id==='tile-lantern')out=bottom?`<path d="M0 127h600" stroke="#607269" stroke-width="10"/><path d="M30 127q30-28 60 0t60 0 60 0 60 0 60 0 60 0 60 0 60 0 60 0" fill="none" stroke="#607269" stroke-width="7"/>`:put(roofArt,254,7,1.25);
+      if(t.id==='persimmon-day')out=bottom?put(persimmonArt,80,71,.72)+put(persimmonArt,440,78,.62):`<path d="M0 30q145 75 295 2" fill="none" stroke="#7a654c" stroke-width="4"/>`+put(persimmonArt,90,43,.78)+put(sticker('leaf').art,190,25,.48,32);
+      if(t.id==='cosmos-road')out=bottom?[55,135,220,390,475,545].map((x,i)=>put(cosmosArt,x,74,.55+(i%2)*.13,i%2?8:-6)).join(''):put(cosmosArt,65,16,.66,-9)+put(cosmosArt,468,9,.72,9);
+      if(t.id==='family-window')out=bottom?`<path d="M0 116h600v44H0Z" fill="#9c6b45" opacity=".25"/><rect x="215" y="70" width="170" height="90" rx="6" fill="#e8bd68" opacity=".58"/><path d="M300 70v90M215 113h170" stroke="#8b6747" stroke-width="5"/>`:put(moonArt,268,11,.95)+put(heart,346,56,.35);
+      if(t.id==='cloudy-moon')out=bottom?cloudLine:put(moonArt,258,5,1.18)+`<path d="M140 70q45-48 90 0 46-55 96 0 48-42 96 0" fill="#f7f4e8" stroke="${a}" stroke-width="2" opacity=".92"/>`;
+    }
     return svg(out,600,160);
   }
   const fontCSS=id=>`"${(fonts[id]||fonts.sans).family}", "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif`;

@@ -41,6 +41,11 @@
     return heading ? '"Gatchi Title", Jua, "Malgun Gothic", sans-serif' : '"Pretendard Variable", Pretendard, "Malgun Gothic", system-ui, sans-serif';
   }
   function safeColor(value, fallback) { return /^#[0-9a-f]{6}$/i.test(value || '') ? value : fallback; }
+  function safeImage(value) { if(!value)return '';try { const url=new URL(value,location.href); return url.protocol==='https:'?url.href:''; } catch (_) { return ''; } }
+  function applyHomeHero(config) {
+    const image=document.querySelector('#letterHome .hero-art');if(!image)return;if(!image.dataset.defaultSrc)image.dataset.defaultSrc=image.getAttribute('src')||'';
+    image.src=safeImage(config.site&&config.site.homeHeroImage)||image.dataset.defaultSrc;
+  }
   function applyStyle(config) {
     const site = config.site || {};
     const slug = getSlug();
@@ -179,7 +184,7 @@
   function apply(config) {
     if (!valid(config)) return;
     current = config; window.APP_PUBLISHED_CONFIG = config;
-    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config); mountChallengeAds(config); mountLetterAds(config);
+    applyStyle(config); setBrandName(config.site.name); applyMenu(config); applyGame(config); applyHomeHero(config); mountHomeAds(config); mountResultAds(config); mountRecommendationAds(config); mountChallengeAds(config); mountLetterAds(config);
     if(getSlug()==='home')document.title=(config.site.name||'같이놀자')+' — 너에게 보내고 싶은 게 있어';
     setTimeout(()=>applyMenu(config),0);
     window.dispatchEvent(new CustomEvent('app-config-ready', { detail: config }));

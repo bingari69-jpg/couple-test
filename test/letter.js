@@ -18,13 +18,14 @@ const hash=p=>'#l='+Buffer.from(JSON.stringify(p)).toString('base64url');
 const tick=()=>new Promise(r=>setTimeout(r,10));
 async function main(){
  const d=load(),w=d.window,$=id=>w.document.getElementById(id);
- assert.equal($('templateGrid').children.length,16);
+ assert.equal($('templateGrid').children.length,26);
  assert.equal($('library').hidden,false);
+ assert.equal($('chuseokHero').hidden,false);assert.equal(w.CHUSEOK_LETTERS.examples.length,20);
  const press=(container,text)=>[...$(container).querySelectorAll('button')].find(x=>x.textContent===text).click();
  press('occasionFilters','생일');assert.equal($('templateGrid').children.length,16);
  assert.equal($('seasonFilters'),null,'분위기 필터는 없앴다');assert.equal($('empty').hidden,true);
  $('favoritesOnly').click();assert.equal($('empty').hidden,false);assert.equal($('viewTemplate').disabled,true);
- $('resetFilters').click();assert.equal($('templateGrid').children.length,16);
+ $('resetFilters').click();assert.equal($('templateGrid').children.length,26);
  $('viewTemplate').click();assert.equal($('detail').hidden,false);$('envelopeTab').click();assert.equal($('envelopePreview').hidden,false);
  $('sampleEnvelope').click();await tick();assert.equal($('paperPreview').hidden,false);
  $('useTemplate').click();assert.equal($('compose').hidden,false);assert.equal($('letterBody').value,'');
@@ -65,6 +66,7 @@ async function main(){
  const kr=load('t/letter/index.html',hash({...p,n:'지민',f:'민수'}),0.25,'Mozilla/5.0 (Linux; Android 14; wv) KAKAOTALK/10.8.3 (INAPP)'),outside=kr.window.document.getElementById('replyLetter').getAttribute('href');assert.match(outside,/^intent:\/\/noljago.co.kr\/t\/letter\/\?reply=1/);assert.match(outside,/#Intent;scheme=https;package=com\.android\.chrome;/);assert.match(outside,/S\.browser_fallback_url=/);assert.equal(kr.window.document.getElementById('reader').hidden,false);const replyQuery='?'+outside.split('?')[1].split('#Intent;')[0],reply=load('t/letter/index.html',replyQuery);reply.window.document.getElementById('viewTemplate').click();reply.window.document.getElementById('useTemplate').click();assert.equal(reply.window.document.getElementById('recipient').value,'민수');assert.equal(reply.window.document.getElementById('sender').value,'지민');reply.window.close();kr.window.close();
  const old=load('t/letter/index.html',hash({v:3,k:0,n:'옛친구',rel:0,num:100,i:[0,0,0,0],t:1,s:3}));assert.equal(old.window.document.getElementById('reader').hidden,false);assert.ok(old.window.document.getElementById('readBody').textContent.includes('100일'));old.window.close();
  const oldText=load('t/letter/index.html',hash({v:3,k:3,n:'친구',w:'예전 편지 그대로',f:'나'}));assert.equal(oldText.window.document.getElementById('readBody').textContent,'예전 편지 그대로');oldText.window.close();
+ const holiday=load(),hdoc=holiday.window.document;hdoc.getElementById('chuseokStart').click();assert.equal(hdoc.getElementById('chuseok').hidden,false);assert.equal(hdoc.getElementById('chuseokExampleGrid').children.length,20);[...hdoc.getElementById('chuseokFilters').children].find(x=>x.textContent==='부모님').click();assert.equal(hdoc.getElementById('chuseokExampleGrid').children.length,4);hdoc.querySelector('#chuseokExampleGrid .chuseok-example button').click();assert.equal(hdoc.getElementById('compose').hidden,false);assert.ok(hdoc.getElementById('letterBody').value.includes('감사'));assert.equal(hdoc.getElementById('occasionChoice').value,'chuseok');assert.equal(hdoc.getElementById('composePaper').dataset.style,'한가위');holiday.window.close();
  for(const bad of ['#l=%%%','#l='+Buffer.from('{bad').toString('base64url'),hash({v:4,w:{bad:true}}),hash({v:99,w:'future'})]){const e=load('t/letter/index.html',bad);assert.equal(e.window.document.getElementById('error').hidden,false);e.window.close();}
  const home=load('index.html'),hd=home.window.document;
  const homeCss=fs.readFileSync(path.join(root,'assets/social-ui.css'),'utf8');

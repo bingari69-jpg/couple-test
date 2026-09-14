@@ -20,5 +20,17 @@
     {id:'autumn',name:'책 사이의 마음',tag:'가을 · 차분한',season:'가을',occasions:['그냥','고마워','기념일'],line:'오래 간직하고 싶은 한 페이지.',color:'#f6e8d5',x:50,y:100},
     {id:'winter',name:'눈 내리는 밤',tag:'겨울 · 포근한',season:'겨울',occasions:['그냥','생일','기념일','고마워'],line:'추운 날에도 마음은 따뜻하게.',color:'#e4edf9',x:100,y:100}
   ].map(t=>({...t,style:'수채화',legacy:true,font:'hand',size:22,paper:'#fffaf2',ink:'#443c37',accent:'#ac7163',occasions:['그냥','생일','기념일','고마워','미안해','응원']}));
-  window.LETTER_TEMPLATES = [...vintage,...modern];
+  const chuseok = [
+    {id:'harvest-moon',name:'풍요로운 보름달',line:'둥근 달처럼 넉넉한 마음을 담아요.',paper:'#fffaf0',color:'#efe1bc',accent:'#aa6d2b',font:'serif'},
+    {id:'moon-rabbit',name:'달토끼의 인사',line:'달토끼가 대신 전하는 다정한 안부.',paper:'#fffaf4',color:'#eadfc9',accent:'#9a6b54',font:'hand'},
+    {id:'songpyeon',name:'송편 한 접시',line:'오손도손 나누는 명절의 따뜻함.',paper:'#fffdf5',color:'#dfe8d1',accent:'#6f8b61',font:'round'},
+    {id:'golden-field',name:'황금빛 들녘',line:'고마운 마음이 알차게 익어 가는 계절.',paper:'#fffaf0',color:'#ead9a4',accent:'#9a6e24',font:'serif'},
+    {id:'bojagi',name:'오색 보자기',line:'소중한 마음을 곱게 감싸 전해요.',paper:'#fffaf7',color:'#e8d8d1',accent:'#a45755',font:'pen'},
+    {id:'tile-lantern',name:'기와 아래 등불',line:'오래 간직하고 싶은 단정한 감사.',paper:'#fbfaf4',color:'#d9e0d4',accent:'#586b5b',font:'serif'},
+    {id:'persimmon-day',name:'감 익는 가을날',line:'주황빛 가을처럼 따뜻한 인사.',paper:'#fffaf3',color:'#f0d5bd',accent:'#ad653c',font:'hand'},
+    {id:'cosmos-road',name:'코스모스 귀향길',line:'반가운 얼굴을 만나러 가는 길.',paper:'#fffafb',color:'#eadce3',accent:'#a6667f',font:'pen'},
+    {id:'family-window',name:'가족의 따뜻한 창',line:'함께라서 더 환한 한가위 밤.',paper:'#fff9ed',color:'#ead9bc',accent:'#9a633b',font:'round'},
+    {id:'cloudy-moon',name:'구름 사이 달빛',line:'멀리 있어도 같은 달을 바라보는 마음.',paper:'#f8f9f2',color:'#dce2d8',accent:'#66755e',font:'serif'}
+  ].map(t=>({...t,tag:'추석 · 한가위 편지지',style:'한가위',ink:'#413a31',size:['hand','pen'].includes(t.font)?22:20,occasions:['추석','고마워']}));
+  window.LETTER_TEMPLATES = [...chuseok,...vintage,...modern];
 })();
