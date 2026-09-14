@@ -25,6 +25,7 @@
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
  <link rel="stylesheet" href="assets/social-ui.css?v=20260913-popular">
+ <link rel="stylesheet" href="assets/home-welcome.css?v=20260914">
 </head>
 <body><main class="shell">
 <header class="topbar"><a class="brand" href="./">같이놀자<b aria-hidden="true">♥</b><small class="brand-tagline">카카오톡으로 보내고 같이 놀아요</small></a><button class="icon-button" id="menuButton" aria-label="메뉴 열기" aria-expanded="false" aria-controls="menu"><span data-icon="menu"></span></button></header>
@@ -36,6 +37,19 @@
 <section class="challenge" id="play"><div id="letterChallenge"><h2>편지가 쑥스러워?<br>그럼 <span class="accent">가위바위보</span> 한판</h2><p>이것도 너한테 말 거는 방법이니까.</p></div><div id="playHero" hidden><p class="play-eyebrow">심심해? 뎀벼~</p><h1 class="heading"><span class="accent">가위바위보로</span><br>한판 할래?</h1><p class="play-lead">내가 먼저 낼게.<br>카톡으로 보내면, 네가 받아줘!</p><span class="play-bubble" aria-hidden="true">뎀벼!</span></div><div class="character" role="img" aria-label="머리띠를 두른 장난스러운 토끼"></div><a class="primary" href="t/rps/" id="rpsStart">나 먼저 낼게 <span data-icon="arrow"></span></a></section>
 <section id="gameLetter" class="game-letter" hidden aria-labelledby="gameLetterTitle"><div><p class="game-letter-eyebrow">장난 끝에, 진심 한 장</p><h2 id="gameLetterTitle">사실, 너에게<br>하고 싶은 말이 있어.</h2><p>짧은 한마디도 편지가 될 수 있어.</p><a class="outline" href="t/letter/">편지 한 장 보내기 <span data-icon="arrow"></span></a></div><img src="assets/art/envelope-hero.png" alt="하트가 담긴 꽃 편지 봉투" width="1536" height="1024"></section>
 <section id="all" class="catalog" aria-labelledby="catalogTitle"><h2 class="section-title" id="catalogTitle">조금 더 놀다 갈래?</h2><p class="catalog-lead">마음에 드는 놀이를 골라, 카톡으로 보내봐.</p><div id="catalogModes" class="mode-tabs" role="group" aria-label="둘이놀기 또는 혼자놀기"></div><div id="catalogFilters" class="filters" role="group" aria-label="관계로 고르기"></div><p class="catalog-count" id="catalogCount" role="status" aria-live="polite"></p><div class="catalog-grid" id="catalogList"></div></section>
-<footer class="footer">소중한 사람과, 조금 더 가까이.<br>© 같이놀자<br><a class="admin-link" href="guide/">사용법</a> · <a class="admin-link" href="privacy/">개인정보 안내</a> · <a class="admin-link" href="admin/">admin</a></footer></main>
+<footer class="footer">소중한 사람과, 조금 더 가까이.<br>© 같이놀자<br><button class="admin-link footer-help" id="welcomeHelp" type="button">처음 사용법</button> · <a class="admin-link" href="guide/">사용법</a> · <a class="admin-link" href="privacy/">개인정보 안내</a> · <a class="admin-link" href="admin/">admin</a></footer></main>
 <nav class="bottom-nav" aria-label="하단 메뉴"><a href="#all" aria-current="page"><span data-icon="play"></span>둘이놀기</a><a href="?tab=solo#all"><span data-icon="star"></span>혼자놀기</a><a href="t/letter/"><span data-icon="letter"></span>편지</a><a href="t/psychology/"><span data-icon="mind"></span>심리</a></nav>
-<script src="assets/supabase-data.js?v=20260913-popular"></script><script src="assets/home-catalog.js?v=20260914-tapbattle"></script><script src="assets/ui.js?v=20260913-solo"></script><script src="assets/home.js?v=20260914-alkkagi"></script></body></html>
+<dialog class="home-welcome" id="homeWelcome" aria-labelledby="welcomeTitle"><div class="welcome-sheet">
+ <button class="welcome-close" id="welcomeClose" type="button" aria-label="안내 닫기">×</button>
+ <div class="welcome-visual" aria-hidden="true"><span>💌</span><i>카톡</i><span>🎮</span></div>
+ <p class="welcome-eyebrow">처음 오셨나요?</p><h2 id="welcomeTitle">카톡으로 보내고,<br>둘이 함께 즐겨요</h2>
+ <p class="welcome-lead">친구나 연인에게 링크만 보내세요.<br><strong>회원가입과 앱 설치 없이</strong> 바로 시작할 수 있어요.</p>
+ <div class="welcome-flows">
+  <article><div class="welcome-flow-title"><span aria-hidden="true">💌</span><div><small>마음을 전하고 싶을 때</small><h3>편지 보내기</h3></div></div><ol><li><b>1</b>편지지와 문구를 골라요</li><li><b>2</b>내 말로 편지를 완성해요</li><li><b>3</b>카톡으로 보내면 상대가 봉투를 열어봐요</li></ol></article>
+  <article><div class="welcome-flow-title"><span aria-hidden="true">🎮</span><div><small>장난스럽게 놀고 싶을 때</small><h3>같이 게임하기</h3></div></div><ol><li><b>1</b>하고 싶은 게임을 골라요</li><li><b>2</b>내가 먼저 하고 도전장을 만들어요</li><li><b>3</b>카톡으로 보내면 상대가 참여하고 결과를 같이 봐요</li></ol></article>
+ </div>
+ <p class="welcome-kakao"><b>카카오톡에서는 이렇게!</b> 편지나 게임을 완성한 뒤 노란 ‘카톡으로 보내기’ 버튼을 누르고, 보낼 친구나 연인을 선택하면 돼요. 상대방도 회원가입 없이 받은 링크를 열면 바로 참여할 수 있어요.</p>
+ <div class="welcome-actions"><a class="welcome-letter" id="welcomeLetter" href="t/letter/">추석 편지 써보기</a><button class="welcome-games" id="welcomeGames" type="button">게임 골라보기</button></div>
+ <p class="welcome-again">닫은 뒤에는 아래 ‘처음 사용법’에서 다시 볼 수 있어요.</p>
+</div></dialog>
+<script src="assets/supabase-data.js?v=20260913-popular"></script><script src="assets/home-catalog.js?v=20260914-tapbattle"></script><script src="assets/ui.js?v=20260913-solo"></script><script src="assets/home.js?v=20260914-alkkagi"></script><script src="assets/home-welcome.js?v=20260914"></script></body></html>
