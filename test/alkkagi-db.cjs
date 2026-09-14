@@ -9,6 +9,7 @@ async function createDB(){
  grant usage on schema auth to authenticated,anon;
  insert into auth.users values ${ids.map(id=>`('${id}')`).join(',')};`);
  await db.exec(fs.readFileSync('supabase/migrations/20260914_alkkagi_rooms.sql','utf8'));
+ await db.exec(fs.readFileSync('supabase/migrations/20260915_alkkagi_staggered.sql','utf8'));
  const args={create_alkkagi_room:['p_name','p_request'],get_alkkagi_room:['p_code'],join_alkkagi_room:['p_code','p_name'],play_alkkagi_shot:['p_code','p_stone','p_angle','p_power','p_version'],resign_alkkagi_room:['p_code','p_version'],rematch_alkkagi_room:['p_code','p_round']};
  // One SQL transaction per authenticated request, as PostgREST provides in production.
  async function rpc(user,fn,params){

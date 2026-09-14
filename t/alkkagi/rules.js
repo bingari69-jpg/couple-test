@@ -2,7 +2,10 @@
  'use strict';
  const RADIUS=.035,DT=1/120,DRAG=.985,STEPS=720;
  const round=n=>Math.round(n*1e6)/1e6;
- function create(){return {stones:Array.from({length:10},(_,id)=>({id,color:id<5?1:2,x:round(.18+(id%5)*.16),y:id<5?.76:.24,alive:true})),turn:1,shots:0,winner:0,draw:false};}
+ const FORMATION=[[.22,.64],[.46,.64],[.70,.64],[.34,.82],[.62,.82]];
+ function create(starter=1){return {stones:Array.from({length:10},(_,id)=>{const [x,y]=FORMATION[id%5];return {id,color:id<5?1:2,x:round(id<5?x:1-x),y:round(id<5?y:1-y),alive:true};}),turn:starter===2?2:1,shots:0,winner:0,draw:false};}
+ // One full low-high-low cycle. The shot samples the clock again on release.
+ function gaugePower(elapsed){const phase=((Math.max(0,elapsed)%2600)/1300);return Math.round(10+90*(phase<=1?phase:2-phase));}
  function counts(stones){return [stones.filter(s=>s.alive&&s.color===1).length,stones.filter(s=>s.alive&&s.color===2).length];}
  function shoot(state,id,angle,power,record=true){
   if(state.winner||state.draw||!Number.isInteger(id)||!Number.isInteger(angle)||angle<0||angle>359||!Number.isInteger(power)||power<10||power>100)return null;
@@ -37,5 +40,5 @@
   }
   return best;
  }
- return {RADIUS,create,counts,shoot,aim,choose};
+ return {RADIUS,create,counts,shoot,aim,choose,gaugePower};
 });

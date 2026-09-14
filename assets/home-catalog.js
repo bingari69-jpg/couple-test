@@ -1,7 +1,7 @@
 const ITEMS = [
   { path:"t/tapbattle/", rel:"친구", kind:"반응 대결", onlineDuel:true, thumbnailUrl:"assets/art/tapbattle.svg",
     title:"톡톡 배틀 — 멈출 때가 승부야!", desc:"초록엔 톡톡, 빨강엔 멈춰! 카톡으로 초대해 동시에 겨루는 20초." },
-  { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"내 돌은 지키고 컴퓨터 돌은 밖으로! 방향과 힘을 정해 톡!",
+  { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"엇갈린 다섯 알! 방향을 고르고 움직이는 힘 게이지를 멈춰 톡!",
     title:"알까기 배틀 — 톡! 다음은 네 차례", desc:"다섯 알의 작은 승부. 카톡으로 친구를 초대하고 각자 휴대폰에서 겨뤄봐." },
   { path:"t/omok/", rel:"친구", kind:"보드게임", soloFree:true, localDuel:true, thumbnailUrl:"assets/art/omok-board.svg",
     title:"오목 한판 — 다음 한 수는 너야",
@@ -140,7 +140,7 @@ const CARDS = [
  ['stack','atlas',12,'#ffe3dc',['친구', '연인', '가족'],'톡 쳐서 멈추는 블록 탑, 20초'],
  ['mines','atlas',15,'#fff0cf',['친구', '연인', '가족'],'60초 지뢰판 연달아, 몇 판 푸나'],
  ['tapbattle','atlas',12,'#f4ebdc',['친구','연인','가족'],'초록엔 톡톡, 빨강엔 멈춰! 카톡으로 만나 동시에 겨루는 20초.'],
- ['alkkagi','atlas',9,'#f4ead8',['친구','연인','가족'],'카톡으로 친구를 초대해 톡! 상대 돌을 판 밖으로 밀어내봐.'],
+ ['alkkagi','atlas',9,'#f4ead8',['친구','연인','가족'],'방향을 고르고 타이밍에 맞춰 톡! 카톡으로 초대해 다섯 알을 지켜봐.'],
  ['omok','atlas',9,'#f4ead8',['친구','연인','가족'],'다섯 알을 먼저 이어봐. 컴퓨터와 또는 카톡으로 친구와!'],
  ['slide15','atlas',9,'#e0eafa',['친구', '연인', '가족'],'60초 숫자판 연달아, 몇 판 맞추나'],
  ['flap','atlas',11,'#e9e3f9',['친구', '연인', '가족'],'20초 동안 문 몇 개 통과하나'],
