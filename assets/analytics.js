@@ -22,7 +22,7 @@
   if(!window.__GATCHI_APP_CONFIG__ && !window.__GATCHI_APP_CONFIG_LOADER__ && analyticsScript && analyticsScript.src){
     window.__GATCHI_APP_CONFIG_LOADER__=true;
     const appConfig=document.createElement("script");
-    appConfig.src=new URL("app-config.js?v=20260914-home-hero",analyticsScript.src).href;
+    appConfig.src=new URL("app-config.js?v=20260914-info-menu",analyticsScript.src).href;
     document.head.appendChild(appConfig);
   }
 

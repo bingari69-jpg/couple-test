@@ -1,0 +1,18 @@
+/* Browser QA for about, feedback, partnership, and the home menu. */
+const fs=require('node:fs'),path=require('node:path'),http=require('node:http'),assert=require('node:assert/strict');
+const {chromium}=require(process.env.PLAYWRIGHT_PATH||'C:/Users/USER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright');
+const root=path.resolve(__dirname,'..'),output=path.join(root,'output/site-pages');fs.mkdirSync(output,{recursive:true});
+const mime={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.png':'image/png','.woff2':'font/woff2'};
+const server=http.createServer((req,res)=>{let p=path.resolve(root,'.'+decodeURIComponent(new URL(req.url,'http://local').pathname));if(p!==root&&!p.startsWith(root+path.sep)){res.writeHead(403).end();return;}try{if(fs.statSync(p).isDirectory())p=path.join(p,'index.html');res.setHeader('Content-Type',mime[path.extname(p)]||'application/octet-stream');res.end(fs.readFileSync(p));}catch(_){res.writeHead(404).end();}});
+(async()=>{
+ await new Promise(resolve=>server.listen(0,'127.0.0.1',resolve));const base='http://127.0.0.1:'+server.address().port,browser=await chromium.launch({headless:true,executablePath:process.env.BROWSER_PATH||'C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe'});
+ try{
+  const context=await browser.newContext({viewport:{width:390,height:844},reducedMotion:'reduce'}),errors=[];await context.addInitScript(()=>localStorage.setItem('gatchi_home_welcome_v1','1'));
+  await context.route('**/*',route=>{const u=route.request().url();if(u.startsWith(base))return route.continue();if(u.includes('/rest/v1/rpc/submit_site_inquiry'))return route.fulfill({status:200,contentType:'application/json',body:'"00000000-0000-4000-8000-000000000001"'});return route.abort();});
+  const page=await context.newPage();page.on('pageerror',error=>errors.push(error.message));await page.goto(base+'/');await page.locator('#menuButton').click();for(const label of ['같이놀자가 뭘까요?','할 말 있어요','제휴문의'])assert.equal(await page.locator('#menu').getByText(label,{exact:true}).count(),1);await page.screenshot({path:path.join(output,'home-menu-mobile.png')});
+  await page.goto(base+'/about/');await page.locator('#infoMenuButton').click();assert.equal(await page.locator('#infoMenu').isVisible(),true);await page.locator('#infoMenuButton').click();await page.screenshot({path:path.join(output,'about-mobile.png'),fullPage:true});
+  await page.goto(base+'/contact/');await page.selectOption('#category',{label:'오류가 있어요'});await page.fill('#email','hello@example.com');await page.fill('#message','편지를 열 때 화면이 멈추는 현상을 확인해 주세요.');await page.click('[type="submit"]');await page.locator('#formSuccess').waitFor({state:'visible'});await page.screenshot({path:path.join(output,'contact-success-mobile.png'),fullPage:true});
+  await page.goto(base+'/partnership/');await page.fill('#name','김담당');await page.fill('#company','같이회사');await page.fill('#email','partner@example.com');await page.check('[name="category"][value="콘텐츠·캠페인"]');await page.fill('#message','친구와 함께 참여하는 추석 브랜드 캠페인을 제안하고 싶습니다.');await page.screenshot({path:path.join(output,'partnership-mobile.png'),fullPage:true});await page.click('[type="submit"]');await page.locator('#formSuccess').waitFor({state:'visible'});
+  assert.deepEqual(errors,[]);await context.close();console.log('Site pages browser QA passed: home menu, about, feedback submit, partnership submit, mobile layouts.');
+ }finally{await browser.close();server.close();}
+})().catch(error=>{console.error(error);server.close();process.exit(1);});

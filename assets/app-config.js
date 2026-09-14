@@ -103,6 +103,7 @@
   /* 2026-09-13 메뉴 4축(둘이놀기·혼자놀기·편지·심리). 게시본에 예전 기본 메뉴(홈·편지·놀이·심리테스트)가 그대로 저장돼 있으면
      관리자가 다시 게시하기 전에도 새 4축으로 보여준다. 관리자가 직접 바꾼 메뉴는 그대로 둔다. (admin.js migrateMenu 와 같은 규칙) */
   const NEW_MENU=[{id:'play',label:'둘이놀기',href:'#all',enabled:true},{id:'solo',label:'혼자놀기',href:'?tab=solo#all',enabled:true},{id:'letter',label:'편지',href:'t/letter/',enabled:true},{id:'psychology',label:'심리',href:'t/psychology/',enabled:true}];
+  const INFO_MENU=[{label:'같이놀자가 뭘까요?',href:'about/'},{label:'할 말 있어요',href:'contact/'},{label:'제휴문의',href:'partnership/'}];
   function migrateMenu(menu){
     if(!Array.isArray(menu))return menu;
     const legacy={home:'홈',letter:'편지',play:'놀이',psychology:'심리테스트'};
@@ -124,6 +125,8 @@
         a.addEventListener('click',()=>{container.hidden=true;const button=document.getElementById('menuButton');if(button)button.setAttribute('aria-expanded','false');});
         container.append(a);
       });
+      const divider=document.createElement('span');divider.className='menu-divider';divider.setAttribute('aria-hidden','true');container.append(divider);
+      INFO_MENU.forEach(item=>{const a=document.createElement('a');a.textContent=item.label;a.href=new URL(item.href,root).href;a.addEventListener('click',()=>{container.hidden=true;const button=document.getElementById('menuButton');if(button)button.setAttribute('aria-expanded','false');});container.append(a);});
     }
     document.querySelectorAll('.bottom-nav,.game-nav,.rps-nav').forEach(nav=>rebuildBottomNav(nav,menu,root));
     document.querySelectorAll('.psy-nav').forEach(nav=>{
