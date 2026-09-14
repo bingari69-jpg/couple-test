@@ -4,6 +4,7 @@ const root=path.join(__dirname,'..'),read=file=>fs.readFileSync(path.join(root,f
 const menuLabels=['같이놀자란?','문의사항','제휴문의','사용법'];
 const home=read('index.html');menuLabels.forEach(label=>assert.match(home,new RegExp(label)));
 for(const removed of ['둘이놀기','혼자놀기','편지 쓰기','심리테스트'])assert.doesNotMatch(home.match(/<nav id="menu"[\s\S]*?<\/nav>/)[0],new RegExp(removed));
+for(const file of ['contact/index.html','partnership/index.html','privacy/index.html'])assert.match(read(file),/mailto:bingari69@gmail\.com/,file+' 공식 문의 메일 누락');
 for(const file of ['about/index.html','contact/index.html','partnership/index.html']){
  const html=read(file);menuLabels.forEach(label=>assert.match(html,new RegExp(label),file+' 메뉴 누락'));
  assert.match(html,/infoMenuButton/);assert.match(html,/회원가입|제휴/);
