@@ -1,8 +1,8 @@
 /* Show the complete artwork, including the space beneath the lettering. */
-.topbar:has(.home-brand),.hub-topbar:has(.home-brand){height:100px;padding:8px 0}
+.topbar:has(.home-brand),.hub-topbar:has(.home-brand){height:100px;padding:0}
 .brand.home-brand{display:block;letter-spacing:0;line-height:1;white-space:normal}
-.home-brand .brand-art{display:block;width:83px;height:83px;mix-blend-mode:multiply}
+.home-brand .brand-art{display:block;width:100px;height:100px;mix-blend-mode:multiply}
 .home-brand .brand-art img{display:block;width:100%;height:100%;object-fit:contain}
 .topbar:has(.home-brand--compact){height:86px;padding:0}
 .brand.home-brand--compact{display:block}
-.home-brand--compact .brand-art{width:58px;height:58px}
+.home-brand--compact .brand-art{width:68px;height:68px}
