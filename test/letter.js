@@ -75,7 +75,7 @@ async function main(){
  assert.equal(fs.readFileSync(path.join(root,'t/letter/index.html'),'utf8').includes('help-guide.js'),false);
  assert.equal(hd.getElementById('catalogList').children.length,37);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
- assert.deepEqual(catalogCards.slice(0,12).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/nonsense/','t/num25/','t/pairs/','t/ufo/','t/stop/','t/ten/','t/tap/','t/delivery/','t/stroop/','t/arrow/']);
+ assert.deepEqual(catalogCards.slice(0,12).map(a=>a.getAttribute('href')),['t/mole/','t/rps/','t/nonsense/','t/hidden-picture/?mode=online','t/num25/','t/pairs/','t/ufo/','t/stop/','t/ten/','t/tap/','t/delivery/','t/stroop/']);
  assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,37);
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/tapbattle/?mode=online'),'톡톡 배틀은 카톡 초대 친구전 입구');
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/alkkagi/?mode=online'),'알까기는 카톡 초대 친구전 입구');
