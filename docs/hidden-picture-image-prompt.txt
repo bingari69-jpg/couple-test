@@ -1,0 +1,25 @@
+LEVEL 1
+Use case: illustration-story. Create one original hidden-object puzzle illustration for a mobile browser game. A portrait 1024x1280 full-bleed hand-inked picture-book drawing of a lush woodland picnic: a cheerful small tortoise carrying a picnic basket along a winding path at center-left, a sleepy rabbit beside an old oak at lower right, stream at bottom, dense fern leaves, flowers, textured tree bark and patterned picnic blanket. Soft watercolor greens, warm cream and peach, intricate clean dark green ink outlines, playful teen-friendly printed puzzle-book aesthetic. Dense but readable objects, no text, numbers, border, UI, legend or watermark.
+Hide exactly these eight recognizable outlined object shapes by incorporating their contours into the environment, each only once, each about 5-8% of image width: a five-point star in upper-left tree foliage around (18%,20%); a spoon as a narrow pale branch in upper-right foliage around (77%,23%); a crown outline within tortoise shell pattern around (43%,47%); a fish outline as a dry leaf beside the path around (18%,60%); a key in right-side tree bark around (85%,56%); a closed umbrella in lower-left ferns around (27%,79%); a heart as pattern on picnic blanket around (62%,77%); a spiral seashell among lower-right stream stones around (83%,91%). The listed shapes should be rotated and use the local background colors, genuinely camouflaged within scenery linework rather than brightly colored objects sitting on top. Still make each complete silhouette visually identifiable when zoomed. Do not add a find-list. All eight must appear in the main scene. Original composition, appealing polished detailed illustration.
+
+LEVEL 2
+Use case: illustration-story
+Asset type: level 2 image for a mobile browser hidden-object game
+Primary request: an original more difficult hidden-object illustration, 1122x1402 portrait
+Scene/backdrop: cozy rainy evening bookshop and tea room, overflowing shelves, tall wooden ladder, window with raindrops, glowing lamps, stacks of books, plants and small objects
+Subject: a small orange cat curled up by the counter and a smiling hedgehog carrying a tea tray, both secondary to the dense room
+Style/medium: richly detailed hand-inked watercolor picture-book art, warm olive, honey, burgundy and cream palette, clean fine dark ink outlines, matching a gentle Korean social game atmosphere
+Composition/framing: full bleed portrait, dense and readable from a mobile zoomed view, no border or legend
+Hide exactly eight recognizable object silhouettes, naturally camouflaged in the scene's material/linework: star in a lamp shade upper left; spoon in a ladder rail upper middle; crown in the cat blanket pattern lower right; fish among book spine decorations left middle; key in the counter carving right middle; closed umbrella among coat hooks upper right; heart in a tea cup steam curl lower middle; spiral seashell in the potted plant stones lower left.
+Constraints: Every hidden item must be visually present exactly once and large enough to tap when zoomed; all are colored like nearby scenery, not pasted stickers. No text, numbers, labels, UI, watermark or logo.
+
+LEVEL 3
+Use case: illustration-story
+Asset type: level 3 image for a mobile browser hidden-object game
+Primary request: an original very difficult hidden-object illustration, 1122x1402 portrait
+Scene/backdrop: whimsical moonlit rooftop garden festival, city rooftops, string lights, flower pots, a small greenhouse, patterned rugs, paper lanterns, a fountain and many intricate architectural details
+Subject: a tiny fox carrying a paper lantern near the center and a sleepy white bird on a rooftop rail, both small
+Style/medium: richly detailed hand-inked watercolor picture-book art, deep indigo, moss green, coral and warm lantern gold, clean very fine dark ink outlines, gentle handmade Korean social game atmosphere
+Composition/framing: full bleed portrait, visually dense but objects remain recognizable after zoom, no border or legend
+Hide exactly eight recognizable object silhouettes, naturally camouflaged in scenery: star in upper-left string light foliage; spoon as a greenhouse roof support upper right; crown in a patterned rooftop rug lower left; fish as fountain mosaic middle; key in an old rooftop door carving left middle; closed umbrella as folded fabric near the right planter; heart in the steam from a tea kettle lower middle; spiral seashell in a lower-right stone mosaic.
+Constraints: Every item is genuinely included once and tap-sized when zoomed. No text, numbers, labels, UI, watermark or logo.

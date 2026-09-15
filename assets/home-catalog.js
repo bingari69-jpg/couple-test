@@ -6,6 +6,9 @@ const ITEMS = [
   { path:"t/omok/", rel:"친구", kind:"보드게임", soloFree:true, localDuel:true, thumbnailUrl:"assets/art/omok-board.svg",
     title:"오목 한판 — 다음 한 수는 너야",
     desc:"15×15 자유오목. 컴퓨터와 혼자, 카톡으로 친구를 초대해 다섯 알을 이어봐." },
+  { path:"t/hidden-picture/", rel:"친구", kind:"찾기", onlineDuel:true, thumbnailUrl:"t/hidden-picture/forest.png",
+    title:"숨은그림찾기 — 30초 안에 몇 개 찾을래?",
+    desc:"혼자는 세 장의 그림을 차례로, 친구와는 같은 그림에서 30초 동안 더 많이 찾아봐." },
   { path:"t/ranking/", rel:"친구", kind:"예측",
     title:"내 취향 맞혀봐",
     desc:"보기 세 개 중 내 최애 하나를 골라 카톡으로 보내면 친구가 맞혀요." },
@@ -121,6 +124,7 @@ const CARDS = [
  ['delivery','classic',2,'#d4f5ee',['친구','연인'],'내가 뭐 시킬지 맞혀봐. 못 맞히면 네가 쏴.'],
  ['stroop','atlas',13,'#e4f2d3',['친구','연인','가족'],'글자 말고 색깔을 답해. 알고도 헷갈려!'],
  ['arrow','atlas',14,'#dceffa',['친구','연인','가족'],'빨간 테두리면 반대로! 순간 판단 대결.'],
+ ['hidden-picture','atlas',5,'#edf1df',['친구','연인','가족'],'숲·서점·옥상 정원. 숨은 물건 8개를 찾아봐. 친구와는 30초 대결!'],
  ['ranking','ranking',0,'#f9edcc',['친구','연인','가족'],'세 가지 중 내 최애는? 하나씩 골라 친구에게 보내봐.'],
  ['love-note','atlas',5,'#ffe3ea',['연인', '부부'],'내가 주는 방식과 상대가 기다리는 방식은 다를 수 있어. 어긋난 자리를 찾아봐.'],
  ['closeness','atlas',4,'#e4eef5',['연인', '부부', '친구'],'답이 늦을 때, 말수가 줄 때, 다툰 직후. 그때 필요한 게 서로 달라.'],
@@ -147,7 +151,7 @@ const CARDS = [
  ['typing','atlas',16,'#ece6f8',['친구', '연인', '가족'],'20초 한글 타자, 몇 글자?']
 ];
 // 혼자놀기(?solo=1)가 있는 게임과 레벨 수. 홈의 '혼자놀기' 탭과 진행도 배지가 쓴다.
-window.SOLO_GAMES={pairs:5,num25:5,mole:5,simon:5,snake:5,choseong:5,'2048':5,stack:5,mines:5,slide15:5,flap:5,typing:5,fit:5};
+window.SOLO_GAMES={pairs:5,num25:5,mole:5,simon:5,snake:5,choseong:5,'2048':5,stack:5,mines:5,slide15:5,flap:5,typing:5,fit:5,'hidden-picture':3};
 const LOCAL_HOME_ITEMS=CARDS.map(([slug,art,index,color,relationships,summary])=>({
  ...ITEMS.find(item=>item.path==='t/'+slug+'/'),art,index,color,relationships,summary
 }));
