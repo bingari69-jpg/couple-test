@@ -13,7 +13,26 @@ $('letterHome').hidden=playing;$('letterChallenge').hidden=playing;
 $('playHero').hidden=!playing;$('gameLetter').hidden=!playing;
 $('play').classList.toggle('game-hero',playing);
 $(playing?'playHomeLink':'letterHomeLink').setAttribute('aria-current','page');
-document.title=playing?'같이놀자 — 가위바위보로 한판 할래?':'같이놀자 — 너에게 보내고 싶은 게 있어';
+const PLAY_HEROES=[
+ {key:'mole',eyebrow:'땅속에서 쏙!',accent:'두더지 잡기',rest:'한판 할래?',lead:'20초 동안 두더지 잡기.\n황금은 놓치지 마!',bubble:'쏙!',button:'두더지 잡으러 가기',href:'t/mole/',label:'고개를 내민 두더지',art:'atlas',sprite:[50,60],color:'#6d9f45'},
+ {key:'rps',eyebrow:'심심해? 뎀벼~',accent:'가위바위보로',rest:'한판 할래?',lead:'내가 먼저 낼게.\n카톡으로 보내면, 네가 받아줘!',bubble:'뎀벼!',button:'나 먼저 낼게',href:'t/rps/',label:'머리띠를 두른 장난스러운 토끼',art:'classic',color:'#ff6959'},
+ {key:'hidden-picture',eyebrow:'그림 속에 꼭꼭',accent:'숨은그림찾기',rest:'같이 할래?',lead:'혼자는 세 장의 그림을.\n친구와는 30초 대결!',bubble:'찾았다!',button:'숨은 물건 찾기',href:'t/hidden-picture/?mode=online',label:'숲속 숨은그림찾기 장면',art:'hidden-picture',color:'#27967b'}
+];
+function setPlayHero(){
+ if(!playing)return;
+ const key='gatchi-play-hero-v1';let index=0;
+ try{const saved=Number(localStorage.getItem(key));if(Number.isInteger(saved)&&saved>=0&&saved<PLAY_HEROES.length)index=saved;localStorage.setItem(key,String((index+1)%PLAY_HEROES.length));}catch(e){}
+ const hero=PLAY_HEROES[index],play=$('play'),title=$('playTitle'),accent=document.createElement('span');
+ accent.className='accent';accent.textContent=hero.accent;title.replaceChildren(accent,document.createElement('br'),document.createTextNode(hero.rest));
+ $('playEyebrow').textContent=hero.eyebrow;$('playLead').replaceChildren(...hero.lead.split('\n').flatMap((line,i)=>i?[document.createElement('br'),document.createTextNode(line)]:[document.createTextNode(line)]));
+ $('playBubble').textContent=hero.bubble;$('rpsStart').href=hero.href;$('rpsStart').firstChild.textContent=hero.button+' ';
+ const character=$('playCharacter');character.className='character hero-'+hero.art;character.setAttribute('aria-label',hero.label);
+ if(hero.sprite){character.style.setProperty('--hero-sprite-x',hero.sprite[0]+'%');character.style.setProperty('--hero-sprite-y',hero.sprite[1]+'%');}else{character.style.removeProperty('--hero-sprite-x');character.style.removeProperty('--hero-sprite-y');}
+ play.classList.remove(...PLAY_HEROES.map(item=>'hero-'+item.key));play.classList.add('hero-'+hero.key);play.style.setProperty('--hero-accent',hero.color);
+ document.title='같이놀자 — '+hero.accent+' '+hero.rest;
+}
+setPlayHero();
+if(!playing)document.title='같이놀자 — 너에게 보내고 싶은 게 있어';
 $('menuButton').onclick=()=>{const open=$('menu').hidden;$('menu').hidden=!open;$('menuButton').setAttribute('aria-expanded',String(open));};
 $('menu').querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{$('menu').hidden=true;$('menuButton').setAttribute('aria-expanded','false');}));
 let relationship='전체';

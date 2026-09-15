@@ -5,14 +5,14 @@ const path = require('node:path');
 const {JSDOM,VirtualConsole}=require('jsdom');
 const root=path.join(__dirname,'..');
 const errors=[];
-function load(relative='t/letter/index.html',suffix='',random=0.25,userAgent=''){
+function load(relative='t/letter/index.html',suffix='',random=0.25,userAgent='',storage={}){
  const file=path.join(root,relative),base=path.dirname(file);
  let html=fs.readFileSync(file,'utf8').replace(/<script src="([^"]+)"><\/script>/g,(all,src)=>{
    if(src.includes('analytics'))return '';
    return '<script>'+fs.readFileSync(path.resolve(base,src.split('?')[0]),'utf8').replace(/<\/script/g,'<\\/script')+'</script>';
  });
  const vc=new VirtualConsole();vc.on('jsdomError',e=>errors.push(e.message));
- return new JSDOM(html,{url:'https://noljago.co.kr/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.Math.random=()=>random;w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};if(userAgent)Object.defineProperty(w.navigator,'userAgent',{value:userAgent,configurable:true});}});
+ return new JSDOM(html,{url:'https://noljago.co.kr/'+relative.replace(/index.html$/,'')+suffix,runScripts:'dangerously',virtualConsole:vc,beforeParse(w){w.Math.random=()=>random;w.TextEncoder=TextEncoder;w.TextDecoder=TextDecoder;w.scrollTo=()=>{};w.Element.prototype.scrollIntoView=()=>{};w.matchMedia=()=>({matches:true});w.navigator.clipboard={writeText:async s=>{w.copied=s;}};Object.entries(storage).forEach(([key,value])=>w.localStorage.setItem(key,value));if(userAgent)Object.defineProperty(w.navigator,'userAgent',{value:userAgent,configurable:true});}});
 }
 const hash=p=>'#l='+Buffer.from(JSON.stringify(p)).toString('base64url');
 const tick=()=>new Promise(r=>setTimeout(r,10));
@@ -94,7 +94,11 @@ async function main(){
  home.window.close();
  for(const [query,random,expected] of [['',0.49,'letter'],['',0.5,'play'],['?home=letter',0.9,'letter'],['?home=play',0.1,'play'],['?home=unknown',0.9,'play']]){
    const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
-   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/rps/');assert.equal(doc.getElementById('catalogList').children.length,37);h.window.close();
+   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/mole/');assert.equal(doc.getElementById('catalogList').children.length,37);h.window.close();
+ }
+ for(const [stored,href,word] of [[0,'t/mole/','두더지 잡기'],[1,'t/rps/','가위바위보로'],[2,'t/hidden-picture/?mode=online','숨은그림찾기']]){
+   const h=load('index.html','?home=play',0.1,'',{'gatchi-play-hero-v1':String(stored)}),doc=h.window.document;
+   assert.equal(doc.getElementById('rpsStart').getAttribute('href'),href);assert.ok(doc.getElementById('playTitle').textContent.includes(word));h.window.close();
  }
  assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 450자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
 }
