@@ -17,8 +17,8 @@ function homeItems(){
 }
 
 function staticCatalog(items){
-  // 홈에 보이는 게임만 — 심리테스트(mind)는 /t/psychology/ 에서 안내한다
-  const cards=items.filter(it=>!it.mind).map(it=>'<a class="catalog-card" href="'+esc(it.path)+'"><div class="catalog-content"><h3>'+esc(it.title.split(' — ')[0])+'</h3><p>'+esc(it.summary||it.desc)+'</p></div></a>');
+  // 홈 놀기 목록에 보이는 게임만 — 심리테스트·편지(playHide)는 각자 메뉴에서 안내한다
+  const cards=items.filter(it=>!it.playHide).map(it=>'<a class="catalog-card" href="'+esc(it.path)+'"><div class="catalog-content"><h3>'+esc(it.title.split(' — ')[0])+'</h3><p>'+esc(it.summary||it.desc)+'</p></div></a>');
   return '<!-- static-catalog:start (scripts/build-seo.cjs) -->'+cards.join('')+'<!-- static-catalog:end -->';
 }
 

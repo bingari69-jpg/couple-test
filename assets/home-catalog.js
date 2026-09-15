@@ -1,5 +1,7 @@
-/* mind:true 인 심리테스트는 홈의 둘이놀기·혼자놀기 목록에 넣지 않는다(상단 "심리" 메뉴 /t/psychology/ 에서만 보여준다).
-   목록·관리센터 편집에는 남겨 두므로 관리자가 제목·공개 여부를 그대로 다룰 수 있다. */
+/* playHide 가 있는 항목은 홈의 둘이놀기·혼자놀기 목록에 넣지 않는다 — 놀기 탭에는 게임만 둔다.
+     playHide:"mind"   심리테스트 → 상단 "심리" 메뉴(/t/psychology/)
+     playHide:"letter" 편지 → 상단 "편지" 화면(/t/letter/)
+   목록·관리센터 편집에는 남겨 두므로 관리자가 제목·공개 여부를 그대로 다룰 수 있고, 주소·sitemap·공유도 그대로다. */
 const ITEMS = [
   { path:"t/timejump/", rel:"친구", kind:"대결", thumbnailUrl:"assets/art/timejump.svg", soloSummary:"원시시대부터 미래 우주까지 5단계. 무서운 동물을 밟고 우체통까지, 별을 모아봐!",
     title:"타임 점프 — 편지 들고 다섯 시대를 건너", desc:"뱀·검치호랑이·늑대를 밟고 3단 점프로 우체통까지. 같은 시대, 같은 코스로 점수 대결." },
@@ -16,7 +18,7 @@ const ITEMS = [
   { path:"t/ranking/", rel:"친구", kind:"예측",
     title:"내 취향 맞혀봐",
     desc:"보기 세 개 중 내 최애 하나를 골라 카톡으로 보내면 친구가 맞혀요." },
-  { path:"t/letter/",    rel:"연인",  kind:"편지형",
+  { path:"t/letter/",    rel:"연인",  kind:"편지형", playHide:"letter",
     title:"기념일 편지 만들기",
     desc:"생일·100일·결혼기념일. 몇 가지만 고르면 편지가 완성되고, 직접 쓸 수도 있습니다." },
   { path:"t/crash/",     rel:"친구",  kind:"딜레마형",
@@ -70,16 +72,16 @@ const ITEMS = [
   { path:"t/exam/",      rel:"가족",  kind:"공부",
     title:"시험지 보내기 — 카톡으로 단어 시험",
     desc:"단어 붙여넣으면 시험지 완성. 자동 채점, 틀린 것만 다시." },
-  { path:"t/love-note/", rel:"연인",  kind:"심리", mind:true,
+  { path:"t/love-note/", rel:"연인",  kind:"심리", playHide:"mind",
     title:"나는 이렇게 주고, 이렇게 받고 싶어",
     desc:"내가 주는 방식과 상대가 기다리는 방식은 다를 수 있어. 어긋난 자리를 찾아봐." },
-  { path:"t/closeness/", rel:"연인",  kind:"심리", mind:true,
+  { path:"t/closeness/", rel:"연인",  kind:"심리", playHide:"mind",
     title:"우리에게 맞는 거리",
     desc:"답이 늦을 때, 말수가 줄 때, 다툰 직후. 그때 필요한 게 서로 달라." },
-  { path:"t/mirror/", rel:"친구",  kind:"심리", mind:true,
+  { path:"t/mirror/", rel:"친구",  kind:"심리", playHide:"mind",
     title:"내가 보는 나, 네가 보는 나",
     desc:"나를 고른 말과 상대가 나에게 붙인 말. 겹친 말과 한 사람만 본 말이 갈려." },
-  { path:"t/know-me/", rel:"친구", kind:"심리", mind:true,
+  { path:"t/know-me/", rel:"친구", kind:"심리", playHide:"mind",
     title:"너, 나 얼마나 알아?",
     desc:"내 답 6개와 상대 예상 3개. 여행·단톡방·모임 속 선택을 비교해봐." },
   { path:"t/simon/",      rel:"친구",  kind:"대결",

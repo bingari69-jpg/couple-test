@@ -73,26 +73,27 @@ async function main(){
  assert.match(homeCss,/\.hero-art\{height:auto\}/);
  assert.match(hd.querySelector('link[href*="social-ui.css"]').getAttribute('href'),/\?v=2026/); /* 버전 일치는 test/asset-versions.js 가 검사 */
  assert.equal(fs.readFileSync(path.join(root,'t/letter/index.html'),'utf8').includes('help-guide.js'),false);
- assert.equal(hd.getElementById('catalogList').children.length,34);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);assert.equal(hd.getElementById('catalogFilters'),null,'관계 필터는 홈에서 제거한다');
+ assert.equal(hd.getElementById('catalogList').children.length,33);assert.equal(hd.getElementById('all').hidden,false);assert.equal(hd.getElementById('allButton'),null);assert.equal(hd.getElementById('catalogFilters'),null,'관계 필터는 홈에서 제거한다');
  const catalogCards=[...hd.querySelectorAll('#catalogList > a')];
  assert.deepEqual(catalogCards.slice(0,13).map(a=>a.getAttribute('href')),['t/timejump/','t/mole/','t/rps/','t/nonsense/','t/hidden-picture/?mode=online','t/num25/','t/pairs/','t/ufo/','t/stop/','t/ten/','t/tap/','t/delivery/','t/stroop/']);
- assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,34);
+ assert.equal(new Set(catalogCards.map(a=>a.getAttribute('href'))).size,33);
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/tapbattle/?mode=online'),'톡톡 배틀은 카톡 초대 친구전 입구');
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/alkkagi/?mode=online'),'알까기는 카톡 초대 친구전 입구');
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/omok/?mode=online'),'오목은 카톡 초대 친구전 입구');
  assert.ok(catalogCards.some(a=>a.getAttribute('href')==='t/hidden-picture/?mode=online'),'숨은그림찾기는 30초 친구 대결 입구');
  assert.deepEqual(['t/know-me/','t/love-note/','t/closeness/','t/mirror/'].filter(h=>catalogCards.some(a=>a.getAttribute('href')===h)),[],'심리테스트는 놀기 목록이 아니라 심리 메뉴에만');
+ assert.ok(hd.querySelector('#letterHome a[href="t/letter/"]'),'편지는 놀기 목록이 아니라 편지 화면에서 연다');
  /* 내려놓은 것들: 페이지는 살아 있지만 홈 목록에는 없어야 한다 */
- ['t/react/','t/living/','t/repair/','t/group-room/','t/next-scene/','t/lucky/','t/daily-word/'].forEach(h=>assert.equal(catalogCards.some(a=>a.getAttribute('href')===h),false,h+' 는 홈에서 내렸다'));
+ ['t/react/','t/living/','t/repair/','t/group-room/','t/next-scene/','t/lucky/','t/daily-word/','t/letter/'].forEach(h=>assert.equal(catalogCards.some(a=>a.getAttribute('href')===h),false,h+' 는 홈에서 내렸다'));
  for(const a of catalogCards){assert.ok(fs.existsSync(path.join(root,a.getAttribute('href').split('?')[0],'index.html')));assert.ok(a.querySelector('.catalog-mascot'));assert.ok(a.querySelector('h3').textContent);assert.equal(a.querySelector('.catalog-tags').textContent,'카톡대전');assert.equal(a.querySelector('.catalog-start').textContent,'시작하기 →');}
  const duelModes=[...hd.getElementById('catalogDuelModes').querySelectorAll('button')];assert.deepEqual(duelModes.map(b=>b.querySelector('b').textContent),['카톡대전','실시간대전']);
  duelModes.find(b=>b.querySelector('b').textContent==='실시간대전').click();
  const realtimeCards=[...hd.querySelectorAll('#catalogList > a')];assert.equal(realtimeCards.length,2);assert.deepEqual(realtimeCards.map(a=>a.getAttribute('href')).sort(),['t/alkkagi/?mode=online','t/tapbattle/?mode=online']);assert.ok(realtimeCards.every(a=>a.querySelector('.catalog-tags').textContent==='실시간대전'));assert.equal(hd.getElementById('catalogCount').textContent,'실시간대전 · 2가지');
- duelModes.find(b=>b.querySelector('b').textContent==='카톡대전').click();assert.equal(hd.getElementById('catalogList').children.length,34);assert.equal(hd.getElementById('all').hidden,false);
+ duelModes.find(b=>b.querySelector('b').textContent==='카톡대전').click();assert.equal(hd.getElementById('catalogList').children.length,33);assert.equal(hd.getElementById('all').hidden,false);
  home.window.close();
  for(const [query,random,expected] of [['',0.49,'letter'],['',0.5,'play'],['?home=letter',0.9,'letter'],['?home=play',0.1,'play'],['?home=unknown',0.9,'play']]){
    const h=load('index.html',query,random),doc=h.window.document,playing=expected==='play';
-   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/mole/');assert.equal(doc.getElementById('catalogList').children.length,34);h.window.close();
+   assert.equal(doc.body.dataset.home,expected);assert.equal(doc.getElementById('letterHome').hidden,playing);assert.equal(doc.getElementById('gameLetter').hidden,!playing);assert.equal(doc.getElementById('playHero').hidden,!playing);assert.equal(doc.getElementById('rpsStart').getAttribute('href'),'t/mole/');assert.equal(doc.getElementById('catalogList').children.length,33);h.window.close();
  }
  for(const [stored,href,word] of [[0,'t/mole/','두더지 잡기'],[1,'t/rps/','가위바위보로'],[2,'t/hidden-picture/?mode=online','숨은그림찾기']]){
    const h=load('index.html','?home=play',0.1,'',{'gatchi-play-hero-v1':String(stored)}),doc=h.window.document;
