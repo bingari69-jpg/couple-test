@@ -35,11 +35,25 @@
     '2048': ['2048 한판', 'atlas', 9, '#fff0d3', '30초 2048 승부', '쓸어 넘겨 같은 숫자를 합쳐봐.'],
     'fit': ['끼워넣기', 'atlas', 17, '#e6f0fb', '같은 조각, 더 채워봐', '조각을 끌어 놓고, 톡 치면 돌아가.'],
     'daily-word': ['오늘의 단어', 'atlas', 0, '#e9e3f9', '오늘 단어, 몇 번 만에?', '초록은 자리까지 맞음, 노랑은 다른 자리에 있음.'],
-    'snake': ['스네이크 40초', 'atlas', 1, '#e2f2e6', '병아리 출동!', '가고 싶은 쪽을 톡! 벽에 닿아도 끝은 아니야.'],
+    'snake': ['스네이크 40초', 'atlas', 1, '#e2f2e6', '병아리 출동!', '화살표나 톡 누르기로 방향 전환. 벽에 닿아도 끝은 아니야.'],
     'choseong': ['초성 퀴즈', 'atlas', 16, '#fff0d3', 'ㄸㅂㅇ 뭔지 알아?', '초성만 보고 답을 입력해. 같은 판이면 문제도 같아.'],
     'simon': ['순서 기억', 'atlas', 13, '#efe6fb', '기억력 자신 있어?', '불빛 순서를 보고 그대로 따라 눌러봐.']
   };
+  /* 그림판은 놀 때만 손짓을 가져간다. 준비 화면(#cover)이 보이는 동안에는 그림판 위에서 쓸어도
+     페이지가 위아래로 스크롤된다 — 시작 전에 화면이 안 내려가 불편하다는 의견을 받아 고쳤다. */
+  function boardScroll() {
+    const board = document.querySelector('.board'), cover = document.getElementById('cover');
+    if (!board || !cover) return;
+    const sync = () => {
+      const idle = !cover.classList.contains('hidden') && !cover.hidden;
+      board.dataset.idle = idle ? '1' : '0';
+      board.style.touchAction = idle ? 'pan-y' : 'none';
+    };
+    new MutationObserver(sync).observe(cover, { attributes: true, attributeFilter: ['class', 'hidden', 'style'] });
+    sync();
+  }
   function init() {
+    boardScroll();
     const config = games[slug];
     const wrap = document.querySelector('.wrap');
     if (!config || !wrap || wrap.querySelector('.game-header')) return;

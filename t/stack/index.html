@@ -116,7 +116,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake40"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
 </head>
 <body class="game-page" data-game="stack">
 <div class="wrap">
@@ -375,7 +375,8 @@ function drop(){
   newSlab(); draw();
   return true;
 }
-$("board").addEventListener("pointerdown",e=>{ if(e.cancelable) e.preventDefault(); drop(); });
+const boardIdle=()=>{const c=$("cover");return !!c&&!c.classList.contains("hidden")};
+$("board").addEventListener("pointerdown",e=>{ if(boardIdle()) return; if(e.cancelable) e.preventDefault(); drop(); });
 $("board").addEventListener("contextmenu",e=>e.preventDefault());
 document.addEventListener("keydown",e=>{
   if(e.key!==" " && e.key!=="Enter" && e.key!=="ArrowDown") return;

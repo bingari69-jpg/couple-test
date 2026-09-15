@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>스네이크 40초 — 같은 먹이, 누가 더 많이 먹나 · 같이놀자</title><meta name="description" content="가고 싶은 쪽을 톡 누르면 방향이 바뀌어요. 40초 동안 지렁이 먹기, 둘이 똑같은 자리에 똑같은 먹이."><link rel="canonical" href="https://noljago.co.kr/t/snake/">
+<title>스네이크 40초 — 같은 먹이, 누가 더 많이 먹나 · 같이놀자</title><meta name="description" content="화살표나 톡 누르기로 방향을 바꿔요. 40초 동안 지렁이 먹기, 둘이 똑같은 자리에 똑같은 먹이."><link rel="canonical" href="https://noljago.co.kr/t/snake/">
 
 <meta property="og:type" content="website">
 <meta property="og:title" content="스네이크 40초 — 같은 지렁이, 누가 더 많이 먹나">
 <meta property="og:description" content="40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 네 기록은 봉인됐어.">
-<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
 <meta property="og:url" content="https://noljago.co.kr/t/snake/">
@@ -67,6 +67,8 @@
   .info b{color:var(--ink)} .info .crash b{color:var(--red)}
 
   /* 방향 버튼 */
+  .dpad{display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:8px;max-width:260px;margin:14px auto 0}
+  .dpad-hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:8px}
   .dpad button{border:2px solid var(--line);background:#fff;border-radius:16px;font:inherit;font-size:26px;font-weight:900;color:var(--ink);padding:12px 0;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:manipulation;box-shadow:inset 0 -4px 0 rgba(0,0,0,.06)}
   .dpad button:active{transform:scale(.94);background:#EAF2FF;border-color:var(--blue)}
   .dpad .u{grid-column:2;grid-row:1} .dpad .l{grid-column:1;grid-row:2} .dpad .d{grid-column:2;grid-row:2} .dpad .r{grid-column:3;grid-row:2}
@@ -118,7 +120,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake40"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
 </head>
 <body class="game-page" data-game="snake">
 <div class="wrap">
@@ -127,7 +129,7 @@
 <section class="screen" id="s-play">
   <span class="tag" id="playTag">스네이크 40초</span>
   <h1 id="playHead">20초.<br><b>누가 더 많이 먹나.</b></h1>
-  <p class="lead" id="playLead">병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.</p>
+  <p class="lead" id="playLead">병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>화살표를 누르거나 가고 싶은 쪽을 톡 누르면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.</p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -144,8 +146,16 @@
     <canvas id="cv" width="360" height="480" aria-label="12×16 판"></canvas>
     <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 출발</div></div>
   </div>
-  <div class="info"><span>길이 <b id="len">3</b></span><span class="crash">부딪힘 <b id="crash">0</b>번</span><span id="speed">한 칸 0.15초</span></div>
+  <div class="info"><span>길이 <b id="len">3</b></span><span class="crash">부딪힘 <b id="crash">0</b>번</span><span id="speed">한 칸 0.18초</span></div>
 
+
+  <div class="dpad" id="dpad" aria-label="방향">
+    <button type="button" class="u" data-d="U" aria-label="위로">▲</button>
+    <button type="button" class="l" data-d="L" aria-label="왼쪽으로">◀</button>
+    <button type="button" class="d" data-d="D" aria-label="아래로">▼</button>
+    <button type="button" class="r" data-d="R" aria-label="오른쪽으로">▶</button>
+  </div>
+  <p class="dpad-hint">화살표를 누르거나, 그림판에서 가고 싶은 쪽을 톡 눌러도 돼요.</p>
 
   <button class="bigbtn start" id="bigBtn">시작</button>
 
@@ -196,28 +206,28 @@
 
    규칙: 12×16 판. 병아리는 가운데서 길이 3으로 오른쪽으로 출발. 40초 동안 지렁이를 먹는다.
    벽이나 몸에 부딪히면 끝나지 않고 — 부딪힘 1번, 빨간 번쩍, 3칸으로 가운데 재출발. 시간은 계속 흐른다.
-   먹을수록 한 칸 시간이 4ms 씩 줄어든다(최소 105ms). 2026-09-16: 40초로 늘리고 한 칸 시간을 10% 늘려 느리게 했다. 기록 = 먹은 지렁이 수(많을수록 이김). 같으면 덜 부딪힌 쪽이 이긴다.
+   먹을수록 한 칸 시간이 4ms 씩 줄어든다(최소 116ms). 2026-09-16: 40초로 늘리고 한 칸 시간을 두 번에 걸쳐 21% 늘려 느리게 했다(150→182ms). 기록 = 먹은 지렁이 수(많을수록 이김). 같으면 덜 부딪힌 쪽이 이긴다.
    판 진행은 setTimeout 사슬(state.tickTimer)로 돌리고, 한 칸 움직임은 step() 하나에 모아 둔다. */
-const COLS=12, ROWS=16, GAME_MS=40000, TICK_MIN=105, TICK_PER_WORM=4, DUEL_TICK=165, FLASH_MS=220;
+const COLS=12, ROWS=16, GAME_MS=40000, TICK_MIN=116, TICK_PER_WORM=4, DUEL_TICK=182, FLASH_MS=220;
 const DIRS={U:[0,-1],D:[0,1],L:[-1,0],R:[1,0]};
 const OPP={U:"D",D:"U",L:"R",R:"L"};
 /* 출발 한 칸 시간(ms). 레벨 0 = 둘이하기 기본 */
-const TICKS={0:DUEL_TICK,1:187,2:165,3:149,4:132,5:116};
+const TICKS={0:DUEL_TICK,1:206,2:182,3:164,4:145,5:128};
 const LEVELS=[
-  {n:1,label:'9마리', limitMs:GAME_MS,goal:9, best:16},
-  {n:2,label:'14마리',limitMs:GAME_MS,goal:14,best:21},
-  {n:3,label:'20마리',limitMs:GAME_MS,goal:20,best:27},
-  {n:4,label:'25마리',limitMs:GAME_MS,goal:25,best:32},
-  {n:5,label:'32마리',limitMs:GAME_MS,goal:32,best:40}
+  {n:1,label:'8마리', limitMs:GAME_MS,goal:8, best:14},
+  {n:2,label:'13마리',limitMs:GAME_MS,goal:13,best:19},
+  {n:3,label:'18마리',limitMs:GAME_MS,goal:18,best:24},
+  {n:4,label:'23마리',limitMs:GAME_MS,goal:23,best:29},
+  {n:5,label:'29마리',limitMs:GAME_MS,goal:29,best:36}
 ];
 const fmtT=ms=>(Math.max(0,ms)/1000).toFixed(1);
 function baseTick(level){ return TICKS[level]||DUEL_TICK; }
 function tickMs(){ return Math.max(TICK_MIN, baseTick(state.level)-state.eaten*TICK_PER_WORM); }
 function titleFor(n){
-  if(n>=32) return "지렁이 사냥꾼";
-  if(n>=23) return "노련한 병아리";
-  if(n>=16) return "평균 이상";
-  if(n>=9)  return "보통 사람";
+  if(n>=29) return "지렁이 사냥꾼";
+  if(n>=21) return "노련한 병아리";
+  if(n>=14) return "평균 이상";
+  if(n>=8)  return "보통 사람";
   return "벽이랑 친해";
 }
 const NEXT=[
@@ -241,7 +251,7 @@ const newSeed=()=>Math.floor(Math.random()*0xFFFFFFFF);
 
 const state = Duel.setup({
   deployBase:"https://noljago.co.kr/t/snake/",
-  og:"https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",imageWidth:800,imageHeight:480,
+  og:"https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",imageWidth:800,imageHeight:480,
   gameName:"스네이크 40초",
   challengeDesc:"40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개.",
   next:NEXT,
@@ -356,13 +366,17 @@ function resetView(){
   $("bigBtn").className="bigbtn start";$("bigBtn").textContent="시작";$("bigBtn").disabled=false;
 }
 
-/* ===== 조작: 머리 기준으로 톡 누르기 · 쓸어 넘기기(18px, 손 안 떼고 연속) · 키보드 =====
-   화살표 버튼은 2026-09-16에 없앴다. 판의 위/아래/왼쪽/오른쪽을 누르면 머리 기준으로 그 방향으로 돈다. */
+/* ===== 조작: 화살표 버튼 · 판을 톡 누르기(머리 기준) · 쓸어 넘기기(18px, 손 안 떼고 연속) · 키보드 =====
+   2026-09-16: 화살표만으로는 손이 바빠 톡 누르기를 더했고, 손 터치가 어렵다는 의견을 받아 화살표도 함께 남겼다. */
 function setDir(d){
   if(!DIRS[d] || !state.running || state.done) return false;
   if(d===OPP[state.dir]) return false;            // 180° 회전은 안 된다 (마지막으로 움직인 방향 기준)
   state.pending=d; return true;
 }
+$("dpad").addEventListener("pointerdown",e=>{
+  const b=e.target.closest && e.target.closest("button"); if(!b) return;
+  if(e.cancelable) e.preventDefault(); setDir(b.dataset.d);
+});
 /* 누른 자리와 머리를 견줘 위·아래·왼쪽·오른쪽 중 하나를 고른다. 180° 라 안 되면 다른 축으로 돈다. */
 function tapDir(clientX,clientY){
   const r=$("cv").getBoundingClientRect(), c=r.width/COLS, h=state.snake[0]||[COLS/2,ROWS/2];
@@ -372,7 +386,8 @@ function tapDir(clientX,clientY){
   const first=across?(dx>0?"R":"L"):(dy>0?"D":"U"), second=across?(dy>0?"D":"U"):(dx>0?"R":"L");
   return setDir(first)?first:(setDir(second)?second:null);
 }
-$("board").addEventListener("pointerdown",e=>{ state.swipe=[e.clientX,e.clientY]; state.tap=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); try{ $("board").setPointerCapture(e.pointerId); }catch(_){} });
+const boardIdle=()=>{const c=$("cover");return !!c&&!c.classList.contains("hidden")};
+$("board").addEventListener("pointerdown",e=>{ if(boardIdle()) return; state.swipe=[e.clientX,e.clientY]; state.tap=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); try{ $("board").setPointerCapture(e.pointerId); }catch(_){} });
 $("board").addEventListener("pointermove",e=>{
   if(!state.swipe) return;
   const dx=e.clientX-state.swipe[0], dy=e.clientY-state.swipe[1];

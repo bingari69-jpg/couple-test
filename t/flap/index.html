@@ -110,7 +110,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake40"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
 </head>
 <body class="game-page" data-game="flap">
 <div class="wrap">
@@ -348,7 +348,8 @@ function flapNow(){
   if(!state.running || state.done) return false;
   state.vy=FLAP; state.wingAt=state.ticks*STEP; return true;
 }
-$("board").addEventListener("pointerdown",e=>{ if(e.cancelable) e.preventDefault(); flapNow(); });
+const boardIdle=()=>{const c=$("cover");return !!c&&!c.classList.contains("hidden")};
+$("board").addEventListener("pointerdown",e=>{ if(boardIdle()) return; if(e.cancelable) e.preventDefault(); flapNow(); });
 $("board").addEventListener("contextmenu",e=>e.preventDefault());
 $("board").addEventListener("touchstart",e=>{ if(state.running) e.preventDefault(); },{passive:false});
 $("board").addEventListener("touchmove", e=>{ if(state.running) e.preventDefault(); },{passive:false});

@@ -2733,7 +2733,7 @@
     "entry_fresh": {
       "playTag": "스네이크 40초",
       "playHead": "20초.<br><b>누가 더 많이 먹나.</b>",
-      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>화살표를 누르거나 가고 싶은 쪽을 톡 누르면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "",
       "tallyText": "",
       "_hidden": {
@@ -2830,7 +2830,7 @@
     "kakao_challenge": {
       "url": "https://noljago.co.kr/t/snake/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzc2LCJjIjpbMiw4XSwibCI6MCwiaCI6W119",
       "btn": "도전 받기",
-      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
+      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "지은의 스네이크 40초 도전장 🔒",
@@ -2842,7 +2842,7 @@
     "kakao_challenge_hist": {
       "url": "https://noljago.co.kr/t/snake/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzc2LCJjIjpbMiw4XSwibCI6MCwiaCI6W1si7KeA7J2AIiw1LCLrr7zsiJgiLDcsImFiYzEyMyIsInp6ejk5OSJdXX0",
       "btn": "도전 받기",
-      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
+      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "지은의 스네이크 40초 도전장 🔒",
@@ -2851,7 +2851,7 @@
     "open_challenge": {
       "playTag": "도전장 도착",
       "playHead": "<b>지은</b>이 도전했다.<br>같은 지렁이야. 더 먹어.",
-      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>화살표를 누르거나 가고 싶은 쪽을 톡 누르면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "지은",
       "tallyText": "",
       "_hidden": {
@@ -2897,7 +2897,7 @@
     "kakao_result": {
       "url": "https://noljago.co.kr/t/snake/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDcsIuuvvOyImCIsNSwiYWJjMTIzIiwienp6OTk5IixbMiw4XSxbMiw4XV1dfQ",
       "btn": "결과 보기",
-      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
+      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "민수 5마리 vs 지은 7마리 — 지은 승",
@@ -2906,7 +2906,7 @@
     "open_challenge_noname": {
       "playTag": "도전장 도착",
       "playHead": "<b>상대</b>가 도전했다.<br>같은 지렁이야. 더 먹어.",
-      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>화살표를 누르거나 가고 싶은 쪽을 톡 누르면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "상대",
       "tallyText": "",
       "_hidden": {
@@ -3099,7 +3099,7 @@
     "bet_kakao": {
       "url": "https://noljago.co.kr/t/snake/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzc2LCJjIjpbMiw4XSwibCI6MCwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
-      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
+      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "🍱 점심 걸고 — 지은의 스네이크 40초 도전장 🔒",
@@ -3124,7 +3124,7 @@
     "bet_kakao_result": {
       "url": "https://noljago.co.kr/t/snake/#r=eyJ2IjoxLCJoIjpbWyLsp4DsnYAiLDcsIuuvvOyImCIsNSwiYWJjMTIzIiwienp6OTk5IixbMiw4XSxbMiw4XV1dLCJiIjoi7KCQ7IusIn0",
       "btn": "결과 보기",
-      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
+      "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "민수 5마리 vs 지은 7마리 — 지은 승",

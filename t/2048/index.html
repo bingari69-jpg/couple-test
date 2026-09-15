@@ -133,7 +133,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake40"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
 </head>
 <body class="game-page" data-game="2048">
 <div class="wrap">
@@ -386,7 +386,8 @@ function resetView(){
 }
 
 /* ===== 조작: 쓸어 넘기기(24px 이상) · 키보드 ===== */
-$("board").addEventListener("pointerdown",e=>{ state.swipe=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); });
+const boardIdle=()=>{const c=$("cover");return !!c&&!c.classList.contains("hidden")};
+$("board").addEventListener("pointerdown",e=>{ if(boardIdle()) return; state.swipe=[e.clientX,e.clientY]; if(e.cancelable) e.preventDefault(); });
 $("board").addEventListener("pointermove",e=>{
   if(!state.swipe) return;
   const dx=e.clientX-state.swipe[0], dy=e.clientY-state.swipe[1];
