@@ -11,7 +11,14 @@ assert.deepEqual(changes,[],'scripts/build-seo.cjs 를 다시 실행해야 함: 
 const home=read('index.html');
 const staticBlock=home.match(/<!-- static-catalog:start[\s\S]*?<!-- static-catalog:end -->/);
 assert.ok(staticBlock,'홈 정적 목록 누락');
-items.forEach(it=>assert.ok(staticBlock[0].includes('href="'+it.path+'"'),'홈 정적 목록에 '+it.path+' 누락'));
+items.filter(it=>!it.mind).forEach(it=>assert.ok(staticBlock[0].includes('href="'+it.path+'"'),'홈 정적 목록에 '+it.path+' 누락'));
+/* 심리테스트는 놀기 목록이 아니라 심리 메뉴(/t/psychology/)에서만 */
+const mind=items.filter(it=>it.mind);
+assert.ok(mind.length>=4,'심리테스트 표시');
+mind.forEach(it=>{
+  assert.ok(!staticBlock[0].includes('href="'+it.path+'"'),it.path+' 는 홈 목록에서 빠져야 함');
+  assert.ok(read('assets/psychology-hub.js').includes(it.path.replace('t/','../')),it.path+' 는 심리 메뉴에 있어야 함');
+});
 assert.ok(!/href="(\.\/)?admin\/"/.test(home),'공개 홈에 관리자 링크가 있으면 안 됨');
 
 const sitemap=read('sitemap.xml');
@@ -23,4 +30,4 @@ items.forEach(it=>{
   assert.match(html,/<title>[^<]*같이놀자[^<]*<\/title>/,it.path+' 제목에 서비스 이름 누락');
   assert.ok(sitemap.includes('<loc>https://noljago.co.kr/'+it.path+'</loc>'),it.path+' sitemap 누락');
 });
-console.log('검색 노출 검사 통과 — 홈 정적 목록 '+items.length+'개, 페이지 메타·sitemap 최신, 관리자 링크 비노출');
+console.log('검색 노출 검사 통과 — 홈 정적 목록 '+(items.length-mind.length)+'개(심리 '+mind.length+'종 제외), 페이지 메타·sitemap 최신, 관리자 링크 비노출');

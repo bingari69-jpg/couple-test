@@ -70,7 +70,8 @@ function render(){
  renderDuelModes();
  const soloMode=mode==='solo';
  $('catalogList').replaceChildren();
- const visible=HOME_ITEMS.filter(it=>soloMode?(SOLO[slugOf(it)]||it.soloFree):(duelMode==='realtime'?it.realtimeDuel:true));
+ // 심리테스트는 '심리' 메뉴에만 둔다 — 놀기 탭에는 게임만 보여준다
+ const visible=HOME_ITEMS.filter(it=>!it.mind).filter(it=>soloMode?(SOLO[slugOf(it)]||it.soloFree):(duelMode==='realtime'?it.realtimeDuel:true));
  $('catalogCount').textContent=(soloMode?'혼자놀기':duelMode==='realtime'?'실시간대전':'카톡대전')+' · '+visible.length+'가지';
  visible.forEach(it=>{
    const slug=slugOf(it),solo=soloMode;
