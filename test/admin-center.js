@@ -27,7 +27,7 @@ function runtimeDom(url, value) {
   ['app_admins','app_config_state','app_config_versions','analytics_events','get_published_app_config','admin_save_app_draft','admin_publish_app_config','admin_restore_app_version','admin_get_app_stats'].forEach(name => assert(migration.includes(name), `migration ${name} 누락`));
   assert(migration.includes('enable row level security'), '관리 테이블 RLS 누락');
   assert(!migration.match(/service_role|sb_secret_/i), '비밀키가 파일에 들어가면 안 됨');
-  assert(read('index.html').includes('class="admin-link" href="admin/"'), '홈의 관리자 진입 링크 누락');
+  assert(!/href="(\.\/)?admin\/"/.test(read('index.html')), '공개 홈에 관리자 진입 링크를 노출하면 안 됨 (/admin/ 직접 주소로 들어간다)');
   /* 저장된 설정에 없는 새 로컬 게임을 관리 목록 끝에 붙이는지 — normalize 만 떼어 내 실행한다 */
   {
     const src = read('admin/admin.js');

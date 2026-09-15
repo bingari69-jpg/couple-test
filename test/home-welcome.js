@@ -3,8 +3,8 @@ const {JSDOM}=require('jsdom');
 const root=path.join(__dirname,'..');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8').replace(/<script[^>]*>[\s\S]*?<\/script>/g,'');
 const script=fs.readFileSync(path.join(root,'assets/home-welcome.js'),'utf8');
-function open({seen=false,preview=false}={}){
- const dom=new JSDOM(html,{url:'https://noljago.co.kr/'+(preview?'?admin_preview=1':''),runScripts:'outside-only',pretendToBeVisual:true});
+function open({seen=false,preview=false,hash=''}={}){
+ const dom=new JSDOM(html,{url:'https://noljago.co.kr/'+(preview?'?admin_preview=1':'')+hash,runScripts:'outside-only',pretendToBeVisual:true});
  const {window:w}=dom,dialog=w.document.getElementById('homeWelcome');
  dialog.showModal=function(){this.open=true;this.setAttribute('open','');};dialog.close=function(){this.open=false;this.removeAttribute('open');};
  w.Element.prototype.scrollIntoView=function(){this.dataset.scrolled='true';};
@@ -24,5 +24,8 @@ function open({seen=false,preview=false}={}){
 }
 {
  const p=open({preview:true});assert.equal(p.dialog.open,false,'관리자 미리보기에서는 자동 안내를 띄우지 않아야 함');p.dom.window.close();
+}
+{
+ const p=open({hash:'#i=abc'});assert.equal(p.dialog.open,false,'옛 초대 링크로 들어오면 안내창으로 막지 않아야 함');p.dom.window.close();
 }
 console.log('홈 첫 방문 안내 검사 통과 — 편지·게임 3단계, 카카오 설명, 다시 열기, 1회 자동 표시');

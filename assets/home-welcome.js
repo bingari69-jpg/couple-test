@@ -14,7 +14,8 @@
   $('welcomeHelp').onclick=show;
   dialog.addEventListener('cancel',event=>{event.preventDefault();close();});
   dialog.addEventListener('click',event=>{if(event.target===dialog)close();});
-  if(!hasSeen()&&!new URLSearchParams(location.search).has('admin_preview'))show();
+  // 옛 결혼 테스트 초대(#i=/#r=)는 home.js가 곧바로 해당 페이지로 넘기므로 안내창으로 막지 않는다.
+  if(!hasSeen()&&!new URLSearchParams(location.search).has('admin_preview')&&!/^#(?:i|r)=/.test(location.hash))show();
  }
  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
