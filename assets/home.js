@@ -35,10 +35,10 @@ setPlayHero();
 if(!playing)document.title='같이놀자 — 너에게 보내고 싶은 게 있어';
 $('menuButton').onclick=()=>{const open=$('menu').hidden;$('menu').hidden=!open;$('menuButton').setAttribute('aria-expanded',String(open));};
 $('menu').querySelectorAll('a').forEach(link=>link.addEventListener('click',()=>{$('menu').hidden=true;$('menuButton').setAttribute('aria-expanded','false');}));
-let relationship='전체';
 // 둘이놀기(기본) / 혼자놀기 탭. ?tab=solo 또는 #solo 로 바로 열 수 있다.
 const SOLO=window.SOLO_GAMES||{};
 let mode=(new URLSearchParams(location.search).get('tab')==='solo'||location.hash==='#solo')?'solo':'duel';
+let duelMode='kakao';
 const slugOf=it=>it.path.replace(/^t\//,'').replace(/\/$/,'');
 function soloBadge(slug){
  let all={};try{all=JSON.parse(localStorage.getItem('gatchi_solo_v1')||'{}')||{};}catch(e){}
@@ -53,24 +53,28 @@ function renderModes(){
    b.innerHTML='<b></b><small></small>';b.querySelector('b').textContent=label;b.querySelector('small').textContent=sub;
    b.onclick=()=>{mode=key;render();};box.append(b);
  });
- $('catalogTitle').textContent=mode==='solo'?'혼자서도 재밌게':'조금 더 놀다 갈래?';
- const lead=document.querySelector('.catalog-lead');if(lead)lead.textContent=mode==='solo'?'레벨을 깨고 별을 모으거나, 컴퓨터와 가볍게 한판 해봐.':'카톡으로 주고받거나 한 화면에서 같이. 마음에 드는 놀이를 골라봐.';
+ $('catalogTitle').textContent=mode==='solo'?'혼자서도 재밌게':duelMode==='realtime'?'지금 바로 붙을래?':'카톡으로 한판 할래?';
+ const lead=document.querySelector('.catalog-lead');if(lead)lead.textContent=mode==='solo'?'레벨을 깨고 별을 모으거나, 컴퓨터와 가볍게 한판 해봐.':duelMode==='realtime'?'둘 다 접속하면 바로 같은 방에서 시작해요.':'내가 먼저 하고 카톡으로 보내면, 친구도 자기 폰에서 이어서 해요.';
+}
+function renderDuelModes(){
+ const box=$('catalogDuelModes');if(!box)return;box.replaceChildren();box.hidden=mode!=='duel';
+ if(mode!=='duel')return;
+ [['kakao','카톡대전','도전장을 보내고 각자 기록으로 승부'],['realtime','실시간대전','둘 다 접속해 같은 방에서 바로 겨뤄요']].forEach(([key,label,sub])=>{
+   const b=document.createElement('button');b.type='button';b.className='duel-mode';b.dataset.duelMode=key;b.setAttribute('aria-pressed',String(duelMode===key));
+   b.innerHTML='<b></b><small></small>';b.querySelector('b').textContent=label;b.querySelector('small').textContent=sub;
+   b.onclick=()=>{duelMode=key;render();};box.append(b);
+ });
 }
 function render(){
  renderModes();
- // 혼자놀기는 상대가 없는 놀이라 관계(연인·부부…) 고르기를 숨기고 전체로 본다. 둘이놀기로 돌아오면 고르던 관계가 그대로 살아난다.
- const soloMode=mode==='solo', rel=soloMode?'전체':relationship;
- $('catalogFilters').hidden=soloMode;
- $('catalogFilters').replaceChildren();
- if(!soloMode) ['전체','연인','부부','친구','가족'].forEach(r=>{const b=document.createElement('button');b.className='chip';b.textContent=r;b.setAttribute('aria-pressed',String(r===relationship));b.onclick=()=>{relationship=r;render();[...$('catalogFilters').children].find(el=>el.textContent===r).focus({preventScroll:true});};$('catalogFilters').append(b);});
+ renderDuelModes();
+ const soloMode=mode==='solo';
  $('catalogList').replaceChildren();
- const visible=HOME_ITEMS.filter(it=>(rel==='전체'||it.relationships.includes(rel))&&(!soloMode||SOLO[slugOf(it)]||it.soloFree));
- // 받침이 있으면 '과', 없으면 '와' (연인과 · 부부와)
- const withJosa=n=>{const c=n.charCodeAt(n.length-1);return n+((c>=0xAC00&&c<=0xD7A3&&(c-0xAC00)%28>0)?'과':'와')+' 함께';};
- $('catalogCount').textContent=(soloMode?'혼자놀기':(rel==='전체'?'전체':withJosa(rel)))+' · '+visible.length+'가지';
+ const visible=HOME_ITEMS.filter(it=>soloMode?(SOLO[slugOf(it)]||it.soloFree):(duelMode==='realtime'?it.realtimeDuel:true));
+ $('catalogCount').textContent=(soloMode?'혼자놀기':duelMode==='realtime'?'실시간대전':'카톡대전')+' · '+visible.length+'가지';
  visible.forEach(it=>{
    const slug=slugOf(it),solo=soloMode;
-   const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path+((it.localDuel||it.onlineDuel)?'?mode=online':'');a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
+   const a=document.createElement('a');a.className='catalog-card'+(solo?' solo':'');a.href=solo?it.path+'?solo=1':it.path+((it.localDuel||it.onlineDuel||it.realtimeDuel)?'?mode=online':'');a.style.setProperty('--card-color',it.color);a.setAttribute('aria-label',it.title+' 시작하기');
    const art=document.createElement('div');art.className='catalog-art';art.setAttribute('aria-hidden','true');
    /* 인기 순위는 둘이놀기 기준이라 혼자놀기 탭에서는 붙이지 않는다 */
    if(!solo&&it.popularRank){const rank=document.createElement('span');rank.className='catalog-rank';rank.textContent='인기 '+it.popularRank+'위';art.append(rank);}
@@ -81,7 +85,7 @@ function render(){
    const title=document.createElement('h3');title.textContent=it.title.split(' — ')[0];
    const description=document.createElement('p');description.textContent=slug==='omok'?(solo?'컴퓨터와 15×15 오목. 다섯 알을 먼저 이어봐.':'카톡으로 초대해서 각자 휴대폰으로 두는 15×15 오목.'):(solo&&it.soloSummary?it.soloSummary:it.summary);
    const tags=document.createElement('div');tags.className='catalog-tags';
-   it.relationships.forEach(rel=>{const tag=document.createElement('span');tag.textContent=rel;tag.dataset.relationship=rel;tags.append(tag);});
+   if(!solo){const tag=document.createElement('span');tag.textContent=duelMode==='realtime'?'실시간대전':'카톡대전';tag.dataset.duelMode=duelMode;tags.append(tag);}
    const start=document.createElement('span');start.className='catalog-start';start.textContent=solo?'혼자 하기 →':'시작하기 →';
    if(solo){const s=soloBadge(slug);const badge=document.createElement('span');badge.className='catalog-badge';badge.textContent=it.soloFree?'컴퓨터와 · 자유 한판':s.total===1?(s.cleared?'오늘 완료 ★'.replace('★','★'.repeat(s.stars)):'오늘 한 판'):(s.cleared>=s.total?'모두 클리어 · ★'+s.stars:'Lv'+s.next+' 도전 · ★'+s.stars+'/'+(s.total*3));tags.replaceChildren(badge);}
    content.append(title,description,tags,start);a.append(art,content);$('catalogList').append(a);

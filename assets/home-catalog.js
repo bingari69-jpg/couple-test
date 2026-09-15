@@ -1,9 +1,9 @@
 const ITEMS = [
   { path:"t/timejump/", rel:"친구", kind:"대결", thumbnailUrl:"assets/art/timejump.svg", soloSummary:"원시시대부터 미래 우주까지 5단계. 뛰고 밟고 우체통까지, 별을 모아봐!",
     title:"타임 점프 — 편지 들고 다섯 시대를 건너", desc:"뛰고 점프해서 우체통까지. 같은 시대, 같은 코스로 누가 더 빨리 배달하나 시간 대결." },
-  { path:"t/tapbattle/", rel:"친구", kind:"반응 대결", onlineDuel:true, thumbnailUrl:"assets/art/tapbattle.svg",
+  { path:"t/tapbattle/", rel:"친구", kind:"반응 대결", onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/tapbattle.svg",
     title:"톡톡 배틀 — 멈출 때가 승부야!", desc:"초록엔 톡톡, 빨강엔 멈춰! 카톡으로 초대해 동시에 겨루는 20초." },
-  { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"엇갈린 다섯 알! 방향을 고르고 움직이는 힘 게이지를 멈춰 톡!",
+  { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"엇갈린 다섯 알! 방향을 고르고 움직이는 힘 게이지를 멈춰 톡!",
     title:"알까기 배틀 — 톡! 다음은 네 차례", desc:"다섯 알의 작은 승부. 카톡으로 친구를 초대하고 각자 휴대폰에서 겨뤄봐." },
   { path:"t/omok/", rel:"친구", kind:"보드게임", soloFree:true, localDuel:true, thumbnailUrl:"assets/art/omok-board.svg",
     title:"오목 한판 — 다음 한 수는 너야",
