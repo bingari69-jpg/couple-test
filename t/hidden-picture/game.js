@@ -12,8 +12,13 @@ function copyText(){const d=mode==='duel';$('eyebrow').textContent=d?'30 SECOND 
 function levelMenu(){ $('landing').hidden=true;$('game').hidden=true;$('levelSelect').hidden=false;$('levelSelect').replaceChildren();const lead=document.createElement('p');lead.className='select-lead';lead.textContent=mode==='solo'?'1단계부터 그림 이야기를 열어봐.':'그림을 골라 30초 도전장을 만들어봐.';$('levelSelect').append(lead);levels.forEach(l=>{const lock=mode==='solo'&&!unlocked(l.n),b=document.createElement('button');b.className='level-card '+(l===level?'on':'')+(lock?' locked':'');b.disabled=lock;b.innerHTML='<span>Lv'+l.n+'</span><b>'+l.title+'</b><small>'+(mode==='duel'?'30초 · 몇 개를 찾을까?':fmt(l.limit)+' 안에 물건 8개')+'</small><i>'+(lock?'🔒 앞 단계를 먼저 완료':'이 그림으로 시작 →')+'</i>';b.onclick=()=>{level=l;levelMenu()};$('levelSelect').append(b)});const enter=document.createElement('button');enter.id='enterGame';enter.className='primary';enter.textContent=mode==='duel'?'이 그림으로 30초 대결 시작 →':'Lv'+level.n+' 시작 →';enter.onclick=openGame;$('levelSelect').append(enter)}
 function openGame(){$('levelSelect').hidden=true;$('game').hidden=false;reset()}
 function renderItems(){$('objects').replaceChildren();level.items.forEach(x=>{const li=document.createElement('li');li.className='object';li.id='item-'+x.id;li.innerHTML='<svg viewBox="0 0 48 48"><path d="'+x.shape+'"/></svg><span class="name">'+x.name+'</span><span class="check" hidden>✓</span>';$('objects').append(li)})}
-function controls(){const p=phase==='playing',z=p||phase==='complete';$('hint').disabled=!p||hints>=3;$('pause').disabled=!p;$('zoomIn').disabled=!z||zoom>=2.5;$('zoomOut').disabled=!z||zoom<=1}
-function setZoom(n,a){const x=a?a.x:(viewport.scrollLeft+viewport.clientWidth/2)/scene.offsetWidth,y=a?a.y:(viewport.scrollTop+viewport.clientHeight/2)/scene.offsetHeight;zoom=Math.max(1,Math.min(2.5,n));scene.style.width=zoom*100+'%';$('zoomLabel').textContent=Math.round(zoom*100)+'%';viewport.scrollLeft=x*scene.offsetWidth-viewport.clientWidth/2;viewport.scrollTop=y*scene.offsetHeight-viewport.clientHeight/2;controls()}
+function controls(){const p=phase==='playing',z=p||phase==='complete';$('hint').disabled=!p||hints>=3;$('pause').disabled=!p;$('zoomIn').disabled=!z||zoom>=MAX_ZOOM-0.001;$('zoomOut').disabled=!z||zoom<=1}
+const MAX_ZOOM=3;
+/* 화면의 한 점(cx,cy)을 붙잡은 채 확대·축소 — 두 손가락 확대와 두 번 톡에 쓴다 */
+function zoomAt(n,cx,cy){const r=viewport.getBoundingClientRect(),fx=(viewport.scrollLeft+cx-r.left)/scene.offsetWidth,fy=(viewport.scrollTop+cy-r.top)/scene.offsetHeight;
+ zoom=Math.max(1,Math.min(MAX_ZOOM,n));scene.style.width=zoom*100+'%';$('zoomLabel').textContent=Math.round(zoom*100)+'%';
+ viewport.scrollLeft=fx*scene.offsetWidth-(cx-r.left);viewport.scrollTop=fy*scene.offsetHeight-(cy-r.top);controls()}
+function setZoom(n,a){const x=a?a.x:(viewport.scrollLeft+viewport.clientWidth/2)/scene.offsetWidth,y=a?a.y:(viewport.scrollTop+viewport.clientHeight/2)/scene.offsetHeight;zoom=Math.max(1,Math.min(MAX_ZOOM,n));scene.style.width=zoom*100+'%';$('zoomLabel').textContent=Math.round(zoom*100)+'%';viewport.scrollLeft=x*scene.offsetWidth-viewport.clientWidth/2;viewport.scrollTop=y*scene.offsetHeight-viewport.clientHeight/2;controls()}
 function clearHint(){clearTimeout(hintTimer);scene.querySelector('.hint-ring')?.remove()}function mark(x,cls='mark'){const[a,b,w,h]=x.box,e=document.createElement('span');e.className=cls;Object.assign(e.style,{left:a*100+'%',top:b*100+'%',width:w*100+'%',height:h*100+'%'});$('marks').append(e)}
 function foundOne(x){found.add(x.id);mark(x);clearHint();const li=$('item-'+x.id);li.classList.add('found');li.querySelector('.check').hidden=false;$('foundCount').textContent=found.size;$('progress').style.width=found.size/8*100+'%';$('message').textContent=x.name+' 발견! '+(8-found.size)+'개 남았어.';if(mode==='solo'&&found.size===8)finish(true)}
 function hit(x,y){if(phase!=='playing')return;const item=level.items.find(v=>x>=v.box[0]&&x<=v.box[0]+v.box[2]&&y>=v.box[1]&&y<=v.box[1]+v.box[3]);if(!item||found.has(item.id)){if(!item)$('message').textContent='아직 아니야. 목록의 모양을 다시 살펴봐!';return}foundOne(item)}
@@ -26,6 +31,31 @@ async function share(){const u=new URL(location.href);u.hash='';let text;if(mode
 function showResultLink(){openGame();phase='complete';duel={me:Number(payload.b)||0,them:Number(payload.a)||0,name:payload.n||'친구'};$('cover').hidden=true;const verdict=duel.me>duel.them?'내가 이겼어!':duel.me<duel.them?'친구가 이겼어!':'무승부!';$('foundCount').textContent=duel.me;$('progress').style.width=duel.me/8*100+'%';$('resultEyebrow').textContent='30 SECOND RESULT';$('resultTitle').textContent=verdict;$('resultText').textContent='나 '+duel.me+'개 · '+duel.name+' '+duel.them+'개. 같은 그림에서 30초 동안 겨뤘어.';$('replay').textContent='나도 30초 도전하기';$('share').textContent='결과 링크 공유';$('result').hidden=false;controls()}
 function ready(){if(!art.naturalWidth)return;loaded=true;$('start').disabled=false;$('start').textContent='시작 →'}function failed(){$('start').textContent='그림을 불러오지 못했어요';$('coverDescription').textContent='연결을 확인한 뒤 새로고침해 주세요.'}
 $('chooseSolo').onclick=()=>{mode='solo';level=levels[0];levelMenu()};$('chooseDuel').onclick=()=>{mode='duel';level=levels[0];levelMenu()};$('start').onclick=start;$('pause').onclick=pause;$('replay').onclick=()=>{if(mode==='solo'&&found.size===8&&level.n<3){level=levels[level.n];levelMenu()}else reset()};$('share').onclick=share;$('zoomIn').onclick=()=>setZoom(zoom+.5);$('zoomOut').onclick=()=>setZoom(zoom-.5);$('hint').onclick=()=>{if(phase!=='playing'||hints>=3)return;hints++;const x=level.items.find(v=>!found.has(v.id));setZoom(1.5,{x:x.box[0]+x.box[2]/2,y:x.box[1]+x.box[3]/2});mark(x,'hint-ring');hintTimer=setTimeout(clearHint,5000);$('hintCount').textContent=hints+' / 3';$('hint').querySelector('span').textContent=3-hints;$('message').textContent='이 근처에 '+x.name+' 모양이 숨어 있어. 직접 눌러 찾아봐!';controls()};
-scene.addEventListener('pointerdown',e=>{if(e.isPrimary)down={x:e.clientX,y:e.clientY,id:e.pointerId,left:viewport.scrollLeft,top:viewport.scrollTop}});scene.addEventListener('pointermove',e=>{if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>9)down=null});scene.addEventListener('pointerup',e=>{if(!down||e.pointerId!==down.id)return;const d=down;down=null;if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>9||Math.abs(viewport.scrollLeft-d.left)+Math.abs(viewport.scrollTop-d.top)>9)return;const r=scene.getBoundingClientRect();hit((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)});art.addEventListener('load',ready);art.addEventListener('error',failed);document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='solo')pause()});
+/* 한 손가락은 밀어서 이동(브라우저 스크롤), 두 손가락은 벌려서 확대, 같은 자리 두 번 톡도 확대 */
+const touches=new Map();let pinch=null,lastTap=0,lastTapPos=null;
+const canZoom=()=>phase==='playing'||phase==='complete';
+scene.addEventListener('pointerdown',e=>{touches.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(touches.size>1){down=null;pinch=null}
+ else if(e.isPrimary)down={x:e.clientX,y:e.clientY,id:e.pointerId,left:viewport.scrollLeft,top:viewport.scrollTop}});
+scene.addEventListener('pointermove',e=>{
+ if(touches.has(e.pointerId))touches.set(e.pointerId,{x:e.clientX,y:e.clientY});
+ if(touches.size>=2&&canZoom()){
+  const[a,b]=[...touches.values()],dist=Math.hypot(a.x-b.x,a.y-b.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  if(!pinch||!pinch.dist)pinch={dist,zoom};
+  else zoomAt(pinch.zoom*dist/pinch.dist,mx,my);
+  down=null;if(e.cancelable)e.preventDefault();return;
+ }
+ if(down&&Math.hypot(e.clientX-down.x,e.clientY-down.y)>9)down=null});
+const endTouch=e=>{touches.delete(e.pointerId);if(touches.size<2)pinch=null};
+scene.addEventListener('pointercancel',endTouch);
+scene.addEventListener('pointerup',e=>{const many=touches.size>1;endTouch(e);
+ if(!down||e.pointerId!==down.id||many)return;const d=down;down=null;
+ if(Math.hypot(e.clientX-d.x,e.clientY-d.y)>9||Math.abs(viewport.scrollLeft-d.left)+Math.abs(viewport.scrollTop-d.top)>9)return;
+ const now=performance.now();
+ if(canZoom()&&lastTapPos&&now-lastTap<320&&Math.hypot(e.clientX-lastTapPos.x,e.clientY-lastTapPos.y)<26){
+  lastTap=0;lastTapPos=null;zoomAt(zoom>=MAX_ZOOM-0.001?1:zoom+1,e.clientX,e.clientY);return;
+ }
+ lastTap=now;lastTapPos={x:e.clientX,y:e.clientY};
+ const r=scene.getBoundingClientRect();hit((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height)});art.addEventListener('load',ready);art.addEventListener('error',failed);document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='solo')pause()});
 if(hash&&hash[1]==='r'&&payload){mode='duel';showResultLink()}else{if(mode==='landing'){$('landing').hidden=false}else levelMenu();if(challenge){$('levelSelect').hidden=true;openGame();$('message').textContent=(challenge.n||'친구')+'의 '+level.title+' 도전장이야. 30초 동안 더 많이 찾아봐!'}}
 })();

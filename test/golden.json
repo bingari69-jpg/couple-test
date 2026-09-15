@@ -2731,9 +2731,9 @@
   },
   "snake": {
     "entry_fresh": {
-      "playTag": "스네이크 20초",
+      "playTag": "스네이크 40초",
       "playHead": "20초.<br><b>누가 더 많이 먹나.</b>",
-      "playLead": "병아리가 20초 동안 지렁이를 몇 마리 먹을까. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "",
       "tallyText": "",
       "_hidden": {
@@ -2833,8 +2833,8 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 스네이크 20초 도전장 🔒",
-      "desc": "20초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
+      "title": "지은의 스네이크 40초 도전장 🔒",
+      "desc": "40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
       "url": "https://noljago.co.kr/t/snake/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzc2LCJjIjpbMiw4XSwibCI6MCwiaCI6W1si7KeA7J2AIiw1LCLrr7zsiJgiLDcsImFiYzEyMyIsInp6ejk5OSJdXX0"
@@ -2845,13 +2845,13 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 스네이크 20초 도전장 🔒",
+      "title": "지은의 스네이크 40초 도전장 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
       "playTag": "도전장 도착",
       "playHead": "<b>지은</b>이 도전했다.<br>같은 지렁이야. 더 먹어.",
-      "playLead": "병아리가 20초 동안 지렁이를 몇 마리 먹을까. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "지은",
       "tallyText": "",
       "_hidden": {
@@ -2873,7 +2873,7 @@
       "dB": "부딪힘 2번 · 최장 8칸",
       "verdict": "상대가 더 먹었어",
       "subVerdict": "5마리 vs 7마리 — 지은이 2마리 더 먹었어.",
-      "titleBadge": "🏅 보통 사람",
+      "titleBadge": "🏅 벽이랑 친해",
       "tallyBox": "",
       "_cls": {
         "sideA": "side lose",
@@ -2901,12 +2901,12 @@
       "imageWidth": 800,
       "imageHeight": 480,
       "title": "민수 5마리 vs 지은 7마리 — 지은 승",
-      "desc": "20초, 같은 지렁이. 누가 더 많이 먹었을까. 재도전은 여기서."
+      "desc": "40초, 같은 지렁이. 누가 더 많이 먹었을까. 재도전은 여기서."
     },
     "open_challenge_noname": {
       "playTag": "도전장 도착",
       "playHead": "<b>상대</b>가 도전했다.<br>같은 지렁이야. 더 먹어.",
-      "playLead": "병아리가 20초 동안 지렁이를 몇 마리 먹을까. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
+      "playLead": "병아리가 40초 동안 지렁이를 몇 마리 먹을까. <b>가고 싶은 쪽을 톡 누르거나 쓸면</b> 방향이 바뀌어. 둘이 <b>똑같은 자리에 똑같은 지렁이</b>를 받아. 부딪히면 3칸으로 돌아가고 시간은 계속 흘러. 기회는 한 번.",
       "lockName": "상대",
       "tallyText": "",
       "_hidden": {
@@ -2928,7 +2928,7 @@
       "dB": "부딪힘 2번 · 최장 8칸",
       "verdict": "내가 더 먹었어!",
       "subVerdict": "7마리 vs 5마리 — 지은이 2마리 더 먹었어.",
-      "titleBadge": "🏅 보통 사람",
+      "titleBadge": "🏅 벽이랑 친해",
       "tallyBox": "",
       "_cls": {
         "sideA": "side win",
@@ -3102,8 +3102,8 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 스네이크 20초 도전장 🔒",
-      "desc": "20초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
+      "title": "🍱 점심 걸고 — 지은의 스네이크 40초 도전장 🔒",
+      "desc": "40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
       "url": "https://noljago.co.kr/t/snake/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzc2LCJjIjpbMiw4XSwibCI6MCwiaCI6W119",
@@ -3169,7 +3169,7 @@
       "dB": "부딪힘 0번 · 최장 3칸",
       "verdict": "내가 더 먹었어!",
       "subVerdict": "7마리 vs 5마리 — 지은이 2마리 더 먹었어.",
-      "titleBadge": "🏅 보통 사람",
+      "titleBadge": "🏅 벽이랑 친해",
       "tallyBox": "",
       "_cls": {
         "sideA": "side win",

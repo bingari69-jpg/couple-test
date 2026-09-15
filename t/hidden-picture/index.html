@@ -7,8 +7,8 @@
 <meta name="description" content="숲, 서점, 옥상 정원에 꼭꼭 숨은 물건을 찾아봐. 혼자 3단계, 친구와는 30초 대결.">
 <meta property="og:type" content="website"><meta property="og:title" content="숨은그림찾기 — 30초 안에 몇 개 찾을래?"><meta property="og:description" content="같은 그림 속 숨은 물건. 친구와 개수로 겨뤄봐."><meta property="og:image" content="https://noljago.co.kr/t/hidden-picture/forest.png"><meta property="og:url" content="https://noljago.co.kr/t/hidden-picture/"><meta name="twitter:card" content="summary_large_image">
 <script src="../../assets/analytics.js?v=20260915-admin-ops"></script>
-<link rel="stylesheet" href="game.css?v=20260916-hidden3">
-<script src="game.js?v=20260916-hidden3" defer></script>
+<link rel="stylesheet" href="game.css?v=20260916-hidden4">
+<script src="game.js?v=20260916-hidden4" defer></script>
 </head>
 <body><main class="shell">
 <header class="topbar"><a href="https://noljago.co.kr/?home=play#all">← 같이놀자</a><span>작은 발견, 숨은그림찾기</span></header>
@@ -22,11 +22,12 @@
  <section class="picture-card" aria-label="숨은그림찾기 그림">
   <div class="board-bar"><span id="boardState">그림을 준비하고 있어요</span><div class="zoom-controls"><button id="zoomOut" aria-label="그림 축소" disabled>−</button><output id="zoomLabel">100%</output><button id="zoomIn" aria-label="그림 확대" disabled>＋</button></div></div>
   <div class="viewport" id="viewport"><div class="scene" id="scene" tabindex="0" role="group" aria-label="숨은 물건이 있는 그림. 방향키로 탐색 위치를 움직이고 Enter로 선택"><img id="art" width="1122" height="1402" alt="숨은 물건이 있는 이야기 그림" draggable="false"><div id="marks" aria-hidden="true"></div><span id="cursor" hidden aria-hidden="true"></span></div><div class="cover" id="cover"><span class="cover-icon">✳</span><p class="eyebrow" id="coverEyebrow">준비됐어?</p><h2 id="coverTitle">작은 비밀을<br>찾아볼까?</h2><p id="coverDescription">목록의 물건 8개를 그림에서 눌러 찾아봐.<br>확대해서 구석구석 살펴볼 수 있어.</p><button class="primary" id="start" disabled>그림을 불러오는 중…</button></div></div>
-  <p class="picture-note">물건을 찾으면 톡! · 확대 후 그림을 밀어서 이동해요.</p>
+  <p class="picture-note">찾으면 톡! · 두 손가락으로 벌리거나 두 번 톡 하면 확대</p>
  </section>
  <aside class="notebook">
+  <p class="list-help">이 모양들이 그림 속에 숨어 있어요.</p><ul id="objects" class="objects" aria-label="찾을 물건"></ul>
   <div class="notebook-top"><p class="eyebrow" id="listTitle">오늘의 찾기 목록</p><div class="progress-count"><strong id="foundCount">0</strong><span>/ 8</span></div></div><div class="progress-track"><div id="progress"></div></div>
-  <p class="list-help">이 모양들이 그림 속에 숨어 있어요.</p><ul id="objects" class="objects" aria-label="찾을 물건"></ul><p class="message" id="message" role="status" aria-live="polite">그림을 고르고 시작해줘.</p>
+  <p class="message" id="message" role="status" aria-live="polite">그림을 고르고 시작해줘.</p>
   <div class="stats"><div><span>남은 시간</span><b id="timer">02:00</b></div><div><span id="hintLabel">사용한 힌트</span><b id="hintCount">0 / 3</b></div></div>
   <div class="actions"><button id="hint" disabled>✧ 힌트 보기 <span>3</span></button><button id="pause" disabled>잠깐 쉬기</button></div><p class="gentle-note" id="gentleNote">시간 안에 모두 찾으면 다음 단계가 열려요.</p>
   <section id="result" class="result" hidden tabindex="-1"><span class="eyebrow" id="resultEyebrow">ALL FOUND!</span><h2 id="resultTitle">숲의 비밀을 다 찾았어!</h2><p id="resultText"></p><button class="primary" id="replay">같은 그림 다시 하기</button><button id="share">기록과 게임 링크 공유</button><p id="shareMessage" role="status"></p><textarea id="shareFallback" aria-label="복사할 기록과 게임 링크" readonly hidden></textarea></section>

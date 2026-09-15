@@ -17,7 +17,7 @@
     "mind/fight", "memory", "ranking", "personality", "tarot"
   ]);
   const TITLES = {
-    ten: "10초 맞추기", react: "반응속도 대결", num25: "1에서 25까지", pairs: "짝 맞추기", "typing": "한글 타자 20초", "flap": "탭 비행", "slide15": "15퍼즐", "mines": "지뢰찾기 미니", "stack": "블록 쌓기", "2048": "2048 한판", "fit": "끼워넣기", "daily-word": "오늘의 단어", "snake": "스네이크 20초", "choseong": "초성 퀴즈", "simon": "순서 기억", mole: "두더지 잡기",
+    ten: "10초 맞추기", react: "반응속도 대결", num25: "1에서 25까지", pairs: "짝 맞추기", "typing": "한글 타자 20초", "flap": "탭 비행", "slide15": "15퍼즐", "mines": "지뢰찾기 미니", "stack": "블록 쌓기", "2048": "2048 한판", "fit": "끼워넣기", "daily-word": "오늘의 단어", "snake": "스네이크 40초", "choseong": "초성 퀴즈", "simon": "순서 기억", mole: "두더지 잡기",
     ufo: "UFO 요격", tap: "10초 연타", stroop: "색깔 함정", arrow: "화살표 함정",
     stop: "딱 멈춰", rps: "가위바위보", nonsense: "넌센스 퀴즈", delivery: "배달 텔레파시",
     mbti: "MBTI 맞히기", crash: "20분 후 추락합니다", seat: "어디에 앉나요",

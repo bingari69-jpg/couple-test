@@ -1,4 +1,4 @@
-/* 스네이크 20초 — 시드 고정 지렁이 자리(12×16), 가운데 출발(길이 3, 오른쪽), 180° 회전 금지, 벽·몸 충돌은 끝이 아니라 부딪힘+재출발,
+/* 스네이크 40초 — 톡 눌러 방향 전환(화살표 버튼 없음), 시드 고정 지렁이 자리(12×16), 가운데 출발(길이 3, 오른쪽), 180° 회전 금지, 벽·몸 충돌은 끝이 아니라 부딪힘+재출발,
    먹을수록 빨라짐, 20초 끝에 먹은 수 봉인(링크에 s·l·c=[부딪힘,최장]), 같은 지렁이 복원, 많이 먹은 쪽 승, 덜 부딪힌 쪽 동점 처리, 혼자놀기 레벨·별 */
 const assert = require('node:assert/strict');
 const { load, el, PAGE_ERRORS } = require('./dom');
@@ -33,7 +33,7 @@ const crash = w => {
 };
 /* 검사에서는 step() 으로만 움직인다 — 진짜 타이머 사슬은 끊는다 */
 const start = w => w.__ev('startPlay(); clearTimeout(state.tickTimer)');
-const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('step()'); assert.equal(w.__ev('state.done'), true); };
+const timeUp = w => { w.__ev('state.t0 = performance.now() - 40000'); w.__ev('step()'); assert.equal(w.__ev('state.done'), true); };
 
 (async () => {
   /* 첫 진입: 캔버스 판, 병아리 3칸(가운데, 머리가 오른쪽), 지렁이 하나, 덮개 */
@@ -59,7 +59,7 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
 
   /* 시작: 한 칸씩 오른쪽으로. 180° 회전(L)은 무시, 위(U)는 됨. 출발 속도 0.15초 */
   start(w);
-  assert.equal(st.running, true); assert.deepEqual(food(w), f0); assert.equal(w.__ev('tickMs()'), 150);
+  assert.equal(st.running, true); assert.deepEqual(food(w), f0); assert.equal(w.__ev('tickMs()'), 165);
   w.__ev('step()'); assert.deepEqual(snake(w), [[7, 8], [6, 8], [5, 8]]);
   assert.equal(w.__ev('setDir("L")'), false, '180° 회전 금지'); assert.equal(st.pending, 'R');
   w.__ev('step()'); assert.deepEqual(snake(w)[0], [8, 8]);
@@ -71,11 +71,11 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
 
   /* 지렁이 두 마리: 길이가 늘고, 빨라지고, 다음 자리는 시드 순서의 다음 빈 칸 */
   eatOne(w); assert.equal(snake(w).length, 4); assert.equal(el(w, 'score').textContent, '1'); assert.equal(el(w, 'len').textContent, '4');
-  assert.equal(w.__ev('tickMs()'), 146, '한 마리에 4ms 빨라짐');
+  assert.equal(w.__ev('tickMs()'), 161, '한 마리에 4ms 빨라짐');
   assert.ok(!snake(w).some(s => s[0] === food(w)[0] && s[1] === food(w)[1]), '새 지렁이도 빈 칸');
   assert.equal(foodLog(w).length, 2);
   eatOne(w); assert.equal(st.eaten, 2); assert.equal(snake(w).length, 5); assert.equal(st.maxLen, 5);
-  assert.equal(w.__ev('state.eaten=30; tickMs()'), 95, '최소 95ms'); w.__ev('state.eaten=2');
+  assert.equal(w.__ev('state.eaten=30; tickMs()'), 105, '최소 105ms'); w.__ev('state.eaten=2');
 
   /* 벽 충돌: 끝나지 않는다 — 부딪힘 1, 빨간 번쩍, 가운데서 3칸으로 재출발, 먹은 수·시간 유지 */
   crash(w);
@@ -139,31 +139,48 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
   const lv = [...sd.querySelectorAll('.solo-lv')];
   assert.equal(lv.length, 5); assert.ok(lv[0].classList.contains('on')); assert.ok(lv[1].classList.contains('locked'));
   assert.equal(ss.level, 1); assert.equal(ss.seed, s.Solo.seedFor('snake', 1));
-  assert.equal(s.__ev('baseTick(1)'), 170); assert.equal(s.__ev('baseTick(5)'), 105); assert.equal(s.__ev('baseTick(0)'), 150);
+  assert.equal(s.__ev('baseTick(1)'), 187); assert.equal(s.__ev('baseTick(5)'), 116); assert.equal(s.__ev('baseTick(0)'), 165);
   assert.equal(el(s, 'nameIn').classList.contains('hidden'), true); assert.equal(el(s, 'playTag').textContent, '혼자놀기');
-  assert.match(el(s, 'soloDesc').textContent, /클리어 5마리/); assert.match(el(s, 'soloDesc').textContent, /★★★ 9마리/);
+  assert.match(el(s, 'soloDesc').textContent, /클리어 9마리/); assert.match(el(s, 'soloDesc').textContent, /★★★ 16마리/);
   const L = s.Solo.levels[0];
-  assert.equal(s.Solo.starsFor(L, 9), 3); assert.equal(s.Solo.starsFor(L, 7), 2); assert.equal(s.Solo.starsFor(L, 5), 1); assert.equal(s.Solo.starsFor(L, 4), 0);
+  assert.equal(s.Solo.starsFor(L, 16), 3); assert.equal(s.Solo.starsFor(L, 13), 2); assert.equal(s.Solo.starsFor(L, 9), 1); assert.equal(s.Solo.starsFor(L, 8), 0);
   const seedLv1 = ss.seed;
 
-  /* 클리어: 9마리 먹고(중간에 한 번 부딪혀도) 시간 끝 → ★★★, 저장, Lv2 해제, 도전장 링크. 봉인 카드는 없음 */
+  /* 클리어: 16마리 먹고(중간에 한 번 부딪혀도) 시간 끝 → ★★★, 저장, Lv2 해제, 도전장 링크. 봉인 카드는 없음 */
   start(s);
-  for (let i = 0; i < 5; i++) eatOne(s);
+  for (let i = 0; i < 8; i++) eatOne(s);
   crash(s); assert.equal(ss.done, false, '부딪혀도 안 끝남');
-  for (let i = 0; i < 4; i++) eatOne(s);
+  for (let i = 0; i < 8; i++) eatOne(s);
   timeUp(s);
   const res = el(s, 'soloResult'); assert.ok(res, '혼자 결과 카드');
-  assert.equal(res.querySelector('.stars').textContent, '★★★'); assert.match(res.querySelector('.rec').textContent, /9마리/); assert.match(res.querySelector('.rec').textContent, /부딪힘 1번/);
+  assert.equal(res.querySelector('.stars').textContent, '★★★'); assert.match(res.querySelector('.rec').textContent, /16마리/); assert.match(res.querySelector('.rec').textContent, /부딪힘 1번/);
   assert.equal(el(s, 'afterPlay').classList.contains('hidden'), true, '봉인 카드 없음');
   assert.equal(el(s, 'soloDuel').getAttribute('href'), '/t/snake/?s=' + seedLv1 + '&l=1');
   const saved = JSON.parse(s.localStorage.getItem('gatchi_solo_v1'));
-  assert.equal(saved.snake['1'].stars, 3); assert.equal(saved.snake['1'].best, 9);
+  assert.equal(saved.snake['1'].stars, 3); assert.equal(saved.snake['1'].best, 16);
   assert.equal(sd.querySelectorAll('.solo-lv')[1].classList.contains('locked'), false, 'Lv2 해제');
+
+  /* 화살표 버튼은 없고, 판을 톡 누르면 머리 기준으로 방향이 바뀐다 */
+  {
+    const t = load('snake', '').window, ts = t.__ev('state');
+    assert.equal(t.document.getElementById('dpad'), null, '화살표 버튼 제거');
+    t.__ev('$("cv").getBoundingClientRect=()=>({left:0,top:0,width:360,height:480})');
+    t.__ev('startPlay()');
+    /* 머리 자리는 매번 다시 잰다 — 판이 한 칸씩 움직이니까 */
+    const tap = (dx, dy) => t.__ev(`(()=>{const h=state.snake[0];return tapDir((h[0]+0.5)*30+${dx},(h[1]+0.5)*30+${dy})})()`);
+    assert.equal(tap(0, -120), 'U', '머리 위를 누르면 위로');
+    t.__ev('step()');
+    assert.equal(tap(120, 0), 'R', '오른쪽을 누르면 오른쪽으로');
+    t.__ev('step()');
+    assert.equal(tap(-150, 40), 'D', '뒤쪽(180°)은 안 되니 다른 축으로');
+    assert.equal(tap(0, 0), null, '머리 자리를 누르면 그대로');
+    t.close();
+  }
 
   /* 다음 레벨: 새 시드, 결과 카드 사라짐. 2마리에 시간 끝 → 별 0 */
   el(s, 'soloNext').click();
   assert.equal(ss.level, 2); assert.notEqual(ss.seed, seedLv1); assert.equal(el(s, 'soloResult'), null);
-  assert.equal(el(s, 'speed').textContent, '한 칸 0.15초');
+  assert.equal(el(s, 'speed').textContent, '한 칸 0.17초');
   start(s); eatOne(s); eatOne(s); timeUp(s);
   const fail = el(s, 'soloResult'); assert.equal(fail.querySelector('.stars').textContent, '☆☆☆'); assert.match(fail.querySelector('.verdict').textContent, /아쉽/);
   assert.match(fail.querySelector('.rec').textContent, /2마리/);
@@ -174,7 +191,7 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
   const du = load('snake', '?s=' + seedLv1 + '&l=1').window;
   const ds = du.__ev('state');
   assert.equal(du.Solo.active, false); assert.equal(el(du, 'soloPanel'), null);
-  assert.equal(ds.seed, seedLv1); assert.equal(ds.level, 1); assert.equal(el(du, 'speed').textContent, '한 칸 0.17초');
+  assert.equal(ds.seed, seedLv1); assert.equal(ds.level, 1); assert.equal(el(du, 'speed').textContent, '한 칸 0.19초');
   start(du); eatOne(du); timeUp(du);
   const dp = pay(du); assert.equal(dp.s, seedLv1); assert.equal(dp.l, 1);
   const guest = load('snake', new URL(du.Duel.url()).hash).window;
@@ -209,5 +226,5 @@ const timeUp = w => { w.__ev('state.t0 = performance.now() - 20000'); w.__ev('st
   bw.close();
 
   assert.deepEqual(PAGE_ERRORS, [], '페이지 스크립트 예외');
-  console.log('스네이크 20초 검사 통과 — 시드 지렁이(12×16)·출발 자리·180° 금지·먹을수록 빨라짐·벽/몸 충돌은 재출발·20초 끝에 봉인(s·l·c)·같은 자리 복원·많이 먹은 쪽 승·부딪힘 동점 처리·혼자놀기 레벨·별·프리셋·몸에 흔들리지 않는 먹이 순서');
+  console.log('스네이크 40초 검사 통과 — 시드 지렁이(12×16)·출발 자리·180° 금지·먹을수록 빨라짐·벽/몸 충돌은 재출발·40초 끝에 봉인(s·l·c)·같은 자리 복원·많이 먹은 쪽 승·부딪힘 동점 처리·혼자놀기 레벨·별·프리셋·몸에 흔들리지 않는 먹이 순서');
 })().catch(e => { console.error(e); process.exit(1); });

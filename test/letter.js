@@ -99,6 +99,13 @@ async function main(){
    const h=load('index.html','?home=play',0.1,'',{'gatchi-play-hero-v1':String(stored)}),doc=h.window.document;
    assert.equal(doc.getElementById('rpsStart').getAttribute('href'),href);assert.ok(doc.getElementById('playTitle').textContent.includes(word));h.window.close();
  }
+ /* 편지 홈의 '그럼 ○○ 한판' 제목도 버튼과 같은 놀이를 가리켜야 한다 */
+ for(const [stored,href,name] of [[0,'t/mole/','두더지 잡기'],[1,'t/rps/','가위바위보'],[2,'t/hidden-picture/?mode=online','숨은그림찾기']]){
+   const h=load('index.html','?home=letter',0.9,'',{'gatchi-play-hero-v1':String(stored)}),doc=h.window.document;
+   assert.equal(doc.getElementById('rpsStart').getAttribute('href'),href);
+   assert.ok(doc.getElementById('letterChallenge').textContent.includes('그럼 '+name+' 한판'),'편지 홈 제목이 버튼과 달라: '+doc.getElementById('letterChallenge').textContent);
+   h.window.close();
+ }
  assert.deepEqual(errors,[]);w.close();console.log('편지·홈 검사 통과 — 450자 한도·초과 보존·링크 복원, 무작위 메인 2종, 필터, 작성 유지, 공유, 옛 링크, 전체 놀이');
 }
 main().catch(e=>{console.error(e);process.exit(1);});
