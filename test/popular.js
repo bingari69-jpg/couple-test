@@ -32,6 +32,9 @@ const cards = w => [...w.document.getElementById('catalogList').children];
 const titles = w => cards(w).map(a => a.querySelector('h3').textContent);
 const ranks = w => cards(w).map(a => { const r = a.querySelector('.catalog-rank'); return r ? r.textContent : null; });
 const tick = () => new Promise(r => setTimeout(r, 30));
+/* 서버 목록에 없는 로컬 새 게임은 목록 앞에 붙는다(home-catalog.js appendUnknownLocal). 순서 비교는 서버가 준 게임끼리만 한다 */
+const SERVER = new Set(['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'nonsense', 'crash']);
+const serverOnly = list => list.filter(t => SERVER.has(t));
 
 /* 서버 목록 한 벌. popular_rank 만 갈아 끼우며 쓴다 */
 const rowsFor = rankBySlug => ['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'nonsense', 'crash'].map((slug, i) => ({
@@ -45,7 +48,7 @@ const rowsFor = rankBySlug => ['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'n
   const plain = loadHome(rowsFor({}));
   await tick();
   const plainOrder = titles(plain);
-  assert.deepEqual(plainOrder.slice(0, 4), ['ten', 'tap', 'num25', 'pairs'], '순위가 없으면 평소 순서');
+  assert.deepEqual(serverOnly(plainOrder).slice(0, 4), ['ten', 'tap', 'num25', 'pairs'], '순위가 없으면 평소 순서');
   assert.deepEqual(ranks(plain).filter(Boolean), [], '순위 표시도 없다');
   plain.close();
 
@@ -54,7 +57,7 @@ const rowsFor = rankBySlug => ['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'n
   await tick();
   const order = titles(ranked);
   assert.deepEqual(order.slice(0, 5), ['mole', 'pairs', 'nonsense', 'ten', 'rps'], '1~5위가 순서대로 맨 앞');
-  assert.deepEqual(order.slice(5, 8), ['tap', 'num25', 'crash'], '나머지는 원래 순서 그대로');
+  assert.deepEqual(serverOnly(order).slice(5, 8), ['tap', 'num25', 'crash'], '나머지는 원래 순서 그대로');
   assert.deepEqual(ranks(ranked).slice(0, 5), ['인기 1위', '인기 2위', '인기 3위', '인기 4위', '인기 5위']);
   assert.deepEqual(ranks(ranked).slice(5).filter(Boolean), [], '6위부터는 표시 없음');
 

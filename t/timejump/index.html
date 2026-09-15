@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>타임 점프 — 편지 들고 다섯 시대를 건너 · 같이놀자</title>
+<meta name="description" content="원시시대부터 미래 우주까지. 병아리가 편지를 들고 뛰고 점프해 우체통까지! 5단계 혼자 도전, 같은 코스로 친구와 시간 대결.">
+<link rel="canonical" href="https://noljago.co.kr/t/timejump/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="타임 점프 — 누가 더 빨리 편지를 배달할까">
+<meta property="og:description" content="원시시대부터 미래 우주까지, 뛰고 점프해서 우체통까지. 같은 코스, 네 기록은 봉인됐어.">
+<meta property="og:image" content="https://noljago.co.kr/assets/share-cards/timejump.png?v=20260916-timejump">
+<meta property="og:image:width" content="800">
+<meta property="og:image:height" content="480">
+<meta property="og:url" content="https://noljago.co.kr/t/timejump/">
+<meta name="twitter:card" content="summary_large_image">
+
+<script src="../../assets/analytics.js?v=20260915-admin-ops"></script>
+<script src="../../assets/kakao-share.js?v=20260916-timejump"></script>
+<script src="../../assets/bet.js?v=20260912-domain"></script>
+<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
+<script src="../../assets/solo.js?v=20260913-solo"></script>
+<script src="engine.js?v=20260916-timejump"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  :root{
+    --bg:#FFF8E7; --card:#FFFFFF; --line:#F0E4C8; --ink:#1F1B16; --sub:#7A6E5E; --dim:#B5A88F;
+    --red:#FF5A5F; --blue:#2D7DFF; --yellow:#FFC94D; --green:#22C55E; --coral:#F36D59;
+    --sp:clamp(16px,4vw,24px);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{background:var(--bg);color:var(--ink);font-family:'Pretendard Variable',Pretendard,-apple-system,sans-serif;line-height:1.5;min-height:100vh;padding:var(--sp) var(--sp) 56px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain}
+  .wrap{max-width:480px;margin:0 auto}
+  .hidden{display:none!important}
+  .screen{animation:fade .3s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+  .tag{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.1em;color:var(--red);background:#fff;border:2px solid var(--red);border-radius:999px;padding:5px 12px;margin-bottom:14px}
+  h1{font-size:clamp(28px,8vw,38px);font-weight:900;line-height:1.25;letter-spacing:-.02em;margin-bottom:10px}
+  h1 b{color:var(--blue)}
+  .lead{font-size:16px;color:var(--sub);line-height:1.6;margin-bottom:18px}
+  .lead b{color:var(--ink)}
+  .q{font-size:14px;color:var(--sub);margin:16px 0 8px;display:block;font-weight:600}
+  input[type=text]{width:100%;background:#fff;border:2px solid var(--line);color:var(--ink);border-radius:14px;padding:14px 16px;font:inherit;font-size:18px;font-weight:700}
+  input::placeholder{color:var(--dim);font-weight:500}
+  input:focus{outline:none;border-color:var(--blue)}
+
+  /* 시대 고르기 (둘이하기) */
+  .era-pick{background:#fff;border:3px solid var(--line);border-radius:22px;padding:12px 14px;margin:14px 0 0}
+  .era-pick .t{font-size:13px;font-weight:700;color:var(--sub)}
+  .era-list{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:8px}
+  .era-btn{border:2px solid var(--line);border-radius:14px;background:#FFFDF6;padding:8px 2px;font:inherit;cursor:pointer;text-align:center;-webkit-tap-highlight-color:transparent;color:var(--ink)}
+  .era-btn span{display:block;font-size:20px;line-height:1.2}
+  .era-btn small{display:block;font-size:11px;font-weight:700;color:var(--sub);letter-spacing:-.03em;white-space:nowrap}
+  .era-btn[aria-pressed="true"]{border-color:var(--blue);background:#EAF2FF}
+  .era-btn:disabled{cursor:default}
+
+  /* 상단 표시줄 */
+  .hud{display:flex;align-items:center;gap:10px;background:#fff;border:3px solid var(--line);border-radius:22px;padding:12px 16px;margin:14px 0 10px}
+  .hud .c{flex:1;min-width:0}
+  .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
+  .hud .c .v{font-size:clamp(28px,9vw,38px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
+  .hud .era{text-align:right} .hud .era .v{font-size:clamp(20px,6vw,26px);padding-top:6px}
+
+  /* 게임 화면 */
+  .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:8px;touch-action:none;-webkit-tap-highlight-color:transparent}
+  .stage{display:block;width:100%;height:auto;aspect-ratio:4/3;border-radius:14px;background:#FFE9C7}
+  .cover{position:absolute;inset:0;background:rgba(255,248,231,.94);border-radius:22px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:4px;z-index:2;text-align:center;padding:0 16px}
+  .cover .cd{font-size:clamp(56px,18vw,80px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
+  @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+  .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
+  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)}
+
+  /* 조작 버튼: 왼손 ◀ ▶ · 오른손 점프 */
+  .pad{display:flex;justify-content:space-between;align-items:stretch;gap:12px;margin-top:12px;touch-action:none}
+  .pad-move{display:flex;gap:10px}
+  .ctl{width:clamp(66px,19vw,82px);height:clamp(66px,19vw,82px);border:none;border-radius:22px;background:#fff;color:var(--ink);font:inherit;font-size:26px;font-weight:900;box-shadow:0 5px 0 #E6D6B4;border:3px solid var(--line);touch-action:none;-webkit-tap-highlight-color:transparent;cursor:pointer}
+  .ctl.jump{width:clamp(96px,30vw,128px);background:var(--yellow);border-color:#F2B632;box-shadow:0 5px 0 #E0A21C;font-size:22px}
+  .ctl.on{transform:translateY(4px);box-shadow:0 1px 0 #E6D6B4;background:#FFF1C9}
+  .ctl.jump.on{background:#FFB938;box-shadow:0 1px 0 #E0A21C}
+  .pad-hint{font-size:12.5px;color:var(--dim);text-align:center;margin-top:10px}
+
+  .bigbtn{width:100%;border:none;border-radius:22px;padding:22px;font:inherit;font-size:22px;font-weight:900;cursor:pointer;transition:transform .08s;margin-top:12px;-webkit-tap-highlight-color:transparent}
+  .bigbtn:active{transform:scale(.97)}
+  .bigbtn.start{background:var(--blue);color:#fff}
+  .bigbtn:disabled{opacity:.4;cursor:default}
+
+  .btn{width:100%;border:none;border-radius:16px;padding:16px;font:inherit;font-size:17px;font-weight:800;cursor:pointer;transition:transform .1s;margin-top:10px}
+  .btn:active{transform:scale(.985)}
+  .btn-main{background:var(--yellow);color:var(--ink)}
+  .btn-blue{background:var(--blue);color:#fff}
+  .btn-sub{background:#fff;color:var(--sub);border:2px solid var(--line);font-weight:600}
+  .btn-ghost{background:transparent;color:#999;font-size:14px;border:none;font-weight:500;padding:12px}
+  .linkbox{margin-top:12px;background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 14px;font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--sub);word-break:break-all;line-height:1.6;max-height:76px;overflow:auto;-webkit-user-select:text;user-select:text}
+  .hint{font-size:13px;color:var(--dim);margin-top:12px;text-align:center;line-height:1.6}
+  .homelink{display:block;text-align:center;font-size:13px;color:var(--dim);text-decoration:none;margin-top:22px}
+  .card{background:#fff;border:2px solid var(--line);border-radius:18px;padding:16px 18px;margin:14px 0}
+  .lockrow{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--sub)} .lockrow .e{font-size:24px}
+  .lockrow b{color:var(--ink)}
+
+  /* 결과 */
+  .versus{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:8px;margin:16px 0 10px}
+  .side{background:#fff;border:3px solid var(--line);border-radius:22px;padding:18px 8px 14px;text-align:center}
+  .side .n{font-size:14px;color:var(--sub);font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .side .t{font-size:clamp(28px,9vw,40px);font-weight:900;letter-spacing:-.03em;line-height:1.1;margin-top:6px;font-variant-numeric:tabular-nums}
+  .side .t small{font-size:.42em;font-weight:700;color:var(--sub)}
+  .side .d{font-size:12.5px;color:var(--sub);margin-top:6px;font-weight:700}
+  .side.win{border-color:var(--yellow);background:#FFFBEE}
+  .side.win .t{color:var(--blue)}
+  .side.lose{opacity:.6}
+  .vs{align-self:center;font-size:14px;font-weight:900;color:var(--dim)}
+  .verdict{text-align:center;font-size:clamp(26px,8vw,34px);font-weight:900;letter-spacing:-.02em;margin:6px 0 2px}
+  .verdict.win{color:var(--blue)} .verdict.lose{color:var(--red)} .verdict.tie{color:var(--sub)}
+  .sub-verdict{text-align:center;font-size:15px;color:var(--sub);font-weight:600}
+  .title-badge{margin:14px auto 0;display:table;background:#fff;border:2px solid var(--yellow);border-radius:999px;padding:9px 18px;font-size:15px;font-weight:800}
+  .tally{margin-top:14px;background:#fff;border:2px solid var(--line);border-radius:16px;padding:12px 16px;text-align:center;font-size:15px;font-weight:700}
+  .tally .big{font-size:26px;font-weight:900;letter-spacing:.02em;margin-top:2px}
+  .tally .big b{color:var(--blue)}
+  .tally .rows{font-size:12.5px;color:var(--sub);font-weight:500;margin-top:8px;line-height:1.7}
+  .notyet{margin-top:14px;padding:12px 14px;background:#fff;border:2px dashed var(--yellow);border-radius:14px;font-size:14px;line-height:1.55}
+  .notyet b{color:var(--red)}
+  .next{margin-top:22px} .next h3{font-size:13px;color:var(--sub);font-weight:700;margin-bottom:10px}
+  .next a{display:block;background:#fff;border:2px solid var(--line);border-radius:14px;padding:13px 15px;text-decoration:none;color:var(--ink);margin-bottom:8px;font-size:15px;font-weight:700}
+  .next a small{display:block;font-weight:500;font-size:12.5px;color:var(--dim);margin-top:2px}
+
+  .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);background:var(--ink);color:#fff;font-weight:800;font-size:15px;padding:13px 22px;border-radius:999px;opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;box-shadow:0 8px 26px rgba(0,0,0,.25);max-width:90vw;text-align:center;z-index:30}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
+</style>
+<link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
+<script defer src="../../assets/game-ui.js?v=20260916-timejump"></script>
+</head>
+<body class="game-page" data-game="timejump">
+<div class="wrap">
+
+<!-- ============ 플레이 (도전자·응답자 공용) ============ -->
+<section class="screen" id="s-play">
+  <span class="tag" id="playTag">타임 점프</span>
+  <h1 id="playHead">편지 들고,<br><b>다섯 시대를 건너!</b></h1>
+  <p class="lead" id="playLead">고장 난 타임머신에서 떨어진 병아리. <b>뛰고 점프해서 우체통</b>까지 편지를 배달해. 적은 위에서 밟고, 넘어지면 마지막 깃발에서 다시. 둘이 <b>똑같은 코스</b>로 시간 대결.</p>
+
+  <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
+  <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
+
+  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+
+  <div class="era-pick" id="eraPick" role="group" aria-label="시대 고르기"><div class="t" id="eraPickTitle">어느 시대로 도전장을 보낼까?</div><div class="era-list" id="eraList"></div></div>
+
+  <div class="hud" id="hud">
+    <div class="c time"><div class="lab">걸린 시간</div><div class="v" id="clock">0.0</div></div>
+    <div class="c era"><div class="lab">지금 시대</div><div class="v" id="eraName">원시시대</div></div>
+  </div>
+
+  <div class="board" id="board">
+    <canvas class="stage" id="stage" width="360" height="270" aria-label="게임 화면 — 아래 버튼으로 조작"></canvas>
+    <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 출발</div></div>
+  </div>
+  <div class="info"><span>넘어짐 <b id="deathInfo">0</b></span><span>밟은 적 <b id="stompInfo">0</b></span><span>깃발 <b id="cpInfo">0/0</b></span></div>
+
+  <div class="pad" id="pad" aria-label="조작 버튼">
+    <div class="pad-move"><button class="ctl" type="button" data-k="l" aria-label="왼쪽으로">◀</button><button class="ctl" type="button" data-k="r" aria-label="오른쪽으로">▶</button></div>
+    <button class="ctl jump" type="button" data-k="j" aria-label="점프">점프</button>
+  </div>
+  <p class="pad-hint">왼손으로 ◀ ▶ 누르고, 오른손으로 점프 · PC는 ← → 와 스페이스</p>
+
+  <button class="bigbtn start" id="bigBtn">시작</button>
+
+  <div id="afterPlay" class="hidden">
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 코스를 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="linkbox hidden" id="linkbox"></div>
+    <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
+    <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
+    <p class="hint hidden" id="sandboxNote">지금은 미리보기 창이라 링크가 안 열려. 배포 후 확인.</p>
+    <p class="hint">한 링크에 한 번뿐. 다시 하기는 없어 — 상대도 한 번이니까 공평하게.</p>
+  </div>
+  <a class="homelink" href="../../">다른 놀이 보기 →</a>
+</section>
+
+<!-- ============ 결과 ============ -->
+<section class="screen hidden" id="s-result">
+  <span class="tag" id="resTag">결과</span>
+  <div class="versus">
+    <div class="side" id="sideA"><div class="n" id="nameA"></div><div class="t" id="tA"></div><div class="d" id="dA"></div></div>
+    <div class="vs">VS</div>
+    <div class="side" id="sideB"><div class="n" id="nameB"></div><div class="t" id="tB"></div><div class="d" id="dB"></div></div>
+  </div>
+  <div class="verdict" id="verdict"></div>
+  <p class="sub-verdict" id="subVerdict"></p>
+  <div class="title-badge" id="titleBadge"></div>
+  <div class="tally hidden" id="tallyBox"></div>
+  <div class="notyet hidden" id="notYet">⚠️ <b>상대는 아직 결과 몰라.</b> 결과 링크를 보내거나, 재도전을 걸면 이번 결과가 같이 가.</div>
+  <div id="respActions" class="hidden">
+    <button class="btn btn-main" id="kakaoRes" style="background:#FEE500;color:#191600">💬 카톡으로 결과 보내기</button>
+    <button class="btn btn-ghost" id="sendResult">링크만 복사</button>
+    <div class="linkbox hidden" id="resLinkbox"></div>
+    <button class="btn btn-blue" id="again">재도전 — 시대 골라 다시</button>
+  </div>
+  <div id="viewActions" class="hidden">
+    <button class="btn btn-blue" id="again2">재도전 — 시대 골라 다시</button>
+  </div>
+  <div class="next"><h3>다음은 이거 어때?</h3><div id="nextList"></div></div>
+  <a class="btn btn-sub" href="../../" style="display:block;text-align:center;text-decoration:none">다른 놀이 보기</a>
+</section>
+
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ===== 타임 점프 =====
+   판(스테이지·물리)은 engine.js(TimeJump), 도전장·봉인·전적·결과는 assets/duel-engine.js,
+   혼자놀기 5단계는 assets/solo.js. 여기에는 시대 고르기·조작 버튼·그리기·진행만 둔다.
+
+   둘이하기: 보내는 사람이 시대(Lv1~5)를 고르고, 링크의 l 로 같은 코스를 받는다. 기록 = 걸린 시간(ms), 짧을수록 승.
+            시간이 같으면 덜 넘어진 쪽이 이긴다. 5분이 지나면 5분으로 기록하고 끝낸다.
+   혼자놀기: 시대마다 제한 시간 안에 우체통에 닿으면 클리어. 별 기준은 test/timejump-routes.json 의 최단 경로 시간에서 정했다.
+   검사용으로 startPlay()·stepN(n,inp)·finishPlay()·buildBoard() 를 최상위에 둔다. */
+const TJ=window.TimeJump, W=TJ.W, H=TJ.H, T=TJ.T, STEP=TJ.STEP, DUEL_CAP_MS=300000;
+/* ★★★ = 최단 경로(넘어짐 없이 찾은 입력)의 약 1.4배. 클리어 = 시대별 제한 시간 */
+const LEVELS=[
+  {n:1,label:'원시',  limitMs:90000, goal:90000, best:21000},
+  {n:2,label:'이집트',limitMs:120000,goal:120000,best:27500},
+  {n:3,label:'중세',  limitMs:150000,goal:150000,best:31500},
+  {n:4,label:'산업',  limitMs:180000,goal:180000,best:35500},
+  {n:5,label:'우주',  limitMs:210000,goal:210000,best:40000}
+];
+const ERA_ICON=['🦕','🏜️','🏰','⚙️','🚀'];
+const fmt=ms=>(Math.max(0,ms)/1000).toFixed(2);
+const clampLevel=n=>Math.min(5,Math.max(1,n|0||1));
+function titleFor(ms){
+  if(ms<=30000) return "번개 배달부";
+  if(ms<=60000) return "베테랑 우체부";
+  if(ms<=120000) return "성실한 병아리";
+  return "느긋한 시간 여행자";
+}
+const NEXT=[
+  {path:"../flap/",  title:"탭 비행",       desc:"톡톡 눌러 문을 통과해."},
+  {path:"../stack/", title:"블록 쌓기",     desc:"20초, 누가 더 높이 쌓나."},
+  {path:"../letter/",title:"편지 한 장 보내기",desc:"배달이 끝났으면, 진짜 편지도."}
+];
+
+const state = Duel.setup({
+  deployBase:"https://noljago.co.kr/t/timejump/",
+  og:"https://noljago.co.kr/assets/share-cards/timejump.png?v=20260916-timejump",imageWidth:800,imageHeight:480,
+  gameName:"타임 점프",
+  challengeDesc:"같은 시대, 같은 코스. 누가 더 빨리 우체통까지 갈까. 내 기록은 네가 끝낸 뒤 공개.",
+  next:NEXT,
+  titleFor,
+  scrollToShare:true,
+  state:{level:1,world:null,running:false,done:false,cdTimer:0,tickTimer:0,last:0,acc:0,deaths:0,stomps:0,fx:[]},
+  linkExtra:st=>({d:st.deaths,l:st.level}),
+  roundExtra:(p,st)=>[p.d||0, st.deaths],
+  extraKey:"d", extraDefault:0,
+  tieBreak:(me,them)=>me.d===them.d?null:{o:me.d<them.d?"win":"lose",why:`시간은 같지만 덜 넘어진 쪽이 이겨. (${me.d}번 vs ${them.d}번)`},
+  recordCell:x=>fmt(x.v)+"<small>초</small>",
+  detailCell:x=>x.d?`넘어짐 ${x.d}번`:"한 번도 안 넘어짐",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${fmt(r[1])} vs ${esc(who(r[2],!isA))} ${fmt(r[3])}`,
+  verdictText:o=> o==="win"?"내가 먼저 배달했어!":o==="lose"?"상대가 먼저 배달했어":"완전 똑같아?!",
+  subVerdictText:(o,me,them,meL,themL)=>
+    o==="tie"?"백분의 일 초까지 같은 건 거의 기적."
+      :`${fmt(me.v)}초 vs ${fmt(them.v)}초 — ${subj(o==="win"?meL:themL)} ${fmt(Math.abs(me.v-them.v))}초 빨랐어.`,
+  challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>${esc(TJ.LEVELS[clampLevel(p.l)-1].era)}, 같은 코스야.`,
+  againHead:()=>`재도전. <b>시대를 골라</b> 다시.`,
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)}초 vs ${nm(them.n)}${fmt(them.v)}초${tail}`,
+  resultDesc:"같은 시대, 같은 코스. 누가 더 빨리 편지를 배달했을까. 재도전은 여기서.",
+  onOpenChallenge(p){ state.level=clampLevel(p.l); buildBoard(); showEraPick(false); },
+  onPreset(p){ state.level=clampLevel(p.l); buildBoard(); showEraPick(false); toast('혼자놀기 '+TJ.LEVELS[state.level-1].era+' 코스야. 끝내면 도전장을 보낼 수 있어.'); },
+  newRound(){ buildBoard(); showEraPick(true); },
+  resetPlay(){ resetView(); showEraPick(true); }
+});
+
+/* ===== 시대 고르기 (둘이하기에서 보내는 사람만) ===== */
+function renderEraList(){
+  const box=$("eraList"); box.innerHTML="";
+  TJ.LEVELS.forEach((l,i)=>{
+    const b=document.createElement("button"); b.type="button"; b.className="era-btn"; b.dataset.level=l.n;
+    b.setAttribute("aria-pressed",String(state.level===l.n));
+    b.innerHTML="<span aria-hidden='true'>"+ERA_ICON[i]+"</span><small>Lv"+l.n+" "+esc(LEVELS[i].label)+"</small>";
+    b.onclick=()=>{ if(state.running||state.done) return; state.level=l.n; buildBoard(); renderEraList(); };
+    box.append(b);
+  });
+}
+function showEraPick(on){ $("eraPick").classList.toggle("hidden",!on||Solo.active); if(on) renderEraList(); }
+
+/* ===== 판 ===== */
+const canvas=$("stage");
+const ctx=(typeof window.CanvasRenderingContext2D==="function")?canvas.getContext("2d"):null;
+const DPR=Math.min(2,window.devicePixelRatio||1);
+if(ctx){ canvas.width=W*DPR; canvas.height=H*DPR; }
+function buildBoard(){
+  const L=TJ.level(state.level);
+  state.L=L; state.world=TJ.create(state.level); state.deaths=0; state.stomps=0; state.fx=[];
+  $("eraName").textContent=L.era;
+  $("deathInfo").textContent="0"; $("stompInfo").textContent="0"; $("cpInfo").textContent="0/"+(L.checks.length-1);
+  render();
+}
+function clearTimers(){ clearTimeout(state.tickTimer); }
+function resetView(){
+  clearTimers(); clearTimeout(state.cdTimer); keys.clear(); pointers.clear(); syncButtons();
+  state.done=false; state.running=false;
+  buildBoard();
+  $("cover").classList.remove("hidden"); $("cd").textContent="준비"; $("cdSub").textContent="시작을 누르면 3초 뒤 출발";
+  $("clock").textContent="0.0"; $("clock").classList.remove("warn");
+  $("bigBtn").className="bigbtn start"; $("bigBtn").textContent="시작"; $("bigBtn").disabled=false;
+}
+
+/* ===== 그리기 — 시대마다 색과 풍경만 바뀐다 ===== */
+const THEMES={
+  stone:  {sky:["#FFE4B8","#FFF6E4"],far:"#F2C99A",ground:"#B98A5E",top:"#8CC56B",block:"#C9B8A2",blockEdge:"#A8957D",spike:"#F4EEE2",enemy:"#9B7BC9"},
+  egypt:  {sky:["#FFE7B0","#FFF8E2"],far:"#F0CF8F",ground:"#E2B872",top:"#F3D79F",block:"#E9C98B",blockEdge:"#C9A262",spike:"#8C7A66",enemy:"#F5F0E4"},
+  castle: {sky:["#D9E7F7","#F4F8FD"],far:"#BFCBDD",ground:"#8E9A7E",top:"#9DCB7C",block:"#BDB5A8",blockEdge:"#9C9385",spike:"#7F8894",enemy:"#AEB6C2"},
+  factory:{sky:["#F1DFCC","#FBF1E6"],far:"#D8BFA6",ground:"#A86F55",top:"#C98B6B",block:"#9FA8B2",blockEdge:"#7E8791",spike:"#6F7780",enemy:"#E2B34C"},
+  space:  {sky:["#2B2A44","#4A4670"],far:"rgba(150,146,205,.28)",ground:"#3D4170",top:"#8EE3F5",block:"#6E72A6",blockEdge:"#8EE3F5",spike:"#FF8FB1",enemy:"#8DE08A"}
+};
+function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function camX(){ const L=state.L,s=state.world; const px=s.dead?s.deadX:s.x; return Math.max(0,Math.min(L.widthPx-W,px-W*0.38)); }
+function drawBackdrop(th,key,cam){
+  const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,th.sky[0]); g.addColorStop(1,th.sky[1]); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+  const par=(speed,spacing,fn)=>{ const off=cam*speed; for(let i=-1;i<Math.ceil(W/spacing)+2;i++){ const wx=i*spacing-((off%spacing)+spacing)%spacing; fn(wx,Math.floor((off+wx)/spacing)); } };
+  ctx.fillStyle=th.far;
+  if(key==="stone"){
+    ctx.fillStyle="#FFD27A"; ctx.beginPath(); ctx.arc(300-cam*0.02,52,22,0,7); ctx.fill();
+    par(0.2,260,(x)=>{ ctx.fillStyle=th.far; ctx.beginPath(); ctx.moveTo(x,200); ctx.lineTo(x+70,92); ctx.lineTo(x+92,92); ctx.lineTo(x+170,200); ctx.fill(); ctx.fillStyle="#E9A27A"; ctx.beginPath(); ctx.moveTo(x+70,92); ctx.lineTo(x+92,92); ctx.lineTo(x+86,104); ctx.lineTo(x+76,104); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x+84,78,9,0,7); ctx.arc(x+96,66,11,0,7); ctx.fill(); });
+    par(0.45,190,(x,i)=>{ ctx.fillStyle="#D9B98E"; ctx.beginPath(); ctx.ellipse(x+60,178,26,12,0,0,7); ctx.fill(); ctx.fillRect(x+74,150,9,26); ctx.beginPath(); ctx.arc(x+80,146,9,0,7); ctx.fill(); ctx.fillRect(x+40,182,5,16); ctx.fillRect(x+70,182,5,16); if(i%2){ ctx.fillStyle="#9FCB7A"; ctx.beginPath(); ctx.ellipse(x+150,188,20,10,0,0,7); ctx.fill(); } });
+  } else if(key==="egypt"){
+    ctx.fillStyle="#FFC94D"; ctx.beginPath(); ctx.arc(70-cam*0.02,54,24,0,7); ctx.fill();
+    par(0.2,230,(x)=>{ ctx.fillStyle=th.far; ctx.beginPath(); ctx.moveTo(x,200); ctx.lineTo(x+80,96); ctx.lineTo(x+160,200); ctx.fill(); ctx.fillStyle="rgba(0,0,0,.06)"; ctx.beginPath(); ctx.moveTo(x+80,96); ctx.lineTo(x+160,200); ctx.lineTo(x+100,200); ctx.fill(); });
+    par(0.45,210,(x,i)=>{ if(i%2) return; ctx.fillStyle="#8BB86A"; ctx.fillRect(x+60,150,5,48); ctx.beginPath(); ctx.ellipse(x+62,148,18,6,-0.3,0,7); ctx.ellipse(x+62,148,18,6,0.3,0,7); ctx.fill(); });
+  } else if(key==="castle"){
+    par(0.1,170,(x)=>{ ctx.fillStyle="rgba(255,255,255,.85)"; ctx.beginPath(); ctx.arc(x+40,50,14,0,7); ctx.arc(x+58,46,18,0,7); ctx.arc(x+76,52,12,0,7); ctx.fill(); });
+    par(0.22,300,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+40,120,150,80); for(let k=0;k<3;k++){ const tx=x+30+k*70; ctx.fillRect(tx,92,30,108); for(let m=0;m<3;m++) ctx.fillRect(tx+m*11,84,7,10); } ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.moveTo(x+115,64); ctx.lineTo(x+135,70); ctx.lineTo(x+115,76); ctx.fill(); ctx.fillStyle=th.far; ctx.fillRect(x+113,62,3,30); });
+  } else if(key==="factory"){
+    par(0.2,210,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+20,130,120,70); ctx.fillRect(x+30,78,18,52); ctx.fillRect(x+80,94,16,36); for(let k=0;k<4;k++){ ctx.beginPath(); ctx.moveTo(x+20+k*30,130); ctx.lineTo(x+35+k*30,114); ctx.lineTo(x+50+k*30,130); ctx.fill(); } ctx.fillStyle="rgba(255,255,255,.65)"; ctx.beginPath(); ctx.arc(x+40,68,10,0,7); ctx.arc(x+54,56,13,0,7); ctx.arc(x+88,84,8,0,7); ctx.fill(); });
+    par(0.4,240,(x,i)=>{ ctx.save(); ctx.translate(x+120,160); ctx.rotate((cam*0.01+i)%6.28); ctx.fillStyle="#C9AE93"; for(let k=0;k<8;k++){ ctx.rotate(Math.PI/4); ctx.fillRect(-4,-26,8,10); } ctx.beginPath(); ctx.arc(0,0,18,0,7); ctx.fill(); ctx.fillStyle=th.sky[1]; ctx.beginPath(); ctx.arc(0,0,6,0,7); ctx.fill(); ctx.restore(); });
+  } else {
+    par(0.08,90,(x,i)=>{ ctx.fillStyle="rgba(255,255,255,.75)"; const y=18+((i*53)%150+150)%150; ctx.fillRect(x+((i*37)%80+80)%80,y,2,2); });
+    ctx.fillStyle="#FFB86B"; ctx.beginPath(); ctx.arc(290-cam*0.03,70,30,0,7); ctx.fill(); ctx.strokeStyle="rgba(255,236,190,.8)"; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(290-cam*0.03,70,48,10,-0.3,0,7); ctx.stroke();
+    par(0.3,260,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+30,140,80,60); ctx.fillRect(x+60,104,20,36); ctx.fillStyle="rgba(142,227,245,.45)"; ctx.fillRect(x+64,110,12,4); ctx.fillRect(x+40,150,10,6); ctx.fillRect(x+60,150,10,6); ctx.fillRect(x+80,150,10,6); });
+  }
+}
+function drawChick(x,y,face,now,s){
+  const bob=s.ground&&Math.abs(s.vx)>20?Math.sin(now/60)*1.2:0;
+  ctx.save(); ctx.translate(x+6,y+8+bob); ctx.scale(face,1);
+  ctx.fillStyle="#FFD54A"; ctx.beginPath(); ctx.ellipse(0,1,8,8,0,0,7); ctx.fill();
+  ctx.fillStyle="#FFC21C"; ctx.beginPath(); ctx.ellipse(-3,3,4,3,-0.4,0,7); ctx.fill();
+  ctx.fillStyle="#FF9A3C"; ctx.beginPath(); ctx.moveTo(6,-2); ctx.lineTo(11,0); ctx.lineTo(6,2); ctx.fill();
+  ctx.fillStyle="#23213A"; ctx.beginPath(); ctx.arc(3,-3,1.4,0,7); ctx.fill();
+  /* 등에 멘 편지 */
+  ctx.fillStyle="#fff"; rr(-12,-5,9,7,1.5); ctx.fill(); ctx.strokeStyle="#E9D5B8"; ctx.lineWidth=1; ctx.stroke();
+  ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.arc(-8.5,-1.8,1.5,0,7); ctx.fill();
+  const leg=s.ground&&Math.abs(s.vx)>20?Math.sin(now/45)*2:0;
+  ctx.strokeStyle="#FF9A3C"; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-2,8); ctx.lineTo(-2-leg,11); ctx.moveTo(2,8); ctx.lineTo(2+leg,11); ctx.stroke();
+  ctx.restore();
+}
+function drawEnemy(key,th,x,y,now){
+  ctx.save(); ctx.translate(x,y);
+  if(key==="egypt"){ ctx.fillStyle=th.enemy; rr(0,0,14,14,5); ctx.fill(); ctx.strokeStyle="#D8CDB6"; ctx.lineWidth=1.2; for(let k=3;k<14;k+=3.5){ ctx.beginPath(); ctx.moveTo(1,k); ctx.lineTo(13,k-1.5); ctx.stroke(); } ctx.fillStyle="#23213A"; ctx.fillRect(4,4,2,2); ctx.fillRect(9,4,2,2); }
+  else if(key==="castle"){ ctx.fillStyle=th.enemy; rr(0,2,14,12,4); ctx.fill(); ctx.fillStyle="#6E7682"; ctx.fillRect(2,6,10,2); ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.ellipse(7,1,3,4,0,0,7); ctx.fill(); }
+  else if(key==="factory"){ ctx.fillStyle=th.enemy; rr(1,2,12,12,3); ctx.fill(); ctx.fillStyle="#23213A"; ctx.fillRect(4,6,2,2); ctx.fillRect(8,6,2,2); ctx.strokeStyle="#7E8791"; ctx.lineWidth=2; const a=now/120; ctx.beginPath(); ctx.moveTo(7,2); ctx.lineTo(7+Math.cos(a)*4,-2+Math.sin(a)); ctx.stroke(); }
+  else if(key==="space"){ ctx.fillStyle=th.enemy; ctx.beginPath(); ctx.ellipse(7,9,7,5+Math.sin(now/150),0,0,7); ctx.fill(); ctx.fillStyle="#23213A"; ctx.beginPath(); ctx.arc(7,7,2.2,0,7); ctx.fill(); ctx.strokeStyle=th.enemy; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(7,4); ctx.lineTo(7,0); ctx.stroke(); }
+  else { ctx.fillStyle=th.enemy; rr(0,2,14,12,6); ctx.fill(); ctx.fillStyle="#23213A"; ctx.fillRect(4,6,2,2); ctx.fillRect(9,6,2,2); }
+  ctx.restore();
+}
+function render(){
+  if(!ctx||!state.world) return;
+  const L=state.L, s=state.world, key=L.key, th=THEMES[key], now=s.ticks*STEP, cam=camX();
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  drawBackdrop(th,key,cam);
+  ctx.save(); ctx.translate(-Math.round(cam),0);
+  const c0=Math.max(0,Math.floor(cam/T)-1), c1=Math.min(L.cols-1,Math.ceil((cam+W)/T)+1);
+  for(let c=c0;c<=c1;c++) for(let r=0;r<TJ.ROWS;r++){
+    const v=TJ.tileAt(L,c,r); if(!v) continue; const x=c*T, y=r*T;
+    if(v===2){ ctx.fillStyle=th.spike; for(let k=0;k<3;k++){ ctx.beginPath(); ctx.moveTo(x+k*6,y+T); ctx.lineTo(x+3+k*6,y+7); ctx.lineTo(x+6+k*6,y+T); ctx.fill(); } continue; }
+    if(v===1){ const surfaceRow=TJ.tileAt(L,c,r-1)!==1;
+      ctx.fillStyle=th.ground; ctx.fillRect(x,y,T,T);
+      if(surfaceRow){ ctx.fillStyle=th.top; ctx.fillRect(x,y,T,5); ctx.fillStyle="rgba(255,255,255,.18)"; ctx.fillRect(x,y,T,2); }
+      else if((c+r)%3===0){ ctx.fillStyle="rgba(0,0,0,.06)"; ctx.fillRect(x+5,y+6,4,3); }
+    } else {
+      ctx.fillStyle=th.blockEdge; rr(x+0.5,y+0.5,T-1,T-1,4); ctx.fill();
+      ctx.fillStyle=th.block; rr(x+1.5,y+1.5,T-3,T-5,3); ctx.fill();
+      if(key==="factory"){ ctx.fillStyle="#7E8791"; ctx.fillRect(x+4,y+4,2,2); ctx.fillRect(x+12,y+4,2,2); }
+    }
+  }
+  /* 무너지는 발판 */
+  L.crumbles.forEach((k,i)=>{ const v=s.crumb[i]; if(v<0) return; const shake=v>0?Math.sin(now/20)*1.2:0;
+    ctx.fillStyle=key==="space"?"#B58CFF":"#C58E5C"; rr(k.x+1+shake,k.y+1,T-2,8,3); ctx.fill(); ctx.fillStyle="rgba(0,0,0,.15)"; ctx.fillRect(k.x+6+shake,k.y+2,1.5,6); ctx.fillRect(k.x+12+shake,k.y+2,1.5,6); });
+  /* 움직이는 발판 */
+  L.movers.forEach(m=>{ const p=TJ.moverPos(m,s.ticks);
+    if(key==="space"){ ctx.fillStyle="rgba(142,227,245,.35)"; rr(p.x-2,p.y+6,m.w+4,6,3); ctx.fill(); ctx.fillStyle="#8EE3F5"; }
+    else if(key==="castle"){ ctx.strokeStyle="#8A7358"; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(p.x+4,p.y); ctx.lineTo(p.x+4,0); ctx.moveTo(p.x+m.w-4,p.y); ctx.lineTo(p.x+m.w-4,0); ctx.stroke(); ctx.fillStyle="#B58A5E"; }
+    else ctx.fillStyle=key==="factory"?"#E2B34C":"#B58A5E";
+    rr(p.x,p.y,m.w,TJ.MOVER_H,4); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.3)"; ctx.fillRect(p.x+3,p.y+1.5,m.w-6,2); });
+  /* 깃발 */
+  L.checks.forEach((cp,i)=>{ if(i===0) return; const x=cp.trigger+4, y=cp.y+TJ.P.h; const on=i<=s.cp;
+    ctx.fillStyle="#8A7358"; ctx.fillRect(x,y-30,2.5,30); ctx.fillStyle=on?"#F36D59":"#D8CDBD"; ctx.beginPath(); ctx.moveTo(x+2.5,y-30); ctx.lineTo(x+16,y-25); ctx.lineTo(x+2.5,y-20); ctx.fill(); });
+  /* 우체통 */
+  { const g=L.goal; ctx.fillStyle="#8A7358"; ctx.fillRect(g.x+5,g.y+18,4,18); ctx.fillStyle="#E8473C"; rr(g.x-2,g.y,g.w+4,20,6); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillRect(g.x+2,g.y+6,g.w-4,2.5); ctx.fillStyle="#FFD54A"; ctx.beginPath(); ctx.arc(g.x+g.w/2,g.y-4+Math.sin(now/200)*1.5,3,0,7); ctx.fill(); }
+  /* 적 */
+  L.enemies.forEach((e,i)=>{ if(s.alive[i]) drawEnemy(key,th,TJ.enemyX(e,s.ticks),e.y,now); });
+  /* 병아리 */
+  if(s.dead){ const k=1-s.dead/38; ctx.globalAlpha=Math.max(0,1-k); drawChick(s.deadX,s.deadY-k*16,s.face,now,s); ctx.globalAlpha=1; }
+  else if(!(s.invul>0&&Math.floor(now/80)%2===0)) drawChick(s.x,s.y,s.face,now,s);
+  /* 밟기 반짝 */
+  state.fx=state.fx.filter(f=>now-f.t<320); state.fx.forEach(f=>{ const k=(now-f.t)/320; ctx.strokeStyle="rgba(255,201,77,"+(1-k)+")"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(f.x,f.y,6+k*14,0,7); ctx.stroke(); });
+  ctx.restore();
+  if(key==="space"){ ctx.fillStyle="rgba(255,255,255,.06)"; ctx.fillRect(0,0,W,H); }
+}
+
+/* ===== 조작 =====
+   버튼마다 누르고 있는 손가락을 따로 기억해서, 왼손으로 ▶ 를 누른 채 오른손으로 점프해도 둘 다 들어간다.
+   손가락을 ◀ 에서 ▶ 로 미끄러뜨려도 따라간다. 키보드는 ← → · 스페이스/↑ */
+const keys=new Set(), pointers=new Map();
+function inputNow(){ const on=new Set([...keys,...pointers.values()]); return {l:on.has("l"),r:on.has("r"),j:on.has("j")}; }
+function syncButtons(){ const i=inputNow(); document.querySelectorAll("#pad [data-k]").forEach(b=>b.classList.toggle("on",!!i[b.dataset.k])); }
+function keyAt(e){ const el=document.elementFromPoint?document.elementFromPoint(e.clientX,e.clientY):e.target; const b=el&&el.closest?el.closest("#pad [data-k]"):null; return b?b.dataset.k:null; }
+const pad=$("pad");
+pad.addEventListener("pointerdown",e=>{ if(e.cancelable) e.preventDefault(); const k=(e.target.closest&&e.target.closest("[data-k]")||{}).dataset; if(!k||!k.k) return; pointers.set(e.pointerId,k.k); try{ pad.setPointerCapture(e.pointerId); }catch(_){} syncButtons(); });
+pad.addEventListener("pointermove",e=>{ if(!pointers.has(e.pointerId)) return; const k=keyAt(e); if(k&&k!=="j"&&pointers.get(e.pointerId)!=="j") pointers.set(e.pointerId,k); syncButtons(); });
+["pointerup","pointercancel","lostpointercapture"].forEach(t=>pad.addEventListener(t,e=>{ pointers.delete(e.pointerId); syncButtons(); }));
+pad.addEventListener("contextmenu",e=>e.preventDefault());
+pad.addEventListener("touchstart",e=>{ if(e.cancelable) e.preventDefault(); },{passive:false});
+$("board").addEventListener("touchmove",e=>{ if(state.running&&e.cancelable) e.preventDefault(); },{passive:false});
+const KEYMAP={ArrowLeft:"l",ArrowRight:"r"," ":"j",ArrowUp:"j",a:"l",d:"r",w:"j"};
+document.addEventListener("keydown",e=>{ const k=KEYMAP[e.key]; if(!k||e.target.tagName==="INPUT") return; if(state.running) e.preventDefault(); keys.add(k); syncButtons(); });
+document.addEventListener("keyup",e=>{ const k=KEYMAP[e.key]; if(!k) return; keys.delete(k); syncButtons(); });
+window.addEventListener("blur",()=>{ keys.clear(); pointers.clear(); syncButtons(); });
+
+/* ===== 걸음 ===== */
+function limitMs(){ return Solo.active&&Solo.level?Solo.level.limitMs:DUEL_CAP_MS; }
+function stepN(n,inp){
+  n=n|0||1;
+  for(let k=0;k<n;k++){
+    if(!state.running||state.done) return;
+    const s=state.world, before={deaths:s.deaths,stomps:s.stomps,cp:s.cp};
+    TJ.step(state.L,s,inp||inputNow());
+    if(s.stomps>before.stomps){ state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+15}); $("stompInfo").textContent=s.stomps; }
+    if(s.deaths>before.deaths){ state.deaths=s.deaths; $("deathInfo").textContent=s.deaths; }
+    if(s.cp>before.cp){ $("cpInfo").textContent=s.cp+"/"+(state.L.checks.length-1); toast("🚩 깃발! 넘어지면 여기서 다시 시작해"); }
+    if(s.done){ finishPlay(); return; }
+    if(s.ticks*STEP>=limitMs()){ Solo.active?failPlay():finishPlay(); return; }
+  }
+}
+function loop(){
+  if(!state.running) return;
+  const now=performance.now();
+  state.acc+=Math.min(250,now-state.last); state.last=now;
+  let n=0; while(state.acc>=STEP){ state.acc-=STEP; n++; }
+  if(n) stepN(n);
+  if(!state.running) return;
+  render();
+  const el=state.world.ticks*STEP, lim=limitMs();
+  $("clock").textContent=(el/1000).toFixed(1); $("clock").classList.toggle("warn",Solo.active&&lim-el<=15000);
+  state.tickTimer=setTimeout(loop,STEP);
+}
+
+/* ===== 진행 ===== */
+$("bigBtn").onclick=()=>{ if(!state.running&&!state.done) countdown(); };
+function countdown(){
+  const b=$("bigBtn"); b.disabled=true; b.textContent="…";
+  $("eraPick").querySelectorAll("button").forEach(x=>x.disabled=true);
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("cdSub").textContent=state.L.era+"(으)로 출발!";
+  let n=3; $("cd").textContent=n;
+  const tickCd=()=>{
+    n--;
+    if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(tickCd,1000); return; }
+    b.textContent="진행 중 — 우체통까지!";
+    startPlay();
+    $("pad").scrollIntoView({block:"nearest",behavior:"smooth"});
+  };
+  state.cdTimer=setTimeout(tickCd,1000);
+}
+function startPlay(){
+  clearTimers(); buildBoard();
+  state.running=true; state.done=false;
+  state.last=performance.now(); state.acc=0;
+  $("cover").classList.add("hidden");
+  $("clock").textContent="0.0"; $("clock").classList.remove("warn");
+  render();
+  state.tickTimer=setTimeout(loop,STEP);
+}
+function endCommon(){
+  state.running=false; state.done=true; clearTimers(); keys.clear(); pointers.clear(); syncButtons(); render();
+  $("bigBtn").disabled=true;
+  $("eraPick").querySelectorAll("button").forEach(x=>x.disabled=false);
+}
+/* 우체통에 닿았거나(둘이하기) 5분이 지났을 때 */
+function finishPlay(){
+  if(!state.running) return;
+  const s=state.world, ms=s.done?s.timeMs:Math.min(DUEL_CAP_MS,s.ticks*STEP);
+  endCommon();
+  state.deaths=s.deaths; state.stomps=s.stomps;
+  const cover=$("cover"); cover.classList.remove("hidden");
+  $("clock").textContent=(ms/1000).toFixed(1);
+  if(Solo.active){
+    $("cd").textContent="💌"; $("cdSub").textContent=state.L.era+" 배달 완료!"; $("bigBtn").textContent="끝";
+    Solo.finish(ms,{deaths:s.deaths,note:"넘어짐 "+s.deaths+"번 · 밟은 적 "+s.stomps}); return;
+  }
+  /* 둘이하기: 기록은 상대가 끝낸 뒤에 같이 열린다 */
+  $("clock").textContent="🔒"; $("cd").textContent=s.done?"💌":"⏰"; $("cdSub").textContent=s.done?"배달 완료 · 기록 봉인":"5분 끝 · 기록 봉인";
+  $("bigBtn").textContent="봉인됨";
+  Duel.finish(ms,{deaths:s.deaths});
+}
+/* 혼자놀기 제한 시간 초과 */
+function failPlay(){
+  if(!state.running) return;
+  endCommon();
+  $("cover").classList.remove("hidden"); $("cd").textContent="⏰"; $("cdSub").textContent="시간 안에 우체통에 못 갔어";
+  $("bigBtn").textContent="끝";
+  Solo.finish(null,{deaths:state.world.deaths});
+}
+
+/* ===== 혼자놀기 ===== */
+Solo.init({
+  game:'timejump', levels:LEVELS, lowerWins:true,
+  fmt:v=>fmt(v)+'초',
+  describe:l=>TJ.LEVELS[l.n-1].era+' · 제한 '+(l.limitMs/1000)+'초',
+  onLevel(l){
+    state.level=l.n;
+    clearTimeout(state.cdTimer);
+    resetView(); showEraPick(false);
+  }
+});
+
+renderEraList();
+Duel.start();
+</script>
+</body>
+</html>

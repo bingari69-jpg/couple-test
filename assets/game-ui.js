@@ -27,6 +27,7 @@
     exam: ['시험지 보내기', 'atlas', 16, '#ece6f8', '같이 공부할래?', '단어를 담아 작은 시험지를 보내봐.'],
     nonsense: ['넌센스 대결', 'atlas', 16, '#fff0d3', '이걸 맞힌다고?', '한 문제에 7초, 같은 7문제로 붙어봐.'],
     'typing': ['한글 타자 20초', 'atlas', 16, '#ece6f8', '20초에 몇 글자?', '나오는 문장을 그대로 따라 쳐.'],
+    'timejump': ['타임 점프', 'atlas', 17, '#ffe9c7', '누가 먼저 배달할까?', '뛰고 점프해서 우체통까지.'],
     'flap': ['탭 비행', 'atlas', 11, '#e9e3f9', '문 몇 개 통과했어?', '톡 치면 올라가고 가만두면 떨어져.'],
     'slide15': ['15퍼즐', 'atlas', 9, '#e0eafa', '60초에 몇 판 맞출까', '빈칸 옆 숫자를 톡 치면 밀려.'],
     'mines': ['지뢰찾기 미니', 'atlas', 15, '#fff0cf', '60초에 몇 판 풀까', '밟아도 끝이 아니야, 다음 판!'],
@@ -87,7 +88,7 @@
       steps.className = 'game-steps'; steps.setAttribute('aria-label', '놀이 방법');
       const labels = ['ladder', 'groups', 'exam'].includes(slug)
         ? ['내용 넣기', '링크 보내기', '함께 열기']
-        : ['ten', 'react', 'num25', 'pairs', 'typing', 'flap', 'slide15', 'mines', 'stack', '2048', 'fit', 'daily-word', 'snake', 'choseong', 'simon', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
+        : ['ten', 'react', 'num25', 'pairs', 'typing', 'flap', 'timejump', 'slide15', 'mines', 'stack', '2048', 'fit', 'daily-word', 'snake', 'choseong', 'simon', 'mole', 'ufo', 'tap', 'stroop', 'arrow', 'stop', 'nonsense'].includes(slug)
           ? ['한판 하기', '도전장 보내기', '기록 비교'] : ['내 답 고르기', '링크 보내기', '함께 보기'];
       labels.forEach((label, i) => {
         const li = document.createElement('li');
