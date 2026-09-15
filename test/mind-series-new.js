@@ -8,6 +8,9 @@ const path = require('node:path');
 const { JSDOM, VirtualConsole } = require('jsdom');
 const root = path.join(__dirname, '..');
 const errors = [];
+const psychologyHub = fs.readFileSync(path.join(root, 't', 'psychology', 'index.html'), 'utf8');
+assert.match(psychologyHub, /둘이놀기[\s\S]*혼자놀기[\s\S]*편지[\s\S]*심리/, '심리 허브도 메인 4축 메뉴를 쓴다');
+assert.doesNotMatch(psychologyHub, /마음 전하기|나랑 한판|게임방법/, '심리 허브의 예전 상단 메뉴를 제거한다');
 
 function load(slug, hash = '') {
   const file = path.join(root, 't', slug, 'index.html');
