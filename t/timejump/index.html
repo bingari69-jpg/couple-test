@@ -20,7 +20,7 @@
 <script src="../../assets/bet.js?v=20260912-domain"></script>
 <script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
 <script src="../../assets/solo.js?v=20260913-solo"></script>
-<script src="engine.js?v=20260916-timejump"></script>
+<script src="engine.js?v=20260916-triplejump"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -139,7 +139,7 @@
 <section class="screen" id="s-play">
   <span class="tag" id="playTag">타임 점프</span>
   <h1 id="playHead">편지 들고,<br><b>다섯 시대를 건너!</b></h1>
-  <p class="lead" id="playLead">고장 난 타임머신에서 떨어진 병아리. <b>뛰고 점프해서 우체통</b>까지 편지를 배달해. 적은 위에서 밟고, 넘어지면 마지막 깃발에서 다시. 둘이 <b>똑같은 코스</b>로 시간 대결.</p>
+  <p class="lead" id="playLead">고장 난 타임머신에서 떨어진 병아리. <b>뛰고 점프해서 우체통</b>까지 편지를 배달해. 공중에서 점프를 더 누르면 <b>최대 3단 점프</b>. 적은 위에서 밟고, 넘어지면 마지막 깃발에서 다시. 둘이 <b>똑같은 코스</b>로 시간 대결.</p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -164,7 +164,7 @@
     <div class="pad-move"><button class="ctl" type="button" data-k="l" aria-label="왼쪽으로">◀</button><button class="ctl" type="button" data-k="r" aria-label="오른쪽으로">▶</button></div>
     <button class="ctl jump" type="button" data-k="j" aria-label="점프">점프</button>
   </div>
-  <p class="pad-hint">왼손으로 ◀ ▶ 누르고, 오른손으로 점프 · PC는 ← → 와 스페이스</p>
+  <p class="pad-hint">왼손으로 ◀ ▶, 오른손으로 점프 · 공중에서 두 번 더 누르면 3단 점프 · PC는 ← → 와 스페이스</p>
 
   <button class="bigbtn start" id="bigBtn">시작</button>
 
@@ -403,7 +403,9 @@ function render(){
   if(s.dead){ const k=1-s.dead/38; ctx.globalAlpha=Math.max(0,1-k); drawChick(s.deadX,s.deadY-k*16,s.face,now,s); ctx.globalAlpha=1; }
   else if(!(s.invul>0&&Math.floor(now/80)%2===0)) drawChick(s.x,s.y,s.face,now,s);
   /* 밟기 반짝 */
-  state.fx=state.fx.filter(f=>now-f.t<320); state.fx.forEach(f=>{ const k=(now-f.t)/320; ctx.strokeStyle="rgba(255,201,77,"+(1-k)+")"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(f.x,f.y,6+k*14,0,7); ctx.stroke(); });
+  state.fx=state.fx.filter(f=>now-f.t<320); state.fx.forEach(f=>{ const k=(now-f.t)/320;
+    if(f.kind==="air"){ ctx.fillStyle="rgba(255,255,255,"+(0.9*(1-k))+")"; for(let q=-1;q<=1;q++){ ctx.beginPath(); ctx.ellipse(f.x+q*(5+k*10),f.y+k*6,4-k*2,2.5,0,0,7); ctx.fill(); } return; }
+    ctx.strokeStyle="rgba(255,201,77,"+(1-k)+")"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(f.x,f.y,6+k*14,0,7); ctx.stroke(); });
   ctx.restore();
   if(key==="space"){ ctx.fillStyle="rgba(255,255,255,.06)"; ctx.fillRect(0,0,W,H); }
 }
@@ -435,6 +437,7 @@ function stepN(n,inp){
     if(!state.running||state.done) return;
     const s=state.world, before={deaths:s.deaths,stomps:s.stomps,cp:s.cp};
     TJ.step(state.L,s,inp||inputNow());
+    if(s.doubleAt===s.ticks){ state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+16,kind:"air"}); }
     if(s.stomps>before.stomps){ state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+15}); $("stompInfo").textContent=s.stomps; }
     if(s.deaths>before.deaths){ state.deaths=s.deaths; $("deathInfo").textContent=s.deaths; }
     if(s.cp>before.cp){ $("cpInfo").textContent=s.cp+"/"+(state.L.checks.length-1); toast("🚩 깃발! 넘어지면 여기서 다시 시작해"); }

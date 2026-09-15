@@ -3,7 +3,7 @@
    그래서 Node 에서 그대로 불러 "정말 깰 수 있는 판인지" 경로를 찾아 검사할 수 있다
    (scripts/timejump-routes.cjs · test/timejump.js).
 
-   규칙: 병아리가 편지를 들고 다섯 시대를 건넌다. 우체통에 닿으면 클리어, 기록 = 걸린 시간(ms).
+   규칙: 병아리가 편지를 들고 다섯 시대를 건넌다. 공중에서 점프를 누르면 같은 힘으로 두 번 더 뛴다(3단 점프). 우체통에 닿으면 클리어, 기록 = 걸린 시간(ms).
    넘어져도(구멍·가시·적) 판이 끝나지 않는다. 마지막 깃발에서 다시 시작하고 시간은 계속 흐른다.
    물리는 16ms 고정 걸음. 적·움직이는 발판의 위치는 걸음 수만으로 정해져 두 사람이 같은 판을 받는다.
 
@@ -16,6 +16,7 @@
   const RUN = 125, ACC_G = 1100, ACC_A = 750, DEC_G = 1500, DEC_A = 500;   // px/s, px/s²
   const GRAV = 1400, JUMP_V = -470, JUMP_CUT = -160, MAX_FALL = 500;       // 점프 높이 약 4.4칸, 멀리 약 4.6칸
   const COYOTE = 6, BUFFER = 8;                        // 발판 끝 늦은 점프 96ms, 미리 누른 점프 128ms
+  const AIR_JUMPS = 2;                                 // 공중에서 두 번 더 뛴다(3단 점프). 땅에 닿거나 적을 밟으면 다시 채워진다
   const STOMP_V = -300, STOMP_HOLD_V = -430;           // 적을 밟고 튀어 오르는 속도 (점프를 누르고 있으면 더 높이)
   const DEAD_TICKS = 38, INVUL_TICKS = 60;             // 넘어진 뒤 0.6초 쉬고, 되살아나면 1초 동안 적에게 무적
   const CRUMBLE_DELAY = 22, CRUMBLE_BACK = 190;        // 무너지는 발판: 밟고 0.35초 뒤 떨어지고 3초 뒤 돌아온다
@@ -128,7 +129,7 @@
     const L = level(n), cp = L.checks[0];
     return {
       level: n, ticks: 0, x: cp.x, y: cp.y, vx: 0, vy: 0, face: 1, ground: false, ride: -1,
-      coyote: 0, buffer: 0, prevJ: false, dead: 0, deadX: 0, deadY: 0, invul: 0,
+      coyote: 0, buffer: 0, airJumps: AIR_JUMPS, doubleAt: -1, prevJ: false, dead: 0, deadX: 0, deadY: 0, invul: 0,
       deaths: 0, stomps: 0, cp: 0, done: false, timeMs: 0,
       alive: L.enemies.map(() => 1), crumb: L.crumbles.map(() => 0)
     };
@@ -144,7 +145,7 @@
   function respawn(L, s) {
     const cp = L.checks[s.cp];
     s.x = cp.x; s.y = cp.y; s.vx = 0; s.vy = 0; s.ground = false; s.ride = -1;
-    s.coyote = 0; s.buffer = 0; s.invul = INVUL_TICKS;
+    s.coyote = 0; s.buffer = 0; s.airJumps = AIR_JUMPS; s.invul = INVUL_TICKS;
     for (let i = 0; i < s.crumb.length; i++) s.crumb[i] = 0;
   }
 
@@ -204,6 +205,7 @@
     if (s.vx < target) s.vx = Math.min(target, s.vx + acc * DT); else if (s.vx > target) s.vx = Math.max(target, s.vx - acc * DT);
 
     if (s.buffer > 0 && s.coyote > 0) { s.vy = JUMP_V; s.buffer = 0; s.coyote = 0; s.ground = false; s.ride = -1; }
+    else if (pressed && s.airJumps > 0) { s.vy = JUMP_V; s.buffer = 0; s.airJumps--; s.doubleAt = t; s.ride = -1; }   // 공중 점프(최대 두 번)
     if (!j && s.vy < JUMP_CUT) s.vy = JUMP_CUT;           // 일찍 떼면 낮게 뛴다
     s.vy = Math.min(MAX_FALL, s.vy + GRAV * DT);
 
@@ -217,9 +219,10 @@
     collideX(L, s, Math.sign(s.x - x0));
 
     s.y += s.vy * DT;
+    if (s.y < 0) { s.y = 0; if (s.vy < 0) s.vy = 0; }       // 화면 위는 천장(3단 점프로 화면 밖으로 사라지지 않게)
     s.ground = false; s.ride = -1;
     collideY(L, s, prevTop, prevBottom, t);
-    if (s.ground) s.coyote = COYOTE; else if (s.coyote > 0) s.coyote--;
+    if (s.ground) { s.coyote = COYOTE; s.airJumps = AIR_JUMPS; } else if (s.coyote > 0) s.coyote--;
 
     /* 가시(아래쪽 뾰족한 부분만) · 떨어짐 */
     const hx = s.x + 2, hy = s.y + 3, hw = P.w - 4, hh = P.h - 3;
@@ -233,7 +236,7 @@
     for (let i = 0; i < L.enemies.length; i++) {
       if (!s.alive[i]) continue; const e = L.enemies[i], ex = enemyX(e, t);
       if (!overlap(s.x, s.y, P.w, P.h, ex, e.y, EW, EH)) continue;
-      if (s.vy > 0 && prevBottom <= e.y + 6) { s.alive[i] = 0; s.stomps++; s.vy = j ? STOMP_HOLD_V : STOMP_V; s.coyote = 0; }
+      if (s.vy > 0 && prevBottom <= e.y + 6) { s.alive[i] = 0; s.stomps++; s.vy = j ? STOMP_HOLD_V : STOMP_V; s.coyote = 0; s.airJumps = AIR_JUMPS; }
       else if (s.invul === 0) { die(s); return; }
     }
 
@@ -242,7 +245,7 @@
     if (overlap(s.x, s.y, P.w, P.h, g.x, g.y, g.w, g.h)) { s.done = true; s.timeMs = t * STEP; }
   }
 
-  const api = { isSolid, T, ROWS, W, H, STEP, P, EW, EH, MOVER_H, LEVELS, level, create, clone, step, moverPos, enemyX, tileAt };
+  const api = { AIR_JUMPS, isSolid, T, ROWS, W, H, STEP, P, EW, EH, MOVER_H, LEVELS, level, create, clone, step, moverPos, enemyX, tileAt };
   if (typeof module === "object" && module.exports) module.exports = api;
   root.TimeJump = api;
 })(typeof window !== "undefined" ? window : globalThis);

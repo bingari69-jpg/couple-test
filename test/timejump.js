@@ -37,6 +37,27 @@ const playRoute = (w, route) => { for (const code of route) { if (!w.__ev('state
     assert.ok(base - low < 2.5 * TJ.T, '짧은 점프는 낮게 ' + (base - low));
   }
   {
+    /* 3단 점프: 공중에서 두 번 더 뛰고, 네 번째는 안 된다. 땅에 닿으면 다시 채워진다. 화면 위는 천장 */
+    const L = TJ.level(1);
+    const peak = presses => {
+      const s = TJ.create(1); for (let i = 0; i < 10; i++) TJ.step(L, s, {});
+      const base = s.y; let top = base, air = [];
+      for (let i = 0; i < 160; i++) { const hold = [0, 22, 44, 66].slice(0, presses).some(p => i >= p && i < p + 20); TJ.step(L, s, { j: hold }); top = Math.min(top, s.y); if (i === 70) air.push(s.airJumps); }
+      return { h: (base - top) / TJ.T, s, air };
+    };
+    const one = peak(1), two = peak(2), three = peak(3), four = peak(4);
+    assert.ok(two.h > one.h * 1.8, '2단 점프는 두 배 가까이 ' + two.h.toFixed(2));
+    assert.ok(three.h > two.h + 1.5, '3단 점프는 더 높이 ' + three.h.toFixed(2));
+    assert.equal(four.h, three.h, '네 번째 누름은 무시');
+    assert.equal(three.air[0], 0, '공중 점프 두 번 다 씀');
+    assert.equal(three.s.ground, true); assert.equal(three.s.airJumps, TJ.AIR_JUMPS, '착지하면 다시 두 번');
+    assert.equal(three.h, (11 * TJ.T - TJ.P.h) / TJ.T, '천장(화면 맨 위)에서 멈춤');
+    /* 발판 끝에서 걸어 떨어진 뒤 누르면 첫 점프 + 공중 두 번 */
+    const e = TJ.create(1); e.x = 20 * TJ.T - 2; e.y = 11 * TJ.T - TJ.P.h; e.ground = true; e.coyote = 6;
+    TJ.step(L, e, { r: 1 }); for (let i = 0; i < 3; i++) TJ.step(L, e, { r: 1 });
+    TJ.step(L, e, { r: 1, j: 1 }); assert.equal(e.airJumps, TJ.AIR_JUMPS, '늦은 점프는 땅 점프로 친다');
+  }
+  {
     /* 가시에 닿으면 넘어짐 → 0.6초 뒤 마지막 깃발에서, 시간은 계속 흐른다 */
     const L = TJ.level(2), s = TJ.create(2);
     let guard = 0; while (!s.deaths && guard++ < 400) TJ.step(L, s, { r: 1 });
