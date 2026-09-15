@@ -1,5 +1,5 @@
 // 타임 점프 화면 확인용: 실제 페이지를 Edge 로 열고, 저장된 최단 경로를 따라가며 시대마다 몇 장면을 캡처한다.
-// `node scripts/timejump-preview.cjs` → output/timejump/lv{n}-{k}.png (390px 모바일 전체 화면은 page.png)
+// `node scripts/timejump-preview.cjs` (ROUTE=hunt 면 동물을 밟는 사냥 경로, AT=0.1,0.5 로 장면 위치) → output/timejump/lv{n}-{k}.png (390px 모바일 전체 화면은 page.png)
 const fs = require('fs'), path = require('path');
 const runtime = process.env.PLAYWRIGHT_PATH || 'C:/Users/USER/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright';
 const { chromium } = require(runtime);
@@ -18,7 +18,7 @@ fs.mkdirSync(out, { recursive: true });
     await page.screenshot({ path: path.join(out, 'page.png'), fullPage: true });
     const fractions = (process.env.AT || '0.08,0.45,0.8').split(',').map(Number);
     for (const n of [1, 2, 3, 4, 5]) {
-      const route = routes[n].route;
+      const route = process.env.ROUTE === 'hunt' && routes[n].hunt ? routes[n].hunt.route : routes[n].route;
       for (let k = 0; k < fractions.length; k++) {
         await page.evaluate(([n, route, frac]) => {
           state.level = n; startPlay(); clearTimeout(state.tickTimer);

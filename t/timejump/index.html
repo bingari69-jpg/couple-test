@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>타임 점프 — 편지 들고 다섯 시대를 건너 · 같이놀자</title>
-<meta name="description" content="원시시대부터 미래 우주까지. 병아리가 편지를 들고 뛰고 점프해 우체통까지! 5단계 혼자 도전, 같은 코스로 친구와 시간 대결.">
+<meta name="description" content="원시시대부터 미래 우주까지. 뱀·검치호랑이·늑대를 밟고 3단 점프로 우체통까지! 5단계 혼자 도전, 같은 코스로 친구와 점수 대결.">
 <link rel="canonical" href="https://noljago.co.kr/t/timejump/">
 <meta property="og:type" content="website">
-<meta property="og:title" content="타임 점프 — 누가 더 빨리 편지를 배달할까">
-<meta property="og:description" content="원시시대부터 미래 우주까지, 뛰고 점프해서 우체통까지. 같은 코스, 네 기록은 봉인됐어.">
+<meta property="og:title" content="타임 점프 — 무서운 동물을 밟고 편지를 배달해">
+<meta property="og:description" content="원시시대부터 미래 우주까지, 밟은 동물 점수 + 빨리 도착한 보너스. 같은 코스, 네 점수는 봉인됐어.">
 <meta property="og:image" content="https://noljago.co.kr/assets/share-cards/timejump.png?v=20260916-timejump">
 <meta property="og:image:width" content="800">
 <meta property="og:image:height" content="480">
@@ -19,8 +19,8 @@
 <script src="../../assets/kakao-share.js?v=20260916-timejump"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
 <script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
-<script src="../../assets/solo.js?v=20260913-solo"></script>
-<script src="engine.js?v=20260916-triplejump"></script>
+<script src="../../assets/solo.js?v=20260916-creatures"></script>
+<script src="engine.js?v=20260916-creatures"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
   :root{
@@ -61,8 +61,8 @@
   .hud .c{flex:1;min-width:0}
   .hud .c .lab{font-size:12px;font-weight:700;color:var(--sub);letter-spacing:.04em}
   .hud .c .v{font-size:clamp(28px,9vw,38px);font-weight:900;line-height:1.05;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
-  .hud .time .v{color:var(--blue)} .hud .time .v.warn{color:var(--red)}
-  .hud .era{text-align:right} .hud .era .v{font-size:clamp(20px,6vw,26px);padding-top:6px}
+  .hud .score .v{color:var(--coral)}
+  .hud .time{text-align:right} .hud .time .v{color:var(--blue);font-size:clamp(22px,7vw,30px)} .hud .time .v.warn{color:var(--red)}
 
   /* 게임 화면 */
   .board{position:relative;background:#fff;border:3px solid var(--line);border-radius:22px;padding:8px;touch-action:none;-webkit-tap-highlight-color:transparent}
@@ -71,8 +71,20 @@
   .cover .cd{font-size:clamp(56px,18vw,80px);font-weight:900;color:var(--blue);line-height:1;font-variant-numeric:tabular-nums;animation:pop .5s ease}
   @keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
   .cover .sub{font-size:15px;font-weight:700;color:var(--sub)}
-  .info{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
-  .info b{color:var(--ink)}
+  .info{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 10px;font-size:13px;color:var(--sub);font-weight:600;margin:10px 4px 0}
+  .info b{color:var(--ink)} .info .era-now{color:var(--ink);font-weight:800}
+
+  /* 이야기 장면 */
+  .story{background:#fff;border:3px solid var(--yellow);border-radius:22px;padding:16px 16px 10px;margin:14px 0 0;animation:fade .3s ease}
+  .story-head{display:flex;align-items:center;gap:8px}
+  .story-head span{font-size:26px} .story-head b{font-size:18px;font-weight:900} .story-head small{margin-left:auto;font-size:12px;font-weight:700;color:var(--dim)}
+  .story-lines{margin-top:10px;display:grid;gap:8px}
+  .story-line{background:#FFF8E7;border-radius:14px;padding:10px 12px;font-size:15px;line-height:1.5;opacity:0;transform:translateY(6px);animation:storyIn .45s ease forwards}
+  @keyframes storyIn{to{opacity:1;transform:none}}
+  .story-actions{display:flex;gap:8px;align-items:center}
+  .story-actions .btn-blue{flex:1}
+  .story-actions .btn-ghost{width:auto;margin-top:10px}
+  .story-again{display:block;margin:6px auto 0;background:none;border:none;font:inherit;font-size:13px;font-weight:700;color:var(--sub);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
   /* 조작 버튼: 왼손 ◀ ▶ · 오른손 점프 */
   .pad{display:flex;justify-content:space-between;align-items:stretch;gap:12px;margin-top:12px;touch-action:none}
@@ -139,7 +151,7 @@
 <section class="screen" id="s-play">
   <span class="tag" id="playTag">타임 점프</span>
   <h1 id="playHead">편지 들고,<br><b>다섯 시대를 건너!</b></h1>
-  <p class="lead" id="playLead">고장 난 타임머신에서 떨어진 병아리. <b>뛰고 점프해서 우체통</b>까지 편지를 배달해. 공중에서 점프를 더 누르면 <b>최대 3단 점프</b>. 적은 위에서 밟고, 넘어지면 마지막 깃발에서 다시. 둘이 <b>똑같은 코스</b>로 시간 대결.</p>
+  <p class="lead" id="playLead">고장 난 타임머신에서 떨어진 병아리. <b>뛰고 점프해서 우체통</b>까지 편지를 배달해. 뱀·호랑이 같은 <b>무서운 동물은 위에서 밟으면 점수</b>, 빨리 도착하면 보너스. 공중에서 점프를 더 누르면 <b>최대 3단 점프</b>. 둘이 <b>똑같은 코스</b>로 점수 대결.</p>
 
   <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 기록은 네가 끝낸 뒤에 공개돼.</span></div></div>
   <div class="card hidden" id="tallyCard"><div id="tallyText" style="font-size:14px;line-height:1.6"></div></div>
@@ -149,27 +161,34 @@
 
   <div class="era-pick" id="eraPick" role="group" aria-label="시대 고르기"><div class="t" id="eraPickTitle">어느 시대로 도전장을 보낼까?</div><div class="era-list" id="eraList"></div></div>
 
+  <div class="story hidden" id="story" aria-live="polite">
+    <div class="story-head"><span id="storyIcon" aria-hidden="true">🦕</span><b id="storyEra">원시시대</b><small id="storyStep">1 / 5 시대</small></div>
+    <div class="story-lines" id="storyLines"></div>
+    <div class="story-actions"><button class="btn btn-blue" id="storyGo" type="button">출발!</button><button class="btn btn-ghost" id="storySkip" type="button">건너뛰기</button></div>
+  </div>
+
   <div class="hud" id="hud">
+    <div class="c score"><div class="lab">점수</div><div class="v" id="scoreNow">0</div></div>
     <div class="c time"><div class="lab">걸린 시간</div><div class="v" id="clock">0.0</div></div>
-    <div class="c era"><div class="lab">지금 시대</div><div class="v" id="eraName">원시시대</div></div>
   </div>
 
   <div class="board" id="board">
     <canvas class="stage" id="stage" width="360" height="270" aria-label="게임 화면 — 아래 버튼으로 조작"></canvas>
     <div class="cover" id="cover"><div class="cd" id="cd">준비</div><div class="sub" id="cdSub">시작을 누르면 3초 뒤 출발</div></div>
   </div>
-  <div class="info"><span>넘어짐 <b id="deathInfo">0</b></span><span>밟은 적 <b id="stompInfo">0</b></span><span>깃발 <b id="cpInfo">0/0</b></span></div>
+  <div class="info"><span class="era-now" id="eraName">원시시대</span><span>밟기 <b id="stompInfo">0</b></span><span>넘어짐 <b id="deathInfo">0</b></span><span>깃발 <b id="cpInfo">0/0</b></span></div>
 
   <div class="pad" id="pad" aria-label="조작 버튼">
     <div class="pad-move"><button class="ctl" type="button" data-k="l" aria-label="왼쪽으로">◀</button><button class="ctl" type="button" data-k="r" aria-label="오른쪽으로">▶</button></div>
     <button class="ctl jump" type="button" data-k="j" aria-label="점프">점프</button>
   </div>
   <p class="pad-hint">왼손으로 ◀ ▶, 오른손으로 점프 · 공중에서 두 번 더 누르면 3단 점프 · PC는 ← → 와 스페이스</p>
+  <button class="story-again" id="storyAgain" type="button">📖 이 시대 이야기 보기</button>
 
   <button class="bigbtn start" id="bigBtn">시작</button>
 
   <div id="afterPlay" class="hidden">
-    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>기록이 봉인됐어요.</b> 상대가 같은 코스를 끝내면 둘의 기록이 같이 열려.</span></div></div>
+    <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b>점수가 봉인됐어요.</b> 상대가 같은 코스를 끝내면 둘의 점수가 같이 열려.</span></div></div>
     <div class="linkbox hidden" id="linkbox"></div>
     <button class="btn btn-main" id="kakaoBtn" style="background:#FEE500;color:#191600">💬 카톡으로 도전장 보내기</button>
     <button class="btn btn-ghost" id="copyBtn">링크만 복사</button>
@@ -210,29 +229,46 @@
 
 <script>
 /* ===== 타임 점프 =====
-   판(스테이지·물리)은 engine.js(TimeJump), 도전장·봉인·전적·결과는 assets/duel-engine.js,
-   혼자놀기 5단계는 assets/solo.js. 여기에는 시대 고르기·조작 버튼·그리기·진행만 둔다.
+   판(스테이지·물리·동물·점수)은 engine.js(TimeJump), 도전장·봉인·전적·결과는 assets/duel-engine.js,
+   혼자놀기 5단계는 assets/solo.js. 여기에는 시대 고르기·이야기·조작 버튼·그리기·진행만 둔다.
 
-   둘이하기: 보내는 사람이 시대(Lv1~5)를 고르고, 링크의 l 로 같은 코스를 받는다. 기록 = 걸린 시간(ms), 짧을수록 승.
-            시간이 같으면 덜 넘어진 쪽이 이긴다. 5분이 지나면 5분으로 기록하고 끝낸다.
-   혼자놀기: 시대마다 제한 시간 안에 우체통에 닿으면 클리어. 별 기준은 test/timejump-routes.json 의 최단 경로 시간에서 정했다.
-   검사용으로 startPlay()·stepN(n,inp)·finishPlay()·buildBoard() 를 최상위에 둔다. */
+   점수 = 밟은 동물 점수 + 시간 보너스(제한 시간에서 남은 1초마다 10점). 넘어지면 시간만 손해.
+   둘이하기: 보내는 사람이 시대(Lv1~5)를 고르고, 링크의 l 로 같은 코스를 받는다. 점수가 높은 쪽이 이기고,
+            같으면 더 빨리 도착한 쪽(t). 5분이 지나면 시간 보너스 없이 밟기 점수만으로 끝낸다.
+            예전 시간 대결 링크(g 없음)는 점수와 섞이지 않게 열지 않고 새 판으로 시작한다.
+   혼자놀기: 시대마다 제한 시간 안에 우체통에 닿으면 클리어. ★★★ 은 test/timejump-routes.json 의
+            최단 경로 시간 1.4배로 도착하며 동물 점수 절반을 얻은 점수(사냥 경로 점수보다 낮다 — 테스트가 검사).
+   검사용으로 startPlay()·stepN(n,inp)·finishPlay()·buildBoard()·inputNow() 를 최상위에 둔다. */
 const TJ=window.TimeJump, W=TJ.W, H=TJ.H, T=TJ.T, STEP=TJ.STEP, DUEL_CAP_MS=300000;
-/* ★★★ = 최단 경로(넘어짐 없이 찾은 입력)의 약 1.4배. 클리어 = 시대별 제한 시간 */
 const LEVELS=[
-  {n:1,label:'원시',  limitMs:90000, goal:90000, best:21000},
-  {n:2,label:'이집트',limitMs:120000,goal:120000,best:27500},
-  {n:3,label:'중세',  limitMs:150000,goal:150000,best:31500},
-  {n:4,label:'산업',  limitMs:180000,goal:180000,best:35500},
-  {n:5,label:'우주',  limitMs:210000,goal:210000,best:40000}
+  {n:1,label:'원시',  limitMs:90000, goal:0,best:1100},
+  {n:2,label:'이집트',limitMs:120000,goal:0,best:1400},
+  {n:3,label:'중세',  limitMs:150000,goal:0,best:1750},
+  {n:4,label:'산업',  limitMs:180000,goal:0,best:1800},
+  {n:5,label:'우주',  limitMs:210000,goal:0,best:2250}
 ];
 const ERA_ICON=['🦕','🏜️','🏰','⚙️','🚀'];
-const fmt=ms=>(Math.max(0,ms)/1000).toFixed(2);
+/* 시대마다 시작 전 이야기 세 줄과, 우체통에 닿았을 때 한 줄 */
+const STORY=[
+  {intro:["💥 쾅! 타임머신이 고장 나서 원시시대에 떨어졌어.","🐥 \"친구한테 보낼 편지… 우체통을 찾아야 해!\"","🐍 풀숲엔 뱀, 바위 뒤엔 검치호랑이. 위에서 꾹 밟아!"],
+   outro:"📮 첫 번째 우체통 발견! 타임머신이 다시 윙— 움직여."},
+  {intro:["🏜️ 이번엔 뜨거운 사막 한가운데야.","🦂 전갈과 코브라가 편지를 노리고, 미라가 어슬렁거려.","🐥 \"피라미드 너머에 우체통이 있대!\""],
+   outro:"📮 모래바람을 뚫고 배달 성공! 저 멀리 성벽이 보여."},
+  {intro:["🏰 성 앞 해자. 도르래 발판이 삐걱거려.","🐺 늑대가 으르렁, 🦇 박쥐가 휙휙 날아다녀.","🐥 \"성문 앞 우체통까지 조금만 더!\""],
+   outro:"📮 성문 앞 우체통에 쏙! 굴뚝 연기가 피어올라."},
+  {intro:["🏭 칙칙폭폭, 공장 도시에 떨어졌어.","🐀 쥐떼와 태엽 로봇이 돌아다니고, 낡은 다리는 금방 무너져!","🐥 \"기름 냄새… 그래도 편지는 깨끗하게!\""],
+   outro:"📮 배달 완료! 타임머신이 마지막 힘을 모아."},
+  {intro:["🚀 슝— 미래 우주정거장에 도착!","👾 외계 괴물이 튀어 오르고 해파리가 둥둥 떠다녀.","🐥 \"마지막 우체통이야. 편지야, 꼭 닿아줘!\""],
+   outro:"💌 다섯 시대를 건너 편지가 도착했어. \"보고 싶었어!\""}
+];
+const STORY_KEY='gatchi_timejump_story_v1';
+const fmtS=ms=>(Math.max(0,ms)/1000).toFixed(2);
+const pts=v=>Number(v||0).toLocaleString('ko-KR');
 const clampLevel=n=>Math.min(5,Math.max(1,n|0||1));
-function titleFor(ms){
-  if(ms<=30000) return "번개 배달부";
-  if(ms<=60000) return "베테랑 우체부";
-  if(ms<=120000) return "성실한 병아리";
+function titleFor(score){
+  if(score>=2200) return "전설의 시간 우체부";
+  if(score>=1500) return "동물 사냥 우체부";
+  if(score>=900)  return "용감한 병아리";
   return "느긋한 시간 여행자";
 }
 const NEXT=[
@@ -245,26 +281,34 @@ const state = Duel.setup({
   deployBase:"https://noljago.co.kr/t/timejump/",
   og:"https://noljago.co.kr/assets/share-cards/timejump.png?v=20260916-timejump",imageWidth:800,imageHeight:480,
   gameName:"타임 점프",
-  challengeDesc:"같은 시대, 같은 코스. 누가 더 빨리 우체통까지 갈까. 내 기록은 네가 끝낸 뒤 공개.",
+  challengeDesc:"같은 시대, 같은 코스. 무서운 동물을 밟고 빨리 도착할수록 점수가 올라가. 내 점수는 네가 끝낸 뒤 공개.",
   next:NEXT,
   titleFor,
+  higherWins:true,
   scrollToShare:true,
-  state:{level:1,world:null,running:false,done:false,cdTimer:0,tickTimer:0,last:0,acc:0,deaths:0,stomps:0,fx:[]},
-  linkExtra:st=>({d:st.deaths,l:st.level}),
-  roundExtra:(p,st)=>[p.d||0, st.deaths],
-  extraKey:"d", extraDefault:0,
-  tieBreak:(me,them)=>me.d===them.d?null:{o:me.d<them.d?"win":"lose",why:`시간은 같지만 덜 넘어진 쪽이 이겨. (${me.d}번 vs ${them.d}번)`},
-  recordCell:x=>fmt(x.v)+"<small>초</small>",
-  detailCell:x=>x.d?`넘어짐 ${x.d}번`:"한 번도 안 넘어짐",
-  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${fmt(r[1])} vs ${esc(who(r[2],!isA))} ${fmt(r[3])}`,
-  verdictText:o=> o==="win"?"내가 먼저 배달했어!":o==="lose"?"상대가 먼저 배달했어":"완전 똑같아?!",
+  state:{level:1,world:null,running:false,done:false,cdTimer:0,tickTimer:0,last:0,acc:0,deaths:0,stomps:0,points:0,timeMs:0,fx:[]},
+  linkExtra:st=>({g:2,t:st.timeMs,d:st.deaths,l:st.level}),
+  roundExtra:(p,st)=>[p.t||0, st.timeMs],
+  extraKey:"t", extraDefault:0,
+  tieBreak:(me,them)=>(!me.t||!them.t||me.t===them.t)?null:{o:me.t<them.t?"win":"lose",why:`점수는 같지만 더 빨리 도착한 쪽이 이겨. (${fmtS(me.t)}초 vs ${fmtS(them.t)}초)`},
+  recordCell:x=>pts(x.v)+"<small>점</small>",
+  detailCell:x=>!x.t?"":x.t>=DUEL_CAP_MS?"우체통 못 감":fmtS(x.t)+"초 도착",
+  histRow:(r,isA,i)=>`${i+1}판 · ${esc(who(r[0],isA))} ${pts(r[1])}점 vs ${esc(who(r[2],!isA))} ${pts(r[3])}점`,
+  verdictText:o=> o==="win"?"내 점수가 더 높아!":o==="lose"?"상대 점수가 더 높아":"완전 똑같아?!",
   subVerdictText:(o,me,them,meL,themL)=>
-    o==="tie"?"백분의 일 초까지 같은 건 거의 기적."
-      :`${fmt(me.v)}초 vs ${fmt(them.v)}초 — ${subj(o==="win"?meL:themL)} ${fmt(Math.abs(me.v-them.v))}초 빨랐어.`,
+    o==="tie"?"점수도 시간도 같은 건 거의 기적."
+      :`${pts(me.v)}점 vs ${pts(them.v)}점 — ${subj(o==="win"?meL:themL)} ${pts(Math.abs(me.v-them.v))}점 더 받았어.`,
   challengeHead:p=>`<b>${esc(p.n||"상대")}</b>${subjTail(p.n||"상대")} 도전했다.<br>${esc(TJ.LEVELS[clampLevel(p.l)-1].era)}, 같은 코스야.`,
   againHead:()=>`재도전. <b>시대를 골라</b> 다시.`,
-  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${fmt(me.v)}초 vs ${nm(them.n)}${fmt(them.v)}초${tail}`,
-  resultDesc:"같은 시대, 같은 코스. 누가 더 빨리 편지를 배달했을까. 재도전은 여기서.",
+  resultTitle:(me,them,tail,nm)=>`${nm(me.n)}${pts(me.v)}점 vs ${nm(them.n)}${pts(them.v)}점${tail}`,
+  resultDesc:"같은 시대, 같은 코스. 밟은 동물 점수 + 빨리 도착한 보너스. 재도전은 여기서.",
+  onInit(){
+    /* 예전(시간 대결) 링크: 기록이 '밀리초'라 점수와 섞이면 결과가 틀린다. 열지 않고 새 판으로 */
+    const h=readHash(); if(!h||!h.p) return;
+    const rows=Array.isArray(h.p.h)?h.p.h:[];
+    const legacy=(h.type==="c"&&h.p.g!==2)||rows.some(r=>Number(r[1])>10000||Number(r[3])>10000);
+    if(legacy){ history.replaceState(null,"",location.pathname); setTimeout(()=>toast("예전 규칙(시간 대결) 링크라 새 판으로 시작해. 이제는 점수 대결이야!"),300); }
+  },
   onOpenChallenge(p){ state.level=clampLevel(p.l); buildBoard(); showEraPick(false); },
   onPreset(p){ state.level=clampLevel(p.l); buildBoard(); showEraPick(false); toast('혼자놀기 '+TJ.LEVELS[state.level-1].era+' 코스야. 끝내면 도전장을 보낼 수 있어.'); },
   newRound(){ buildBoard(); showEraPick(true); },
@@ -278,11 +322,27 @@ function renderEraList(){
     const b=document.createElement("button"); b.type="button"; b.className="era-btn"; b.dataset.level=l.n;
     b.setAttribute("aria-pressed",String(state.level===l.n));
     b.innerHTML="<span aria-hidden='true'>"+ERA_ICON[i]+"</span><small>Lv"+l.n+" "+esc(LEVELS[i].label)+"</small>";
-    b.onclick=()=>{ if(state.running||state.done) return; state.level=l.n; buildBoard(); renderEraList(); };
+    b.onclick=()=>{ if(state.running||state.done) return; state.level=l.n; buildBoard(); renderEraList(); hideStory(); };
     box.append(b);
   });
 }
 function showEraPick(on){ $("eraPick").classList.toggle("hidden",!on||Solo.active); if(on) renderEraList(); }
+
+/* ===== 이야기 ===== */
+function storySeen(){ try{ return JSON.parse(localStorage.getItem(STORY_KEY)||"[]")||[]; }catch(_){ return []; } }
+function markStorySeen(n){ try{ const s=storySeen(); if(!s.includes(n)){ s.push(n); localStorage.setItem(STORY_KEY,JSON.stringify(s)); } }catch(_){} }
+function showStory(){
+  const n=state.level, st=STORY[n-1];
+  $("storyIcon").textContent=ERA_ICON[n-1]; $("storyEra").textContent=TJ.LEVELS[n-1].era; $("storyStep").textContent=n+" / 5 시대";
+  const box=$("storyLines"); box.innerHTML="";
+  st.intro.forEach((line,i)=>{ const p=document.createElement("p"); p.className="story-line"; p.style.animationDelay=(i*0.55)+"s"; p.textContent=line; box.append(p); });
+  $("story").classList.remove("hidden");
+  if($("story").scrollIntoView) $("story").scrollIntoView({block:"nearest",behavior:"smooth"});
+}
+function hideStory(){ $("story").classList.add("hidden"); }
+function leaveStory(){ markStorySeen(state.level); hideStory(); if(!state.running&&!state.done) countdown(); }
+$("storyGo").onclick=leaveStory; $("storySkip").onclick=leaveStory;
+$("storyAgain").onclick=()=>{ if(!state.running&&!state.done) showStory(); };
 
 /* ===== 판 ===== */
 const canvas=$("stage");
@@ -291,52 +351,56 @@ const DPR=Math.min(2,window.devicePixelRatio||1);
 if(ctx){ canvas.width=W*DPR; canvas.height=H*DPR; }
 function buildBoard(){
   const L=TJ.level(state.level);
-  state.L=L; state.world=TJ.create(state.level); state.deaths=0; state.stomps=0; state.fx=[];
+  state.L=L; state.world=TJ.create(state.level); state.deaths=0; state.stomps=0; state.points=0; state.fx=[];
   $("eraName").textContent=L.era;
-  $("deathInfo").textContent="0"; $("stompInfo").textContent="0"; $("cpInfo").textContent="0/"+(L.checks.length-1);
+  $("scoreNow").textContent="0"; $("deathInfo").textContent="0"; $("stompInfo").textContent="0"; $("cpInfo").textContent="0/"+(L.checks.length-1);
   render();
 }
 function clearTimers(){ clearTimeout(state.tickTimer); }
 function resetView(){
   clearTimers(); clearTimeout(state.cdTimer); keys.clear(); pointers.clear(); syncButtons();
   state.done=false; state.running=false;
-  buildBoard();
+  buildBoard(); hideStory();
+  $("eraPick").querySelectorAll("button").forEach(x=>x.disabled=false);
   $("cover").classList.remove("hidden"); $("cd").textContent="준비"; $("cdSub").textContent="시작을 누르면 3초 뒤 출발";
   $("clock").textContent="0.0"; $("clock").classList.remove("warn");
   $("bigBtn").className="bigbtn start"; $("bigBtn").textContent="시작"; $("bigBtn").disabled=false;
 }
 
-/* ===== 그리기 — 시대마다 색과 풍경만 바뀐다 ===== */
+/* ===== 그리기 — 시대마다 색과 풍경이 바뀐다 ===== */
 const THEMES={
-  stone:  {sky:["#FFE4B8","#FFF6E4"],far:"#F2C99A",ground:"#B98A5E",top:"#8CC56B",block:"#C9B8A2",blockEdge:"#A8957D",spike:"#F4EEE2",enemy:"#9B7BC9"},
-  egypt:  {sky:["#FFE7B0","#FFF8E2"],far:"#F0CF8F",ground:"#E2B872",top:"#F3D79F",block:"#E9C98B",blockEdge:"#C9A262",spike:"#8C7A66",enemy:"#F5F0E4"},
-  castle: {sky:["#D9E7F7","#F4F8FD"],far:"#BFCBDD",ground:"#8E9A7E",top:"#9DCB7C",block:"#BDB5A8",blockEdge:"#9C9385",spike:"#7F8894",enemy:"#AEB6C2"},
-  factory:{sky:["#F1DFCC","#FBF1E6"],far:"#D8BFA6",ground:"#A86F55",top:"#C98B6B",block:"#9FA8B2",blockEdge:"#7E8791",spike:"#6F7780",enemy:"#E2B34C"},
-  space:  {sky:["#2B2A44","#4A4670"],far:"rgba(150,146,205,.28)",ground:"#3D4170",top:"#8EE3F5",block:"#6E72A6",blockEdge:"#8EE3F5",spike:"#FF8FB1",enemy:"#8DE08A"}
+  stone:  {sky:["#FFE4B8","#FFF6E4"],far:"#F2C99A",ground:"#B98A5E",top:"#8CC56B",block:"#C9B8A2",blockEdge:"#A8957D",spike:"#F4EEE2"},
+  egypt:  {sky:["#FFE7B0","#FFF8E2"],far:"#F0CF8F",ground:"#E2B872",top:"#F3D79F",block:"#E9C98B",blockEdge:"#C9A262",spike:"#8C7A66"},
+  castle: {sky:["#D9E7F7","#F4F8FD"],far:"#BFCBDD",ground:"#8E9A7E",top:"#9DCB7C",block:"#BDB5A8",blockEdge:"#9C9385",spike:"#7F8894"},
+  factory:{sky:["#F1DFCC","#FBF1E6"],far:"#D8BFA6",ground:"#A86F55",top:"#C98B6B",block:"#9FA8B2",blockEdge:"#7E8791",spike:"#6F7780"},
+  space:  {sky:["#2B2A44","#4A4670"],far:"rgba(150,146,205,.28)",ground:"#3D4170",top:"#8EE3F5",block:"#6E72A6",blockEdge:"#8EE3F5",spike:"#FF8FB1"}
 };
 function rr(x,y,w,h,r){ r=Math.min(r,w/2,h/2); ctx.beginPath(); ctx.moveTo(x+r,y); ctx.arcTo(x+w,y,x+w,y+h,r); ctx.arcTo(x+w,y+h,x,y+h,r); ctx.arcTo(x,y+h,x,y,r); ctx.arcTo(x,y,x+w,y,r); ctx.closePath(); }
+function circle(x,y,r,color){ ctx.fillStyle=color; ctx.beginPath(); ctx.arc(x,y,r,0,7); ctx.fill(); }
+function tri3(ax,ay,bx,by,cx,cy,color){ ctx.fillStyle=color; ctx.beginPath(); ctx.moveTo(ax,ay); ctx.lineTo(bx,by); ctx.lineTo(cx,cy); ctx.closePath(); ctx.fill(); }
+function eye(x,y,r,glow){ circle(x,y,r,glow||"#fff"); circle(x+r*0.3,y,r*0.55,"#23213A"); }
 function camX(){ const L=state.L,s=state.world; const px=s.dead?s.deadX:s.x; return Math.max(0,Math.min(L.widthPx-W,px-W*0.38)); }
 function drawBackdrop(th,key,cam){
   const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,th.sky[0]); g.addColorStop(1,th.sky[1]); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
   const par=(speed,spacing,fn)=>{ const off=cam*speed; for(let i=-1;i<Math.ceil(W/spacing)+2;i++){ const wx=i*spacing-((off%spacing)+spacing)%spacing; fn(wx,Math.floor((off+wx)/spacing)); } };
   ctx.fillStyle=th.far;
   if(key==="stone"){
-    ctx.fillStyle="#FFD27A"; ctx.beginPath(); ctx.arc(300-cam*0.02,52,22,0,7); ctx.fill();
+    circle(300-cam*0.02,52,22,"#FFD27A");
     par(0.2,260,(x)=>{ ctx.fillStyle=th.far; ctx.beginPath(); ctx.moveTo(x,200); ctx.lineTo(x+70,92); ctx.lineTo(x+92,92); ctx.lineTo(x+170,200); ctx.fill(); ctx.fillStyle="#E9A27A"; ctx.beginPath(); ctx.moveTo(x+70,92); ctx.lineTo(x+92,92); ctx.lineTo(x+86,104); ctx.lineTo(x+76,104); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.7)"; ctx.beginPath(); ctx.arc(x+84,78,9,0,7); ctx.arc(x+96,66,11,0,7); ctx.fill(); });
     par(0.45,190,(x,i)=>{ ctx.fillStyle="#D9B98E"; ctx.beginPath(); ctx.ellipse(x+60,178,26,12,0,0,7); ctx.fill(); ctx.fillRect(x+74,150,9,26); ctx.beginPath(); ctx.arc(x+80,146,9,0,7); ctx.fill(); ctx.fillRect(x+40,182,5,16); ctx.fillRect(x+70,182,5,16); if(i%2){ ctx.fillStyle="#9FCB7A"; ctx.beginPath(); ctx.ellipse(x+150,188,20,10,0,0,7); ctx.fill(); } });
   } else if(key==="egypt"){
-    ctx.fillStyle="#FFC94D"; ctx.beginPath(); ctx.arc(70-cam*0.02,54,24,0,7); ctx.fill();
+    circle(70-cam*0.02,54,24,"#FFC94D");
     par(0.2,230,(x)=>{ ctx.fillStyle=th.far; ctx.beginPath(); ctx.moveTo(x,200); ctx.lineTo(x+80,96); ctx.lineTo(x+160,200); ctx.fill(); ctx.fillStyle="rgba(0,0,0,.06)"; ctx.beginPath(); ctx.moveTo(x+80,96); ctx.lineTo(x+160,200); ctx.lineTo(x+100,200); ctx.fill(); });
     par(0.45,210,(x,i)=>{ if(i%2) return; ctx.fillStyle="#8BB86A"; ctx.fillRect(x+60,150,5,48); ctx.beginPath(); ctx.ellipse(x+62,148,18,6,-0.3,0,7); ctx.ellipse(x+62,148,18,6,0.3,0,7); ctx.fill(); });
   } else if(key==="castle"){
     par(0.1,170,(x)=>{ ctx.fillStyle="rgba(255,255,255,.85)"; ctx.beginPath(); ctx.arc(x+40,50,14,0,7); ctx.arc(x+58,46,18,0,7); ctx.arc(x+76,52,12,0,7); ctx.fill(); });
-    par(0.22,300,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+40,120,150,80); for(let k=0;k<3;k++){ const tx=x+30+k*70; ctx.fillRect(tx,92,30,108); for(let m=0;m<3;m++) ctx.fillRect(tx+m*11,84,7,10); } ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.moveTo(x+115,64); ctx.lineTo(x+135,70); ctx.lineTo(x+115,76); ctx.fill(); ctx.fillStyle=th.far; ctx.fillRect(x+113,62,3,30); });
+    par(0.22,300,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+40,120,150,80); for(let k=0;k<3;k++){ const tx=x+30+k*70; ctx.fillRect(tx,92,30,108); for(let m=0;m<3;m++) ctx.fillRect(tx+m*11,84,7,10); } tri3(x+115,64,x+135,70,x+115,76,"#F36D59"); ctx.fillStyle=th.far; ctx.fillRect(x+113,62,3,30); });
   } else if(key==="factory"){
     par(0.2,210,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+20,130,120,70); ctx.fillRect(x+30,78,18,52); ctx.fillRect(x+80,94,16,36); for(let k=0;k<4;k++){ ctx.beginPath(); ctx.moveTo(x+20+k*30,130); ctx.lineTo(x+35+k*30,114); ctx.lineTo(x+50+k*30,130); ctx.fill(); } ctx.fillStyle="rgba(255,255,255,.65)"; ctx.beginPath(); ctx.arc(x+40,68,10,0,7); ctx.arc(x+54,56,13,0,7); ctx.arc(x+88,84,8,0,7); ctx.fill(); });
     par(0.4,240,(x,i)=>{ ctx.save(); ctx.translate(x+120,160); ctx.rotate((cam*0.01+i)%6.28); ctx.fillStyle="#C9AE93"; for(let k=0;k<8;k++){ ctx.rotate(Math.PI/4); ctx.fillRect(-4,-26,8,10); } ctx.beginPath(); ctx.arc(0,0,18,0,7); ctx.fill(); ctx.fillStyle=th.sky[1]; ctx.beginPath(); ctx.arc(0,0,6,0,7); ctx.fill(); ctx.restore(); });
   } else {
     par(0.08,90,(x,i)=>{ ctx.fillStyle="rgba(255,255,255,.75)"; const y=18+((i*53)%150+150)%150; ctx.fillRect(x+((i*37)%80+80)%80,y,2,2); });
-    ctx.fillStyle="#FFB86B"; ctx.beginPath(); ctx.arc(290-cam*0.03,70,30,0,7); ctx.fill(); ctx.strokeStyle="rgba(255,236,190,.8)"; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(290-cam*0.03,70,48,10,-0.3,0,7); ctx.stroke();
+    circle(290-cam*0.03,70,30,"#FFB86B"); ctx.strokeStyle="rgba(255,236,190,.8)"; ctx.lineWidth=4; ctx.beginPath(); ctx.ellipse(290-cam*0.03,70,48,10,-0.3,0,7); ctx.stroke();
     par(0.3,260,(x)=>{ ctx.fillStyle=th.far; ctx.fillRect(x+30,140,80,60); ctx.fillRect(x+60,104,20,36); ctx.fillStyle="rgba(142,227,245,.45)"; ctx.fillRect(x+64,110,12,4); ctx.fillRect(x+40,150,10,6); ctx.fillRect(x+60,150,10,6); ctx.fillRect(x+80,150,10,6); });
   }
 }
@@ -345,22 +409,63 @@ function drawChick(x,y,face,now,s){
   ctx.save(); ctx.translate(x+6,y+8+bob); ctx.scale(face,1);
   ctx.fillStyle="#FFD54A"; ctx.beginPath(); ctx.ellipse(0,1,8,8,0,0,7); ctx.fill();
   ctx.fillStyle="#FFC21C"; ctx.beginPath(); ctx.ellipse(-3,3,4,3,-0.4,0,7); ctx.fill();
-  ctx.fillStyle="#FF9A3C"; ctx.beginPath(); ctx.moveTo(6,-2); ctx.lineTo(11,0); ctx.lineTo(6,2); ctx.fill();
-  ctx.fillStyle="#23213A"; ctx.beginPath(); ctx.arc(3,-3,1.4,0,7); ctx.fill();
+  tri3(6,-2,11,0,6,2,"#FF9A3C");
+  circle(3,-3,1.4,"#23213A");
   /* 등에 멘 편지 */
   ctx.fillStyle="#fff"; rr(-12,-5,9,7,1.5); ctx.fill(); ctx.strokeStyle="#E9D5B8"; ctx.lineWidth=1; ctx.stroke();
-  ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.arc(-8.5,-1.8,1.5,0,7); ctx.fill();
+  circle(-8.5,-1.8,1.5,"#F36D59");
   const leg=s.ground&&Math.abs(s.vx)>20?Math.sin(now/45)*2:0;
   ctx.strokeStyle="#FF9A3C"; ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(-2,8); ctx.lineTo(-2-leg,11); ctx.moveTo(2,8); ctx.lineTo(2+leg,11); ctx.stroke();
   ctx.restore();
 }
-function drawEnemy(key,th,x,y,now){
-  ctx.save(); ctx.translate(x,y);
-  if(key==="egypt"){ ctx.fillStyle=th.enemy; rr(0,0,14,14,5); ctx.fill(); ctx.strokeStyle="#D8CDB6"; ctx.lineWidth=1.2; for(let k=3;k<14;k+=3.5){ ctx.beginPath(); ctx.moveTo(1,k); ctx.lineTo(13,k-1.5); ctx.stroke(); } ctx.fillStyle="#23213A"; ctx.fillRect(4,4,2,2); ctx.fillRect(9,4,2,2); }
-  else if(key==="castle"){ ctx.fillStyle=th.enemy; rr(0,2,14,12,4); ctx.fill(); ctx.fillStyle="#6E7682"; ctx.fillRect(2,6,10,2); ctx.fillStyle="#F36D59"; ctx.beginPath(); ctx.ellipse(7,1,3,4,0,0,7); ctx.fill(); }
-  else if(key==="factory"){ ctx.fillStyle=th.enemy; rr(1,2,12,12,3); ctx.fill(); ctx.fillStyle="#23213A"; ctx.fillRect(4,6,2,2); ctx.fillRect(8,6,2,2); ctx.strokeStyle="#7E8791"; ctx.lineWidth=2; const a=now/120; ctx.beginPath(); ctx.moveTo(7,2); ctx.lineTo(7+Math.cos(a)*4,-2+Math.sin(a)); ctx.stroke(); }
-  else if(key==="space"){ ctx.fillStyle=th.enemy; ctx.beginPath(); ctx.ellipse(7,9,7,5+Math.sin(now/150),0,0,7); ctx.fill(); ctx.fillStyle="#23213A"; ctx.beginPath(); ctx.arc(7,7,2.2,0,7); ctx.fill(); ctx.strokeStyle=th.enemy; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(7,4); ctx.lineTo(7,0); ctx.stroke(); }
-  else { ctx.fillStyle=th.enemy; rr(0,2,14,12,6); ctx.fill(); ctx.fillStyle="#23213A"; ctx.fillRect(4,6,2,2); ctx.fillRect(9,6,2,2); }
+/* 동물 그림: 가운데 아래 기준(0,0 = 몸 위쪽 가운데), 오른쪽을 보고 그린 뒤 가는 방향으로 뒤집는다 */
+const CREATURES={
+  snake(w,h,now){ for(let k=0;k<5;k++) circle(-7+k*3.2,5+Math.sin(now/110+k)*1.4,3,k%2?"#7DBE5A":"#6BAF4B"); circle(7,4,4.2,"#4E8F36"); eye(7.5,2.8,1.6); if(Math.floor(now/260)%2){ ctx.strokeStyle="#E8473C"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(11,5); ctx.lineTo(14,5); ctx.lineTo(15.5,3.5); ctx.moveTo(14,5); ctx.lineTo(15.5,6.5); ctx.stroke(); } },
+  tiger(w,h,now){ ctx.strokeStyle="#E48A30"; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(-10,8); ctx.quadraticCurveTo(-15,2,-12,-1); ctx.stroke();
+    const step=Math.sin(now/90)*1.5; ctx.fillStyle="#D97A28"; ctx.fillRect(-8+step,13,3,4); ctx.fillRect(4-step,13,3,4);
+    ctx.fillStyle="#F29A3E"; rr(-11,4,19,10,5); ctx.fill(); ctx.strokeStyle="#6B3E1E"; ctx.lineWidth=1.5; [-6,-2,2].forEach(sx=>{ ctx.beginPath(); ctx.moveTo(sx,5); ctx.lineTo(sx+1,9); ctx.stroke(); });
+    tri3(4,1,6,-4,9,1,"#F29A3E"); tri3(9,1,12,-4,13,2,"#F29A3E"); circle(9,5,6.2,"#F5A54C");
+    tri3(8,9,9,14.5,10,9,"#fff"); tri3(11.5,9,12.5,14,13.5,9,"#fff");
+    eye(10.5,3.5,1.9,"#FFF4C2"); ctx.strokeStyle="#6B3E1E"; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(8,1); ctx.lineTo(12.5,2.4); ctx.stroke(); },
+  ptero(w,h,now){ const flap=Math.floor(now/140)%2?-4:3; tri3(0,4,-13,flap-1,-5,9,"#8C624B"); tri3(2,4,-8,flap-6,4,9,"#A0735A");
+    ctx.fillStyle="#A0735A"; ctx.beginPath(); ctx.ellipse(0,6,6,3.5,0,0,7); ctx.fill(); circle(6,3,3.2,"#A0735A"); tri3(5,1,1,-3,7,1,"#8C624B"); tri3(8,2.5,15,4.5,8,5,"#E9B04A"); eye(6.5,2.5,1.2,"#FFE7A0"); },
+  scorpion(w,h,now){ ctx.strokeStyle="#7E3322"; ctx.lineWidth=1; for(let k=-4;k<=4;k+=4){ ctx.beginPath(); ctx.moveTo(k,9); ctx.lineTo(k-2,11); ctx.stroke(); }
+    [-5,-1,3].forEach((x,k)=>{ ctx.fillStyle=k%2?"#C0613F":"#B5523A"; ctx.beginPath(); ctx.ellipse(x,8,2.8,2.4,0,0,7); ctx.fill(); });
+    const sway=Math.sin(now/200)*1.2; [[-7,5],[-8.5,2],[-7,-0.5]].forEach(([x,y],k)=>circle(x+sway*k*0.3,y,2.2-k*0.3,"#B5523A")); tri3(-5+sway*0.6,-1,-2+sway*0.6,0.5,-5+sway*0.6,2,"#3A1E14");
+    circle(6.5,7,2.6,"#B5523A"); tri3(8,5.5,12,4,9.5,7,"#C0613F"); tri3(8,8.5,12,10,9.5,7,"#C0613F"); eye(6.8,6,0.9,"#FFD27A"); },
+  cobra(w,h,now){ ctx.fillStyle="#C9A15B"; rr(-2.5,7,5,11,2.5); ctx.fill(); ctx.fillStyle="#B98A3E"; ctx.beginPath(); ctx.ellipse(0,7,6.2,6.5,0,0,7); ctx.fill();
+    ctx.fillStyle="#E8D29B"; ctx.beginPath(); ctx.ellipse(0,8,3,4.2,0,0,7); ctx.fill(); circle(1,2.5,3.4,"#C9A15B"); eye(1.8,1.8,1.1,"#FFB23E");
+    if(Math.floor(now/240)%2){ ctx.strokeStyle="#E8473C"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(4,3.5); ctx.lineTo(6.5,3.5); ctx.stroke(); } },
+  mummy(w,h,now){ const arm=Math.sin(now/180)*1; ctx.fillStyle="#EDE4D0"; rr(3,5+arm,6,3,1.5); ctx.fill(); ctx.fillStyle="#F5F0E4"; rr(-7,0,14,18,5); ctx.fill();
+    ctx.strokeStyle="#D2C5A8"; ctx.lineWidth=1.1; for(let k=3;k<18;k+=3.2){ ctx.beginPath(); ctx.moveTo(-6.5,k); ctx.lineTo(6.5,k-1.6); ctx.stroke(); }
+    ctx.fillStyle="#2E2A24"; ctx.fillRect(-4.5,3.5,9,3.5); circle(-1.5,5.2,1.3,"#6FE3FF"); circle(2.8,5.2,1.3,"#6FE3FF"); },
+  wolf(w,h,now){ ctx.strokeStyle="#7A7C86"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(-9,6); ctx.quadraticCurveTo(-14,3,-12,-1); ctx.stroke();
+    const step=Math.sin(now/70)*1.8; ctx.fillStyle="#6F717B"; ctx.fillRect(-7+step,11,2.5,4); ctx.fillRect(3-step,11,2.5,4);
+    ctx.fillStyle="#8D8F99"; ctx.beginPath(); ctx.ellipse(-2,7.5,9.5,4.8,0,0,7); ctx.fill(); tri3(5,2,6.5,-4,9,2,"#8D8F99"); circle(8,5,5,"#9A9CA6");
+    ctx.fillStyle="#9A9CA6"; rr(10,4.5,4.5,3.5,1.5); ctx.fill(); circle(14.4,5.5,1,"#23213A"); tri3(11,8,12,10.5,13,8,"#fff");
+    circle(8.7,3.6,1.5,"#FF5A5F"); ctx.strokeStyle="#4F5159"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(6.8,1.8); ctx.lineTo(10.5,2.8); ctx.stroke(); },
+  bat(w,h,now){ const up=Math.floor(now/110)%2; ctx.fillStyle="#5A4878"; ctx.beginPath(); ctx.moveTo(-2,4); ctx.lineTo(-9,up?-2:6); ctx.lineTo(-6,up?3:8); ctx.lineTo(-4,up?1:9); ctx.lineTo(-1,6); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(2,4); ctx.lineTo(9,up?-2:6); ctx.lineTo(6,up?3:8); ctx.lineTo(4,up?1:9); ctx.lineTo(1,6); ctx.fill();
+    circle(0,5,4,"#6E5A8F"); tri3(-3,2.5,-2,-1.5,-0.5,2,"#6E5A8F"); tri3(0.5,2,2,-1.5,3,2.5,"#6E5A8F"); circle(-1.3,4.3,1,"#FF5A5F"); circle(1.3,4.3,1,"#FF5A5F"); tri3(-1,7,-0.5,9,0,7,"#fff"); tri3(0.3,7,0.8,9,1.3,7,"#fff"); },
+  rat(w,h,now){ ctx.strokeStyle="#E8A3B0"; ctx.lineWidth=1.3; ctx.beginPath(); ctx.moveTo(-7,6); ctx.quadraticCurveTo(-12,1+Math.sin(now/120)*2,-15,5); ctx.stroke();
+    ctx.fillStyle="#9A9AA5"; ctx.beginPath(); ctx.ellipse(-1,5.5,7,3.8,0,0,7); ctx.fill(); ctx.beginPath(); ctx.ellipse(6,5,4,3,0.2,0,7); ctx.fill();
+    circle(4.5,1.8,2,"#B3B3BD"); circle(4.5,1.8,1.1,"#E8A3B0"); circle(7,4,0.9,"#23213A"); circle(10,5.5,1,"#E8A3B0"); },
+  robot(w,h,now){ ctx.save(); ctx.translate(-8,8); ctx.rotate(now/150); ctx.fillStyle="#8A6F3A"; ctx.fillRect(-1,-4,2,8); ctx.fillRect(-4,-1,8,2); ctx.restore();
+    const step=Math.floor(now/160)%2; ctx.fillStyle="#7E8791"; ctx.fillRect(-4,14+step,3,3-step); ctx.fillRect(2,14+(1-step),3,2+step);
+    ctx.fillStyle="#E2B34C"; rr(-7,3,14,11,3); ctx.fill(); ctx.fillStyle="#C99A34"; ctx.fillRect(-7,8,14,1.5);
+    ctx.fillStyle="#9FA8B2"; rr(-5,-1,10,6,2); ctx.fill(); circle(-2,2,1.4,"#FF5A5F"); circle(2.5,2,1.4,"#FF5A5F"); ctx.strokeStyle="#7E8791"; ctx.lineWidth=1.2; ctx.beginPath(); ctx.moveTo(0,-1); ctx.lineTo(0,-3); ctx.stroke(); circle(0,-3.5,1,"#FF5A5F"); },
+  crawler(w,h,now){ for(let k=0;k<5;k++){ const y=6+Math.sin(now/100+k*0.9)*1; ctx.strokeStyle="#3E8C7A"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(-7+k*3.2,y+2); ctx.lineTo(-8+k*3.2,y+4.5); ctx.stroke(); circle(-7+k*3.2,y,3,k%2?"#6FD3B8":"#5CC6A8"); }
+    circle(7.5,5,3.6,"#48B394"); eye(8.3,4,1.5,"#FFF36B"); ctx.strokeStyle="#48B394"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(7,2); ctx.lineTo(6,-2); ctx.moveTo(9,2); ctx.lineTo(11,-2); ctx.stroke(); circle(6,-2,1,"#FF8FB1"); circle(11,-2,1,"#FF8FB1"); },
+  alien(w,h,now){ ctx.strokeStyle="#7B4FC4"; ctx.lineWidth=2; for(let k=-2;k<=2;k++){ ctx.beginPath(); ctx.moveTo(k*3.5,13); ctx.quadraticCurveTo(k*3.5+Math.sin(now/120+k)*2,16,k*3.5,18); ctx.stroke(); }
+    ctx.fillStyle="#9B6BE8"; ctx.beginPath(); ctx.ellipse(0,8,10,7.5,0,0,7); ctx.fill(); circle(0,6,4.8,"#fff"); circle(1,6,2.6,"#23213A"); circle(1.8,5.2,0.8,"#fff");
+    ctx.fillStyle="#fff"; for(let k=-3;k<=3;k+=2) tri3(k-1,11.5,k,13.5,k+1,11.5,"#fff"); },
+  jelly(w,h,now){ ctx.strokeStyle="rgba(255,143,177,.75)"; ctx.lineWidth=1.4; for(let k=-2;k<=2;k++){ ctx.beginPath(); ctx.moveTo(k*3,8); ctx.quadraticCurveTo(k*3+Math.sin(now/140+k)*2.5,11,k*3,14); ctx.stroke(); }
+    ctx.fillStyle="rgba(255,143,177,.85)"; ctx.beginPath(); ctx.arc(0,7,7.5,Math.PI,0); ctx.closePath(); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.5)"; ctx.beginPath(); ctx.ellipse(-2.5,3.5,2,1.2,-0.5,0,7); ctx.fill();
+    circle(-2,5.5,1.1,"#23213A"); circle(2.2,5.5,1.1,"#23213A"); }
+};
+function drawCreature(e,p,now){
+  ctx.save(); ctx.translate(Math.round(p.x+e.w/2),Math.round(p.y+e.h)); ctx.scale(p.dir*1.2,1.2); ctx.translate(0,-e.h);   /* 그림만 1.2배(부딪힘 판정은 몸 크기 그대로) */
+  (CREATURES[e.species]||CREATURES.snake)(e.w,e.h,now);
   ctx.restore();
 }
 function render(){
@@ -394,16 +499,18 @@ function render(){
     rr(p.x,p.y,m.w,TJ.MOVER_H,4); ctx.fill(); ctx.fillStyle="rgba(255,255,255,.3)"; ctx.fillRect(p.x+3,p.y+1.5,m.w-6,2); });
   /* 깃발 */
   L.checks.forEach((cp,i)=>{ if(i===0) return; const x=cp.trigger+4, y=cp.y+TJ.P.h; const on=i<=s.cp;
-    ctx.fillStyle="#8A7358"; ctx.fillRect(x,y-30,2.5,30); ctx.fillStyle=on?"#F36D59":"#D8CDBD"; ctx.beginPath(); ctx.moveTo(x+2.5,y-30); ctx.lineTo(x+16,y-25); ctx.lineTo(x+2.5,y-20); ctx.fill(); });
+    ctx.fillStyle="#8A7358"; ctx.fillRect(x,y-30,2.5,30); tri3(x+2.5,y-30,x+16,y-25,x+2.5,y-20,on?"#F36D59":"#D8CDBD"); });
   /* 우체통 */
-  { const g=L.goal; ctx.fillStyle="#8A7358"; ctx.fillRect(g.x+5,g.y+18,4,18); ctx.fillStyle="#E8473C"; rr(g.x-2,g.y,g.w+4,20,6); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillRect(g.x+2,g.y+6,g.w-4,2.5); ctx.fillStyle="#FFD54A"; ctx.beginPath(); ctx.arc(g.x+g.w/2,g.y-4+Math.sin(now/200)*1.5,3,0,7); ctx.fill(); }
-  /* 적 */
-  L.enemies.forEach((e,i)=>{ if(s.alive[i]) drawEnemy(key,th,TJ.enemyX(e,s.ticks),e.y,now); });
+  { const g=L.goal; ctx.fillStyle="#8A7358"; ctx.fillRect(g.x+5,g.y+18,4,18); ctx.fillStyle="#E8473C"; rr(g.x-2,g.y,g.w+4,20,6); ctx.fill(); ctx.fillStyle="#fff"; ctx.fillRect(g.x+2,g.y+6,g.w-4,2.5); circle(g.x+g.w/2,g.y-4+Math.sin(now/200)*1.5,3,"#FFD54A"); }
+  /* 동물 */
+  L.enemies.forEach((e,i)=>{ if(!s.alive[i]) return; const p=TJ.enemyPos(e,s.ticks); if(p.x>cam+W+30||p.x+e.w<cam-30) return; drawCreature(e,p,now); });
   /* 병아리 */
   if(s.dead){ const k=1-s.dead/38; ctx.globalAlpha=Math.max(0,1-k); drawChick(s.deadX,s.deadY-k*16,s.face,now,s); ctx.globalAlpha=1; }
   else if(!(s.invul>0&&Math.floor(now/80)%2===0)) drawChick(s.x,s.y,s.face,now,s);
-  /* 밟기 반짝 */
-  state.fx=state.fx.filter(f=>now-f.t<320); state.fx.forEach(f=>{ const k=(now-f.t)/320;
+  /* 효과: 공중 점프 깃털 · 밟기 반짝 · +점수 */
+  state.fx=state.fx.filter(f=>now-f.t<(f.kind==="pts"?700:320)); state.fx.forEach(f=>{
+    if(f.kind==="pts"){ const k=(now-f.t)/700; ctx.globalAlpha=1-k*k; ctx.font="900 12px 'Pretendard Variable',Pretendard,sans-serif"; ctx.textAlign="center"; ctx.lineWidth=3; ctx.strokeStyle="#fff"; ctx.strokeText("+"+f.pts,f.x,f.y-k*22); ctx.fillStyle="#F36D59"; ctx.fillText("+"+f.pts,f.x,f.y-k*22); ctx.globalAlpha=1; return; }
+    const k=(now-f.t)/320;
     if(f.kind==="air"){ ctx.fillStyle="rgba(255,255,255,"+(0.9*(1-k))+")"; for(let q=-1;q<=1;q++){ ctx.beginPath(); ctx.ellipse(f.x+q*(5+k*10),f.y+k*6,4-k*2,2.5,0,0,7); ctx.fill(); } return; }
     ctx.strokeStyle="rgba(255,201,77,"+(1-k)+")"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(f.x,f.y,6+k*14,0,7); ctx.stroke(); });
   ctx.restore();
@@ -438,7 +545,7 @@ function stepN(n,inp){
     const s=state.world, before={deaths:s.deaths,stomps:s.stomps,cp:s.cp};
     TJ.step(state.L,s,inp||inputNow());
     if(s.doubleAt===s.ticks){ state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+16,kind:"air"}); }
-    if(s.stomps>before.stomps){ state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+15}); $("stompInfo").textContent=s.stomps; }
+    if(s.stomps>before.stomps){ const st=s.lastStomp; state.fx.push({t:s.ticks*STEP,x:s.x+6,y:s.y+15},{t:s.ticks*STEP,x:st.x,y:st.y,kind:"pts",pts:st.pts}); state.points=s.points; $("stompInfo").textContent=s.stomps; $("scoreNow").textContent=pts(s.points); }
     if(s.deaths>before.deaths){ state.deaths=s.deaths; $("deathInfo").textContent=s.deaths; }
     if(s.cp>before.cp){ $("cpInfo").textContent=s.cp+"/"+(state.L.checks.length-1); toast("🚩 깃발! 넘어지면 여기서 다시 시작해"); }
     if(s.done){ finishPlay(); return; }
@@ -459,7 +566,7 @@ function loop(){
 }
 
 /* ===== 진행 ===== */
-$("bigBtn").onclick=()=>{ if(!state.running&&!state.done) countdown(); };
+$("bigBtn").onclick=()=>{ if(state.running||state.done) return; if(!storySeen().includes(state.level)) showStory(); else countdown(); };
 function countdown(){
   const b=$("bigBtn"); b.disabled=true; b.textContent="…";
   $("eraPick").querySelectorAll("button").forEach(x=>x.disabled=true);
@@ -471,12 +578,12 @@ function countdown(){
     if(n>0){ $("cd").textContent=n; $("cd").style.animation="none"; void $("cd").offsetWidth; $("cd").style.animation=""; state.cdTimer=setTimeout(tickCd,1000); return; }
     b.textContent="진행 중 — 우체통까지!";
     startPlay();
-    $("pad").scrollIntoView({block:"nearest",behavior:"smooth"});
+    if($("pad").scrollIntoView) $("pad").scrollIntoView({block:"nearest",behavior:"smooth"});
   };
   state.cdTimer=setTimeout(tickCd,1000);
 }
 function startPlay(){
-  clearTimers(); buildBoard();
+  clearTimers(); buildBoard(); hideStory();
   state.running=true; state.done=false;
   state.last=performance.now(); state.acc=0;
   $("cover").classList.add("hidden");
@@ -492,19 +599,23 @@ function endCommon(){
 /* 우체통에 닿았거나(둘이하기) 5분이 지났을 때 */
 function finishPlay(){
   if(!state.running) return;
-  const s=state.world, ms=s.done?s.timeMs:Math.min(DUEL_CAP_MS,s.ticks*STEP);
+  const L=state.L, s=state.world, ms=s.done?s.timeMs:DUEL_CAP_MS, bonus=TJ.timeBonus(L,s), score=TJ.scoreOf(L,s);
   endCommon();
-  state.deaths=s.deaths; state.stomps=s.stomps;
-  const cover=$("cover"); cover.classList.remove("hidden");
-  $("clock").textContent=(ms/1000).toFixed(1);
+  state.deaths=s.deaths; state.stomps=s.stomps; state.points=s.points;
+  const outro=STORY[state.level-1].outro;
+  $("cover").classList.remove("hidden");
+  $("clock").textContent=(Math.min(ms,s.ticks*STEP)/1000).toFixed(1);
+  const note="시간 "+fmtS(ms)+"초 · 동물 "+s.stomps+"마리 +"+pts(s.points)+" · 시간 보너스 +"+pts(bonus)+" · 넘어짐 "+s.deaths+"번";
   if(Solo.active){
-    $("cd").textContent="💌"; $("cdSub").textContent=state.L.era+" 배달 완료!"; $("bigBtn").textContent="끝";
-    Solo.finish(ms,{deaths:s.deaths,note:"넘어짐 "+s.deaths+"번 · 밟은 적 "+s.stomps}); return;
+    $("scoreNow").textContent=pts(score);
+    $("cd").textContent="💌"; $("cdSub").textContent=outro; $("bigBtn").textContent="끝";
+    Solo.finish(score,{deaths:s.deaths,note}); return;
   }
-  /* 둘이하기: 기록은 상대가 끝낸 뒤에 같이 열린다 */
-  $("clock").textContent="🔒"; $("cd").textContent=s.done?"💌":"⏰"; $("cdSub").textContent=s.done?"배달 완료 · 기록 봉인":"5분 끝 · 기록 봉인";
+  /* 둘이하기: 점수는 상대가 끝낸 뒤에 같이 열린다 */
+  $("scoreNow").textContent="🔒"; $("cd").textContent=s.done?"💌":"⏰";
+  $("cdSub").textContent=(s.done?outro:"5분 끝 — 시간 보너스 없이 밟기 점수만")+" · 점수 봉인";
   $("bigBtn").textContent="봉인됨";
-  Duel.finish(ms,{deaths:s.deaths});
+  Duel.finish(score,{timeMs:ms,deaths:s.deaths,stomps:s.stomps,points:s.points});
 }
 /* 혼자놀기 제한 시간 초과 */
 function failPlay(){
@@ -517,9 +628,10 @@ function failPlay(){
 
 /* ===== 혼자놀기 ===== */
 Solo.init({
-  game:'timejump', levels:LEVELS, lowerWins:true,
-  fmt:v=>fmt(v)+'초',
-  describe:l=>TJ.LEVELS[l.n-1].era+' · 제한 '+(l.limitMs/1000)+'초',
+  game:'timejump', levels:LEVELS, lowerWins:false,
+  fmt:v=>pts(v)+'점',
+  goalLabel:()=>'우체통 도착',
+  describe:l=>TJ.LEVELS[l.n-1].era+' · 제한 '+(l.limitMs/1000)+'초 · 동물 '+TJ.level(l.n).enemies.length+'마리',
   onLevel(l){
     state.level=l.n;
     clearTimeout(state.cdTimer);

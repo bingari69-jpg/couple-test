@@ -14,7 +14,8 @@ function run(L, s, code) {
   return true;
 }
 
-function search(n) {
+// hunt=true 면 멀리 가기와 함께 밟기 점수도 챙기는 경로를 찾는다(100점 = 45px 앞선 것으로 친다). ★★★ 기준이 실제로 닿는지 확인용.
+function search(n, hunt) {
   const L = TJ.level(n), maxBlocks = Math.ceil(L.limitMs / TJ.STEP / K);
   let beam = [{ s: TJ.create(n), route: '' }], far = 0;
   for (let b = 0; b < maxBlocks; b++) {
@@ -23,12 +24,13 @@ function search(n) {
       const s = TJ.clone(node.s);
       if (!run(L, s, code)) continue;
       const route = node.route + code;
-      if (s.done) return { n, era: L.era, route, timeMs: s.timeMs };
+      if (s.done) return { n, era: L.era, route, timeMs: s.timeMs, points: s.points, score: TJ.scoreOf(L, s), maxPoints: L.maxPoints };
       const key = [Math.round(s.x / 5), Math.round(s.y / 5), s.ground ? 1 : 0, s.ride, s.vy < 0 ? 1 : 0, s.coyote > 0 ? 1 : 0, s.alive.join(''), s.crumb.map(v => v === 0 ? 0 : 1).join('')].join('|');
       const old = next.get(key);
-      if (!old || s.x > old.s.x) next.set(key, { s, route });
+      if (!old || s.x + s.points > old.s.x + old.s.points) next.set(key, { s, route });
     }
-    beam = [...next.values()].sort((a, b) => b.s.x - a.s.x).slice(0, BEAM);
+    const rank = node => node.s.x + (hunt ? node.s.points * 0.45 : 0);
+    beam = [...next.values()].sort((a, b) => rank(b) - rank(a)).slice(0, BEAM);
     if (!beam.length) break;
     far = Math.max(far, beam[0].s.x);
   }
@@ -48,8 +50,9 @@ if (require.main === module) {
   const saved = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, 'utf8')) : {};
   let ok = true;
   for (const n of only) {
-    const t0 = Date.now(), r = search(n);
-    if (r.route) { saved[n] = { era: r.era, timeMs: r.timeMs, route: r.route }; console.log(`Lv${n} ${r.era}: ${(r.timeMs / 1000).toFixed(2)}초 (${((Date.now() - t0) / 1000).toFixed(1)}s 탐색)`); }
+    const t0 = Date.now(), r = search(n), h = search(n, true);
+    if (h.route) { r.hunt = { timeMs: h.timeMs, points: h.points, score: h.score, route: h.route }; console.log(`  사냥 경로: ${(h.timeMs / 1000).toFixed(2)}초 · 밟기 ${h.points}/${h.maxPoints}점 · 점수 ${h.score}`); }
+    if (r.route) { saved[n] = { era: r.era, timeMs: r.timeMs, points: r.points, score: r.score, maxPoints: r.maxPoints, route: r.route, hunt: r.hunt || null }; console.log(`Lv${n} ${r.era}: ${(r.timeMs / 1000).toFixed(2)}초 · 밟기 ${r.points}/${r.maxPoints}점 · 점수 ${r.score} (${((Date.now() - t0) / 1000).toFixed(1)}s 탐색)`); }
     else { ok = false; console.log(`Lv${n} ${r.era}: 경로 없음 — 가장 멀리 ${r.farthestCol}/${r.cols}칸`); }
   }
   fs.writeFileSync(file, JSON.stringify(saved, null, 1) + '\n');

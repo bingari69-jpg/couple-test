@@ -1,6 +1,6 @@
 const ITEMS = [
-  { path:"t/timejump/", rel:"친구", kind:"대결", thumbnailUrl:"assets/art/timejump.svg", soloSummary:"원시시대부터 미래 우주까지 5단계. 뛰고 밟고 우체통까지, 별을 모아봐!",
-    title:"타임 점프 — 편지 들고 다섯 시대를 건너", desc:"뛰고 점프해서 우체통까지. 같은 시대, 같은 코스로 누가 더 빨리 배달하나 시간 대결." },
+  { path:"t/timejump/", rel:"친구", kind:"대결", thumbnailUrl:"assets/art/timejump.svg", soloSummary:"원시시대부터 미래 우주까지 5단계. 무서운 동물을 밟고 우체통까지, 별을 모아봐!",
+    title:"타임 점프 — 편지 들고 다섯 시대를 건너", desc:"뱀·검치호랑이·늑대를 밟고 3단 점프로 우체통까지. 같은 시대, 같은 코스로 점수 대결." },
   { path:"t/tapbattle/", rel:"친구", kind:"반응 대결", onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/tapbattle.svg",
     title:"톡톡 배틀 — 멈출 때가 승부야!", desc:"초록엔 톡톡, 빨강엔 멈춰! 카톡으로 초대해 동시에 겨루는 20초." },
   { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"엇갈린 다섯 알! 방향을 고르고 움직이는 힘 게이지를 멈춰 톡!",
@@ -114,7 +114,7 @@ const ITEMS = [
 
 // The catalogue order and artwork follow the browsing cards on the home screen.
 const CARDS = [
- ['timejump','atlas',17,'#ffe9c7',['친구','연인','가족'],'뛰고 점프해서 우체통까지! 다섯 시대, 같은 코스 시간 대결.'],
+ ['timejump','atlas',17,'#ffe9c7',['친구','연인','가족'],'무서운 동물을 밟고 우체통까지! 다섯 시대, 같은 코스 점수 대결.'],
  ['mole','atlas',10,'#ffead4',['친구','연인','가족'],'20초 동안 두더지 잡기. 황금은 놓치지 마!'],
  ['rps','classic',0,'#ffe1e5',['친구','연인','가족'],'내가 먼저 낸다. 네 선택 전까지는 비밀!'],
  ['nonsense','atlas',16,'#fff0d3',['친구','연인','가족'],'한 문제에 7초. 같은 7문제로 점수와 시간을 겨뤄봐.'],

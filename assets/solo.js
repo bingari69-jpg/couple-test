@@ -15,6 +15,7 @@
        fmt:v=>(v/1000).toFixed(2)+'초',    // 기록 표시
        onLevel(level){ ... },              // 레벨을 고를 때: state.seed=level.seed 로 판을 다시 만든다
        describe(level){ return '...'; }    // 레벨 칸 아래 한 줄 (선택)
+       goalLabel(level){ return '우체통 도착'; }  // 클리어 조건을 기록값 대신 글로 보여줄 때 (선택)
      });
      ... 게임은 진행 중 Solo.level.limitMs 를 보고 시간이 다 되면 Solo.finish(null) 을 부른다.
      function finishPlay(){ ...; if(Solo.active) Solo.finish(기록값,{flips:…}); else Duel.finish(기록값,…); }
@@ -142,7 +143,7 @@
     const s = Solo.summary(cfg.game, Solo.levels.length);
     $("soloStars").textContent = "★ " + s.stars + " / " + (Solo.levels.length * 3);
     const l = Solo.level, r = p[l.n];
-    const goalText = cfg.fmt ? cfg.fmt(l.goal) : l.goal, bestText = cfg.fmt ? cfg.fmt(l.best) : l.best;
+    const goalText = cfg.goalLabel ? cfg.goalLabel(l) : cfg.fmt ? cfg.fmt(l.goal) : l.goal, bestText = cfg.fmt ? cfg.fmt(l.best) : l.best;
     $("soloDesc").innerHTML = (cfg.describe ? esc(cfg.describe(l)) + " · " : "") + "클리어 <b>" + esc(goalText) + "</b> · ★★★ <b>" + esc(bestText) + "</b>" + (r && r.best !== undefined ? " · 내 최고 <b>" + esc(cfg.fmt ? cfg.fmt(r.best) : r.best) + "</b>" : "");
     const hud = $("soloHud"); if (hud) hud.innerHTML = "Lv" + l.n + " · 목표 <b>" + esc(goalText) + "</b>";
   }
