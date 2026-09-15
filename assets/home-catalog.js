@@ -182,15 +182,16 @@ function setPopularRanks(rows){
   return true;
 }
 
-// 서버 목록(관리자 게시본·game_catalog)에 아직 등록되지 않은 로컬 게임은 목록 끝에 그대로 붙인다.
-// 새 게임을 코드에만 추가했을 때 서버 등록 전이라고 홈에서 사라지는 일을 막는다.
+// 서버 목록(관리자 게시본·game_catalog)에 아직 등록되지 않은 로컬 게임은 목록 앞에 붙인다.
+// 새 게임을 코드에만 추가했을 때 서버 등록 전이라고 홈에서 사라지거나 목록 아래에 묻히는 일을 막는다.
 // 서버가 명시적으로 '숨김'으로 둔 게임은 rows에 있으므로 여기서 다시 살아나지 않는다.
 function appendUnknownLocal(merged,rows){
   const known=new Set((rows||[]).map(row=>row&&row.slug));
-  LOCAL_HOME_ITEMS.forEach(item=>{
+  const unknown=LOCAL_HOME_ITEMS.filter(item=>{
     const slug=item.path.replace(/^t\//,'').replace(/\/$/,'');
-    if(!known.has(slug))merged.push(item);
+    return !known.has(slug);
   });
+  merged.unshift(...unknown);
 }
 
 // Translate older published settings to the new series while preserving visibility and order.
