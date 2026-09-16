@@ -218,18 +218,22 @@
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}
- /* 받는 사람이 누가 보냈는지 알 수 있게 보내는 사람 이름을 꼭 받는다 — 카톡 카드에 "민수님께서 보내신 편지입니다" 로 나간다 */
- function needSender(){
+ /* 받는 사람이 누가 보냈는지 알 수 있게 보내는 사람 이름을 꼭 받는다 — 카톡 카드에 "민수님께서 보내신 편지입니다" 로 나간다.
+    보내는 사람 칸은 작성 화면에 있어 보내기 화면에서는 보이지 않는다. 비어 있으면 팝업으로 직접 받는다. */
+ async function askSender(){
    const from=$('sender').value.trim();
-   if(from)return false;
-   $('sender').focus();$('sender').scrollIntoView({block:'center',behavior:'smooth'});
-   toast('카톡에 보일 보내는 사람 이름을 먼저 적어줘');
-   return true;
+   if(from)return from;
+   if(!window.NameAsk){$('sender').focus();toast('작성 화면에서 보내는 사람 이름을 적어줘');return '';}
+   const name=await NameAsk.ask({title:'보내는 사람이 누구야?',desc:'적어준 이름이 카톡에 「민수님께서 보내신 편지입니다」 처럼 보여요.',value:NameAsk.saved(),confirm:'이 이름으로'});
+   if(!name)return '';
+   $('sender').value=name;syncDraft();madeUrl='';
+   return name;
  }
  async function sendLetter(textOnly=false){
-   if(needSender())return;
+   const from=await askSender();
+   if(!from)return;
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:$('sender').value.trim()+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
+   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:from+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
    catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();
