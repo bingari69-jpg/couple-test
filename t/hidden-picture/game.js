@@ -39,7 +39,7 @@ function duelLink(){const u=new URL(location.href);u.hash='';
  return u.href}
 let sdkPromise=null;
 function loadKakao(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;
- sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260916-sender-name';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share'))};document.head.append(s)});
+ sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260917-share-size';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share'))};document.head.append(s)});
  return sdkPromise}
 async function sendKakao(){
  let name=$('playerName').value.trim();

@@ -57,11 +57,16 @@
         let slug='',isResult=false;
         try{const u=new URL(o.url);const m=u.pathname.match(/\/t\/(.+?)\/?$/);slug=m?m[1]:'';isResult=u.hash.startsWith('#r=');}catch(e){}
         const sharedUrl=notifier ? notifier.decorateShareUrl(o.url,slug,isResult) : o.url;
-        const link = { mobileWebUrl:sharedUrl, webUrl:sharedUrl };
+        /* 카카오는 메시지 전체 크기에 한도가 있다. 편지처럼 링크가 길면 같은 주소를 두 번 실을 때 한도를 넘어
+           "메시지 크기 제한 초과"로 거부된다. 주소가 길면 모바일 주소 하나만 싣는다. */
+        const link = sharedUrl.length > 300 ? { mobileWebUrl:sharedUrl } : { mobileWebUrl:sharedUrl, webUrl:sharedUrl };
         const cardTitle=CARD_TITLES[slug];
         // Letters provide curated stationery cards; every game's existing card stays fixed.
         const letterImage=slug==='letter'&&/^https:\/\/noljago\.co\.kr\/assets\/share-cards\/letter-[a-z0-9-]+\.png\?v=\d{8}-studio$/.test(o.img||'') ? o.img : null;
-        const message = o.textOnly ? {
+        /* 카카오는 메시지 전체 크기에 한도가 있는데, 그림 카드(피드)는 링크를 여섯 군데에 복사해 넣는다.
+           긴 편지 링크는 그래서 "메시지 크기 제한 초과"로 거부된다. 링크가 길면 글 메시지로 보낸다(링크가 네 군데). */
+        const longLink = sharedUrl.length > 700;
+        const message = (o.textOnly || longLink) ? {
           objectType:"text",
           text:[o.title,o.desc].filter(Boolean).join("\n").slice(0,200),
           link,
@@ -69,8 +74,10 @@
         } : {
           objectType:"feed",
           content:{
-            title:cardTitle ? (slug==='letter'?'너에게 편지가 도착했어요':cardTitle+(isResult?' · 결과 도착':' · 초대 도착')) : o.title,
-            description:cardTitle ? Array.from([o.title,o.desc].filter(Boolean).join(' · ')).slice(0,100).join('') : o.desc,
+            /* 제목에는 보낸 사람 이름을 살린다 — "민수님이 도전했어요 · 두더지 잡기 🔒" / "민수님께서 보내신 편지입니다".
+               예전에는 게임 이름만 넣어 누가 보냈는지 카드에서 알 수 없었다. */
+            title:Array.from(o.title||cardTitle||'같이놀자').slice(0,60).join(''),
+            description:Array.from(o.desc||'').slice(0,100).join(''),
             imageUrl:letterImage || (cardTitle ? CARD_ROOT+slug.replace('/','-')+'.png?v=20260910-unified' : o.img),
             imageWidth:o.imageWidth||800, imageHeight:o.imageHeight||(cardTitle?480:800),
             link

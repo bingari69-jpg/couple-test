@@ -40,7 +40,7 @@
  function renderSaved(){const has=meaningful(savedDraft);$('savedDraftBanner').hidden=!has;if(has)$('savedDraftSummary').textContent=(savedDraft.to?savedDraft.to+'에게 쓰던 편지':'쓰던 편지')+' · '+D.segments(savedDraft.body).length+'자 · 이 기기에 저장';}
  function openDialog(id){const el=$(id);if(el.open)return;if(el.showModal)el.showModal();else el.setAttribute('open','');}
  function closeDialog(id){if($(id).close)$(id).close();else $(id).removeAttribute('open');}
- function resumeDraft(){if(!savedDraft)return;Object.assign(draft,cleanDraft(savedDraft));ownDraft=true;pendingNew=null;closeDialog('draftDialog');changingPaper=false;if(location.hash.startsWith('#l=')){incoming=null;preview=false;history.replaceState(null,'',location.pathname);}go('compose');}
+ function resumeDraft(){if(!savedDraft)return;Object.assign(draft,cleanDraft(savedDraft));ownDraft=true;pendingNew=null;closeDialog('draftDialog');changingPaper=false;if(/^#[lz]=/.test(location.hash)){incoming=null;preview=false;history.replaceState(null,'',location.pathname);}go('compose');}
  function requestNew(action,deleteOnly=false){
    if(meaningful(savedDraft)){pendingNew=action;$('draftDialogTitle').textContent=deleteOnly?'저장한 초안을 지울까요?':'쓰던 편지가 있어요';$('draftDialogCopy').textContent=deleteOnly?'이 기기에 저장한 초안이 지워져요. 이미 보낸 편지 링크는 그대로 열려요.':'쓰던 편지를 이어 쓰거나, 지우고 새 마음을 적을 수 있어요.';$('dialogDiscard').textContent=deleteOnly?'초안 지우기':'지우고 새 편지 쓰기';openDialog('draftDialog');}else action();
  }
@@ -175,9 +175,31 @@
  function validDraft(){syncDraft();const count=D.segments(draft.body).length;if(count>MAX_LETTER){toast('450자까지 보낼 수 있어요. '+(count-MAX_LETTER)+'자를 줄여주세요.');editor.focus();return false;}if(!draft.body.trim()){toast('편지 내용을 먼저 써주세요.');editor.focus();return false;}if(draft.body.length>16000||encode(payload()).length+3>24000){toast('공유 링크에 담기에는 이모지 조합이 너무 길어요. 조금 줄여 주세요.');return false;}return true;}
  function dateText(){const d=new Date();return `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}`;}
  function payload(){return {v:draft.inline.length?6:5,inl:draft.inline,w:draft.body,n:draft.to.trim(),f:draft.from.trim(),d:dateText(),tpl:draft.template,font:draft.font,size:draft.size,k:({day:0,year:1,wed:2,bday:3,plain:4,chuseok:4,thanks:4,sorry:4,cheer:4})[draft.occasion],num:draft.number,rel:0,st:draft.stickers,seal:draft.seal,color:draft.color};}
+/* 카카오톡은 메시지 전체 크기에 한도가 있고, 링크를 여섯 군데에 복사해 넣는다.
+    긴 편지는 링크만 2,000자가 넘어 "메시지 크기 제한 초과"로 거부됐다.
+    그래서 보낼 때는 편지 내용을 압축해 '#z=' 링크로 만든다(약 30~55% 짧아진다).
+    브라우저가 압축을 못 하면 예전 '#l=' 그대로 쓴다. 받는 쪽은 둘 다 읽는다. */
+ const canZip=()=>typeof CompressionStream==='function'&&typeof DecompressionStream==='function';
+ const bytesToB64=bytes=>{let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');};
+ const b64ToBytes=code=>{let t=code.replace(/-/g,'+').replace(/_/g,'/');t+='='.repeat((4-t.length%4)%4);const binary=atob(t);return Uint8Array.from(binary,c=>c.charCodeAt(0));};
+ async function zip(text){
+   const cs=new CompressionStream('deflate-raw');
+   const buf=await new Response(new Blob([new TextEncoder().encode(text)]).stream().pipeThrough(cs)).arrayBuffer();
+   return bytesToB64(new Uint8Array(buf));
+ }
+ async function unzip(code){
+   const ds=new DecompressionStream('deflate-raw');
+   const buf=await new Response(new Blob([b64ToBytes(code)]).stream().pipeThrough(ds)).arrayBuffer();
+   return new TextDecoder().decode(new Uint8Array(buf));
+ }
  function encode(p){const bytes=new TextEncoder().encode(JSON.stringify(p));let binary='';bytes.forEach(b=>binary+=String.fromCharCode(b));return btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
  function decode(hash){
-   if(!/^#l=/.test(hash)||hash.length>24000)throw new Error('invalid link');let s=hash.slice(3).replace(/-/g,'+').replace(/_/g,'/');s+='='.repeat((4-s.length%4)%4);const binary=atob(s);const p=JSON.parse(new TextDecoder().decode(Uint8Array.from(binary,c=>c.charCodeAt(0))));
+   if(hash.length>24000)throw new Error('invalid link');
+   let json;
+   if(/^#j=/.test(hash))json=hash.slice(3);                                  // 이미 풀어 둔 압축 편지
+   else if(/^#l=/.test(hash))json=new TextDecoder().decode(b64ToBytes(hash.slice(3)));
+   else throw new Error('invalid link');
+   const p=JSON.parse(json);
    if(!p||typeof p!=='object'||Array.isArray(p))throw new Error('invalid payload');
    if(p.w!=null){if(typeof p.w!=='string'||p.w.length>16000)throw new Error('invalid text');}
    else if(!Array.isArray(p.i)||p.i.length>32||p.i.some(x=>!Number.isInteger(x)||x<0))throw new Error('invalid legacy');
@@ -189,11 +211,18 @@
    return p;
  }
  function urlFor(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:';const base=local?'https://noljago.co.kr/t/letter/':location.origin+location.pathname;return base+(p.v===6?'?v=6':'')+'#l='+encode(p);}
+ async function urlForShare(p){
+   const url=urlFor(p);
+   if(!canZip())return url;
+   try{const code=await zip(JSON.stringify(p));const short=url.replace(/#l=.*$/,'#z='+code);return short.length<url.length?short:url;}catch(e){return url;}
+ }
  function replyUrl(p){const local=location.hostname==='localhost'||location.hostname==='127.0.0.1'||location.protocol==='file:',base=local?'https://noljago.co.kr/t/letter/':location.origin+location.pathname,u=new URL(base);u.searchParams.set('reply','1');u.searchParams.set('template',template(p&&p.tpl).id);if(p&&p.f)u.searchParams.set('to',p.f.slice(0,24));if(p&&p.n)u.searchParams.set('from',p.n.slice(0,24));return u.href;}
  function externalUrl(target){const ua=navigator.userAgent||'';if(/Android/i.test(ua)){const u=new URL(target);return 'intent://'+u.host+u.pathname+u.search+'#Intent;scheme='+u.protocol.slice(0,-1)+';package=com.android.chrome;action=android.intent.action.VIEW;category=android.intent.category.BROWSABLE;S.browser_fallback_url='+encodeURIComponent(target)+';end';}return 'kakaotalk://web/openExternal?url='+encodeURIComponent(target);}
  function beginReplyHere(p,body=''){requestNew(()=>{const t=template(p&&p.tpl);Object.assign(draft,{to:p&&p.f||'',from:p&&p.n||'',body,template:t.id,font:t.font,size:t.size,stickers:[],inline:[],seal:'heart',color:'',occasion:'plain'});ownDraft=true;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('compose',{historyMode:'replace'});});}
  function beginReply(e){const letter=incoming;if(!letter){e.preventDefault();return;}if(/KAKAOTALK/i.test(navigator.userAgent||''))return;e.preventDefault();beginReplyHere(letter);}
- function renderSend(){paint($('packedEnvelope'),template());seal($('packedEnvelope'),draft.seal);$('packedName').textContent=draft.to?draft.to+'에게':'너에게';madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;}
+ function renderSend(){paint($('packedEnvelope'),template());seal($('packedEnvelope'),draft.seal);$('packedName').textContent=draft.to?draft.to+'에게':'너에게';
+   madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;
+   const mine=payload();urlForShare(mine).then(u=>{try{if(madeUrl&&JSON.stringify(mine)===JSON.stringify(payload())){madeUrl=u;const box=$('shareLink');if(box)box.value=u;}}catch(_){}}).catch(()=>{});}
  $('packLetter').onclick=()=>{if(validDraft())go('send');};$('editLetter').onclick=()=>go('compose');
  function read(p,isPreview){
    stopReveal();incoming=p;preview=isPreview;$('returnPreview').hidden=!isPreview;$('replyLetter').hidden=isPreview;
@@ -209,12 +238,12 @@
  $('returnPreview').onclick=()=>go(returnFromPreview);
  $('replyLetter').onclick=beginReply;
  async function copyLink(){
-   if(!madeUrl)madeUrl=urlFor(payload());let success=false;try{await navigator.clipboard.writeText(madeUrl);success=true;}catch(e){$('shareLink').hidden=false;$('shareLink').value=madeUrl;$('shareLink').focus();$('shareLink').select();try{success=document.execCommand('copy');}catch(err){}}
+   if(!madeUrl)madeUrl=await urlForShare(payload());let success=false;try{await navigator.clipboard.writeText(madeUrl);success=true;}catch(e){$('shareLink').hidden=false;$('shareLink').value=madeUrl;$('shareLink').focus();$('shareLink').select();try{success=document.execCommand('copy');}catch(err){}}
    toast(success?'링크를 복사했어요. 카톡에 붙여넣어주세요.':'아래 링크를 길게 눌러 복사해주세요.');
  }
  $('copyLetter').onclick=copyLink;
  // Third-party sharing code is loaded only after an explicit share action. No analytics on letters.
- function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260916-snake40';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
+ function loadShare(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise)return sdkPromise;sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260917-share-size';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share unavailable'));};document.head.append(s);});return sdkPromise;}
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}
@@ -233,7 +262,7 @@
    const from=await askSender();
    if(!from)return;
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:from+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
+   try{const url=madeUrl||await urlForShare(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:from+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
    catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();
@@ -272,8 +301,17 @@
  function back(){if(view==='library'){if(changingPaper){changingPaper=false;go('compose');}else location.href='../../';}else if(view==='chuseok')go('library');else if(view==='detail')go('library');else if(view==='compose')go('detail');else if(view==='send')go('compose');else if(view==='reader'&&preview)go(returnFromPreview);else location.href='../../';}
  $('back').onclick=back;$('letterNav').onclick=e=>{e.preventDefault();if(view==='compose')syncDraft();go('library');};
  window.addEventListener('popstate',e=>{const next=e.state&&e.state.letterScreen;if(next&&titles[next])go(next,{historyMode:'none'});else go('library',{historyMode:'replace'});});
- window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#l='))openIncoming(location.hash);});
- function openIncoming(hash){try{read(decode(hash),false);show('reader',{historyMode:'replace',focus:false});}catch(e){show('error',{historyMode:'replace',focus:false});}}
- if(initialHash.startsWith('#l='))openIncoming(initialHash);else{renderLibrary();if(params.get('view')==='preview')go('detail',{historyMode:'replace',focus:false});else go('library',{historyMode:'replace',focus:false});}
+ window.addEventListener('hashchange',()=>{if(/^#[lz]=/.test(location.hash))openIncoming(location.hash);});
+ async function openIncoming(hash){
+   try{
+     let ready=hash;
+     if(/^#z=/.test(hash)){
+       if(!canZip())throw new Error('no unzip');
+       ready='#j='+await unzip(hash.slice(3));
+     }
+     read(decode(ready),false);show('reader',{historyMode:'replace',focus:false});
+   }catch(e){show('error',{historyMode:'replace',focus:false});}
+ }
+ if(/^#[lz]=/.test(initialHash))openIncoming(initialHash);else{renderLibrary();if(params.get('view')==='preview')go('detail',{historyMode:'replace',focus:false});else go('library',{historyMode:'replace',focus:false});}
  window.addEventListener('app-config-ready',()=>{if(view==='library')renderLibrary();if(view==='compose')renderTools();});
 })();

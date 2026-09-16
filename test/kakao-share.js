@@ -11,8 +11,11 @@ async function main() {
   } } };
   sandbox.window = sandbox;
   vm.runInNewContext(source, sandbox);
-  const payload = { v:4, w:'가'.repeat(448)+'💌', n:'친구', f:'나' };
+  /* 짧은 편지는 그림 카드, 긴 편지는 글 메시지 — 카카오 메시지 크기 한도 때문 */
+  const payload = { v:4, w:'가'.repeat(40)+'💌', n:'친구', f:'나' };
   const url = 'https://noljago.co.kr/t/letter/#l=' + Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const longPayload = { v:4, w:'가'.repeat(448)+'💌', n:'친구', f:'나' };
+  const longUrl = 'https://noljago.co.kr/t/letter/#l=' + Buffer.from(JSON.stringify(longPayload)).toString('base64url');
   const input = {url,title:'너에게 편지가 도착했어요',desc:'봉투를 눌러 마음을 읽어보세요.',img:'https://example.com/letter.png',btn:'편지 열어보기'};
   assert.equal(await sandbox.kakaoShare(input), true);
   assert.equal(message.objectType, 'feed');
@@ -30,6 +33,13 @@ async function main() {
   assert.equal(message.content.imageWidth,800);assert.equal(message.content.imageHeight,480);
   assert.equal(await sandbox.kakaoShare({...input,url:'https://noljago.co.kr/t/rps/#c=test',img:stationery}),true);
   assert.ok(message.content.imageUrl.endsWith('rps.png?v=20260910-unified'));
+  /* 링크가 길면(700자 초과) 카카오가 그림 카드를 크기 초과로 거부한다 → 글 메시지 + 주소 한 번만 */
+  assert.ok(url.length <= 300, '짧은 링크는 주소를 두 번 실어도 괜찮다');
+  assert.ok(longUrl.length > 700);
+  assert.equal(await sandbox.kakaoShare({...input,url:longUrl}), true);
+  assert.equal(message.objectType, 'text');
+  assert.equal(message.link.mobileWebUrl, longUrl);
+  assert.equal(message.link.webUrl, undefined, '긴 링크는 한 번만 싣는다');
   assert.equal(await sandbox.kakaoShare({...input,textOnly:true}), true);
   assert.equal(message.objectType, 'text');
   assert.equal(message.content, undefined); // No remote image scraping in the retry path.
