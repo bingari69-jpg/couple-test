@@ -3,16 +3,16 @@
   const $=id=>document.getElementById(id);
   const service=window.GroupRoomService;
   const GAMES={
-    rps:{icon:'✊',title:'가위바위보 단체전',short:'가위바위보',description:'전원 비밀 선택 · 진 사람만 다음 판',min:3},
-    nunchi:{icon:'🔢',title:'눈치숫자',short:'눈치숫자',description:'가장 낮은 유일 숫자는 탈출 · 마지막 한 명',min:3},
-    choseong:{icon:'💬',title:'초성 퀴즈 릴레이',short:'초성 릴레이',description:'한 명씩 5문제 · 최저 점수는 연장전',min:3},
-    balance:{icon:'⚖️',title:'단톡 밸런스',short:'단톡 밸런스',description:'소수 의견만 살아남기 · 마지막 한 명',min:3},
-    bomb:{icon:'💣',title:'랜덤 폭탄 돌리기',short:'폭탄 돌리기',description:'제한시간 안에 폭탄을 넘겨라',min:3}
+    rps:{icon:'✊',title:'가위바위보 단체전',short:'가위바위보',description:'전원 비밀 선택 · 진 사람만 다음 판',min:2},
+    nunchi:{icon:'🔢',title:'눈치숫자',short:'눈치숫자',description:'가장 낮은 유일 숫자는 탈출 · 마지막 한 명',min:2},
+    choseong:{icon:'💬',title:'초성 퀴즈 릴레이',short:'초성 릴레이',description:'한 명씩 5문제 · 최저 점수는 연장전',min:2},
+    balance:{icon:'⚖️',title:'단톡 밸런스',short:'단톡 밸런스',description:'소수 의견만 살아남기 · 마지막 한 명',min:2},
+    bomb:{icon:'💣',title:'랜덤 폭탄 돌리기',short:'폭탄 돌리기',description:'제한시간 안에 폭탄을 넘겨라',min:2}
   };
   const BALANCE=[['평생 여름','평생 겨울'],['카톡 답장 바로','읽고 나중에'],['사진 100장','영상 10개'],['치킨만 먹기','피자만 먹기'],['계획 여행','즉흥 여행'],['하루 말 안 하기','하루 폰 안 보기']];
   const PROD='https://noljago.co.kr/t/group-room/';
   let code='', snapshot=null, busy=false, timer=null, selectedGame='rps', selectedStake='커피 한 잔';
-  const errors={AUTH_REQUIRED:'참가자 연결에 실패했어요. 잠시 뒤 다시 눌러주세요.',ROOM_NOT_FOUND:'이 단톡방을 찾을 수 없어요.',ROOM_ACCESS_DENIED:'이 방에 먼저 입장해주세요.',ROOM_FULL:'방 정원이 모두 찼어요.',ROOM_ALREADY_STARTED:'이미 게임이 시작됐어요.',NICKNAME_ALREADY_USED:'이미 사용 중인 이름이에요.',NEED_MORE_PLAYERS:'세 명 이상 모여야 시작할 수 있어요.',MEMBERS_NOT_READY:'아직 준비하지 않은 친구가 있어요.',NOT_YOUR_TURN:'아직 내 차례가 아니에요.',ALREADY_SUBMITTED:'이번 라운드 선택을 이미 냈어요.'};
+  const errors={AUTH_REQUIRED:'참가자 연결에 실패했어요. 잠시 뒤 다시 눌러주세요.',ROOM_NOT_FOUND:'이 단톡방을 찾을 수 없어요.',ROOM_ACCESS_DENIED:'이 방에 먼저 입장해주세요.',ROOM_FULL:'방 정원이 모두 찼어요.',ROOM_ALREADY_STARTED:'이미 게임이 시작됐어요.',NICKNAME_ALREADY_USED:'이미 사용 중인 이름이에요.',NEED_MORE_PLAYERS:'두 명 이상 모여야 시작할 수 있어요.',MEMBERS_NOT_READY:'아직 준비하지 않은 친구가 있어요.',NOT_YOUR_TURN:'아직 내 차례가 아니에요.',ALREADY_SUBMITTED:'이번 라운드 선택을 이미 냈어요.'};
   function msg(error){const raw=error&&(error.message||String(error));const found=Object.keys(errors).find(k=>raw&&raw.includes(k));return found?errors[found]:'연결이 잠시 불안정해요. 다시 눌러주세요.';}
   async function rpc(name,args){const client=await service.ensureSession();const r=await client.rpc(name,args||{});if(r.error)throw r.error;return r.data;}
   function show(id){['createView','joinView','roomView'].forEach(v=>$(v).hidden=v!==id);window.scrollTo(0,0);}
