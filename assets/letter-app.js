@@ -266,6 +266,7 @@
    if($('sendFrom')&&$('sendFrom').value!==name)$('sendFrom').value=name;
    if($('sender').value!==name){$('sender').value=name;syncDraft();}
    madeUrl='';
+   const box=$('shareLink');if(box)box.value=urlFor(payload());   // 화면에 보이는 링크도 새 이름으로
    try{localStorage.setItem('gh_name',name)}catch(_){}
  }
  if($('sendFrom'))$('sendFrom').addEventListener('input',e=>{e.target.classList.remove('need-name');syncSender(e.target.value);});
