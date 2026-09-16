@@ -20,3 +20,11 @@
  .object .name{font-size:11px}
  .progress-track{margin:10px 0 14px}
 }
+/* 둘이하기 결과: 이름 적고 카톡으로 바로 도전장 (2026-09-16) */
+.name-row{display:block;margin:14px 0 6px;font-size:12px;color:var(--muted);font-weight:700}
+.name-row input{width:100%;margin-top:6px;border:1px solid var(--line);border-radius:12px;background:#fffdf7;padding:12px 14px;font:inherit;font-size:16px;font-weight:700;color:var(--ink)}
+.name-row input:focus{outline:none;border-color:var(--green)}
+.name-row input.need-name{border-color:#d4553f;animation:needName .45s ease}
+@keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
+button.kakao{background:#FEE500;border-color:#f2d900;color:#191600}
+button.kakao:hover:not(:disabled){background:#ffe94d}
