@@ -1,0 +1,4 @@
+const fs=require('fs'),path=require('path'),assert=require('assert'),{JSDOM}=require('jsdom');
+const root=path.join(__dirname,'..'),html=fs.readFileSync(path.join(root,'t/hidden-picture/index.html'),'utf8'),script=fs.readFileSync(path.join(root,'t/hidden-picture/game.js'),'utf8');
+const dom=new JSDOM(html,{url:'http://127.0.0.1:4173/t/hidden-picture/?solo=1',runScripts:'outside-only',pretendToBeVisual:true});
+const w=dom.window,d=w.document;w.scrollTo=()=>{};w.eval(script);d.getElementById('enterGame').click();assert.equal(d.querySelectorAll('#decoys .decoy').length,5,'각 단계에 닮은 장식 다섯 개가 겹쳐야 함');assert.equal(d.getElementById('hintCount').textContent,'0 / 1','혼자하기 힌트는 한 번만 제공');assert.match(d.querySelector('.level-card small').textContent,/01:30/,'1단계 제한시간은 90초');assert.match(script,/const scale=\.52/,'정답 영역은 기존보다 정밀해야 함');assert.match(script,/HINT_MAX=1/);dom.window.close();console.log('숨은그림 어려움 검사 통과 — 정밀 선택 영역, 닮은 장식, 1회 힌트, 짧은 제한시간');

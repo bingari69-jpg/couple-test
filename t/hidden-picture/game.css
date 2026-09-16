@@ -28,3 +28,9 @@
 @keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
 button.kakao{background:#FEE500;border-color:#f2d900;color:#191600}
 button.kakao:hover:not(:disabled){background:#ffe94d}
+
+/* 정답과 닮은 장식이 장면 속에 얇게 겹친다. 클릭은 통과되어 진짜 물건만 정답이다. */
+.decoy{position:absolute;z-index:1;display:block;pointer-events:none;transform:rotate(var(--tilt));opacity:.43;mix-blend-mode:multiply;filter:blur(.18px)}
+.decoy svg{display:block;width:100%;height:100%;fill:#d7b47655;stroke:#4f573d;stroke-width:2.1;stroke-linejoin:round}
+.decoy-1{opacity:.34;filter:blur(.3px)}.decoy-1 svg{fill:#aac37b55;stroke:#42553e}.decoy-2{opacity:.30}.decoy-2 svg{fill:#cf8d6755;stroke:#734c3b}
+.mark,.hint-ring{z-index:2}
