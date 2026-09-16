@@ -42,11 +42,7 @@ function loadKakao(){if(window.kakaoShare)return Promise.resolve();if(sdkPromise
  sdkPromise=new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='../../assets/kakao-share.js?v=20260917-share-size';s.onload=resolve;s.onerror=()=>{sdkPromise=null;s.remove();reject(new Error('share'))};document.head.append(s)});
  return sdkPromise}
 async function sendKakao(){
- let name=$('playerName').value.trim();
- if(!name&&window.NameAsk){
-  name=await NameAsk.ask({title:'누가 보냈는지 알려줄까?',desc:'적어준 이름이 카톡에 「민수님이 도전했어요」 처럼 보여요.',value:NameAsk.saved(),confirm:'이 이름으로'})||'';
-  if(name)$('playerName').value=name;
- }
+ const name=$('playerName').value.trim();
  if(!name){$('playerName').classList.add('need-name');$('playerName').focus();setTimeout(()=>$('playerName').classList.remove('need-name'),1600);$('shareMessage').textContent='카톡에 보일 내 이름을 먼저 적어줘.';return}
  try{localStorage.setItem(NAME_KEY,name)}catch(_){}
  const url=duelLink();

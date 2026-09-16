@@ -190,32 +190,44 @@
 
     /* 이름은 카톡 카드에 "민수님이 도전했어요" 로 들어간다. 비어 있으면 보내지 않고 이름 칸으로 데려간다.
        (예전에는 이름이 선택이라 받는 사람이 누가 보냈는지 몰랐다) */
+    const sendNameBoxes = () => [$("shareName"), $("shareNameRes")].filter(Boolean);
     function setName(v) {
       state.name = v; saveName(v);
-      const input = $("nameIn"); if (input) input.value = v;
+      [$("nameIn"), ...sendNameBoxes()].forEach(el => { if (el && el.value !== v) el.value = v; });
       if (state.ms !== null && !state.incoming) makeLink();
     }
-    /* 이름이 없으면 팝업으로 받고 이어서 보낸다. 팝업의 확인 클릭이 사용자 동작이라 카카오 공유가 바로 열린다. */
+    /* 보내는 사람 칸은 카톡 버튼 바로 위에 만든다. 비면 보내지 않고 그 칸을 흔든다(팝업 없음). */
+    function addSendName(id, beforeId, labelText) {
+      const anchor = $(beforeId); if (!anchor || $(id)) return;
+      const label = document.createElement("label");
+      label.className = "send-name"; label.htmlFor = id;
+      label.innerHTML = '<span></span><input type="text" maxlength="10" autocomplete="nickname" placeholder="예: 민수">';
+      label.querySelector("span").textContent = labelText;
+      const input = label.querySelector("input"); input.id = id; input.value = state.name || "";
+      input.addEventListener("input", e => { e.target.classList.remove("need-name"); setName(e.target.value.trim()); });
+      anchor.parentNode.insertBefore(label, anchor);
+    }
     function withName(run) {
       if (state.name) { run(); return; }
-      if (!window.NameAsk) {                       // 팝업 모듈을 못 읽었을 때만 옛 방식
-        const input = $("nameIn"), box = input && input.closest("details");
-        if (box) box.open = true;
-        if (input) { input.classList.add("need-name"); input.focus(); setTimeout(() => input.classList.remove("need-name"), 1600); }
-        toast("카톡에 보일 내 이름을 먼저 적어줘");
-        return;
+      const boxes = sendNameBoxes();
+      const box = boxes.find(el => el.offsetParent !== null) || boxes[0] || $("nameIn");
+      if (box) {
+        box.classList.add("need-name");
+        try { box.focus({ preventScroll: true }); } catch (_) { box.focus(); }
+        setTimeout(() => box.classList.remove("need-name"), 1600);
       }
-      NameAsk.ask({
-        title: "누가 보냈는지 알려줄까?",
-        desc: "적어준 이름이 카톡에 「민수님이 도전했어요」 처럼 보여요.",
-        value: state.name || NameAsk.saved(),
-        confirm: "이 이름으로"
-      }).then(name => { if (!name) return; setName(name); run(); });
+      toast("보내는 사람 이름을 적어줘");
     }
     {
       const st = document.createElement("style");
-      st.textContent = '#nameIn.need-name{border-color:#FF5A5F;animation:needName .45s ease}@keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}';
+      st.textContent = '.send-name{display:block;text-align:left;font-size:13px;font-weight:700;color:#7A6E5E;margin:4px 0 8px}'
+        + '.send-name input{display:block;width:100%;box-sizing:border-box;margin-top:6px;border:2px solid #F0E4C8;border-radius:14px;padding:13px 15px;font:inherit;font-size:17px;font-weight:700;background:#fff;color:#1F1B16}'
+        + '.send-name input:focus{outline:none;border-color:#2D7DFF}'
+        + '.need-name{border-color:#FF5A5F!important;animation:needName .45s ease}'
+        + '@keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}';
       document.head.appendChild(st);
+      addSendName("shareName", "kakaoBtn", "보내는 사람 (카톡에 보여요)");
+      addSendName("shareNameRes", "kakaoRes", "보내는 사람 (카톡에 보여요)");
     }
     $("copyBtn").onclick = () => withName(() => copy(madeUrl, "복사됐어. 카톡에 붙여넣어"));
     /* 도전장 카톡 버튼 */

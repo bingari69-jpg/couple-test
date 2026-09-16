@@ -221,6 +221,8 @@
  function beginReplyHere(p,body=''){requestNew(()=>{const t=template(p&&p.tpl);Object.assign(draft,{to:p&&p.f||'',from:p&&p.n||'',body,template:t.id,font:t.font,size:t.size,stickers:[],inline:[],seal:'heart',color:'',occasion:'plain'});ownDraft=true;incoming=null;preview=false;history.replaceState(null,'',location.pathname);go('compose',{historyMode:'replace'});});}
  function beginReply(e){const letter=incoming;if(!letter){e.preventDefault();return;}if(/KAKAOTALK/i.test(navigator.userAgent||''))return;e.preventDefault();beginReplyHere(letter);}
  function renderSend(){paint($('packedEnvelope'),template());seal($('packedEnvelope'),draft.seal);$('packedName').textContent=draft.to?draft.to+'에게':'너에게';
+   let saved='';try{saved=localStorage.getItem('gh_name')||''}catch(_){}
+   if($('sendFrom')){$('sendFrom').value=(draft.from||saved).slice(0,24);if($('sendFrom').value&&!draft.from){$('sender').value=$('sendFrom').value;syncDraft();}}
    madeUrl=urlFor(payload());$('shareLink').value=madeUrl;$('shareLink').hidden=true;
    const mine=payload();urlForShare(mine).then(u=>{try{if(madeUrl&&JSON.stringify(mine)===JSON.stringify(payload())){madeUrl=u;const box=$('shareLink');if(box)box.value=u;}}catch(_){}}).catch(()=>{});}
  $('packLetter').onclick=()=>{if(validDraft())go('send');};$('editLetter').onclick=()=>go('compose');
@@ -238,6 +240,7 @@
  $('returnPreview').onclick=()=>go(returnFromPreview);
  $('replyLetter').onclick=beginReply;
  async function copyLink(){
+   if(!senderName())return;
    if(!madeUrl)madeUrl=await urlForShare(payload());let success=false;try{await navigator.clipboard.writeText(madeUrl);success=true;}catch(e){$('shareLink').hidden=false;$('shareLink').value=madeUrl;$('shareLink').focus();$('shareLink').select();try{success=document.execCommand('copy');}catch(err){}}
    toast(success?'링크를 복사했어요. 카톡에 붙여넣어주세요.':'아래 링크를 길게 눌러 복사해주세요.');
  }
@@ -247,19 +250,27 @@
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}
- /* 받는 사람이 누가 보냈는지 알 수 있게 보내는 사람 이름을 꼭 받는다 — 카톡 카드에 "민수님께서 보내신 편지입니다" 로 나간다.
-    보내는 사람 칸은 작성 화면에 있어 보내기 화면에서는 보이지 않는다. 비어 있으면 팝업으로 직접 받는다. */
- async function askSender(){
-   const from=$('sender').value.trim();
+ /* 보내는 사람 이름은 꼭 받는다 — 카톡 카드에 "민수님께서 보내신 편지입니다" 로 나간다.
+    보내기 화면(#sendFrom)과 작성 화면(#sender)은 같은 값이다. 비어 있으면 보내지 않고 그 칸을 흔든다(팝업 없음). */
+ function senderName(){
+   const from=(($('sendFrom')&&$('sendFrom').value)||$('sender').value||'').trim();
    if(from)return from;
-   if(!window.NameAsk){$('sender').focus();toast('작성 화면에서 보내는 사람 이름을 적어줘');return '';}
-   const name=await NameAsk.ask({title:'보내는 사람이 누구야?',desc:'적어준 이름이 카톡에 「민수님께서 보내신 편지입니다」 처럼 보여요.',value:NameAsk.saved(),confirm:'이 이름으로'});
-   if(!name)return '';
-   $('sender').value=name;syncDraft();madeUrl='';
-   return name;
+   const box=$('sendFrom')||$('sender');
+   box.classList.add('need-name');box.focus();
+   setTimeout(()=>box.classList.remove('need-name'),1600);
+   toast('보내는 사람 이름을 적어줘');
+   return '';
  }
+ function syncSender(value){
+   const name=value.slice(0,24);
+   if($('sendFrom')&&$('sendFrom').value!==name)$('sendFrom').value=name;
+   if($('sender').value!==name){$('sender').value=name;syncDraft();}
+   madeUrl='';
+   try{localStorage.setItem('gh_name',name)}catch(_){}
+ }
+ if($('sendFrom'))$('sendFrom').addEventListener('input',e=>{e.target.classList.remove('need-name');syncSender(e.target.value);});
  async function sendLetter(textOnly=false){
-   const from=await askSender();
+   const from=senderName();
    if(!from)return;
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
    try{const url=madeUrl||await urlForShare(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:from+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}

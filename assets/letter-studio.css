@@ -86,3 +86,10 @@
 .writing-dock .sticker-option,.writing-dock .emoji-options button{min-height:42px;padding:5px;aspect-ratio:1;font-size:24px;touch-action:manipulation}
 .writing-dock .sticker-option img{width:32px;height:32px}.seal-details{font-size:12px;color:#8e6b57;margin-top:13px}.seal-details summary{cursor:pointer;padding:8px 0}.seal-details .seal-options{margin-top:8px}
 @media(max-width:400px){.writing-dock .sticker-options,.writing-dock .emoji-options{grid-template-columns:repeat(6,minmax(0,1fr))}.writing-dock{padding-left:10px;padding-right:10px}.writing-dock-tabs button{font-size:12px}}
+/* 보내는 사람 칸 — 카톡 버튼 바로 위 (2026-09-17) */
+.send-name{display:block;text-align:left;font-size:13px;font-weight:700;color:#7a6a58;margin:0 0 10px}
+.send-name b{font-weight:600;color:#a89982}
+.send-name input{display:block;width:100%;box-sizing:border-box;margin-top:6px;border:2px solid #efe3cf;border-radius:14px;padding:13px 15px;font:inherit;font-size:17px;font-weight:700;color:#3d3328;background:#fffdf8}
+.send-name input:focus{outline:none;border-color:#f0a58a}
+.send-name input.need-name{border-color:#e2685a;animation:needName .45s ease}
+@keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}
