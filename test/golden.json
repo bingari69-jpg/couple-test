@@ -103,7 +103,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/2048.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 2048 한판 도전장 🔒",
+      "title": "지은님이 도전했어요 · 2048 한판 🔒",
       "desc": "30초, 같은 타일 순서. 밀어서 합친 점수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -115,7 +115,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/2048.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 2048 한판 도전장 🔒",
+      "title": "지은님이 도전했어요 · 2048 한판 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -372,7 +372,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/2048.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 2048 한판 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 2048 한판 🔒",
       "desc": "30초, 같은 타일 순서. 밀어서 합친 점수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -561,7 +561,7 @@
       "url": "https://noljago.co.kr/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ten-sq.png",
-      "title": "지은의 10초 맞추기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 10초 맞추기 🔒",
       "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
     },
     "link_challenge_hist": {
@@ -571,7 +571,7 @@
       "url": "https://noljago.co.kr/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJoIjpbWyLsp4DsnYAiLDEwMjUwLCLrr7zsiJgiLDk4NDAsImFiYzEyMyIsInp6ejk5OSJdXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ten-sq.png",
-      "title": "지은의 10초 맞추기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 10초 맞추기 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -824,7 +824,7 @@
       "url": "https://noljago.co.kr/t/ten/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMzkyMDksInQiOltdLCJiIjoi7KCQ7IusIiwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ten-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 10초 맞추기 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 10초 맞추기 🔒",
       "desc": "안 보고 10초 세다가 멈추기. 둘 다 딱 한 번. 내 기록은 네가 멈춘 뒤 공개."
     },
     "bet_off_link": {
@@ -1011,7 +1011,7 @@
       "url": "https://noljago.co.kr/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-react-sq.png",
-      "title": "지은의 반응속도 도전장 🔒",
+      "title": "지은님이 도전했어요 · 반응속도 🔒",
       "desc": "두더지·진동·빛·숫자·좌우, 다섯 신호에 반응하기. 5회 평균, 둘이 같은 판. 내 기록은 네가 한 뒤 공개."
     },
     "link_challenge_hist": {
@@ -1021,7 +1021,7 @@
       "url": "https://noljago.co.kr/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiaCI6W1si7KeA7J2AIiwyNjgsIuuvvOyImCIsMjMxLCJhYmMxMjMiLCJ6eno5OTkiXV19",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-react-sq.png",
-      "title": "지은의 반응속도 도전장 🔒",
+      "title": "지은님이 도전했어요 · 반응속도 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -1274,7 +1274,7 @@
       "url": "https://noljago.co.kr/t/react/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjAwLCJ0IjpbXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-react-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 반응속도 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 반응속도 🔒",
       "desc": "두더지·진동·빛·숫자·좌우, 다섯 신호에 반응하기. 5회 평균, 둘이 같은 판. 내 기록은 네가 한 뒤 공개."
     },
     "bet_off_link": {
@@ -1461,7 +1461,7 @@
       "url": "https://noljago.co.kr/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJsIjowLCJoIjpbXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-num25-sq.png",
-      "title": "지은의 1에서 25까지 도전장 🔒",
+      "title": "지은님이 도전했어요 · 1에서 25까지 🔒",
       "desc": "같은 판, 같은 숫자. 1부터 25까지 순서대로 최대한 빨리. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -1471,7 +1471,7 @@
       "url": "https://noljago.co.kr/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJsIjowLCJoIjpbWyLsp4DsnYAiLDE5ODcwLCLrr7zsiJgiLDIxMzQwLCJhYmMxMjMiLCJ6eno5OTkiXV19",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-num25-sq.png",
-      "title": "지은의 1에서 25까지 도전장 🔒",
+      "title": "지은님이 도전했어요 · 1에서 25까지 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -1724,7 +1724,7 @@
       "url": "https://noljago.co.kr/t/num25/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjUwNzA5LCJwIjoyLCJsIjowLCJiIjoi7KCQ7IusIiwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-num25-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 1에서 25까지 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 1에서 25까지 🔒",
       "desc": "같은 판, 같은 숫자. 1부터 25까지 순서대로 최대한 빨리. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -1913,7 +1913,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 짝 맞추기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 짝 맞추기 🔒",
       "desc": "같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -1925,7 +1925,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 짝 맞추기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 짝 맞추기 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -2182,7 +2182,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/pairs.png?v=20260912-pairs",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 짝 맞추기 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 짝 맞추기 🔒",
       "desc": "같은 판, 같은 카드 배치. 10짝을 다 맞춘 시간으로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -2373,7 +2373,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/simon.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 순서 기억 도전장 🔒",
+      "title": "지은님이 도전했어요 · 순서 기억 🔒",
       "desc": "같은 판, 같은 불빛 순서. 몇 라운드까지 외우나로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -2385,7 +2385,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/simon.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 순서 기억 도전장 🔒",
+      "title": "지은님이 도전했어요 · 순서 기억 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -2642,7 +2642,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/simon.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 순서 기억 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 순서 기억 🔒",
       "desc": "같은 판, 같은 불빛 순서. 몇 라운드까지 외우나로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -2833,7 +2833,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 스네이크 40초 도전장 🔒",
+      "title": "지은님이 도전했어요 · 스네이크 40초 🔒",
       "desc": "40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -2845,7 +2845,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 스네이크 40초 도전장 🔒",
+      "title": "지은님이 도전했어요 · 스네이크 40초 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -3102,7 +3102,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/snake.png?v=20260916-snake40",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 스네이크 40초 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 스네이크 40초 🔒",
       "desc": "40초, 같은 자리에 같은 지렁이. 부딪히면 3칸으로 돌아가. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -3293,7 +3293,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/choseong.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 초성 퀴즈 도전장 🔒",
+      "title": "지은님이 도전했어요 · 초성 퀴즈 🔒",
       "desc": "같은 5문제, 60초. 초성만 보고 누가 더 많이 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -3305,7 +3305,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/choseong.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 초성 퀴즈 도전장 🔒",
+      "title": "지은님이 도전했어요 · 초성 퀴즈 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -3562,7 +3562,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/choseong.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 초성 퀴즈 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 초성 퀴즈 🔒",
       "desc": "같은 5문제, 60초. 초성만 보고 누가 더 많이 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -3753,7 +3753,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/daily-word.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 오늘의 단어 도전장 🔒",
+      "title": "지은님이 도전했어요 · 오늘의 단어 🔒",
       "desc": "같은 두 글자 단어. 자모 힌트로 6번 안에. 더 적은 시도로 맞힌 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -3765,7 +3765,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/daily-word.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 오늘의 단어 도전장 🔒",
+      "title": "지은님이 도전했어요 · 오늘의 단어 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -4022,7 +4022,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/daily-word.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 오늘의 단어 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 오늘의 단어 🔒",
       "desc": "같은 두 글자 단어. 자모 힌트로 6번 안에. 더 적은 시도로 맞힌 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -4213,7 +4213,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/fit.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 끼워넣기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 끼워넣기 🔒",
       "desc": "60초, 같은 순서의 조각. 판에 끼워 넣고 줄을 지워. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -4225,7 +4225,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/fit.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 끼워넣기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 끼워넣기 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -4482,7 +4482,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/fit.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 끼워넣기 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 끼워넣기 🔒",
       "desc": "60초, 같은 순서의 조각. 판에 끼워 넣고 줄을 지워. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -4673,7 +4673,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/stack.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 블록 쌓기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 블록 쌓기 🔒",
       "desc": "20초, 같은 순서로 오는 블록. 톡 쳐서 멈춰 쌓은 층수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -4685,7 +4685,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/stack.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 블록 쌓기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 블록 쌓기 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -4942,7 +4942,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/stack.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 블록 쌓기 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 블록 쌓기 🔒",
       "desc": "20초, 같은 순서로 오는 블록. 톡 쳐서 멈춰 쌓은 층수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -5133,7 +5133,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/mines.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 지뢰찾기 미니 도전장 🔒",
+      "title": "지은님이 도전했어요 · 지뢰찾기 미니 🔒",
       "desc": "60초, 같은 순서의 지뢰판. 밟으면 다음 판. 몇 판 풀었는지로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -5145,7 +5145,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/mines.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 지뢰찾기 미니 도전장 🔒",
+      "title": "지은님이 도전했어요 · 지뢰찾기 미니 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -5402,7 +5402,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/mines.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 지뢰찾기 미니 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 지뢰찾기 미니 🔒",
       "desc": "60초, 같은 순서의 지뢰판. 밟으면 다음 판. 몇 판 풀었는지로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -5593,7 +5593,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/slide15.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 15퍼즐 도전장 🔒",
+      "title": "지은님이 도전했어요 · 15퍼즐 🔒",
       "desc": "60초, 같은 순서로 섞인 숫자판. 몇 판 맞췄는지로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -5605,7 +5605,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/slide15.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 15퍼즐 도전장 🔒",
+      "title": "지은님이 도전했어요 · 15퍼즐 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -5862,7 +5862,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/slide15.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 15퍼즐 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 15퍼즐 🔒",
       "desc": "60초, 같은 순서로 섞인 숫자판. 몇 판 맞췄는지로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -6053,7 +6053,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/flap.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 탭 비행 도전장 🔒",
+      "title": "지은님이 도전했어요 · 탭 비행 🔒",
       "desc": "20초, 같은 코스에 같은 문. 부딪혀도 다시 날아. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -6065,7 +6065,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/flap.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 탭 비행 도전장 🔒",
+      "title": "지은님이 도전했어요 · 탭 비행 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -6322,7 +6322,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/flap.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 탭 비행 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 탭 비행 🔒",
       "desc": "20초, 같은 코스에 같은 문. 부딪혀도 다시 날아. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -6513,7 +6513,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/typing.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 한글 타자 20초 도전장 🔒",
+      "title": "지은님이 도전했어요 · 한글 타자 20초 🔒",
       "desc": "20초, 같은 순서의 문장. 맞게 친 글자 수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -6525,7 +6525,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/typing.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "지은의 한글 타자 20초 도전장 🔒",
+      "title": "지은님이 도전했어요 · 한글 타자 20초 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -6782,7 +6782,7 @@
       "img": "https://noljago.co.kr/assets/share-cards/typing.png?v=20260913-new",
       "imageWidth": 800,
       "imageHeight": 480,
-      "title": "🍱 점심 걸고 — 지은의 한글 타자 20초 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 한글 타자 20초 🔒",
       "desc": "20초, 같은 순서의 문장. 맞게 친 글자 수로 승부. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -6971,7 +6971,7 @@
       "url": "https://noljago.co.kr/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwibCI6MCwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-mole-sq.png",
-      "title": "지은의 두더지 잡기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 두더지 잡기 🔒",
       "desc": "20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -6981,7 +6981,7 @@
       "url": "https://noljago.co.kr/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwibCI6MCwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyNCwiYWJjMTIzIiwienp6OTk5Il1dfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-mole-sq.png",
-      "title": "지은의 두더지 잡기 도전장 🔒",
+      "title": "지은님이 도전했어요 · 두더지 잡기 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -7234,7 +7234,7 @@
       "url": "https://noljago.co.kr/t/mole/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkzLCJjIjpbMTgsMywxXSwibCI6MCwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-mole-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 두더지 잡기 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 두더지 잡기 🔒",
       "desc": "20초, 같은 두더지. 황금 +3, 폭탄 −3. 내 점수는 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -7421,7 +7421,7 @@
       "url": "https://noljago.co.kr/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-tap-sq.png",
-      "title": "지은의 10초 연타 도전장 🔒",
+      "title": "지은님이 도전했어요 · 10초 연타 🔒",
       "desc": "10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -7431,7 +7431,7 @@
       "url": "https://noljago.co.kr/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImgiOltbIuyngOydgCIsNzQsIuuvvOyImCIsODgsImFiYzEyMyIsInp6ejk5OSJdXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-tap-sq.png",
-      "title": "지은의 10초 연타 도전장 🔒",
+      "title": "지은님이 도전했어요 · 10초 연타 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -7684,7 +7684,7 @@
       "url": "https://noljago.co.kr/t/tap/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsImsiOjMyNzY3LCJ4IjoyMjk0NTcsImIiOiLsoJDsi6wiLCJoIjpbXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-tap-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 10초 연타 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 10초 연타 🔒",
       "desc": "10초 동안 몇 번 누를 수 있어? 두 손가락도 돼. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -7871,7 +7871,7 @@
       "url": "https://noljago.co.kr/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ufo-sq.png",
-      "title": "지은의 UFO 요격 도전장 🔒",
+      "title": "지은님이 도전했어요 · UFO 요격 🔒",
       "desc": "20초에 미사일 40발. 황금 모선 +3, 아군 드론 −3. 내 점수와 명중률은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -7881,7 +7881,7 @@
       "url": "https://noljago.co.kr/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiaCI6W1si7KeA7J2AIiwxOSwi66-87IiYIiwyMywiYWJjMTIzIiwienp6OTk5Il1dfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ufo-sq.png",
-      "title": "지은의 UFO 요격 도전장 🔒",
+      "title": "지은님이 도전했어요 · UFO 요격 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -8134,7 +8134,7 @@
       "url": "https://noljago.co.kr/t/ufo/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjMwMzkyLCJjIjpbMjAsMiwxLDMwXSwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-ufo-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 UFO 요격 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · UFO 요격 🔒",
       "desc": "20초에 미사일 40발. 황금 모선 +3, 아군 드론 −3. 내 점수와 명중률은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -8321,7 +8321,7 @@
       "url": "https://noljago.co.kr/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stroop-sq.png",
-      "title": "지은의 색깔 함정 도전장 🔒",
+      "title": "지은님이 도전했어요 · 색깔 함정 🔒",
       "desc": "글자 말고 글자색을 답하는 놀이. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -8331,7 +8331,7 @@
       "url": "https://noljago.co.kr/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImgiOltbIuyngOydgCIsMjEsIuuvvOyImCIsMjcsImFiYzEyMyIsInp6ejk5OSJdXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stroop-sq.png",
-      "title": "지은의 색깔 함정 도전장 🔒",
+      "title": "지은님이 도전했어요 · 색깔 함정 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -8584,7 +8584,7 @@
       "url": "https://noljago.co.kr/t/stroop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5Mzk2LCJjIjpbMjcsNF0sImIiOiLsoJDsi6wiLCJoIjpbXX0",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stroop-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 색깔 함정 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 색깔 함정 🔒",
       "desc": "글자 말고 글자색을 답하는 놀이. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -8771,7 +8771,7 @@
       "url": "https://noljago.co.kr/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-arrow-sq.png",
-      "title": "지은의 화살표 함정 도전장 🔒",
+      "title": "지은님이 도전했어요 · 화살표 함정 🔒",
       "desc": "화살표대로 밀되 빨간 테두리면 반대로. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -8781,7 +8781,7 @@
       "url": "https://noljago.co.kr/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiaCI6W1si7KeA7J2AIiwyNCwi66-87IiYIiwzMSwiYWJjMTIzIiwienp6OTk5Il1dfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-arrow-sq.png",
-      "title": "지은의 화살표 함정 도전장 🔒",
+      "title": "지은님이 도전했어요 · 화살표 함정 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -9034,7 +9034,7 @@
       "url": "https://noljago.co.kr/t/arrow/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NDAwLCJjIjpbMzEsNSw4XSwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-arrow-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 화살표 함정 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 화살표 함정 🔒",
       "desc": "화살표대로 밀되 빨간 테두리면 반대로. 20초 동안 몇 개나 맞힐까. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {
@@ -9221,7 +9221,7 @@
       "url": "https://noljago.co.kr/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjQzLCJjIjpbMjEsNDQsMTIsMzgsMjIsMzAsMTcsNDEsMjYsMTldLCJyIjoxMCwiaCI6W119",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stop-sq.png",
-      "title": "지은의 딱 멈춰 도전장 🔒",
+      "title": "지은님이 도전했어요 · 딱 멈춰 🔒",
       "desc": "왔다갔다하는 바를 한가운데서 멈추기. 10번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
     },
     "link_challenge_hist": {
@@ -9231,7 +9231,7 @@
       "url": "https://noljago.co.kr/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjQzLCJjIjpbMjEsNDQsMTIsMzgsMjIsMzAsMTcsNDEsMjYsMTldLCJyIjoxMCwiaCI6W1si7KeA7J2AIiw0MTAsIuuvvOyImCIsMjc0LCJhYmMxMjMiLCJ6eno5OTkiXV19",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stop-sq.png",
-      "title": "지은의 딱 멈춰 도전장 🔒",
+      "title": "지은님이 도전했어요 · 딱 멈춰 🔒",
       "desc": "2판째. 전적이 같이 실려 있어."
     },
     "open_challenge": {
@@ -9484,7 +9484,7 @@
       "url": "https://noljago.co.kr/t/stop/#c=eyJ2IjoxLCJuIjoi7KeA7J2AIiwiaSI6ImFiYzEyMyIsInMiOjEyMzQ1LCJrIjozMjc2NywieCI6MjI5NjQzLCJjIjpbMjEsNDQsMTIsMzgsMjIsMzAsMTcsNDEsMjYsMTldLCJyIjoxMCwiYiI6IuygkOyLrCIsImgiOltdfQ",
       "btn": "도전 받기",
       "img": "https://noljago.co.kr/og/og-stop-sq.png",
-      "title": "🍱 점심 걸고 — 지은의 딱 멈춰 도전장 🔒",
+      "title": "🍱 점심 걸고 — 지은님이 도전했어요 · 딱 멈춰 🔒",
       "desc": "왔다갔다하는 바를 한가운데서 멈추기. 10번 오차를 더해 적은 쪽이 이겨. 내 기록은 네가 끝낸 뒤 공개."
     },
     "bet_off_link": {

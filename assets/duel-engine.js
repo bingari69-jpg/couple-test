@@ -188,14 +188,34 @@
       return madeUrl;
     }
 
-    $("copyBtn").onclick = () => copy(madeUrl, "복사됐어. 카톡에 붙여넣어");
+    /* 이름은 카톡 카드에 "민수님이 도전했어요" 로 들어간다. 비어 있으면 보내지 않고 이름 칸으로 데려간다.
+       (예전에는 이름이 선택이라 받는 사람이 누가 보냈는지 몰랐다) */
+    function needName() {
+      if (state.name) return false;
+      const input = $("nameIn"), box = input && input.closest("details");
+      if (box) box.open = true;
+      if (input) {
+        input.classList.add("need-name");
+        input.scrollIntoView({ block: "center", behavior: "smooth" });
+        setTimeout(() => { try { input.focus({ preventScroll: true }); } catch (_) { input.focus(); } }, 120);
+        setTimeout(() => input.classList.remove("need-name"), 1600);
+      }
+      toast("카톡에 보일 내 이름을 먼저 적어줘");
+      return true;
+    }
+    {
+      const st = document.createElement("style");
+      st.textContent = '#nameIn.need-name{border-color:#FF5A5F;animation:needName .45s ease}@keyframes needName{25%{transform:translateX(-4px)}75%{transform:translateX(4px)}}';
+      document.head.appendChild(st);
+    }
+    $("copyBtn").onclick = () => { if (needName()) return; copy(madeUrl, "복사됐어. 카톡에 붙여넣어"); };
     /* 도전장 카톡 버튼 */
     if (cfg.shareChallenge !== false) {
-      $("kakaoBtn").onclick = () => kakaoShare({
+      $("kakaoBtn").onclick = () => { if (needName()) return; kakaoShare({
         url: madeUrl, btn: "도전 받기", img: cfg.og, imageWidth:cfg.imageWidth, imageHeight:cfg.imageHeight,
-        title: `${Bet.titlePrefix(state.bet)}${state.name ? state.name + "의 " : ""}${cfg.gameName} 도전장 🔒`,
+        title: `${Bet.titlePrefix(state.bet)}${state.name}님이 도전했어요 · ${cfg.gameName} 🔒`,
         desc: state.hist.length ? `${state.hist.length + 1}판째. 전적이 같이 실려 있어.` : cfg.challengeDesc
-      }, () => copy(madeUrl, "카톡 공유를 못 열어 링크를 복사했어"));
+      }, () => copy(madeUrl, "카톡 공유를 못 열어 링크를 복사했어")); };
     }
 
     /* ── 이미 푼 도전장 기억 ──
@@ -293,16 +313,16 @@
         $("respActions").classList.remove("hidden"); $("notYet").classList.remove("hidden");
         const rurl = baseUrl() + "#r=" + b64e(JSON.stringify(Bet.put({ v: 1, h: R.hist }, betNow)));
         window.__gatchiResultUrl = rurl;          // 완료 알림의 "결과 보기"가 열 주소(도전장이 아니라 결과 링크)
-        $("sendResult").onclick = () => { $("resLinkbox").textContent = rurl; copy(rurl, "결과 링크 복사됐어. 상대에게 보내"); };
+        $("sendResult").onclick = () => { if (needName()) return; $("resLinkbox").textContent = rurl; copy(rurl, "결과 링크 복사됐어. 상대에게 보내"); };
         {
           const nm = n => n ? n + " " : "";
           const wn = o === "tie" ? null : (o === "win" ? me.n : them.n);
           const tail = o === "tie" ? " — 무승부" : (wn ? ` — ${wn} 승` : "");
-          $("kakaoRes").onclick = () => kakaoShare({
+          $("kakaoRes").onclick = () => { if (needName()) return; kakaoShare({
             url: rurl, btn: "결과 보기", img: cfg.og, imageWidth:cfg.imageWidth, imageHeight:cfg.imageHeight,
             title: cfg.resultTitle(me, them, tail, nm),
             desc: betCard || cfg.resultDesc
-          }, () => copy(rurl, "카톡 공유를 못 열어 링크를 복사했어"));
+          }, () => copy(rurl, "카톡 공유를 못 열어 링크를 복사했어")); };
         }
         $("again").onclick = () => startNext(R.hist, bN, bId || "");
       } else {
@@ -371,7 +391,11 @@
     };
 
     /* 이름 칸은 여섯 게임이 똑같이 쓴다 */
-    $("nameIn").oninput = e => { state.name = e.target.value.trim(); saveName(state.name); };
+    $("nameIn").oninput = e => {
+      state.name = e.target.value.trim(); saveName(state.name);
+      if (state.name) $("nameIn").classList.remove("need-name");
+      if (state.ms !== null && !state.incoming) makeLink();   // 기록을 낸 뒤 이름을 적어도 링크에 실린다
+    };
 
     /* 내기 자리 — 이름 칸 바로 아래 */
     Bet.mount($("nameIn"), v => { state.bet = v; if (state.ms !== null && !state.incoming) makeLink(); });

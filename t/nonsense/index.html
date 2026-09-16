@@ -16,7 +16,7 @@
 <script src="../../assets/analytics.js?v=20260915-admin-ops"></script>
 <script src="../../assets/kakao-share.js?v=20260916-snake40"></script>
 <script src="../../assets/bet.js?v=20260912-domain"></script>
-<script src="../../assets/duel-engine.js?v=20260913-blank-tie"></script>
+<script src="../../assets/duel-engine.js?v=20260916-sender-name"></script>
 <script src="../../assets/nonsense-questions.js?v=20260914-decoys"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <style>
@@ -46,7 +46,7 @@
   @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-sender-name"></script>
 </head>
 <body class="game-page" data-game="nonsense">
 <div class="wrap">
@@ -58,8 +58,8 @@
     <div class="card hidden" id="lockedCard"><div class="lockrow"><span class="e">🔒</span><span><b id="lockName"></b>의 점수는 네가 다 푼 뒤 공개돼요.</span></div></div>
     <div class="card hidden" id="tallyCard"><div id="tallyText"></div></div>
 
-    <label class="q" for="nameIn">내 이름 (선택)</label>
-    <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+    <label class="q" for="nameIn">내 이름</label>
+    <input type="text" id="nameIn" placeholder="예: 민수" maxlength="10" autocomplete="nickname">
 
     <div class="rules" id="rules"><span><b>7</b>무작위 출제</span><span><b>7초</b>문제마다</span><span><b>+5초</b>틀리면 벌칙</span></div>
     <div class="start-card" id="startCard"><div class="bubble" aria-hidden="true">🤔</div><p>문제마다 7초예요. 틀리거나 시간을 넘기면 5초가 더해져요.</p><button class="bigbtn" id="startBtn">7문제 시작하기</button></div>

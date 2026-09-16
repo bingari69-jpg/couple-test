@@ -119,8 +119,9 @@
       const options = document.createElement('details');
       options.className = 'game-options';
       const summary = document.createElement('summary');
-      summary.textContent = '이름 추가하기 (선택)';
+      summary.textContent = '내 이름 정하기 (카톡에 보여요)';
       (label || name).before(options);
+      try { options.open = !localStorage.getItem('gh_name'); } catch (_) { options.open = true; }
       options.append(summary);
       const content = document.createElement('div'); content.className = 'game-options-content';
       options.append(content);

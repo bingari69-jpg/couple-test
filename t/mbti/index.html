@@ -111,7 +111,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-sender-name"></script>
 </head>
 <body class="game-page" data-game="mbti">
 <div class="wrap">
@@ -122,7 +122,7 @@
   <h1>내 MBTI,<br><b>몇 글자나 맞힐래?</b></h1>
   <p class="lead">4문항으로 내 네 글자를 뽑아. 상대는 나라면 뭘 고를지 찍어서 네 글자를 맞혀. 진짜 MBTI 아는 사람은 그것도 같이 비교.</p>
   <div id="prevNote" class="card hidden"><div id="prevText" style="font-size:14.5px;line-height:1.6"></div></div>
-  <label class="q" for="nameIn">내 이름 (선택)</label>
+  <label class="q" for="nameIn">내 이름</label>
   <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="12">
   <button class="btn btn-main" id="startBtn">4문항 답하기</button>
   <a class="homelink" href="../../">다른 놀이 보기 →</a>
@@ -165,7 +165,7 @@
   <h1><b id="openName"></b>의 MBTI,<br>몇 글자나 맞힐까?</h1>
   <p class="lead">문항마다 <b id="openName2"></b> 뭘 골랐을지 찍어. 찍는 순간 글자가 열려.</p>
   <div class="card"><div class="lockrow"><span class="e">🔒</span><span><b id="openName3"></b>의 네 글자가 잠겨 있어요.</span></div></div>
-  <label class="q" for="myNameIn">내 이름 (선택)</label>
+  <label class="q" for="myNameIn">내 이름</label>
   <input type="text" id="myNameIn" placeholder="비워도 돼요" maxlength="12">
   <button class="btn btn-main" id="guessStart">맞히기 시작</button>
 </section>

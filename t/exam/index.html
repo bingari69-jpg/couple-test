@@ -113,7 +113,7 @@
   @media (prefers-reduced-motion:reduce){*{animation:none!important;transition-duration:.01ms!important}}
 </style>
 <link rel="stylesheet" href="../../assets/game-ui.css?v=20260913-play">
-<script defer src="../../assets/game-ui.js?v=20260916-snake-dpad"></script>
+<script defer src="../../assets/game-ui.js?v=20260916-sender-name"></script>
 </head>
 <body class="game-page" data-game="exam">
 <div class="wrap">
@@ -128,7 +128,7 @@
   <input type="text" id="titleIn" placeholder="예: 중1 3과 단어" maxlength="20">
 
   <label class="q" for="nameIn">출제자 이름 <em>· 선택</em></label>
-  <input type="text" id="nameIn" placeholder="비워도 돼요" maxlength="10">
+  <input type="text" id="nameIn" placeholder="예: 민수" maxlength="10" autocomplete="nickname">
 
   <label class="q" for="pasteText">문제 붙여넣기 <em>· 1~30문제</em></label>
   <textarea id="pasteText" placeholder="apple 사과&#10;take off 벗다&#10;세종대왕 - 훈민정음   (한글끼리는 - 로 구분)&#10;banana, 바나나&#10;1. egg 달걀&#10;&#10;정답이 여러 개면 / 로 나눠요 — apple 사과/능금"></textarea>

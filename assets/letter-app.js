@@ -218,9 +218,18 @@
  function canUseMobileShare(){const ua=navigator.userAgent||'';return /Android|iPhone|iPad|iPod/i.test(ua)||(/Macintosh/i.test(ua)&&navigator.maxTouchPoints>1);}
  async function nativeShare(url){if(!canUseMobileShare()||typeof navigator.share!=='function')return false;try{await navigator.share({url});return true;}catch(e){return !!(e&&e.name==='AbortError');}}
  async function shareFallback(url){if(!await nativeShare(url))await copyLink();}
+ /* 받는 사람이 누가 보냈는지 알 수 있게 보내는 사람 이름을 꼭 받는다 — 카톡 카드에 "민수님께서 보내신 편지입니다" 로 나간다 */
+ function needSender(){
+   const from=$('sender').value.trim();
+   if(from)return false;
+   $('sender').focus();$('sender').scrollIntoView({block:'center',behavior:'smooth'});
+   toast('카톡에 보일 보내는 사람 이름을 먼저 적어줘');
+   return true;
+ }
  async function sendLetter(textOnly=false){
+   if(needSender())return;
    const buttons=[$('kakaoSend'),$('kakaoSendText')];buttons.forEach(b=>b.disabled=true);
-   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:'너에게 편지가 도착했어요',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
+   try{const url=madeUrl||urlFor(payload());await loadShare();await window.kakaoShare({url,textOnly,btn:'편지 열어보기',img:'https://noljago.co.kr/assets/share-cards/letter-'+template().id+'.png?v=20260913-studio',title:$('sender').value.trim()+'님께서 보내신 편지입니다',desc:template().name+'에 담은 마음. 봉투를 눌러 읽어보세요.'},()=>shareFallback(url));}
    catch(e){await copyLink();}finally{buttons.forEach(b=>b.disabled=false);}
  }
  $('kakaoSend').onclick=()=>sendLetter();
