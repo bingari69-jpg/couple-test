@@ -22,3 +22,20 @@
 .ad-switch{flex:0 0 auto;white-space:nowrap}
 .ad-card.off{opacity:.72}
 .ad-card.off h3{color:#9a8f86}
+/* 콘텐츠 순서 번호와 노출 위치 배지 (2026-09-18) */
+.game-order{display:flex;align-items:center;gap:6px}
+.game-no{width:52px;padding:6px 4px;text-align:center;font-weight:800;font-size:15px;border:1px solid #e6ddd3;border-radius:10px;background:#fffdf9;-moz-appearance:textfield}
+.game-no::-webkit-outer-spin-button,.game-no::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.order-arrows{display:flex;flex-direction:column;gap:2px}
+.where-pill{flex:0 0 auto;padding:4px 9px;border-radius:999px;font-size:12px;font-weight:700;background:#f1ece5;color:#7b6f64}
+.where-pill.home{background:#e8f3ea;color:#3f7a50}
+.where-pill.side{background:#eef0fb;color:#4f5a96}
+.where-pill.link{background:#fdeee2;color:#b06a2c}
+.where-pill.off{background:#f1ece5;color:#8b7f74}
+.where-pill.none{background:#fbe3e0;color:#b1453a}
+@media (max-width:720px){.where-pill{display:none}}
+/* 콘텐츠 분류 탭 (2026-09-18) */
+.content-tabs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 10px}
+.content-tab{padding:8px 14px;border-radius:999px;border:1px solid #e6ddd3;background:#fffdf9;font-weight:700;font-size:14px;color:#7b6f64;cursor:pointer}
+.content-tab.active{background:#2f2a26;border-color:#2f2a26;color:#fff}
+.content-tab-note{margin:0 0 12px;font-size:13px}

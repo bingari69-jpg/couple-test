@@ -171,7 +171,8 @@ window.HOME_ITEMS=LOCAL_HOME_ITEMS;
 const slugKey=item=>String(item.path||'').replace(/^t\//,'').replace(/\/$/,'');
 let popularRank=new Map();
 function orderByPopularity(items){
-  if(window.APP_PUBLISHED_CONFIG?.site?.catalogOrder==='manual')return items.slice().sort((a,b)=>(Number(!!b.featured)-Number(!!a.featured))||((a.adminOrder??999)-(b.adminOrder??999)));
+  /* 관리자가 매긴 번호 순서 그대로. 예전에는 추천(★)을 먼저 올려서 관리 화면의 번호와 홈 순서가 달랐다. */
+  if(window.APP_PUBLISHED_CONFIG?.site?.catalogOrder==='manual')return items.slice().sort((a,b)=>(a.adminOrder??999)-(b.adminOrder??999));
   if(!popularRank.size)return items.map(it=>it.popularRank?{...it,popularRank:0}:it);
   const ranked=[],rest=[];
   items.forEach(it=>{const r=popularRank.get(slugKey(it));if(r)ranked.push([r,it]);else rest.push(it.popularRank?{...it,popularRank:0}:it);});

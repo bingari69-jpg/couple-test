@@ -85,6 +85,38 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
    d.getElementById('saveDraftBtn').click();await pause();
    assert.equal(writes.length,1,'없는 주소는 저장을 막아야 함');
    assert.ok(/나와 너의 타로/.test(d.getElementById('notice').textContent)&&d.getElementById('notice').textContent.includes('t/nowhere/'),'문제 항목의 이름과 주소를 알려 줘야 함');
+   /* 콘텐츠 관리: 위에서 아래로 1번부터 번호가 붙고, 번호를 고쳐 넣으면 그 자리로 옮겨진다 */
+   pathBox.value='t/tarot/';pathBox.dispatchEvent(new w.Event('input',{bubbles:true}));
+   d.getElementById('closeGameEditor').click();
+   const nos=()=>[...d.querySelectorAll('#gameList .game-no')].map(i=>i.value);
+   const titles=()=>[...d.querySelectorAll('#gameList .game-row-main strong')].map(e=>e.textContent.replace('★ ',''));
+   assert.deepEqual(nos(),['1','2'],'위에서 아래로 1번부터');
+   const before=titles();
+   const second=[...d.querySelectorAll('#gameList .game-no')][1];
+   second.value='1';second.dispatchEvent(new w.Event('change',{bubbles:true}));
+   assert.deepEqual(titles(),[before[1],before[0]],'2번을 1로 고치면 맨 위로 올라와야 함');
+   assert.deepEqual(nos(),['1','2'],'옮긴 뒤에도 번호는 1부터 다시 매긴다');
+   d.getElementById('saveDraftBtn').click();await pause();
+   assert.deepEqual(writes.at(-1).config.games.slice().sort((a,b)=>a.sortOrder-b.sortOrder).map(g=>g.title),[before[1],before[0]],'저장에도 새 순서가 실려야 함');
+   assert.deepEqual(writes.at(-1).config.games.map(g=>g.sortOrder).sort((a,b)=>a-b),[1,2],'번호는 1부터 빈틈없이');
+   const first=[...d.querySelectorAll('#gameList .game-no')][0];
+   first.value='99';first.dispatchEvent(new w.Event('change',{bubbles:true}));
+   assert.deepEqual(titles(),[before[0],before[1]],'목록 수보다 큰 번호는 맨 아래로');
+   /* 어디에 보이는지 배지 — 관리 목록에만 있고 홈에는 없는 콘텐츠를 가려낸다 */
+   const pills=[...d.querySelectorAll('#gameList .where-pill')].map(e=>e.textContent);
+   assert.ok(pills.includes('둘이놀기'),'놀기 목록에 있는 콘텐츠는 둘이놀기');
+   assert.ok(pills.includes('링크로만'),'홈 카드에 없는 콘텐츠는 링크로만');
+   /* 분류 탭: 둘이놀기·링크로만으로 나눠 보고, 번호는 그 분류 안에서 1번부터 */
+   const tab=name=>[...d.querySelectorAll('#contentTabs .content-tab')].find(b=>b.textContent.startsWith(name));
+   assert.ok(tab('전체').textContent.endsWith('2'),'탭에 개수가 붙어야 함');
+   tab('링크로만').click();
+   assert.equal(d.querySelectorAll('#gameList .game-row').length,1,'링크로만 탭');
+   assert.deepEqual(nos(),['1'],'분류 안에서는 1번부터');
+   assert.deepEqual(titles(),['나와 너의 타로']);
+   tab('둘이놀기').click();
+   assert.deepEqual(titles(),['10초'],'둘이놀기 탭에는 놀기 목록 콘텐츠만');
+   tab('전체').click();
+   console.log('콘텐츠 순서 검사 통과 — 1번부터 번호 표시, 번호를 고치면 그 자리로 이동·재번호, 분류 탭(둘이놀기·혼자놀기·편지·심리·링크로만)과 노출 위치 배지');
    console.log('관리 저장 검사 통과 — 홈 카드 목록에 없어도 실제 페이지면 저장·게시 가능, 없는 주소는 이름과 함께 막음');
   }finally{w.close();}
  }

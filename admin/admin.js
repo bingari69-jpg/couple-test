@@ -204,29 +204,97 @@
     renderGames(); renderMenus(); renderDesign(); renderAds(); renderVersions(); renderLetters(); renderPreview();
   }
 
+  /* 홈에서 쓰는 분류를 그대로 쓴다 — 관리 화면과 실제 화면이 어긋나지 않게.
+       둘이놀기: 놀기 목록 전체 · 혼자놀기: 그중 ?solo=1 이 있는 것(SOLO_GAMES·soloFree)
+       편지·심리: 놀기 목록에서 빼고 각자 메뉴로 보내는 것(playHide)
+       링크로만: 페이지는 있는데 어느 목록에도 안 걸린 것 · 페이지 없음: 주소가 잘못된 것 */
+  const TAB_LABEL={all:'전체',duel:'둘이놀기',solo:'혼자놀기',letter:'편지',mind:'심리',link:'링크로만',none:'페이지 없음'};
+  let contentTab='all';
+  function slugOfPath(path){return String(path||'').replace(/^t\//,'').replace(/\/$/,'');}
+  function categoriesOf(game){
+    const item=(window.HOME_ITEMS||[]).find(x=>x.path===game.path);
+    if(!item)return (window.APP_PAGES||[]).includes(game.path)?['link']:['none'];
+    if(item.playHide==='mind')return ['mind'];
+    if(item.playHide==='letter')return ['letter'];
+    const list=['duel'];
+    if((window.SOLO_GAMES||{})[slugOfPath(item.path)]||item.soloFree)list.push('solo');
+    return list;
+  }
+  function whereShown(game){
+    const cats=categoriesOf(game);
+    if(cats[0]==='none')return {text:'페이지 없음',cls:'none'};
+    if(cats[0]==='link')return {text:'링크로만',cls:'link'};
+    if(game.visibility==='maintenance')return {text:'점검 안내',cls:'none'};
+    if(game.visibility!=='listed')return {text:'숨김',cls:'off'};
+    return {text:cats.map(key=>TAB_LABEL[key]).join(' · '),cls:cats[0]==='duel'?'home':'side'};
+  }
+  function orderedGames(){return config.games.slice().sort((a,b)=>a.sortOrder-b.sortOrder);}
+  /* 지금 보고 있는 분류의 순서 — 번호는 이 목록 기준으로 1번부터 붙는다 */
+  function tabGames(){const all=orderedGames();return contentTab==='all'?all:all.filter(g=>categoriesOf(g).includes(contentTab));}
+  function renderContentTabs(){
+    const bar=$('contentTabs');if(!bar)return;
+    const all=orderedGames();
+    bar.replaceChildren();
+    ['all','duel','solo','letter','mind','link','none'].forEach(key=>{
+      const count=key==='all'?all.length:all.filter(g=>categoriesOf(g).includes(key)).length;
+      if(!count&&key!=='all')return;
+      const b=document.createElement('button');b.type='button';b.dataset.tab=key;
+      b.className='content-tab'+(contentTab===key?' active':'');
+      b.setAttribute('aria-pressed',String(contentTab===key));
+      b.textContent=TAB_LABEL[key]+' '+count;
+      b.onclick=()=>{contentTab=key;renderGames();};
+      bar.append(b);
+    });
+  }
   function renderGames() {
     const query = ($('gameSearch').value || '').trim().toLowerCase();
     const list = $('gameList'); list.replaceChildren();
-    config.games.slice().sort((a,b) => a.sortOrder - b.sortOrder).forEach(game => {
+    renderContentTabs();
+    const scope = tabGames(), total = scope.length;
+    const note=$('contentTabNote');
+    if(note)note.textContent=contentTab==='all'?'번호는 전체 순서입니다. 번호를 고쳐 넣으면 그 자리로 옮겨집니다.'
+      :contentTab==='link'?'페이지는 있지만 홈·심리·편지 어느 목록에도 안 걸린 콘텐츠입니다. 주소로 들어가야만 보입니다.'
+      :contentTab==='none'?'연결 주소에 해당하는 페이지가 없습니다. 주소를 고치거나 숨김으로 두세요.'
+      :'번호는 «'+TAB_LABEL[contentTab]+'» 안에서의 순서입니다. 번호를 고쳐 넣으면 그 자리로 옮겨집니다.';
+    scope.forEach((game, position) => {
       const index = config.games.indexOf(game);
+      const where = whereShown(game);
       if($('contentFilter').value && game.category!==$('contentFilter').value)return;
       if($('visibilityFilter').value && game.visibility!==$('visibilityFilter').value)return;
       if (query && !(game.title + ' ' + game.slug + ' ' + game.summary).toLowerCase().includes(query)) return;
       const row = document.createElement('article'); row.className = 'game-row';
       const order = document.createElement('div'); order.className = 'game-order';
-      [['↑',-1],['↓',1]].forEach(([label, direction]) => { const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>moveGame(index,direction);order.append(b); });
+      const no = document.createElement('input'); no.className='game-no';no.type='number';no.min='1';no.max=String(total);no.value=String(position+1);
+      no.setAttribute('aria-label','순서 번호 (1부터 '+total+'까지)');
+      no.onchange=()=>setOrder(index,Number(no.value));
+      no.onkeydown=event=>{if(event.key==='Enter'){event.preventDefault();no.blur();}};
+      const arrows = document.createElement('div'); arrows.className='order-arrows';
+      [['↑',-1],['↓',1]].forEach(([label, direction]) => { const b=document.createElement('button');b.type='button';b.textContent=label;b.onclick=()=>moveGame(index,direction);arrows.append(b); });
+      order.append(no,arrows);
       const main = document.createElement('div'); main.className = 'game-row-main'; main.innerHTML = '<strong></strong><small></small>'; main.querySelector('strong').textContent = (game.featured?'★ ':'')+game.title; main.querySelector('small').textContent = game.summary || game.path;
+      const place = document.createElement('span'); place.className='where-pill '+where.cls; place.textContent=where.text;
       const status = document.createElement('span'); status.className = 'status-pill ' + game.visibility; status.textContent = ({listed:'공개',hidden:'숨김',maintenance:'점검'})[game.visibility] || '공개';
       const edit = document.createElement('button'); edit.className='edit-game';edit.type='button';edit.textContent='수정';edit.onclick=()=>openGame(index);
-      row.append(order,main,status,edit); list.append(row);
+      row.append(order,main,place,status,edit); list.append(row);
     });
+    if(!list.children.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='이 조건에 해당하는 콘텐츠가 없습니다.';list.append(empty);}
+  }
+  /* 번호를 고치면 지금 보고 있는 분류 안에서 그 자리로 옮기고, 전체 번호를 1번부터 다시 매긴다 */
+  function setOrder(index, target){
+    const game=config.games[index],ordered=orderedGames(),scope=tabGames();
+    const from=scope.indexOf(game);
+    const to=Math.min(Math.max(1,Math.round(target)||1),scope.length)-1;
+    if(from<0||from===to)return renderGames();
+    const rest=ordered.filter(g=>g!==game),others=scope.filter(g=>g!==game);
+    const neighbour=others[to];
+    const at=neighbour?rest.indexOf(neighbour)+(to>from?1:0):rest.length;
+    rest.splice(at,0,game);
+    rest.forEach((g,i)=>{g.sortOrder=i+1;});
+    changed(); renderGames();
   }
   function moveGame(index, direction) {
-    const ordered = config.games.slice().sort((a,b)=>a.sortOrder-b.sortOrder);
-    const position = ordered.indexOf(config.games[index]); const swap = ordered[position + direction];
-    if (!swap) return;
-    const currentOrder = config.games[index].sortOrder; config.games[index].sortOrder = swap.sortOrder; swap.sortOrder = currentOrder;
-    changed(); renderGames();
+    const position = tabGames().indexOf(config.games[index]);
+    setOrder(index, position + direction + 1);
   }
   function openGame(index) {
     editingIndex = index; const game = config.games[index];

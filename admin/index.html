@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex,nofollow">
   <title>같이놀자 관리센터</title>
-  <link rel="stylesheet" href="admin.css?v=20260918-ad-switch">
+  <link rel="stylesheet" href="admin.css?v=20260918-order">
 </head>
 <body>
   <section class="login-view" id="loginView">
@@ -70,7 +70,7 @@
 
       <section class="view" data-panel="games">
         <div class="panel-head page-tools"><div><p class="eyebrow">CONTENTS</p><h2>콘텐츠 공개와 순서</h2><p class="muted">숨기기는 목록에서만 제외하고, 점검은 기존 링크에도 안내를 표시합니다.</p></div><div class="tool-row"><input id="gameSearch" type="search" placeholder="게임 검색"><button class="button secondary" id="addGameBtn">새 콘텐츠 안내</button></div></div>
-        <div class="content-filters"><label>종류<select id="contentFilter"><option value="">전체 콘텐츠</option><option>게임</option><option>심리테스트</option><option>운세</option><option>편지</option><option>단체방</option></select></label><label>공개 상태<select id="visibilityFilter"><option value="">전체 상태</option><option value="listed">공개</option><option value="hidden">숨김</option><option value="maintenance">점검</option></select></label></div>
+        <div class="content-tabs" id="contentTabs" role="group" aria-label="콘텐츠 분류"></div><p class="muted content-tab-note" id="contentTabNote"></p><div class="content-filters"><label>종류<select id="contentFilter"><option value="">전체 콘텐츠</option><option>게임</option><option>심리테스트</option><option>운세</option><option>편지</option><option>단체방</option></select></label><label>공개 상태<select id="visibilityFilter"><option value="">전체 상태</option><option value="listed">공개</option><option value="hidden">숨김</option><option value="maintenance">점검</option></select></label></div>
         <details class="panel letter-settings"><summary>편지지·글꼴·스티커 관리</summary><p class="muted">숨긴 편지지는 새 편지의 선택 목록에서만 제외됩니다. 이미 보낸 편지와 저장한 초안은 유지됩니다.</p><div id="letterPapers" class="paper-settings"></div><h3>사용할 글꼴</h3><div id="letterFonts" class="option-grid"></div><h3>사용할 스티커</h3><div id="letterStickers" class="option-grid"></div></details>
         <div class="games-layout"><div class="game-list" id="gameList"></div><form class="editor-card" id="gameEditor" hidden>
           <div class="editor-title"><div><p class="eyebrow">GAME DETAIL</p><h2 id="gameEditorTitle">게임 수정</h2></div><button type="button" class="icon-close" id="closeGameEditor" aria-label="닫기">×</button></div>
@@ -134,12 +134,12 @@
   <dialog id="publishDialog"><form method="dialog" id="publishForm"><button class="dialog-close" id="closePublishDialog" type="button" aria-label="닫기">×</button><p class="eyebrow">PUBLISH</p><h2>변경 내용을 게시할까요?</h2><p>게시하는 순간 새로 방문하는 사용자에게 적용됩니다.</p><ul id="publishChanges" class="publish-changes"></ul><p id="publishError" role="alert"></p><label>게시 메모<input id="publishNote" maxlength="200" placeholder="예: 가을 배너와 게임 순서 변경"></label><div class="dialog-actions"><button class="button secondary" id="cancelPublish" type="button">취소</button><button class="button primary" id="confirmPublish" value="default">게시하기</button></div></form></dialog>
 
   <script src="../assets/supabase-data.js?v=20260913-popular"></script>
-  <script src="../assets/home-catalog.js?v=20260916-snake-dpad"></script>
+  <script src="../assets/home-catalog.js?v=20260918-order"></script>
   <script src="../assets/guide-data.js?v=20260916-snake-dpad"></script>
   <script src="../assets/letter-templates.js?v=20260914-chuseok"></script>
   <script src="../assets/letter-design.js?v=20260914-chuseok"></script>
   <script src="app-pages.js?v=20260918"></script>
   <script src="admin-api.js?v=20260918-admin-ops"></script>
-  <script src="admin.js?v=20260918-ad-switch"></script>
+  <script src="admin.js?v=20260918-order"></script>
 </body>
 </html>

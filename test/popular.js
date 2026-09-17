@@ -70,9 +70,11 @@ const rowsFor = rankBySlug => ['ten', 'tap', 'num25', 'pairs', 'mole', 'rps', 'n
   const manual=loadHome(rowsFor({mole:1,ten:2}));await tick();
   const managed={site:{catalogOrder:'manual'},games:[{slug:'ten',title:'열 초',sortOrder:1,featured:false},{slug:'mole',title:'두더지',sortOrder:2,featured:true}]};
   manual.APP_PUBLISHED_CONFIG=managed;manual.dispatchEvent(new manual.CustomEvent('app-config-ready',{detail:managed}));await tick();
-  assert.deepEqual(titles(manual).slice(0,2),['두더지','열 초'],'관리자 지정 모드에서 추천 우선 후 지정 순서');
-  managed.games[1].featured=false;manual.dispatchEvent(new manual.CustomEvent('app-config-ready',{detail:managed}));await tick();
-  assert.deepEqual(titles(manual).slice(0,2),['열 초','두더지'],'추천 해제 시 인기 순위보다 지정 순서 우선');manual.close();
+  /* 관리자가 매긴 번호 그대로 — 추천(★)이라고 앞으로 끌어올리지 않는다.
+     관리 화면 목록의 번호와 홈 순서가 어긋나면 번호를 고칠 방법이 없다. */
+  assert.deepEqual(titles(manual).slice(0,2),['열 초','두더지'],'관리자 지정 모드는 번호 순서 그대로(추천이어도 끌어올리지 않음)');
+  managed.games[1].sortOrder=0;manual.dispatchEvent(new manual.CustomEvent('app-config-ready',{detail:managed}));await tick();
+  assert.deepEqual(titles(manual).slice(0,2),['두더지','열 초'],'번호를 앞으로 바꾸면 홈에서도 앞으로');manual.close();
 
   /* 잘못된 값은 무시한다 */
   const bad = loadHome(rowsFor({ mole: 0, pairs: 9, ten: -1 }));
