@@ -202,17 +202,32 @@ function appendUnknownLocal(merged,rows){
   merged.unshift(...unknown);
 }
 
-// Translate older published settings to the new series while preserving visibility and order.
-// Retired standalone MBTI/seat entries must not be reintroduced by a cached server catalogue.
-const PSY_SERIES_ALIASES={"personality": "know-me"};
+/* 같은 콘텐츠가 두 줄로 들어오면 앞의 것만 쓴다.
+   예전에는 여기서 mbti·seat 를 무조건 버리고 personality 를 know-me 로 바꿨는데,
+   그러면 관리 화면에서 «공개» 로 바꿔도 홈에 나오지 않았다. 이제 게시본에 적힌 대로 따른다
+   — 안 보이게 하려면 관리 화면에서 «목록에서 숨김» 으로 두면 된다. */
 function migratePsychologyRows(rows){
- const explicit=new Set(rows.filter(row=>row&&!PSY_SERIES_ALIASES[row.slug]).map(row=>row.slug));
  const seen=new Set();
- return rows.filter(row=>row&&!['mbti','seat'].includes(row.slug)&&!(PSY_SERIES_ALIASES[row.slug]&&explicit.has(PSY_SERIES_ALIASES[row.slug]))).map(row=>{
-  const slug=PSY_SERIES_ALIASES[row.slug];if(!slug)return row;
-  const local=LOCAL_HOME_ITEMS.find(item=>item.path==='t/'+slug+'/');
-  return {...row,slug,path:local.path,title:local.title,summary:local.summary,thumbnailUrl:''};
- }).filter(row=>{if(seen.has(row.slug))return false;seen.add(row.slug);return true;});
+ return rows.filter(row=>{if(!row||!row.slug||seen.has(row.slug))return false;seen.add(row.slug);return true;});
+}
+/* 코드 카드 목록(CARDS)에 없는 콘텐츠의 카드를 게시본만 보고 만든다.
+   분류는 관리 화면의 «카테고리» 를 따른다: 심리테스트·운세 → 심리 메뉴, 편지 → 편지 화면, 나머지 → 놀기 목록. */
+const SERVER_CARD_COLORS=['#e0eafa','#fdeee2','#e9e3f9','#e6f2ea','#fbe1df','#f4ead8'];
+function cardFromRow(row){
+ const key=String(row.slug||row.path||'');
+ let hash=7;for(let i=0;i<key.length;i++)hash=(hash*31+key.charCodeAt(i))>>>0;
+ const summary=row.summary||'';
+ const mind=row.category==='심리테스트'||row.category==='운세';
+ return {
+  path:row.path,title:row.title||key,desc:summary,summary,
+  rel:(row.relationships||[])[0]||'친구',
+  relationships:Array.isArray(row.relationships)&&row.relationships.length?row.relationships:['친구'],
+  kind:row.category==='운세'?'운세':mind?'심리':row.category==='편지'?'편지형':'대결',
+  art:'atlas',index:hash%18,color:SERVER_CARD_COLORS[hash%SERVER_CARD_COLORS.length],
+  thumbnailUrl:row.thumbnailUrl||'',
+  playHide:mind?'mind':row.category==='편지'?'letter':undefined,
+  fromServer:true
+ };
 }
 let publishedCatalogApplied=false;
 function applyPublishedCatalog(config){
@@ -226,7 +241,8 @@ function applyPublishedCatalog(config){
     .sort((a,b)=>(Number(a.sortOrder)||0)-(Number(b.sortOrder)||0))
     .map(row=>{
       const local=localBySlug.get(row.slug);
-      if(!local)return null;
+      /* 코드에 카드가 없어도 페이지만 있으면 게시본대로 내보낸다 */
+      if(!local)return row.path?{...cardFromRow(row),featured:!!row.featured,adminOrder:Number(row.sortOrder)||0}:null;
       return {
         ...local,
         path:row.path||local.path,
