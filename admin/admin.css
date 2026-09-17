@@ -16,3 +16,9 @@
 .ads-published-state{margin:10px 0 8px;font-size:13px;font-weight:700;color:#5b8a5b}
 .ads-published-state.on{color:#c2543f}
 #adsOffNow{width:100%}
+/* 광고 자리 켜기 스위치를 카드 맨 위로 (2026-09-18) */
+.ad-card-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.ad-card-head h3{flex:1 1 220px;margin:0}
+.ad-switch{flex:0 0 auto;white-space:nowrap}
+.ad-card.off{opacity:.72}
+.ad-card.off h3{color:#9a8f86}

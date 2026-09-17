@@ -32,6 +32,17 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
   assert.equal(writes.at(-1).action,'publish');assert.equal(writes.at(-1).config.ads.enabled,false,'광고 끄기 버튼이 광고 꺼진 설정을 게시해야 함');
   assert.equal(state.published.ads.enabled,false);
   assert.match(d.getElementById('adsPublishedState').textContent,/광고 꺼짐/,'지금 공개 중인 광고 상태를 보여줘야 함');
+  /* 전체 광고만 켜고 자리를 안 켜면 광고가 안 나온다 — 상태 줄이 그 이유를 말해 줘야 한다 */
+  d.getElementById('addAdBtn').click();
+  d.getElementById('adsEnabled').checked=true;d.getElementById('adsEnabled').dispatchEvent(new w.Event('change',{bubbles:true}));
+  d.getElementById('publishBtn').click();d.getElementById('publishForm').dispatchEvent(new w.Event('submit',{cancelable:true}));await pause();await pause();
+  assert.match(d.getElementById('adsPublishedState').textContent,/이 자리 광고 켜기/,'자리가 꺼져 있으면 그 이유를 말해 줘야 함');
+  assert.match(d.querySelector('.ad-card h3').textContent,/[꺼짐]/,'꺼진 자리는 제목에 표시');
+  /* 자리를 켜면 "보이는 중" 으로 바뀐다 */
+  const slotSwitch=d.querySelector('.ad-card [data-field="enabled"]');
+  slotSwitch.checked=true;slotSwitch.dispatchEvent(new w.Event('change',{bubbles:true}));
+  d.getElementById('publishBtn').click();d.getElementById('publishForm').dispatchEvent(new w.Event('submit',{cancelable:true}));await pause();await pause();
+  assert.match(d.getElementById('adsPublishedState').textContent,/보이는 중 · 자리 1개/,'자리를 켜면 보이는 중');
   /* 다른 기기에서 먼저 저장해 revision 이 어긋나도, 내 변경을 잃지 않고 한 번 다시 게시한다 */
   state.revision++;
   d.getElementById('adsEnabled').checked=true;d.getElementById('adsEnabled').dispatchEvent(new w.Event('change',{bubbles:true}));
