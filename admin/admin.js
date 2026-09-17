@@ -251,6 +251,13 @@
     const list = $('gameList'); list.replaceChildren();
     renderContentTabs();
     const scope = tabGames(), total = scope.length;
+    const bulk=$('hideTabAll');
+    if(bulk){
+      const targets=scope.filter(g=>g.visibility==='listed');
+      bulk.hidden=!(contentTab==='link'||contentTab==='none')||!targets.length;
+      bulk.textContent='이 '+targets.length+'개 전부 숨김으로';
+      bulk.onclick=()=>hideTabAll();
+    }
     const note=$('contentTabNote');
     if(note)note.textContent=contentTab==='all'?'번호는 전체 순서입니다. 번호를 고쳐 넣으면 그 자리로 옮겨집니다.'
       :contentTab==='link'?'페이지는 있지만 홈·심리·편지 어느 목록에도 안 걸린 콘텐츠입니다. 주소로 들어가야만 보입니다.'
@@ -278,6 +285,15 @@
       row.append(order,main,place,status,edit); list.append(row);
     });
     if(!list.children.length){const empty=document.createElement('p');empty.className='empty';empty.textContent='이 조건에 해당하는 콘텐츠가 없습니다.';list.append(empty);}
+  }
+  /* 지금 탭에 있는 공개 콘텐츠를 한 번에 숨김으로. 게시는 따로 눌러야 반영된다. */
+  function hideTabAll(){
+    const targets=tabGames().filter(g=>g.visibility==='listed');
+    if(!targets.length)return;
+    if(!confirm(targets.length+'개를 모두 «목록에서 숨김» 으로 바꿀까요? 게시하기를 눌러야 실제 화면에 반영됩니다.'))return;
+    targets.forEach(g=>{g.visibility='hidden';});
+    changed(); renderGames();
+    notice(targets.length+'개를 숨김으로 바꿨습니다. 게시하기를 눌러야 반영됩니다.');
   }
   /* 번호를 고치면 지금 보고 있는 분류 안에서 그 자리로 옮기고, 전체 번호를 1번부터 다시 매긴다 */
   function setOrder(index, target){

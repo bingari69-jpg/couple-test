@@ -1,6 +1,7 @@
 const fs=require('node:fs'),assert=require('node:assert/strict');
 const {JSDOM}=require('jsdom');
 const read=p=>fs.readFileSync(p,'utf8'),clone=x=>JSON.parse(JSON.stringify(x));
+const config_of=(w,slug)=>{const row=[...w.document.querySelectorAll('#gameList .game-row')].find(r=>r.textContent.includes('타로'));return {visibility:row?({'공개':'listed','숨김':'hidden','점검':'maintenance'})[row.querySelector('.status-pill').textContent]:null};};
 const pause=()=>new Promise(r=>setTimeout(r,30));
 (async()=>{
  const dom=new JSDOM(read('admin/index.html'),{url:'https://noljago.co.kr/admin/',runScripts:'outside-only',pretendToBeVisual:true});
@@ -113,6 +114,15 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
    assert.equal(d.querySelectorAll('#gameList .game-row').length,1,'링크로만 탭');
    assert.deepEqual(nos(),['1'],'분류 안에서는 1번부터');
    assert.deepEqual(titles(),['나와 너의 타로']);
+   /* 링크로만 탭에서 한 번에 숨김 — 하나씩 고치지 않아도 되게 */
+   tab('링크로만').click();
+   assert.equal(d.getElementById('hideTabAll').hidden,false,'링크로만 탭에는 전부 숨김 버튼');
+   assert.match(d.getElementById('hideTabAll').textContent,/1개 전부 숨김/);
+   d.getElementById('hideTabAll').click();
+   assert.equal(config_of(w,'tarot').visibility,'hidden','전부 숨김이 실제로 숨김으로 바꿔야 함');
+   assert.equal(d.getElementById('hideTabAll').hidden,true,'더 숨길 게 없으면 버튼도 사라진다');
+   d.getElementById('saveDraftBtn').click();await pause();
+   assert.equal(writes.at(-1).config.games.find(g=>g.slug==='tarot').visibility,'hidden','저장에도 실려야 함');
    tab('둘이놀기').click();
    assert.deepEqual(titles(),['10초'],'둘이놀기 탭에는 놀기 목록 콘텐츠만');
    tab('전체').click();
