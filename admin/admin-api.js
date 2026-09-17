@@ -45,7 +45,7 @@
     const text = await response.text();
     let data = null;
     try { data = text ? JSON.parse(text) : null; } catch (_) { data = text; }
-    if (!response.ok) { const error=new Error(messageFrom(data || response.status));error.code=data&&data.code;error.status=response.status;throw error; }
+    if (!response.ok) { const source=data || response.status;const error=new Error(messageFrom(source));error.code=data&&data.code;error.status=response.status;error.conflict=/CONFIG_CONFLICT/i.test(JSON.stringify(source));throw error; }
     return data;
   }
   async function ensureSession(session) {
@@ -104,6 +104,7 @@
     signIn,
     signOut,
     getState: async () => {try{return await rpc('admin_get_app_state_v2');}catch(e){if(e.code!=='PGRST202')throw e;return rpc('admin_get_app_state');}},
+    isConflict: error => !!(error && error.conflict) || /CONFIG_CONFLICT/i.test(String(error && (error.message || error))),
     write: (action, revision, config, note, version) => {
       if (!Number.isSafeInteger(revision)) return Promise.reject(new Error('서버 개선 SQL을 먼저 적용해 주세요. 초안은 이 기기에 보관되며 내려받을 수 있습니다.'));
       return rpc('admin_write_app_config', {p_action:action,p_expected_revision:revision,p_config:config||null,p_note:note||null,p_version:version||null});

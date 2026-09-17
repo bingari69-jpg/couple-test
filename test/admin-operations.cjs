@@ -9,8 +9,8 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
  w.HOME_ITEMS=[{path:'t/ten/',title:'10초',kind:'대결',relationships:['친구']}];w.GATCHI_GUIDES={};
  w.eval(read('assets/letter-templates.js'));w.eval(read('assets/letter-design.js'));
  let state={revision:0,admin:{name:'운영자',role:'owner'},draft:null,published:null,versions:[]},writes=[],failStats=false,release=null,slow=false;
- w.AdminAPI={hasSession:()=>true,messageFrom:e=>e.message,getState:async()=>clone(state),write:async(action,revision,config)=>{
-   if(revision!==state.revision)throw Error('다른 기기 변경');if(slow)await new Promise(r=>release=r);
+ w.AdminAPI={hasSession:()=>true,messageFrom:e=>e.message,isConflict:e=>!!(e&&e.conflict),getState:async()=>clone(state),write:async(action,revision,config)=>{
+   if(revision!==state.revision){const e=Error('다른 기기 변경');e.conflict=true;throw e;}if(slow)await new Promise(r=>release=r);
    writes.push({action,config:clone(config)});state.revision++;state.draft=clone(config);if(action==='publish')state.published=clone(config);return clone(state);
  },getStatsRange:async(from,to)=>{if(failStats)throw Error('연결 실패');return {from,to,visitors:7,totals:{game_started:2,game_completed:3},games:[{slug:'ten',visits:7,starts:2,completes:3,shares:1,responses:0}]};},getInquiries:async()=>[{id:'11111111-1111-4111-8111-111111111111',status:'new',created_at:'2026-09-14',message:'<img src=x onerror=alert(1)>',name:'문의',email:'test@example.com'}]};
  try{
@@ -25,8 +25,23 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
   d.getElementById('removeGameBtn').click();d.getElementById('saveDraftBtn').click();await pause();assert.equal(writes.at(-1).config.games[0].visibility,'hidden');assert.equal(writes.at(-1).config.games.length,1);
   failStats=true;d.getElementById('statsApply').click();await pause();assert.match(d.getElementById('statsStatus').textContent,/마지막/);assert.equal(d.querySelector('.metric strong').textContent,'7','실패 시 0으로 덮어쓰지 않음');
   d.querySelector('[data-view="inquiries"]').click();await pause();assert.equal(d.querySelector('.inquiry-message img'),null);assert.match(d.querySelector('.inquiry-message').textContent,/<img/);
+  /* 광고 전체 끄고 바로 게시 — 한 번 눌러 게시까지 끝나고, 공개 중 상태가 '꺼짐'으로 바뀐다 */
+  d.querySelector('[data-view="ads"]').click();
+  d.getElementById('adsEnabled').checked=true;d.getElementById('adsEnabled').dispatchEvent(new w.Event('change',{bubbles:true}));
+  d.getElementById('adsOffNow').click();await pause();await pause();
+  assert.equal(writes.at(-1).action,'publish');assert.equal(writes.at(-1).config.ads.enabled,false,'광고 끄기 버튼이 광고 꺼진 설정을 게시해야 함');
+  assert.equal(state.published.ads.enabled,false);
+  assert.match(d.getElementById('adsPublishedState').textContent,/광고 꺼짐/,'지금 공개 중인 광고 상태를 보여줘야 함');
+  /* 다른 기기에서 먼저 저장해 revision 이 어긋나도, 내 변경을 잃지 않고 한 번 다시 게시한다 */
+  state.revision++;
+  d.getElementById('adsEnabled').checked=true;d.getElementById('adsEnabled').dispatchEvent(new w.Event('change',{bubbles:true}));
+  const before=writes.length;
+  d.getElementById('publishBtn').click();d.getElementById('publishForm').dispatchEvent(new w.Event('submit',{cancelable:true}));await pause();await pause();
+  assert.equal(writes.length,before+1,'충돌 뒤 자동으로 한 번 더 게시해야 함');
+  assert.equal(writes.at(-1).config.ads.enabled,true,'다시 시도할 때 내 변경이 그대로 실려야 함');
+  assert.match(d.getElementById('adsPublishedState').textContent,/광고 보이는 중|자리/);
   d.querySelector('[data-view="design"]').click();await new Promise(r=>setTimeout(r,700));assert.match(d.querySelector('#designPreview iframe').src,/admin_preview=1/);
-  console.log('관리 운영 UI 통과 — 편집 누락 방지, 초안/게시 상태, 저장 도중 수정, 숨김 유지, 실패 통계 보존, 문의 안전 출력, 실제 미리보기');
+  console.log('관리 운영 UI 통과 — 편집 누락 방지, 초안/게시 상태, 저장 도중 수정, 숨김 유지, 실패 통계 보존, 문의 안전 출력, 실제 미리보기, 광고 끄고 바로 게시·게시본 확인·충돌 자동 재시도');
  }finally{w.close();}
  // Analytics exclusions must not disable app-config/guide loading.
  for(const [url,optout,blocked] of [['http://localhost:4185/t/ten/',false,true],['https://noljago.co.kr/?admin_preview=1',false,true],['https://noljago.co.kr/t/ten/',true,true],['https://noljago.co.kr/t/ten/',false,false]]){

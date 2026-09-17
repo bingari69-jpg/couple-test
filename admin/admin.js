@@ -279,7 +279,7 @@
   }
   function escapeHtml(value){return String(value||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-  function renderAds(){const list=$('adList');list.replaceChildren();$('adsEnabled').checked=!!config.ads.enabled;config.ads.slots.forEach((ad,index)=>{
+  function renderAds(){const list=$('adList');list.replaceChildren();$('adsEnabled').checked=!!config.ads.enabled;renderPublishedAdsState();config.ads.slots.forEach((ad,index)=>{
     const card=document.createElement('article');card.className='ad-card';card.innerHTML='<div class="ad-card-head"><h3></h3><button class="remove-ad" type="button">삭제</button></div><div class="field-grid"><label>자리 이름<input data-field="name"></label></div><div><span class="field-title">노출 위치 <small>(여러 개 선택 가능)</small></span><div class="placement-picks">'+Object.keys(PLACEMENT_LABEL).map(key=>'<label class="check"><input type="checkbox" value="'+key+'"> '+PLACEMENT_LABEL[key]+'</label>').join('')+'</div></div><div class="field-grid"><label>광고 종류<select data-field="type"><option value="own">자체 배너</option><option value="adsense">AdSense</option></select></label><label class="check"><input data-field="enabled" type="checkbox"> 이 자리 사용</label></div><div class="own-fields"><label>배너 이미지 주소<div class="upload-row"><input data-field="imageUrl" type="url" placeholder="https://..."><label class="button upload">이미지 올리기<input class="ad-file" type="file" accept="image/png,image/jpeg,image/webp,image/gif"></label></div></label><label>클릭할 주소<input data-field="linkUrl" type="url" placeholder="https://..."></label><label>배너 설명<input data-field="alt" maxlength="80"></label></div><div class="adsense-fields"><div class="field-grid"><label>광고 클라이언트<input data-field="networkClient" placeholder="ca-pub-..."></label><label>광고 슬롯<input data-field="networkSlot" placeholder="숫자"></label></div></div><label>광고 제외 게임<textarea data-field="excludedGames" rows="2" placeholder="letter, tarot"></textarea></label>';
     // 제목에는 자리 이름과 실제 노출 위치를 같이 보여준다. 이름은 메모용이라 위치를 바꿔도 안 바뀌어 헷갈렸다.
     const head=()=>{card.querySelector('h3').textContent=(ad.name||'광고 자리')+' · '+(placementsOf(ad).map(p=>PLACEMENT_LABEL[p]||p).join(', ')||'위치 미정');};head();
@@ -335,12 +335,59 @@
     }
   }
   function preview(){if(!validConfig())return;try{localStorage.setItem('gatchi_admin_preview',JSON.stringify(config));}catch(_){return notice('미리보기를 준비하지 못했습니다.',true);}window.open('../?admin_preview=1&v='+Date.now(),'_blank','noopener');}
+  /* 서버 revision 이 어긋나면(다른 탭·다른 기기에서 저장) 쓰기가 거부된다.
+     내가 고친 내용은 그대로 두고 최신 revision 만 받아 한 번 다시 시도한다. */
+  async function writeWithRetry(action, payload, note){
+    try{ return await AdminAPI.write(action, serverState.revision, payload, note); }
+    catch(error){
+      if(!AdminAPI.isConflict(error)) throw error;
+      const latest = await AdminAPI.getState();
+      serverState = Object.assign({}, serverState, latest);
+      const again = await AdminAPI.write(action, serverState.revision, payload, note);
+      notice('다른 곳에서 바뀐 설정을 불러와 다시 ' + (action === 'publish' ? '게시' : '저장') + '했습니다.');
+      return again;
+    }
+  }
   async function saveDraft(automatic=false){
     if(writing||!dirty||!validConfig(!automatic))return;
     clearTimeout(autosaveTimer);writing=true;const snapshot=clone(config),button=$('saveDraftBtn');buttonBusy(button,true,'저장 중…');
-    try{serverState=await AdminAPI.write('draft',serverState.revision,snapshot,serverState.draft_note);savedFingerprint=fingerprint(snapshot);setDirty(fingerprint(config)!==savedFingerprint);if(!dirty){localStorage.removeItem(LOCAL_DRAFT);$('localSaveStatus').textContent='서버에 초안 저장됨 · 미게시';}if(!automatic)notice('초안을 저장했습니다. 이용자 화면에는 아직 반영되지 않았습니다.');}
+    try{serverState=await writeWithRetry('draft',snapshot,serverState.draft_note);savedFingerprint=fingerprint(snapshot);setDirty(fingerprint(config)!==savedFingerprint);if(!dirty){localStorage.removeItem(LOCAL_DRAFT);$('localSaveStatus').textContent='서버에 초안 저장됨 · 미게시';}if(!automatic)notice('초안을 저장했습니다. 이용자 화면에는 아직 반영되지 않았습니다.');}
     catch(error){autosavePaused=true;notice(AdminAPI.messageFrom(error),true);$('localSaveStatus').textContent='서버 저장 실패 · 내 초안을 내려받아 보관할 수 있습니다.';}
     finally{writing=false;buttonBusy(button,false);if(dirty&&!autosavePaused)autosaveTimer=setTimeout(()=>saveDraft(true),1800);}
+  }
+  /* 게시한 내용이 실제 게시본과 같은지 서버에서 다시 읽어 확인한다.
+     "게시를 눌렀는데 설정이 그대로"라는 상황을 조용히 넘기지 않기 위해서다. */
+  async function verifyPublished(sent){
+    try{
+      const latest = await AdminAPI.getState();
+      serverState = Object.assign({}, serverState, latest);
+      const same = fingerprint(normalize(latest.published)) === fingerprint(normalize(sent));
+      renderPublishedAdsState();
+      notice(same ? '게시 확인됐습니다. 공개 화면에 반영됩니다.' : '게시본이 보낸 설정과 다릅니다. 새로고침 후 다시 게시해 주세요.', !same);
+    }catch(_){ }
+  }
+  /* 지금 공개 중인 광고 상태를 광고 패널에 그대로 보여준다 */
+  function renderPublishedAdsState(){
+    const el = $('adsPublishedState'); if(!el) return;
+    const published = serverState && serverState.published;
+    if(!published){ el.textContent = '아직 게시한 설정이 없습니다.'; return; }
+    const ads = published.ads || {};
+    const on = !!ads.enabled && (ads.slots || []).some(slot => slot && slot.enabled);
+    el.textContent = '지금 공개 중: 광고 ' + (on ? '보이는 중' : '꺼짐') + ' · 자리 ' + ((ads.slots || []).filter(s => s && s.enabled).length) + '개';
+    el.classList.toggle('on', on);
+  }
+  async function turnAdsOffNow(){
+    if(!confirm('모든 광고를 끄고 바로 게시할까요? 광고 자리 설정은 지워지지 않습니다.')) return;
+    config.ads.enabled = false; changed(); renderAds();
+    const button = $('adsOffNow'); buttonBusy(button, true, '끄는 중…');
+    try{
+      const snapshot = clone(config);
+      serverState = await writeWithRetry('publish', snapshot, '광고 전체 끄기');
+      config = normalize(serverState.published); savedFingerprint = fingerprint(config);
+      localStorage.removeItem(LOCAL_DRAFT); setDirty(false); renderAll();
+      await verifyPublished(snapshot);
+    }catch(error){ notice(AdminAPI.messageFrom(error), true); }
+    finally{ buttonBusy(button, false); }
   }
   function diffSummary(){
     const before=normalize(serverState.published),items=[];
@@ -353,7 +400,7 @@
   function preparePublish(){if(writing)return notice('초안 저장이 끝난 뒤 게시해 주세요.');if(!validConfig())return;clearTimeout(autosaveTimer);pendingPublish=clone(config);const list=$('publishChanges');list.replaceChildren();const items=diffSummary();(items.length?items:['현재 게시본과 변경 사항이 없습니다.']).forEach(x=>{const li=document.createElement('li');li.textContent=x;list.append(li);});$('publishNote').value='';$('publishError').textContent='';$('publishDialog').showModal();}
   async function publishConfirmed(event){
     event.preventDefault();if(writing||!pendingPublish)return;writing=true;clearTimeout(autosaveTimer);const button=$('confirmPublish');buttonBusy(button,true,'게시 중…');
-    try{serverState=await AdminAPI.write('publish',serverState.revision,pendingPublish,$('publishNote').value.trim());config=normalize(serverState.published);savedFingerprint=fingerprint(config);localStorage.removeItem(LOCAL_DRAFT);$('publishDialog').close();setDirty(false);renderAll();notice('새 설정을 게시했습니다.');}
+    try{serverState=await writeWithRetry('publish',pendingPublish,$('publishNote').value.trim());config=normalize(serverState.published);savedFingerprint=fingerprint(config);localStorage.removeItem(LOCAL_DRAFT);$('publishDialog').close();setDirty(false);renderAll();verifyPublished(pendingPublish);notice('새 설정을 게시했습니다.');}
     catch(error){notice(AdminAPI.messageFrom(error),true);$('publishError').textContent=AdminAPI.messageFrom(error);}finally{writing=false;buttonBusy(button,false);}
   }
   function downloadDraft(){const url=URL.createObjectURL(new Blob([JSON.stringify({config,revision:serverState.revision},null,2)],{type:'application/json'}));const a=document.createElement('a');a.href=url;a.download='같이놀자-관리초안.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
@@ -380,7 +427,7 @@
     $('loginForm').addEventListener('submit',login);$('logoutBtn').onclick=logout;
     $('adminNav').onclick=e=>{const button=e.target.closest('[data-view]');if(button)switchView(button.dataset.view);};
     $('gameSearch').oninput=renderGames;$('contentFilter').onchange=$('visibilityFilter').onchange=renderGames;$('gameEditor').oninput=saveGame;$('addGameBtn').onclick=addGame;$('gameEditor').onsubmit=saveGame;$('closeGameEditor').onclick=()=>{$('gameEditor').hidden=true;editingIndex=-1;};$('removeGameBtn').onclick=removeGame;$('gameImageFile').onchange=uploadGameImage;
-    $('addMenuBtn').onclick=addMenu;$('designForm').oninput=readDesign;$('homeHeroImageFile').onchange=uploadHomeHeroImage;$('resetHomeHeroImage').onclick=resetHomeHeroImage;$('adsEnabled').onchange=e=>{config.ads.enabled=e.target.checked;changed();};$('addAdBtn').onclick=addAd;
+    $('addMenuBtn').onclick=addMenu;$('designForm').oninput=readDesign;$('homeHeroImageFile').onchange=uploadHomeHeroImage;$('resetHomeHeroImage').onclick=resetHomeHeroImage;$('adsEnabled').onchange=e=>{config.ads.enabled=e.target.checked;changed();};$('adsOffNow').onclick=turnAdsOffNow;$('addAdBtn').onclick=addAd;
     document.querySelector('.preview-switch').onclick=e=>{const button=e.target.closest('[data-preview]');if(!button)return;document.querySelectorAll('.preview-switch button').forEach(b=>b.classList.toggle('active',b===button));renderPreview(button.dataset.preview);};
     $('periodTabs').onclick=e=>{const button=e.target.closest('[data-days]');if(!button)return;document.querySelectorAll('#periodTabs button').forEach(b=>b.classList.toggle('active',b===button));loadStats(Number(button.dataset.days));};
     $('previewBtn').onclick=preview;$('saveDraftBtn').onclick=()=>saveDraft(false);$('publishBtn').onclick=preparePublish;$('closePublishDialog').onclick=$('cancelPublish').onclick=()=>$('publishDialog').close();$('publishForm').onsubmit=publishConfirmed;
