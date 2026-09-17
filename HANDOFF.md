@@ -14,6 +14,18 @@
 - 캐시 버전: `admin.js`·`admin-api.js`·`admin.css` → 20260918. 배포 후 관리 화면을 한 번 새로고침해야 새 코드가 뜬다.
 - 검사: `test/admin-operations.cjs` 에 광고 끄고 바로 게시, 게시본 상태 줄, 일부러 revision 을 어긋나게 한 뒤의 자동 재시도(내 변경 유지) 3가지를 추가했다.
 
+### 진짜 원인: validConfig 가 저장·게시를 통째로 막고 있었다 (같은 날 추가 조사)
+
+- 사용자가 광고를 다시 켜려는데 게시가 안 된다며 보낸 화면에 빨간 안내가 있었다: "제목과 연결 주소를 확인해 주세요. 공개할 콘텐츠는 앱에 구현된 주소여야 합니다."
+- `validConfig()` 는 `visibility:"listed"` 인 콘텐츠가 **홈 카드 목록(`HOME_ITEMS`)** 에 있는지로 "앱에 구현됨"을 판단했다. 그런데 `HOME_ITEMS` 는 `home-catalog.js` 의 `CARDS` 에 적힌 것만이다.
+- `f174168`(2026-09-13, 홈 목록에서 네 항목 제외) 이후 게시본에는 홈 카드에 없는 공개 항목이 9개 남았다: react, mbti, seat, marriage, mind/fight, personality, tarot, fortune, group-room. 페이지는 전부 실제로 있는데도 검사에 걸렸다.
+- 그래서 `saveDraft()` 와 `preparePublish()` 가 매번 첫 줄에서 되돌아갔다. **2026-09-13 부터 초안 저장도 게시도 한 번도 되지 않았다.** 안내는 어느 항목이 문제인지 말해 주지 않았고 4.2초 뒤 사라졌다. 광고 끄기가 통했던 건 새로 넣은 `turnAdsOffNow()` 가 이 검사를 거치지 않아서였다.
+- 고친 것:
+  - `scripts/build-seo.cjs` 가 `admin/app-pages.js` 를 만든다 — `t/` 아래에 `index.html` 이 실제로 있는 주소 목록(한 겹 더 들어간 `t/mind/fight/` 포함). 생성물이라 `test/seo.js` 의 최신 여부 검사에 자동으로 걸린다.
+  - `validConfig()` 는 홈 카드 목록 + `window.APP_PAGES` 를 합친 집합으로 판단하고, 막을 때는 **어느 콘텐츠의 어떤 주소가 문제인지 이름과 함께** 말하고 `openInvalid()` 로 그 항목을 바로 열어 준다.
+- 검사: `test/admin-operations.cjs` 에 홈 카드 목록에 없는 실제 페이지(t/tarot/)는 저장되고, 없는 주소(t/nowhere/)는 이름과 함께 막히는 경우를 넣었다. 캐시 버전 `admin.js` → 20260918-app-pages.
+
+
 ## 2026-09-17 숨은그림찾기 2·3단계 좌표 수정
 
 - 사용자 신고: 2·3단계에서 숨은 물건을 눌러도 안 잡힌다. 확인해 보니 상자(hit box)가 그림 속 물건에서 일정하게 오른쪽·아래로 벗어나 있었다(1단계는 정확했다).

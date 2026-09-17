@@ -43,6 +43,40 @@ const pause=()=>new Promise(r=>setTimeout(r,30));
   d.querySelector('[data-view="design"]').click();await new Promise(r=>setTimeout(r,700));assert.match(d.querySelector('#designPreview iframe').src,/admin_preview=1/);
   console.log('관리 운영 UI 통과 — 편집 누락 방지, 초안/게시 상태, 저장 도중 수정, 숨김 유지, 실패 통계 보존, 문의 안전 출력, 실제 미리보기, 광고 끄고 바로 게시·게시본 확인·충돌 자동 재시도');
  }finally{w.close();}
+ /* 공개(listed)로 둘 수 있는 주소는 "홈 카드 목록"이 아니라 "t/ 아래에 실제로 있는 페이지"다.
+    2026-09-13 에 네 항목을 홈 카드 목록에서 뺀 뒤, 저장된 설정이 그 항목들을 공개로 갖고 있어서
+    validConfig 가 매번 막았고 초안 저장과 게시가 통째로 멈춰 있었다. */
+ {
+  const dom=new JSDOM(read('admin/index.html'),{url:'https://noljago.co.kr/admin/',runScripts:'outside-only',pretendToBeVisual:true});
+  const w=dom.window,d=w.document;w.scrollTo=()=>{};w.confirm=()=>true;
+  w.HTMLDialogElement.prototype.showModal=function(){this.open=true;};w.HTMLDialogElement.prototype.close=function(){this.open=false;};
+  w.HOME_ITEMS=[{path:'t/ten/',title:'10초',kind:'대결',relationships:['친구']}];w.GATCHI_GUIDES={};
+  w.eval(read('assets/letter-templates.js'));w.eval(read('assets/letter-design.js'));w.eval(read('admin/app-pages.js'));
+  assert.ok(w.APP_PAGES.includes('t/tarot/'),'만들어진 페이지 목록에 t/tarot/ 이 있어야 함');
+  assert.ok(w.APP_PAGES.includes('t/mind/fight/'),'한 겹 더 들어간 페이지도 찾아야 함');
+  /* 홈 카드 목록에는 없지만 실제로 있는 페이지를 공개로 저장해 둔 상태 */
+  const saved={schemaVersion:1,games:[{slug:'tarot',path:'t/tarot/',title:'나와 너의 타로',visibility:'listed',sortOrder:9,category:'심리테스트'}]};
+  let state={revision:3,admin:{name:'운영자',role:'owner'},draft:clone(saved),published:clone(saved),versions:[]},writes=[];
+  w.AdminAPI={hasSession:()=>true,messageFrom:e=>e.message,isConflict:e=>!!(e&&e.conflict),getState:async()=>clone(state),
+   write:async(action,revision,config)=>{if(revision!==state.revision){const e=Error('충돌');e.conflict=true;throw e;}writes.push({action,config:clone(config)});state.revision++;state.draft=clone(config);if(action==='publish')state.published=clone(config);return clone(state);},
+   getStatsRange:async()=>({visitors:0,totals:{},games:[]}),getInquiries:async()=>[]};
+  try{
+   w.eval(read('admin/admin.js'));await pause();
+   d.querySelector('[data-view="games"]').click();
+   const card=[...d.querySelectorAll('#gameList .game-row')].find(row=>row.textContent.includes('타로'));
+   assert.ok(card,'저장된 타로 항목이 목록에 보여야 함');card.querySelector('.edit-game').click();
+   const summary=d.getElementById('gameSummary');summary.value='타로 설명';summary.dispatchEvent(new w.Event('input',{bubbles:true}));
+   d.getElementById('saveDraftBtn').click();await pause();
+   assert.equal(writes.length,1,'홈 카드 목록에 없어도 실제 페이지면 저장이 막히면 안 됨');
+   assert.ok(!d.getElementById('notice').textContent.includes('앱에 없는'),'경고가 뜨면 안 됨');
+   /* 진짜 없는 주소로 바꾸면 막되, 어느 항목인지 이름과 주소를 알려 준다 */
+   const pathBox=d.getElementById('gamePath');pathBox.value='t/nowhere/';pathBox.dispatchEvent(new w.Event('input',{bubbles:true}));
+   d.getElementById('saveDraftBtn').click();await pause();
+   assert.equal(writes.length,1,'없는 주소는 저장을 막아야 함');
+   assert.ok(/나와 너의 타로/.test(d.getElementById('notice').textContent)&&d.getElementById('notice').textContent.includes('t/nowhere/'),'문제 항목의 이름과 주소를 알려 줘야 함');
+   console.log('관리 저장 검사 통과 — 홈 카드 목록에 없어도 실제 페이지면 저장·게시 가능, 없는 주소는 이름과 함께 막음');
+  }finally{w.close();}
+ }
  // Analytics exclusions must not disable app-config/guide loading.
  for(const [url,optout,blocked] of [['http://localhost:4185/t/ten/',false,true],['https://noljago.co.kr/?admin_preview=1',false,true],['https://noljago.co.kr/t/ten/',true,true],['https://noljago.co.kr/t/ten/',false,false]]){
   const dom=new JSDOM('<script src="https://noljago.co.kr/assets/analytics.js"></script><main><button id="difficulty">난이도</button></main>',{url,runScripts:'outside-only'}),w=dom.window,calls=[];

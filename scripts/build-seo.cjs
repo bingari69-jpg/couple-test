@@ -52,16 +52,43 @@ function withSitemap(xml,paths){
   return xml.replace('</urlset>',rows+'</urlset>');
 }
 
+/* 관리 화면 검사용: t/ 아래에 실제로 만들어진 페이지 주소 (홈 카드 목록과 별개다).
+   심리·타로·운세처럼 홈 카드에는 없지만 링크로 공개된 페이지도 여기에 들어간다. */
+function appPages(){
+  /* t/<이름>/ 과 t/mind/<이름>/ 처럼 한 겹 더 들어간 페이지까지 찾는다 */
+  const pages=[];
+  const scan=(rel)=>{
+    for(const name of fs.readdirSync(path.join(ROOT,rel))){
+      const dir=path.join(ROOT,rel,name);
+      if(!fs.statSync(dir).isDirectory())continue;
+      if(fs.existsSync(path.join(dir,'index.html')))pages.push(rel+'/'+name+'/');
+      else scan(rel+'/'+name);
+    }
+  };
+  scan('t');
+  return pages.sort();
+}
+function appPagesFile(pages){
+  const line=String.fromCharCode(10);
+  return [
+    "/* scripts/build-seo.cjs 가 만든 파일 — 직접 고치지 말 것.",
+    "   t/ 아래에 실제로 있는 페이지 주소다. 관리 화면이 \"앱에 구현된 주소\" 검사에 쓴다. */",
+    "window.APP_PAGES=["
+  ].concat(pages.map(p=>"  '"+p+"',")).concat(["];",""]).join(line);
+}
+
 function build({write}){
   const items=homeItems(),changes=[];
-  const put=(file,next)=>{if(read(file)!==next){changes.push(file);if(write)fs.writeFileSync(path.join(ROOT,file),next);}};
+  const current=file=>{try{return read(file);}catch(_){return null;}};
+  const put=(file,next)=>{if(current(file)!==next){changes.push(file);if(write)fs.writeFileSync(path.join(ROOT,file),next);}};
   put('index.html',withHome(read('index.html'),items));
   items.forEach(it=>{const file=it.path+'index.html';if(fs.existsSync(path.join(ROOT,file)))put(file,withPageMeta(read(file),it));});
   put('sitemap.xml',withSitemap(read('sitemap.xml'),items.map(it=>it.path).concat(EXTRA_PUBLIC)));
+  put('admin/app-pages.js',appPagesFile(appPages()));
   return {items,changes};
 }
 
-module.exports={build};
+module.exports={build,appPages};
 if(require.main===module){
   const check=process.argv.includes('--check'),{changes}=build({write:!check});
   console.log((check?'Would change: ':'Updated: ')+(changes.join(', ')||'nothing'));

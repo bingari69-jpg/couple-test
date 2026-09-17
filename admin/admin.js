@@ -124,10 +124,23 @@
     clearTimeout(autosaveTimer);
     if(!autosavePaused&&Number.isSafeInteger(serverState.revision))autosaveTimer=setTimeout(()=>saveDraft(true),1800);
   }
+  /* 공개(listed)로 둘 수 있는 주소: 홈 카드 목록 + t/ 아래에 실제로 있는 페이지.
+     심리·타로·운세처럼 홈 카드에는 없지만 링크로 공개된 페이지를 막지 않는다. */
+  function knownPaths(){
+    const paths=new Set(localGames().map(g=>g.path));
+    (window.APP_PAGES||[]).forEach(p=>paths.add(p));
+    return paths;
+  }
   function validConfig(show=true) {
-    const supported=new Map(localGames().map(g=>[g.slug,g.path]));
-    const invalid=config.games.find(g=>!g.title.trim()||(g.visibility==='listed'&&(!supported.has(g.slug)||g.path!==supported.get(g.slug))));
-    if(invalid){if(show)notice('제목과 연결 주소를 확인해 주세요. 공개할 콘텐츠는 앱에 구현된 주소여야 합니다.',true);return false;}
+    const paths=knownPaths();
+    const invalid=config.games.find(g=>!String(g.title||'').trim()||(g.visibility==='listed'&&!paths.has(g.path)));
+    if(invalid){
+      if(show)notice(!String(invalid.title||'').trim()
+        ? '제목이 비어 있는 콘텐츠가 있습니다. 콘텐츠 관리에서 제목을 채워 주세요.'
+        : '‘'+invalid.title+'’의 연결 주소 '+(invalid.path||'(비어 있음)')+' 는 앱에 없는 주소입니다. 주소를 고치거나 숨김으로 바꿔 주세요.',true);
+      if(show)openInvalid(invalid);
+      return false;
+    }
     if(config.site.campaign?.enabled&&(!config.site.campaign.from||!config.site.campaign.to||config.site.campaign.to<config.site.campaign.from)){if(show)notice('계절 안내의 시작일과 종료일을 확인해 주세요.',true);return false;}
     if(!$('designForm').checkValidity()||(!$('gameEditor').hidden&&!$('gameEditor').checkValidity())){if(show)notice('입력 항목의 길이와 주소 형식을 확인해 주세요.',true);return false;}
     return true;
@@ -227,6 +240,13 @@
     game.title=$('gameTitle').value.trim();game.summary=$('gameSummary').value.trim();game.category=$('gameCategory').value;game.visibility=$('gameVisibility').value;game.path=$('gamePath').value.trim();game.relationships=$('gameRelationships').value.split(',').map(v=>v.trim()).filter(Boolean);game.thumbnailUrl=$('gameThumbnail').value.trim();game.featured=$('gameFeatured').checked;game.adsMode=$('gameAdsMode').value;
     game.guide={rule:$('gameRule').value.trim(),steps:[$('gameStep1').value.trim(),$('gameStep2').value.trim(),$('gameStep3').value.trim()],tip:$('gameTip').value.trim(),practice:$('gamePractice').value};
     changed(); renderGames(); if(event&&event.type==='submit'){if(!game.title)return notice('제목을 입력해 주세요.',true);$('gameEditor').hidden=true;editingIndex=-1;notice('편집 내용이 초안에 반영됐습니다.');}
+  }
+  /* 문제가 된 콘텐츠를 바로 열어 준다 — 어디가 막혔는지 찾아다니지 않게 */
+  function openInvalid(game){
+    const index=config.games.indexOf(game);if(index<0)return;
+    const tab=document.querySelector('[data-view="games"]');if(tab)tab.click();
+    $('gameSearch').value='';renderGames();openGame(index);
+    if($('gameEditor').scrollIntoView)$('gameEditor').scrollIntoView({block:'center'});
   }
   function addGame() {notice('새 게임은 개발 후 목록에 자동 등록됩니다. 여기서는 등록된 콘텐츠의 공개·숨김·설명을 관리합니다.');}
   function removeGame() {
