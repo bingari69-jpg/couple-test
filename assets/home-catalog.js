@@ -9,7 +9,7 @@ const ITEMS = [
     title:"톡톡 배틀 — 멈출 때가 승부야!", desc:"초록엔 톡톡, 빨강엔 멈춰! 카톡으로 초대해 동시에 겨루는 20초." },
   { path:"t/alkkagi/", rel:"친구", kind:"보드게임", soloFree:true, onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/alkkagi-board.svg", soloSummary:"엇갈린 다섯 알! 방향을 고르고 움직이는 힘 게이지를 멈춰 톡!",
     title:"알까기 배틀 — 톡! 다음은 네 차례", desc:"다섯 알의 작은 승부. 카톡으로 친구를 초대하고 각자 휴대폰에서 겨뤄봐." },
-  { path:"t/omok/", rel:"친구", kind:"보드게임", soloFree:true, localDuel:true, thumbnailUrl:"assets/art/omok-board.svg",
+  { path:"t/omok/", rel:"친구", kind:"보드게임", soloFree:true, localDuel:true, onlineDuel:true, realtimeDuel:true, thumbnailUrl:"assets/art/omok-board.svg",
     title:"오목 한판 — 다음 한 수는 너야",
     desc:"15×15 자유오목. 컴퓨터와 혼자, 카톡으로 친구를 초대해 다섯 알을 이어봐." },
   { path:"t/hidden-picture/", rel:"친구", kind:"찾기", onlineDuel:true, thumbnailUrl:"t/hidden-picture/forest.png",
